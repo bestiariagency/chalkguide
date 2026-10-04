@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+/*
+ * PROVISIONAL design tokens.
+ * The brand is not defined yet: every value below is a placeholder to prove the
+ * pipeline works. Replace them wholesale once the visual identity is decided.
+ */
+@theme {
+  /* Colors (provisional) */
+  --color-brand: oklch(0.55 0.15 250);
+  --color-brand-contrast: oklch(0.98 0 0);
+  --color-accent: oklch(0.75 0.16 70);
+  --color-ink: oklch(0.22 0.01 260);
+  --color-ink-muted: oklch(0.45 0.01 260);
+  --color-surface: oklch(0.99 0 0);
+  --color-surface-muted: oklch(0.96 0.005 260);
+
+  /* Font families (provisional, system stacks: no web fonts loaded yet) */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Spacing scale (provisional): Tailwind derives p-*, m-*, gap-*… from this base unit */
+  --spacing: 0.25rem;
+}
