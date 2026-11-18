@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChalkGuide · Panel /administrador · Propuestas (F5)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui'],mono:['JetBrains Mono','monospace']}}}}</script>
+<style>:focus-visible{outline:2px solid #C2410C;outline-offset:3px;border-radius:8px}</style>
+</head>
+<body class="bg-[#FAFAFA] text-[#18181B] font-sans antialiased">
+<main class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+  <p class="font-mono text-[11px] uppercase tracking-[.14em] text-[#52525B]">ChalkGuide · Panel /administrador · F5 · 9 oct 2026 · Búho-Pixel</p>
+  <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mt-3">Propuestas del panel</h1>
+  <p class="mt-3 text-[#52525B]">Primero la arquitectura (vale para cualquier piel); después dos direcciones visuales con tres pantallas cada una: Inicio, listado de artículos y editor. Sirve desde la raíz del repo para ver el logo. Spec y razonamiento en <code class="text-sm bg-white px-1.5 py-0.5 rounded border">README.md</code>.</p>
+
+  <ul class="mt-10 space-y-4">
+    <li class="font-mono text-[11px] uppercase tracking-[.14em] text-[#52525B]">5.4–5.5 · Sobre la dirección A aprobada (D23) · para revisar</li>
+    <li><a href="design-system.html" class="block bg-white rounded-xl p-6 ring-2 ring-[#C2410C] ring-offset-2 ring-offset-[#FAFAFA] hover:-translate-y-0.5 transition-transform">
+      <span class="flex flex-wrap items-center gap-3"><span class="font-mono text-xs text-[#52525B]">5.4</span><span class="font-semibold text-xl">Design system del panel</span><span class="ml-auto text-xs font-semibold bg-[#C2410C] text-white px-2.5 py-0.5 rounded-full">Nuevo</span></span>
+      <span class="block mt-2 text-[#52525B]">Tokens (claro y oscuro preparado), tipografía, botones, insignias de estado (incluido "cambios sin publicar"), formularios, ES/EN, tablas de datos, selector de medios, modales y hojas, toasts, borrados, vacío/carga/error y arrastrar para ordenar.</span></a></li>
+    <li class="bg-white border border-[#E4E4E7] rounded-xl p-5">
+      <span class="flex flex-wrap items-center gap-3"><span class="font-mono text-xs text-[#52525B]">5.5</span><span class="font-semibold text-lg">Mockups</span><a href="anchos.html" class="ml-auto text-sm underline underline-offset-2">Ver en 390 y 768</a></span>
+      <span class="mt-3 grid sm:grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+        <a class="underline underline-offset-2" href="login.html">Login</a>
+        <a class="underline underline-offset-2" href="inicio.html">Inicio · calendario editorial</a>
+        <a class="underline underline-offset-2" href="articulos.html">Artículos · vista "Con cambios"</a>
+        <a class="underline underline-offset-2" href="articulo-editor.html">Editor de artículo · cambios sin publicar</a>
+        <a class="underline underline-offset-2" href="categorias.html">Categorías · arrastrar para ordenar</a>
+        <a class="underline underline-offset-2" href="medios.html">Medios · subir, reemplazar, dónde se usa</a>
+        <a class="underline underline-offset-2" href="rocodromo-editor.html">Ficha de rocódromo</a>
+        <a class="underline underline-offset-2" href="pie-de-gato-editor.html">Ficha de pie de gato (ligera)</a>
+        <a class="underline underline-offset-2" href="resolador-editor.html">Ficha de resolador (ligera)</a>
+        <a class="underline underline-offset-2" href="criterios.html">Criterios de nota · F6.10</a>
+        <a class="underline underline-offset-2" href="opiniones.html">Opiniones · Recientes</a>
+        <a class="underline underline-offset-2" href="agenda.html">Agenda · borradores del agente · F6.12</a>
+        <a class="underline underline-offset-2" href="paginas.html">Páginas · Sobre mí y legales · F6.13</a>
+        <a class="underline underline-offset-2" href="suscriptores.html">Suscriptores + exportar</a>
+        <a class="underline underline-offset-2" href="exportar.html">Exportar</a>
+        <a class="underline underline-offset-2" href="importar.html">Importar fichas · F6.15b</a>
+        <a class="underline underline-offset-2" href="inicio-v2.html">Inicio v2 · Pendiente primero · D52</a>
+        <a class="underline underline-offset-2" href="noticias.html">Noticias · cola del agente y lote · F8</a>
+        <a class="underline underline-offset-2" href="newsletter.html">Newsletter semanal · aprobar +1 h · F8</a>
+        <a class="underline underline-offset-2" href="ingesta.html">Ingesta · recogidas, fuentes y tokens · F8</a>
+        <a class="underline underline-offset-2" href="agenda-f8.html">Agenda · ajuste F8 (fuente visible)</a>
+        <a class="underline underline-offset-2" href="busqueda-cmdk.html">Búsqueda en ⌘K · D53</a>
+        <a class="underline underline-offset-2" href="actividad.html">Actividad · exportaciones</a>
+        <a class="underline underline-offset-2" href="ajustes.html">Ajustes</a>
+      </span></li>
+
+    <li class="pt-6 font-mono text-[11px] uppercase tracking-[.14em] text-[#52525B]">Historial · 5.1–5.2</li>
+
+    <li><a href="arquitectura.html" class="block bg-white border border-[#E4E4E7] rounded-xl p-5 hover:border-[#18181B] transition-colors">
+      <span class="flex flex-wrap items-center gap-3"><span class="font-mono text-xs text-[#52525B]">5.1</span><span class="font-semibold text-lg">Arquitectura de información</span><span class="ml-auto text-xs font-medium border border-[#D4D4D8] px-2 py-0.5 rounded-full">Para revisar</span></span>
+      <span class="block mt-1 text-[#52525B]">Menú lateral y jerarquía, rutas y patrón de cada pantalla, y los cinco flujos: artículo programado con portada, foto reemplazada y "dónde se usa", ficha de rocódromo con reseña y notas, moderación y exportación.</span></a></li>
+
+    <li class="pt-4 font-mono text-[11px] uppercase tracking-[.14em] text-[#52525B]">5.2 · Direcciones visuales</li>
+    <li><a href="direccion-a-consola.html" class="block bg-white rounded-xl p-6 ring-2 ring-[#C2410C] ring-offset-2 ring-offset-[#FAFAFA] hover:-translate-y-0.5 transition-transform">
+      <span class="flex flex-wrap items-center gap-3"><span class="w-4 h-4 rounded bg-[#18181B]"></span><span class="font-semibold text-xl">A · Consola</span><span class="ml-auto text-xs font-semibold bg-[#C2410C] text-white px-2.5 py-0.5 rounded-full">Recomendada</span></span>
+      <span class="block mt-2 text-[#52525B]">Herramienta pro clara y densa (Linear, Vercel, Supabase Studio). Neutros zinc, una sola tinta de acción, el naranja de ChalkGuide como hilo (foco, selección, contadores). Filas de 40 px, tema claro y oscuro con el mismo set de tokens.</span>
+      <span class="mt-3 flex flex-wrap gap-2 text-sm"><span class="underline underline-offset-2">Inicio</span><span aria-hidden="true">·</span><span class="underline underline-offset-2">Artículos</span><span aria-hidden="true">·</span><span class="underline underline-offset-2">Editor</span></span></a></li>
+    <li><a href="direccion-b-taller.html" class="block bg-[#F4F1EA] border border-[#DCD5C8] rounded-xl p-6 hover:border-[#1C1A17] transition-colors">
+      <span class="flex flex-wrap items-center gap-3"><span class="w-4 h-4 rounded bg-[#0f0f0f]"></span><span class="w-4 h-4 rounded -ml-2 bg-[#E8923A]"></span><span class="font-semibold text-xl">B · Taller</span><span class="ml-auto text-xs font-medium border border-[#827A6D] px-2.5 py-0.5 rounded-full">Alternativa</span></span>
+      <span class="block mt-2 text-[#5E584E]">La identidad ChalkGuide llevada al panel: menú de pizarra, contenido en papel, JetBrains Mono en etiquetas, botón naranja de marca y una nota manuscrita. Densidad media (filas de 60 px), editor como la hoja del artículo publicado.</span>
+      <span class="mt-3 flex flex-wrap gap-2 text-sm text-[#1C1A17]"><span class="underline underline-offset-2">Inicio</span><span aria-hidden="true">·</span><span class="underline underline-offset-2">Artículos</span><span aria-hidden="true">·</span><span class="underline underline-offset-2">Editor</span></span></a></li>
+    <li><a href="anchos.html" class="block bg-[#18181B] text-white rounded-xl p-5 hover:-translate-y-0.5 transition-transform">
+      <span class="font-semibold">Vista por anchos · 390 y 768</span>
+      <span class="block mt-1 text-sm text-[#D4D4D8]">Las dos direcciones en marcos de móvil y tablet, interactivos.</span></a></li>
+  </ul>
+
+  <section class="mt-12 rounded-xl border border-[#E4E4E7] bg-white p-5">
+    <h2 class="font-semibold">Qué probar</h2>
+    <ul class="mt-2 text-sm text-[#52525B] list-disc pl-5 space-y-1">
+      <li>A: marca varias filas (aparece la barra de lote abajo), "Publicar ▾" abre el modal de programar, "Tema oscuro" arriba a la derecha.</li>
+      <li>B: chips de categoría y estado filtran de verdad (y el vacío), al marcar filas la barra de lote sustituye a los filtros, pestañas Publicar / Portada / SEO en el editor.</li>
+      <li>En 390: menú en drawer; en A barra inferior de accesos rápidos; en B el panel del editor es una hoja inferior ("Ajustes" / "Publicar").</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

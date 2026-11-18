@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Medios · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+</head>
+<body data-page="medios" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Medios <span class="text-muted font-normal num ml-1">86</span></h1>
+    <span class="text-xs text-muted hidden md:inline">· 214 MB de 1 GB</span>
+    <div class="ml-auto"><label class="btn btn-primary cursor-pointer"><i data-lucide="upload"></i>Subir<input type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif,image/gif" class="sr-only" id="file"></label></div>
+  </header>
+
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+    <div class="relative w-full sm:w-72"><label for="q" class="sr-only">Buscar medios</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="q" class="input !pl-8" placeholder="Buscar por nombre o alt"></div>
+    <div class="seg overflow-x-auto" role="group" aria-label="Filtro">
+      <button aria-pressed="true">Todas <span class="num opacity-70">86</span></button><button aria-pressed="false">Sin alt <span class="num text-warn">9</span></button><button aria-pressed="false">Sin usar <span class="num">14</span></button><button aria-pressed="false">En uso</button>
+    </div>
+    <div class="ml-auto hidden md:flex items-center gap-2 text-sm text-meta"><span>Ordenar</span><button class="btn btn-ghost">Más recientes<i data-lucide="arrow-down" class="!w-3.5 !h-3.5"></i></button></div>
+  </div>
+
+  <div class="px-4 md:px-6 py-5">
+    <!-- zona de soltar + progreso de subida -->
+    <div class="grid lg:grid-cols-[1fr_420px] gap-4"><p class="md:hidden text-xs text-meta">«Subir» abre la cámara o la galería del móvil.</p>
+      <div class="dropzone p-5 hidden md:flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left" id="dz">
+        <span class="w-10 h-10 rounded-lg bg-elev border border-line grid place-items-center text-meta flex-none"><i data-lucide="image-up" class="w-5 h-5"></i></span>
+        <div class="text-sm"><p class="font-medium">Suelta fotos aquí o en cualquier parte de la pantalla</p><p class="text-meta text-xs mt-0.5">JPG, PNG, WebP, AVIF o GIF · hasta 10 MB · se quitan los datos EXIF y GPS antes de subir y se calcula el color dominante</p></div>
+      </div>
+      <section class="card" aria-labelledby="h-up" id="subir">
+        <div class="card-h"><h2 id="h-up">Subiendo 3 fotos</h2><span class="text-xs text-meta num ml-auto">1 de 3</span></div>
+        <ul class="divide-y divide-line text-sm" aria-live="polite">
+          <li class="px-4 py-2.5 flex items-center gap-3"><span class="photo w-9 h-9 rounded flex-none" style="background-image:linear-gradient(150deg,#6d7a62,#2b3227)"></span><div class="flex-1 min-w-0"><p class="mono text-xs truncate">entreno-badalona.jpg</p><p class="text-xs text-ok flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i>Subida · 1,2 MB · <span class="swatch !w-2.5 !h-2.5" style="background:#2b3227"></span><span class="mono">#2b3227</span></p></div><button class="btn btn-ghost btn-sm">Describir</button></li>
+          <li class="px-4 py-2.5 flex items-center gap-3"><span class="photo w-9 h-9 rounded flex-none" style="background-image:linear-gradient(150deg,#c9a24a,#5a4417)"></span><div class="flex-1 min-w-0"><p class="mono text-xs truncate">presa-badalona-recepcion.jpg</p><div class="bar mt-1.5" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="Progreso de presa-badalona-recepcion.jpg"><span style="width:62%"></span></div></div><button class="icon-btn" aria-label="Cancelar subida"><i data-lucide="x"></i></button></li>
+          <li class="px-4 py-2.5 flex items-center gap-3"><span class="w-9 h-9 rounded flex-none bg-danger-soft text-danger grid place-items-center"><i data-lucide="file-x" class="w-4 h-4"></i></span><div class="flex-1 min-w-0"><p class="mono text-xs truncate">sala-cuerda-02.tiff</p><p class="text-xs text-danger">Formato no admitido (TIFF). Expórtala como JPG o WebP.</p></div><button class="icon-btn" aria-label="Quitar de la lista"><i data-lucide="x"></i></button></li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- rejilla -->
+    <ul class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 gap-3" id="grid" aria-label="Fotos"></ul>
+    <div class="mt-6 flex justify-center"><button class="btn btn-ghost">Cargar 48 más</button></div>
+  </div>
+</main>
+
+<!-- detalle -->
+<div id="det" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="det-h"><div class="drawer !w-[min(480px,100vw)]"><div class="grab"></div>
+  <div class="drawer-h"><h2 id="det-h" class="text-base font-semibold truncate mono !text-[13px]">sala-bloque-poblenou.jpg</h2><span class="chip st-neutral ml-1">v2</span><button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="drawer-b space-y-5">
+    <div class="photo aspect-[3/2] rounded-lg" style="background-image:linear-gradient(135deg,#7f6a4d,#4a3b2a 55%,#2a221a)" role="img" aria-label="Vista previa de sala-bloque-poblenou.jpg"></div>
+    <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs"><dt class="text-meta">Tamaño</dt><dd class="num">2400 × 1600 · 486 KB · WebP</dd><dt class="text-meta">Subida</dt><dd>12 sep 2026 · reemplazada ayer</dd>
+      <dt class="text-meta">Color dominante</dt><dd class="flex items-center gap-2"><span class="swatch" style="background:#4a3b2a"></span><input class="input mono !h-7 !w-24 !text-xs" value="#4a3b2a" aria-label="Color dominante en hexadecimal"><button class="text-meta underline underline-offset-2 hover:text-fg">Recalcular</button></dd></dl>
+    <p class="help !mt-1">El color dominante tiñe el hero de la home cuando esta foto es la portada del destacado.</p>
+    <div class="space-y-3">
+      <div><label class="lbl" for="a-es">Texto alternativo <span class="lang-tag">ES</span><span class="counter">52 / 250</span></label><textarea id="a-es" rows="2" class="input">Sala de bloque amplia con presas de colores y colchonetas azules</textarea></div>
+      <div><label class="lbl" for="a-en">Texto alternativo <span class="lang-tag">EN</span></label><textarea id="a-en" rows="2" class="input" placeholder="Opcional hasta traducir">Large bouldering room with colourful holds and blue mats</textarea></div>
+      <p class="help">Describe lo que se ve, no "foto de". Sin alt ES no se puede usar en contenido publicado.</p>
+    </div>
+    <div class="space-y-3">
+      <div><label class="lbl" for="c-es">Pie de foto <span class="lang-tag">ES</span></label><input id="c-es" class="input" value="Magnesi Poblenou un martes a las 19:00."></div>
+      <div><label class="lbl" for="c-en">Pie de foto <span class="lang-tag">EN</span></label><input id="c-en" class="input" placeholder="Opcional"></div>
+      <div><label class="lbl" for="cr">Crédito</label><input id="cr" class="input" value="Foto: Xavi"></div>
+    </div>
+    <section aria-labelledby="h-uso"><h3 id="h-uso" class="text-sm font-semibold flex items-center gap-2">Dónde se usa <span class="count">3</span></h3>
+      <ul class="mt-2 text-sm border border-line rounded-lg divide-y divide-line">
+        <li class="flex items-center gap-2 px-3 min-h-[40px]"><i data-lucide="mountain" class="w-4 h-4 text-meta"></i><a href="rocodromo-editor.html" class="flex-1 truncate row-link">Magnesi Poblenou</a><span class="text-xs text-meta">Portada</span></li>
+        <li class="flex items-center gap-2 px-3 min-h-[40px]"><i data-lucide="file-text" class="w-4 h-4 text-meta"></i><a href="articulo-editor.html" class="flex-1 truncate row-link">Dónde escalar en Barcelona cuando llueve</a><span class="text-xs text-meta">Cuerpo ES</span></li>
+        <li class="flex items-center gap-2 px-3 min-h-[40px]"><i data-lucide="settings" class="w-4 h-4 text-meta"></i><a href="ajustes.html" class="flex-1 truncate row-link">Ajustes · imagen para redes</a><span class="text-xs text-meta">OG</span></li>
+      </ul></section>
+  </div>
+  <div class="drawer-f flex-wrap">
+    <button class="btn btn-ghost" data-open="rep"><i data-lucide="replace"></i>Reemplazar…</button>
+    <button class="btn btn-quiet"><i data-lucide="download"></i><span class="hidden sm:inline">Descargar</span></button>
+    <span class="ml-auto inline-flex items-center gap-2"><button class="btn btn-danger-ghost" aria-disabled="true" aria-describedby="nodel"><i data-lucide="trash-2"></i>Eliminar</button></span>
+    <p id="nodel" class="w-full text-xs text-meta">No se puede eliminar: está en uso en 3 sitios.</p>
+    <button class="btn btn-primary w-full sm:w-auto" data-close data-toast="Foto guardada">Guardar</button>
+  </div>
+</div></div>
+
+<!-- reemplazar -->
+<div id="rep" class="overlay" role="dialog" aria-modal="true" aria-labelledby="rep-h"><div class="dialog lg"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="rep-h">Reemplazar «sala-bloque-poblenou.jpg»</h2><p class="text-sm text-meta mt-1">Se actualiza en los 3 sitios donde se usa. El texto alternativo, el pie y el crédito se mantienen; la URL del archivo cambia (sin problemas de caché).</p></div>
+  <div class="dialog-b">
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+      <figure><div class="photo aspect-[3/2] rounded-md opacity-80" style="background-image:linear-gradient(135deg,#7f6a4d,#2a221a)"></div><figcaption class="mt-1.5 text-xs text-meta">Ahora · v2 · <span class="mono">#4a3b2a</span></figcaption></figure>
+      <i data-lucide="arrow-right" class="w-5 h-5 text-muted"></i>
+      <figure><div class="photo aspect-[3/2] rounded-md" style="background-image:linear-gradient(135deg,#8c7a5c,#3b2f22)"></div><figcaption class="mt-1.5 text-xs text-meta">Nueva · v3 · <span class="mono">#3b2f22</span> · 2400 × 1600</figcaption></figure>
+    </div>
+    <div class="mt-4 banner banner-warn"><i data-lucide="triangle-alert"></i><span>La foto nueva es de otra sala (la original tiene colchonetas azules). Revisa si el alt sigue siendo correcto.</span></div>
+  </div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-primary" data-close data-toast="Foto reemplazada (v3) en 3 sitios">Reemplazar en 3 sitios</button></div></div></div>
+
+<script>
+const M=[['sala-bloque-poblenou.jpg','#4a3b2a','linear-gradient(135deg,#7f6a4d,#2a221a)',1,3],['pared-15m-gracia.jpg','#3d2a22','linear-gradient(160deg,#9b5a3a,#3d2a22)',1,2],['autobelays-gracia.jpg','#1c232a','linear-gradient(150deg,#5b6b78,#1c232a)',0,0],['entreno-badalona.jpg','#2b3227','linear-gradient(150deg,#6d7a62,#2b3227)',0,0],['tarantulace-perfil.jpg','#5a4417','linear-gradient(150deg,#c9a24a,#5a4417)',1,1],['resolado-antes.jpg','#2e211a','linear-gradient(150deg,#7a5a48,#2e211a)',1,1],['via-sants-pared.jpg','#232a33','linear-gradient(150deg,#5d6a7a,#232a33)',1,2],['solution-suela.jpg','#251e33','linear-gradient(150deg,#6a5a8a,#251e33)',1,1],['grupo-bloque-poblenou.jpg','#2f3a44','linear-gradient(150deg,#5d6a7a,#2f3a44,#1b2027)',1,1],['cornella-cuerda.jpg','#1e2a23','linear-gradient(150deg,#4f6b5a,#1e2a23)',1,1],['montserrat-sector.jpg','#4b3422','linear-gradient(150deg,#b0835a,#4b3422)',0,0],['magnesio-bolsa.jpg','#3a2418','linear-gradient(150deg,#a0603e,#3a2418)',1,0],['zona-infantil.jpg','#5a4417','linear-gradient(150deg,#d9b25a,#5a4417)',1,1],['taller-goma-fina.jpg','#2b1712','linear-gradient(150deg,#8b4a3a,#2b1712)',1,1]];
+document.getElementById('grid').innerHTML=M.map(([n,c,g,alt,use])=>`<li><button class="tile block w-full aspect-[4/3] text-left" data-open="det" aria-label="${n}${alt?'':', sin texto alternativo'}${use?', en uso en '+use:', sin usar'}">
+  <span class="photo absolute inset-0" style="background-image:${g}"></span><span class="tile-ov"></span>
+  ${alt?'':'<span class="absolute left-1.5 top-1.5 chip st-warn !h-[18px] !text-[11px]"><i data-lucide="triangle-alert" class="!w-3 !h-3"></i>Sin alt</span>'}
+  ${use?'':'<span class="absolute right-1.5 top-1.5 chip !bg-white/90 !text-meta !h-[18px] !text-[11px]">Sin usar</span>'}
+  </button><p class="mt-1.5 flex items-center gap-1.5 text-xs"><span class="swatch !w-3 !h-3" style="background:${c}" title="Color dominante ${c}"></span><span class="mono truncate text-meta">${n}</span></p></li>`).join('');
+/* arrastrar archivos encima de la página */
+const dz=document.getElementById('dz');
+['dragenter','dragover'].forEach(ev=>addEventListener(ev,e=>{if(e.dataTransfer&&[...e.dataTransfer.types].includes('Files')){e.preventDefault();dz.classList.add('over');}}));
+['dragleave','drop'].forEach(ev=>addEventListener(ev,e=>{if(ev==='drop')e.preventDefault();dz.classList.remove('over');}));
+addEventListener('drop',()=>CG.toast('3 fotos subidas · 3 sin alt',{action:'Describir ahora'}));
+document.getElementById('file').onchange=()=>CG.toast('3 fotos subidas · 3 sin alt',{action:'Describir ahora'});
+if(location.hash==='#detalle')setTimeout(()=>CG.open('det'),200);
+</script>
+</body>
+</html>

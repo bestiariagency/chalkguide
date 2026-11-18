@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Pies de gato: comparador · ChalkGuide (3.18 · iteración 2)</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="_shared/lectura.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw-vars.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+<link rel="stylesheet" href="_shared/lectura.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="pies" data-route-es="/pies-de-gato" data-route-en="/en/climbing-shoes">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="board-tex border-b-[0.5px] border-line">
+    <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-10 md:pt-10 md:pb-14">
+      <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Pies de gato</span></li></ol></nav>
+      <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5 max-w-[20ch]">Pies de gato: comparador</h1>
+      <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">15 modelos con datos del fabricante y precios revisados el <span class="font-mono">01.09.26</span>. Elige hasta 3 y compáralos lado a lado.</p>
+    </div>
+  </section>
+
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-14 grid lg:grid-cols-[260px_minmax(0,1fr)] gap-10">
+    <!-- Filtros -->
+    <aside aria-labelledby="h-filters">
+      <button type="button" class="acc-btn lg:hidden w-full flex items-center justify-between min-h-[48px] px-4 rounded-md border border-control" aria-expanded="false" aria-controls="filters-acc"><span class="flex items-center gap-2"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-sliders"/></svg>Filtros <span class="font-mono text-meta text-sm" id="fcount">(1)</span></span><svg class="chev ico" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+      <div id="filters-acc" class="acc lg:!grid-rows-[1fr] lg:[&>div]:!visible"><div>
+        <div class="pt-6 lg:pt-0 space-y-7" id="filters">
+          <h2 id="h-filters" class="label-mini hidden lg:block">Filtros</h2>
+          <fieldset><legend class="text-sm text-meta mb-2">Nivel</legend>
+            <div class="flex flex-wrap gap-2"><button type="button" class="chip" aria-pressed="true" data-chip data-g="level" data-v="beginner"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Inicio</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="level" data-v="intermediate"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Intermedio</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="level" data-v="advanced"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Avanzado</button></div></fieldset>
+          <fieldset><legend class="text-sm text-meta mb-2">Perfil</legend>
+            <div class="flex flex-wrap gap-2"><button type="button" class="chip" aria-pressed="false" data-chip data-g="profile" data-v="flat"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Plano</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="profile" data-v="moderate"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Moderado</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="profile" data-v="aggressive"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Agresivo</button></div></fieldset>
+          <fieldset><legend class="text-sm text-meta mb-2">Cierre</legend>
+            <div class="flex flex-wrap gap-2"><button type="button" class="chip" aria-pressed="false" data-chip data-g="closure" data-v="velcro"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Velcro</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="closure" data-v="lace"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Cordones</button></div></fieldset>
+          <fieldset><legend class="text-sm text-meta mb-1">Precio</legend>
+            <p class="font-mono text-[15px] num" aria-live="polite"><span id="pmin">40</span>–<span id="pmax">185</span> €</p>
+            <div class="range-dual mt-1"><span class="track"></span><span class="fill" id="pfill"></span>
+              <input type="range" min="40" max="185" step="5" value="40" id="rmin" aria-label="Precio mínimo">
+              <input type="range" min="40" max="185" step="5" value="185" id="rmax" aria-label="Precio máximo">
+            </div></fieldset>
+          <fieldset><legend class="sr-only">Experiencia del autor</legend>
+            <button type="button" class="chip" aria-pressed="false" data-chip data-g="owned" data-v="1"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Los he usado yo</button></fieldset>
+          <button type="button" class="link text-sm inline-flex items-center min-h-[44px]" id="clear">Quitar filtros</button>
+        </div>
+      </div></div>
+    </aside>
+
+    <!-- Resultados -->
+    <section aria-labelledby="h-results" class="min-w-0">
+      <div class="flex flex-wrap items-baseline justify-between gap-3">
+        <h2 id="h-results" class="text-xl font-medium" aria-live="polite"><span id="count">7 resultados</span></h2>
+        <p class="text-sm text-meta">Ordenado por precio</p>
+      </div>
+      <ul class="mt-5 grid sm:grid-cols-2 xl:grid-cols-3 gap-4 num" id="grid"></ul>
+      <div id="empty" class="hidden mt-5 border-[0.5px] border-line-strong rounded-lg bg-board p-8 text-center" role="status">
+        <svg class="ico !w-6 !h-6 mx-auto text-meta" aria-hidden="true"><use href="#i-sliders"/></svg>
+        <p class="font-medium mt-3">Ningún resultado con estos filtros</p>
+        <p class="text-sm text-meta mt-1">Prueba a quitar alguno de los filtros.</p>
+        <button type="button" class="btn btn-ghost mt-5" id="clear2"><span class="label">Quitar filtros</span></button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Comparación (iteración 2): buscador para añadir, máx. 3, sustituir; tabla en lg, vista por atributo en < lg -->
+  <section id="comparacion" class="scroll-mt-16 pb-12 md:pb-16" aria-labelledby="h-cmp">
+    <div class="max-w-page mx-auto md:px-6">
+      <div class="paper mx-2 sm:mx-4 md:mx-0 px-4 py-8 sm:px-8 md:px-10 md:py-12">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+          <h2 id="h-cmp" class="display text-[1.75rem] md:text-[2.25rem]">Lado a lado</h2>
+          <p class="flex items-center gap-2 text-sm text-meta"><span class="cap-dots" id="capDots" aria-hidden="true"></span><span><span class="font-mono text-foreground" id="capN">3</span> de <span class="font-mono">3</span> modelos</span></p>
+        </div>
+
+        <!-- Añadir modelo: combobox -->
+        <div class="mt-6 grid md:grid-cols-[minmax(0,520px)_1fr] gap-x-6 items-start">
+          <div class="relative" id="add">
+            <label for="cq" class="label-mini block mb-3">Añadir un modelo</label>
+            <div class="relative">
+            <div class="search" id="cwrap">
+              <svg class="ico s-ico !w-[18px] !h-[18px]" aria-hidden="true"><use href="#i-search"/></svg>
+              <input id="cq" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="clist" aria-describedby="c-hint c-help" autocomplete="off" enterkeyhint="search" spellcheck="false" placeholder="Busca por marca o modelo">
+              <button type="button" class="s-clear" id="cq-clear" aria-label="Borrar búsqueda" hidden><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="combo-pop" id="cpop" hidden>
+              <p class="combo-group text-[13px] text-meta flex items-center gap-1.5" id="cfull" hidden><svg class="ico !w-3.5 !h-3.5 text-accent" aria-hidden="true"><use href="#i-swap"/></svg>Comparación llena: al elegir uno, te pregunto cuál sustituir.</p>
+              <ul id="clist" role="listbox" aria-label="Modelos de pies de gato"></ul>
+              <p class="combo-empty" id="cempty" hidden></p>
+            </div>
+            </div>
+            <p id="c-hint" class="text-[13px] text-meta mt-2"></p>
+            <p id="c-help" class="sr-only">Escribe para filtrar. Flechas arriba y abajo para moverte, Enter para añadir, Escape para cerrar.</p>
+          </div>
+        </div>
+        <p class="sr-only" aria-live="polite" aria-atomic="true" id="c-live"></p>
+
+        <div id="cmp" class="mt-8"></div>
+        <p class="mt-5 text-sm text-meta max-w-read flex gap-2"><svg class="ico !w-4 !h-4 mt-0.5 shrink-0 text-accent" aria-hidden="true"><use href="#i-link"/></svg><span><span class="text-foreground">Enlace de afiliado:</span> si compras desde este enlace, puedo recibir una comisión. A ti no te cuesta más. Los modelos sin enlace se comparan igual.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="compare-tray hidden" id="tray" aria-live="polite">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+      <p class="text-sm min-w-0 truncate"><span class="font-mono text-accent" id="trayN">3/3</span> <span class="text-meta">·</span> <span id="trayNames"></span></p>
+      <a href="#comparacion" class="btn btn-primary shrink-0"><span class="label">Ver comparación</span></a>
+    </div>
+  </div>
+</main>
+
+<!-- Comparación llena: elegir cuál sustituir (bottom sheet en móvil, modal desde md) -->
+<div class="sheet sheet--dialog" id="replace" aria-hidden="true">
+  <div class="scrim" data-sheet-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="rp-title" aria-describedby="rp-desc">
+    <div class="w-12 h-1 bg-line-strong rounded-full mx-auto mt-3 md:hidden" aria-hidden="true"></div>
+    <div class="px-5 md:px-6 pt-4 md:pt-6 flex items-start justify-between gap-4">
+      <h2 id="rp-title" class="text-xl font-medium">La comparación está llena</h2>
+      <button type="button" class="w-11 h-11 -mr-2 -mt-2 grid place-items-center text-meta hover:text-foreground rounded-md" data-sheet-close aria-label="Cancelar"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <p id="rp-desc" class="px-5 md:px-6 mt-1 text-meta">Caben 3 modelos. ¿Cuál sustituyes por <span class="text-foreground font-medium" id="rp-new"></span>?</p>
+    <ul class="px-5 md:px-6 pt-4 pb-2 space-y-2" id="rp-list"></ul>
+    <div class="px-5 md:px-6 pb-6 pt-3 flex justify-end"><button type="button" class="btn btn-ghost" data-sheet-close><span class="label">Cancelar</span></button></div>
+  </div>
+</div>
+
+<style>
+  /* ===== Iteración 2 · comparador ===== */
+  .cap-dots { display:inline-flex; gap:4px; }
+  .cap-dots i { width:8px; height:8px; border-radius:999px; border:1px solid var(--control); }
+  .cap-dots i.on { background:var(--accent-fill); border-color:var(--accent-fill); }
+
+  /* Combobox */
+  .combo-pop { position:absolute; left:0; right:0; top:100%; z-index:25; margin-top:6px; background:var(--board); border:.5px solid var(--line-strong); border-radius:12px; padding:6px;
+    box-shadow:0 18px 40px -18px rgba(28,26,23,.45); max-height:min(360px, 60vh); overflow:auto; }
+  .combo-pop ul { display:grid; gap:2px; }
+  .opt { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.25rem 1rem; min-height:52px; padding:6px 10px; border-radius:8px; cursor:pointer; transition:background-color var(--dur-fast) var(--ease-standard); }
+  .opt[aria-selected="true"] { background:var(--elevated); box-shadow:inset 2px 0 0 var(--accent); }
+  @media (hover:hover) { .opt:hover { background:var(--elevated); } }
+  .opt[aria-disabled="true"] { cursor:default; }
+  .opt[aria-disabled="true"] .o-model { color:var(--meta); }
+  .opt .o-side { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .combo-empty { padding:14px 10px; font-size:15px; color:var(--meta); }
+  .combo-group { padding:8px 10px 4px; }
+
+  /* Tabla (lg+): cabecera de modelos pegajosa bajo la barra compacta (56 px) */
+  .cmp-t { border-collapse:separate; border-spacing:0; }
+  .cmp-t th, .cmp-t td { border-bottom:.5px solid var(--line); }
+  .cmp-t thead > tr > * { position:sticky; top:56px; z-index:3; background:var(--elevated); border-bottom:.5px solid var(--line-strong); vertical-align:bottom; }
+  .cmp-t thead > tr > *:first-child { border-top-left-radius:12px; }
+  .cmp-t thead > tr > *:last-child { border-top-right-radius:12px; }
+  .cmp-t tbody tr:last-child > * { border-bottom:0; }
+  .cmp-t tbody th { color:var(--meta); font-weight:400; }
+  .cmp-t .slot-col { background:repeating-linear-gradient(135deg, transparent 0 10px, var(--tex-line) 10px 11px); }
+  .slot-add { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:2px; width:100%; min-height:88px; padding:10px 12px; border:1px dashed var(--control); border-radius:8px; color:var(--accent); font-weight:500; font-size:15px; text-align:left;
+    transition:background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast); }
+  .slot-add:hover { background:var(--accent-muted); border-color:var(--accent); }
+  .x-btn { display:inline-flex; align-items:center; gap:.3rem; min-height:44px; padding:0 .25rem; margin-left:-.25rem; font-size:13px; color:var(--meta); border-radius:6px; transition:color var(--dur-fast); }
+  .x-btn:hover { color:var(--foreground); }
+
+  /* Vista por atributo (< lg) */
+  .cmp-stack { background:var(--board); border:.5px solid var(--line-strong); border-radius:12px; }
+  .cmp-cols { display:grid; grid-template-columns:repeat(var(--n), minmax(0,1fr)); column-gap:12px; }
+  @media (min-width:768px) { .cmp-cols { column-gap:20px; } }
+  .cmp-mhead { position:sticky; top:56px; z-index:5; background:var(--elevated); border-bottom:.5px solid var(--line-strong); border-radius:12px 12px 0 0; padding:12px 16px 4px; }
+  @media (min-width:768px) { .cmp-mhead { padding:14px 24px 6px; } }
+  .cmp-mhead .mh-brand, .cmp-mhead .mh-x { display:grid; grid-template-rows:1fr; transition:grid-template-rows var(--dur-base) var(--ease-out), opacity var(--dur-base); }
+  .cmp-mhead .mh-brand > *, .cmp-mhead .mh-x > * { overflow:hidden; }
+  .cmp-mhead.is-stuck { border-radius:0; box-shadow:0 10px 20px -16px rgba(28,26,23,.5); padding-bottom:10px; }
+  .cmp-mhead.is-stuck .mh-brand, .cmp-mhead.is-stuck .mh-x { grid-template-rows:0fr; opacity:0; }
+  .cmp-attr { padding:14px 16px; border-bottom:.5px solid var(--line); }
+  @media (min-width:768px) { .cmp-attr { padding:16px 24px; } }
+  .cmp-attr:last-child { border-bottom:0; }
+  .cmp-attr > h3 { margin-bottom:8px; }
+  .cmp-attr .v { font-size:15px; line-height:1.4; min-width:0; overflow-wrap:break-word; }
+  .cmp-cols.only-md { display:none; }
+  @media (min-width:768px) { .cmp-cols.only-md { display:grid; } .only-sm { display:none; } }
+  @media (max-width:767.98px) { .cmp-attr .v { font-size:14px; hyphens:auto; } }
+  .who { display:block; font-size:13px; color:var(--meta); }
+
+  /* Columna recién añadida o sustituida: destello breve */
+  @media (prefers-reduced-motion: no-preference) {
+    .is-new { animation: colIn 900ms var(--ease-out); }
+    @keyframes colIn { from { background-color:var(--accent-muted); } }
+  }
+</style>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$, vt } = window.CG;
+  const PROFILE = { flat: 'Plano', moderate: 'Moderado', aggressive: 'Agresivo' };
+  const ASYM = { none: 'Ninguna', slight: 'Ligera', moderate: 'Moderada', strong: 'Fuerte' };
+  const CLOSURE = { velcro: 'Velcro', lace: 'Cordones' };
+  const USE = { gym: 'Rocódromo', boulder: 'Bloque', sport: 'Deportiva', trad: 'Clásica', multipitch: 'Vías largas', training: 'Entrenamiento' };
+  const LEVEL = { beginner: 'Inicio', intermediate: 'Intermedio', advanced: 'Avanzado' };
+  // Datos del seed (guide_dummy.sql). Reseña, "lo que aprendí" y talla (autor vs. calle) solo en los modelos que tiene el autor.
+  const S = [
+    ['la-sportiva-solution','La Sportiva','Solution','aggressive','strong','velcro','Vibram XS Grip2',3.5,3,['boulder','sport','gym'],['advanced'],150,175,1,1,[3,5,4,4],'Duelen las primeras semanas; en desplomes no hay nada igual. Para vías largas, no.',[39,41]],
+    ['la-sportiva-skwama','La Sportiva','Skwama','aggressive','moderate','velcro','Vibram XS Grip2',3.5,2,['boulder','sport'],['intermediate','advanced'],145,170,1,0],
+    ['la-sportiva-tarantulace','La Sportiva','Tarantulace','flat','slight','lace','FriXion RS',5.0,4,['gym','sport','trad'],['beginner'],80,95,1,1,[5,3,4,4],'Mi primer pie de gato serio. Los cordones me obligaron a ajustarlo bien y aguantó dos resolados.',[39.5,41]],
+    ['la-sportiva-finale','La Sportiva','Finale','moderate','slight','lace','Vibram XS Edge',4.0,4,['sport','trad','multipitch'],['beginner','intermediate'],100,125,0,0],
+    ['la-sportiva-miura-vs','La Sportiva','Miura VS','moderate','strong','velcro','Vibram XS Edge',4.0,4,['sport','trad'],['intermediate','advanced'],150,175,0,0],
+    ['scarpa-instinct-vs','Scarpa','Instinct VS','aggressive','moderate','velcro','Vibram XS Edge',3.5,3,['boulder','sport'],['intermediate','advanced'],145,170,1,0],
+    ['scarpa-drago','Scarpa','Drago','aggressive','strong','velcro','Vibram XS Grip2',3.5,1,['boulder','gym'],['advanced'],160,185,0,0],
+    ['scarpa-veloce','Scarpa','Veloce','moderate','slight','velcro','Vibram XS Grip',3.5,2,['gym','boulder','training'],['beginner','intermediate'],95,115,1,1,[5,5,4,4],'Blandos y sensibles: perfectos para el bloque del rocódromo. En roca se gastan rápido.',[40,41]],
+    ['scarpa-force-v','Scarpa','Force V','flat','slight','velcro','Vibram XS Edge',4.0,4,['gym','sport','multipitch'],['beginner'],90,110,0,0],
+    ['scarpa-vapor-v','Scarpa','Vapor V','moderate','moderate','velcro','Vibram XS Edge',3.5,3,['sport','boulder'],['intermediate'],130,155,0,0],
+    ['evolv-defy','Evolv','Defy','flat','none','velcro','TRAX SAS',4.2,4,['gym','training'],['beginner'],75,90,0,0],
+    ['tenaya-oasi','Tenaya','Oasi','moderate','moderate','velcro','Vibram XS Grip2',3.5,2,['boulder','sport','gym'],['intermediate','advanced'],145,165,0,0],
+    ['ocun-ozone','Ocun','Ozone','moderate','moderate','velcro','Ocun CAT',4.0,3,['sport','boulder'],['intermediate'],120,140,0,0],
+    ['black-diamond-momentum','Black Diamond','Momentum','flat','none','velcro','NeoFriction',4.3,3,['gym','training'],['beginner'],80,95,0,0],
+    ['simond-rock-plus','Simond','Rock+','flat','none','velcro','Simond Grip',4.0,3,['gym'],['beginner'],40,55,0,0],
+  ].map(r => ({ slug:r[0], brand:r[1], model:r[2], profile:r[3], asym:r[4], closure:r[5], rubber:r[6], mm:r[7], stiff:r[8], use:r[9], levels:r[10], pmin:r[11], pmax:r[12], aff:!!r[13], owned:!!r[14], scores:r[15], learned:r[16], size:r[17] }))
+   .sort((a, b) => a.pmin - b.pmin);
+  const MAX = 3;
+  const q0 = new URLSearchParams(location.search).get('comparar');
+  let selected = q0 ? q0.split(',').filter(s => S.some(x => x.slug === s)).slice(0, MAX) : ['la-sportiva-tarantulace', 'scarpa-veloce', 'evolv-defy'];
+  let fresh = null; // columna recién añadida (destello)
+  const chips = $$('#filters [data-chip]'), rmin = $('#rmin'), rmax = $('#rmax');
+  const ick = '<svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-check"/></svg>';
+  const avg = (a) => (a.reduce((x, y) => x + y, 0) / a.length).toFixed(1);
+  const by = (sl) => S.find(s => s.slug === sl);
+  const sel = () => selected.map(by);
+  const eu = (n) => String(n).replace('.', ',');
+  const fichaHref = (s) => s.slug === 'la-sportiva-tarantulace' ? 'lectura-pie-de-gato.html' + location.search.replace(/[?&]comparar=[^&]*/, '') : '#';
+  const live = (t) => { $('#c-live').textContent = ''; setTimeout(() => { $('#c-live').textContent = t; }, 60); };
+
+  /* ---------- Tarjetas ---------- */
+  const card = (s) => {
+    const on = selected.includes(s.slug);
+    return `<li><article class="card${on ? ' is-selected' : ''} p-5 h-full flex flex-col">
+      <div class="photo aspect-[16/9] sm:aspect-[4/3] rounded-md"><span class="tag">foto · ${s.model}</span></div>
+      <p class="text-sm text-meta mt-4">${s.brand}</p>
+      <h3 class="text-lg font-medium leading-snug"><a href="${fichaHref(s)}" class="stretch t-link">${s.model}</a></h3>
+      <p class="text-sm text-meta mt-1">${PROFILE[s.profile]} · ${CLOSURE[s.closure].toLowerCase()} · ${s.rubber}</p>
+      <p class="font-mono text-accent mt-3">${s.pmin}–${s.pmax} €</p>
+      <div class="mt-auto pt-4 flex flex-wrap items-center justify-between gap-2 relative z-[2]">
+        <button type="button" class="btn-inline${on ? ' !bg-accent-fill !text-on-accent' : ''}" aria-pressed="${on}" data-cmp="${s.slug}">${on ? ick + 'En comparación' : '+ Comparar'}</button>
+        <span class="flex flex-wrap gap-1.5">${s.owned ? '<span class="badge">los uso</span>' : ''}${s.aff ? '<span class="badge badge-accent"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-link"/></svg>afiliado</span>' : ''}</span>
+      </div></article></li>`;
+  };
+  const filtered = () => {
+    const act = (g) => chips.filter(c => c.dataset.g === g && c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.v);
+    const lv = act('level'), pr = act('profile'), cl = act('closure'), ow = act('owned').length > 0;
+    const lo = +rmin.value, hi = +rmax.value;
+    $('#fcount').textContent = `(${chips.filter(c => c.getAttribute('aria-pressed') === 'true').length + (lo > 40 || hi < 185 ? 1 : 0)})`;
+    return S.filter(s => (!lv.length || s.levels.some(l => lv.includes(l))) && (!pr.length || pr.includes(s.profile)) && (!cl.length || cl.includes(s.closure)) && (!ow || s.owned) && s.pmax >= lo && s.pmin <= hi);
+  };
+  const renderGrid = () => {
+    const list = filtered();
+    $('#grid').innerHTML = list.map(card).join('') + `<li class="sm:col-span-2 xl:col-span-3 text-[13px] text-meta ${selected.length >= MAX ? '' : 'hidden'}">Comparación llena (3 de 3). Si añades otro, te pregunto cuál sustituir.</li>`;
+    $('#count').textContent = list.length === 0 ? 'Sin resultados' : list.length === 1 ? '1 resultado' : list.length + ' resultados';
+    $('#empty').classList.toggle('hidden', list.length > 0);
+    window.CG.observe($('#grid'));
+  };
+
+  /* ---------- Comparación ---------- */
+  const affCell = (s) => s.aff
+    ? `<a href="#" rel="sponsored nofollow" class="btn btn-ghost !min-h-[44px]"><span class="label">Ver precio</span><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-external"/></svg></a><span class="badge badge-accent mt-2"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-link"/></svg>Enlace de afiliado</span>`
+    : '<span class="text-sm text-meta">Sin enlace de afiliado. Búscalo en tu tienda habitual.</span>';
+  const scoreBadge = (s) => `<span class="badge badge-accent !text-[15px] !py-1.5">${avg(s.scores)}<span class="opacity-70">/5</span></span>`;
+  // [etiqueta, celda, ¿texto largo? (en < md se apila por modelo)]
+  const ROWS = [
+    ['Precio', s => `<span class="font-mono text-accent">${s.pmin}–${s.pmax} €</span>`],
+    ['Perfil', s => PROFILE[s.profile]],
+    ['Asimetría', s => ASYM[s.asym]],
+    ['Cierre', s => CLOSURE[s.closure]],
+    ['Goma', s => `${s.rubber}<span class="block font-mono text-[13px] text-meta">${s.mm.toFixed(1)} mm</span>`],
+    ['Rigidez', s => `<span class="flex items-center gap-2"><span class="bar flex-1 max-w-14 block" aria-hidden="true"><span style="--w:${s.stiff * 20}%"></span></span><span class="font-mono text-sm">${s.stiff}/5</span></span>`],
+    ['Uso', s => s.use.map(u => USE[u]).join('<br class="lg:hidden"><span class="hidden lg:inline">, </span>')],
+    ['Nivel', s => s.levels.map(l => LEVEL[l]).join('<br class="lg:hidden"><span class="hidden lg:inline">, </span>')],
+    ['Nota del autor', s => s.scores ? `${scoreBadge(s)}<span class="hidden md:block text-[13px] text-meta mt-1.5">comodidad ${s.scores[0]} · canteo ${s.scores[1]} · adherencia ${s.scores[2]} · durabilidad ${s.scores[3]}</span>` : '<span class="text-meta">No los he usado</span>'],
+    ['Mi talla', s => s.size ? `<span class="font-mono">${eu(s.size[0])}</span><span class="block text-[13px] text-meta">calzo ${eu(s.size[1])} de calle</span>` : '<span class="text-meta">—</span>'],
+    ['Lo que aprendí', s => s.learned ? `<p class="text-[15px] leading-[1.55] text-prose border-l-2 border-accent pl-3">${s.learned}</p>` : '<span class="text-meta">—</span>', true],
+    ['Dónde comprar', affCell, true],
+  ];
+  const quitar = (s, cls = '') => `<button type="button" class="x-btn ${cls}" data-cmp="${s.slug}" aria-pressed="true" aria-label="Quitar ${s.model} de la comparación"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-x"/></svg>Quitar</button>`;
+  const newCls = (s) => s.slug === fresh ? ' is-new' : '';
+
+  const table = () => {
+    const free = MAX - selected.length;
+    const emptyHead = Array.from({ length: free }, (_, i) => `<td class="py-3 px-3"><button type="button" class="slot-add" data-focus-add><span class="inline-flex items-center gap-1.5"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-plus"/></svg>Añadir modelo</span><span class="font-mono text-[12px] text-meta font-normal">hueco ${selected.length + i + 1} de 3</span></button></td>`).join('');
+    const emptyCells = '<td class="slot-col" aria-hidden="true"></td>'.repeat(free);
+    return `<div class="hidden lg:block border-[0.5px] border-line-strong rounded-lg bg-board"><table class="cmp-t w-full text-left num text-[15px] table-fixed">
+      <caption class="sr-only">Comparación de ${selected.length} pies de gato</caption>
+      <colgroup><col class="w-40">${'<col>'.repeat(MAX)}</colgroup>
+      <thead><tr><th scope="col" class="py-3 px-4 label-mini font-normal">Modelo</th>${sel().map(s => `<th scope="col" class="py-3 px-3 font-normal${newCls(s)}"><span class="block text-sm text-meta">${s.brand}</span><a href="${fichaHref(s)}" class="t-link block font-medium text-lg leading-tight w-fit">${s.model}</a>${quitar(s)}</th>`).join('')}${emptyHead}</tr></thead>
+      <tbody>${ROWS.map(([l, fn]) => `<tr><th scope="row" class="py-3 px-4 align-top">${l}</th>${sel().map(s => `<td class="px-3 py-3 align-top${newCls(s)}">${fn(s)}</td>`).join('')}${emptyCells}</tr>`).join('')}</tbody>
+    </table></div>`;
+  };
+
+  const stack = () => {
+    const n = selected.length;
+    const head = `<div class="cmp-mhead" id="mhead"><div class="cmp-cols" style="--n:${n}">${sel().map(s => `<div class="min-w-0${newCls(s)}">
+        <span class="mh-brand"><span class="text-[13px] text-meta truncate">${s.brand}</span></span>
+        <a href="${fichaHref(s)}" class="block font-medium text-[15px] md:text-lg leading-tight t-link">${s.model}</a>
+        <span class="mh-x"><span>${quitar(s)}</span></span></div>`).join('')}</div></div>`;
+    const attr = ([l, fn, long], i) => {
+      const id = 'a' + i;
+      const cols = `<div class="cmp-cols${long ? ' only-md' : ''}" style="--n:${n}">${sel().map(s => `<div class="v${newCls(s)}"><span class="sr-only">${s.model}: </span>${fn(s)}</div>`).join('')}</div>`;
+      const stacked = long ? `<ul class="only-sm space-y-4">${sel().map(s => `<li class="v${newCls(s)}"><span class="who">${s.model}</span>${fn(s)}</li>`).join('')}</ul>` : '';
+      return `<section class="cmp-attr" aria-labelledby="${id}"><h3 id="${id}" class="label-mini">${l}</h3>${cols}${stacked}</section>`;
+    };
+    return `<div class="lg:hidden cmp-stack num"><span id="mh-sentinel" aria-hidden="true"></span>${head}${ROWS.map(attr).join('')}</div>`;
+  };
+
+  let stickIO;
+  const renderCmp = () => {
+    const box = $('#cmp');
+    if (selected.length < 2) {
+      const one = sel()[0];
+      box.innerHTML = `<div class="border-[0.5px] border-line-strong rounded-lg bg-board p-6 md:p-8 text-center">
+        <p class="font-medium">${one ? `Tienes ${one.model}. Añade al menos otro modelo` : 'Elige al menos 2 modelos'}</p>
+        <p class="text-sm text-meta mt-1 max-w-[46ch] mx-auto">Búscalo arriba por marca o modelo, o pulsa “+ Comparar” en las tarjetas.</p>
+        ${one ? `<p class="mt-4 inline-flex items-center gap-2 badge !text-[13px] !py-2">${one.brand} ${one.model} ${quitar(one, '!min-h-0 !p-0 !m-0')}</p>` : ''}
+        <button type="button" class="btn btn-ghost mt-5" data-focus-add><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-plus"/></svg><span class="label">Añadir un modelo</span></button></div>`;
+    } else {
+      box.innerHTML = table() + stack() + `<p class="text-[13px] text-meta mt-3 font-mono">Precios revisados el 01.09.26 · datos técnicos del fabricante · talla: la que uso yo (EU)</p>`;
+    }
+    window.CG.observe(box);
+    // Cabecera de modelos pegajosa: al quedar fija, se compacta (sin marca ni "Quitar")
+    stickIO && stickIO.disconnect();
+    const sen = $('#mh-sentinel'), mh = $('#mhead');
+    if (sen && mh) { stickIO = new IntersectionObserver(([e]) => mh.classList.toggle('is-stuck', !e.isIntersecting && e.boundingClientRect.top < 60), { rootMargin: '-57px 0px 0px 0px' }); stickIO.observe(sen); }
+    // Capacidad, pista del buscador y bandeja
+    $('#capN').textContent = selected.length;
+    $('#capDots').innerHTML = Array.from({ length: MAX }, (_, i) => `<i class="${i < selected.length ? 'on' : ''}"></i>`).join('');
+    $('#c-hint').textContent = selected.length >= MAX ? 'Comparación llena (3 de 3). Si eliges otro modelo, te pregunto cuál sustituir.' : `Puedes añadir ${MAX - selected.length} ${MAX - selected.length === 1 ? 'modelo más' : 'modelos más'}.`;
+    $('#tray').classList.toggle('hidden', selected.length === 0);
+    $('#trayN').textContent = `${selected.length}/${MAX}`;
+    $('#trayNames').textContent = sel().map(s => s.model).join(' · ');
+    const u = new URL(location.href); selected.length ? u.searchParams.set('comparar', selected.join(',')) : u.searchParams.delete('comparar'); history.replaceState(null, '', u);
+    fresh = null;
+  };
+  const render = () => vt(() => { renderGrid(); renderCmp(); });
+
+  /* ---------- Añadir / quitar / sustituir ---------- */
+  const add = (sl) => {
+    const s = by(sl);
+    if (selected.includes(sl)) return;
+    if (selected.length >= MAX) return openReplace(sl);
+    selected.push(sl); fresh = sl; render();
+    window.CG.toast('info', `${s.model} añadido (${selected.length}/${MAX})`);
+    live(`${s.model} añadido a la comparación. ${selected.length} de ${MAX}.`);
+  };
+  const remove = (sl) => {
+    const s = by(sl); selected = selected.filter(x => x !== sl); render();
+    window.CG.toast('info', `${s.model} fuera de la comparación`);
+    live(`${s.model} quitado. ${selected.length} de ${MAX}.`);
+  };
+  let pending = null;
+  const openReplace = (sl) => {
+    pending = sl; const n = by(sl);
+    $('#rp-new').textContent = `${n.brand} ${n.model}`;
+    $('#rp-list').innerHTML = sel().map((s, i) => `<li><button type="button" class="w-full flex items-center gap-3 min-h-[56px] px-4 rounded-md border border-control text-left hover:bg-elevated transition-colors" data-replace="${s.slug}"${i === 0 ? ' autofocus' : ''}>
+        <svg class="ico !w-4 !h-4 text-accent shrink-0" aria-hidden="true"><use href="#i-swap"/></svg>
+        <span class="min-w-0 flex-1"><span class="block">Sustituir <span class="font-medium">${s.model}</span></span><span class="block text-[13px] text-meta">${s.brand} · <span class="font-mono">${s.pmin}–${s.pmax} €</span></span></span></button></li>`).join('');
+    window.CG.setSheet($('#replace'), true);
+    setTimeout(() => { const f = $('[data-replace]'); f && f.focus(); }, 90);
+  };
+  $('#rp-list').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-replace]'); if (!b || !pending) return;
+    const out = by(b.dataset.replace), inn = by(pending);
+    selected[selected.indexOf(out.slug)] = pending; fresh = pending; pending = null;
+    window.CG.setSheet($('#replace'), false);
+    render();
+    window.CG.toast('success', `${inn.model} sustituye a ${out.model}`);
+    live(`${inn.model} sustituye a ${out.model}.`);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-focus-add]')) { const i = $('#cq'); i.scrollIntoView({ block: 'center', behavior: window.CG.reduce ? 'auto' : 'smooth' }); i.focus({ preventScroll: true }); openList(); return; }
+    const b = e.target.closest('[data-cmp]'); if (!b || b.disabled) return;
+    selected.includes(b.dataset.cmp) ? remove(b.dataset.cmp) : add(b.dataset.cmp);
+  });
+
+  /* ---------- Combobox ---------- */
+  const input = $('#cq'), pop = $('#cpop'), list = $('#clist'), empty = $('#cempty'), clr = $('#cq-clear');
+  const n1 = (c) => c.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const norm = (s) => [...s].map(n1).join('');
+  const esc = (s) => s.replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const toks = () => norm(input.value).trim().split(/\s+/).filter(Boolean);
+  const hl = (text) => {
+    const t = toks(); if (!t.length) return esc(text);
+    const nt = norm(text), m = new Array(text.length).fill(false);
+    t.forEach(k => { let i = nt.indexOf(k); while (i >= 0) { for (let j = i; j < i + k.length; j++) m[j] = true; i = nt.indexOf(k, i + 1); } });
+    let o = '', open = false; [...text].forEach((c, i) => { if (m[i] && !open) { o += '<mark class="hl">'; open = true; } if (!m[i] && open) { o += '</mark>'; open = false; } o += esc(c); }); return o + (open ? '</mark>' : '');
+  };
+  let opts = [], active = -1;
+  const matches = () => { const t = toks(); return [...S].sort((a, b) => (a.brand + a.model).localeCompare(b.brand + b.model)).filter(s => t.every(k => norm(s.brand + ' ' + s.model + ' ' + s.rubber).includes(k))); };
+  const setActive = (i) => {
+    active = i; $$('.opt', list).forEach((o, k) => o.setAttribute('aria-selected', String(k === i)));
+    const o = $$('.opt', list)[i]; input.setAttribute('aria-activedescendant', o ? o.id : ''); o && o.scrollIntoView({ block: 'nearest' });
+  };
+  const drawList = () => {
+    opts = matches(); const t = input.value.trim();
+    $('#cfull').hidden = selected.length < MAX;
+    list.innerHTML = opts.map(s => { const on = selected.includes(s.slug); return `<li role="option" id="o-${s.slug}" class="opt" aria-selected="false"${on ? ' aria-disabled="true"' : ''} data-o="${s.slug}">
+        <span class="min-w-0"><span class="block text-[13px] text-meta">${hl(s.brand)}</span><span class="o-model block font-medium leading-tight">${hl(s.model)}</span></span>
+        <span class="o-side"><span class="font-mono text-sm ${on ? 'text-meta' : 'text-accent'}">${s.pmin}–${s.pmax} €</span>${on ? '<span class="badge !py-1">en comparación</span>' : ''}</span></li>`; }).join('');
+    empty.hidden = opts.length > 0; empty.innerHTML = `Ningún modelo coincide con «${esc(t)}». Prueba con la marca (Scarpa) o la goma (XS Edge).`;
+    clr.hidden = !input.value; $('#cwrap').classList.toggle('has-value', !!input.value);
+    setActive(opts.findIndex(s => !selected.includes(s.slug)) >= 0 && t ? opts.findIndex(s => !selected.includes(s.slug)) : -1);
+  };
+  const openList = () => { drawList(); pop.hidden = false; input.setAttribute('aria-expanded', 'true'); };
+  const closeList = () => { pop.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; };
+  const choose = (sl) => { if (!sl || selected.includes(sl)) return; closeList(); input.value = ''; clr.hidden = true; $('#cwrap').classList.remove('has-value'); add(sl); };
+  input.addEventListener('focus', openList);
+  input.addEventListener('input', () => { openList(); live(opts.length ? `${opts.length} ${opts.length === 1 ? 'modelo' : 'modelos'}` : 'Ningún modelo'); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (pop.hidden) openList(); setActive(Math.min(active + 1, opts.length - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(active - 1, 0)); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (active >= 0) choose(opts[active].slug); }
+    else if (e.key === 'Escape') { if (!pop.hidden) { e.preventDefault(); closeList(); } else if (input.value) { input.value = ''; drawList(); } }
+    else if (e.key === 'Tab') closeList();
+  });
+  list.addEventListener('mousedown', (e) => e.preventDefault()); // no perder el foco del input
+  list.addEventListener('click', (e) => { const o = e.target.closest('[data-o]'); if (o) choose(o.dataset.o); });
+  clr.addEventListener('click', () => { input.value = ''; input.focus(); drawList(); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('#add')) closeList(); });
+
+  /* ---------- Bandeja: se oculta cuando la comparación está a la vista ---------- */
+  new IntersectionObserver(([e]) => $('#tray').style.visibility = e.isIntersecting ? 'hidden' : '', { threshold: .05 }).observe($('#comparacion'));
+
+  /* ---------- Filtros ---------- */
+  $('#filters').addEventListener('chip-change', render);
+  const syncRange = () => {
+    if (+rmin.value > +rmax.value - 10) { if (document.activeElement === rmin) rmin.value = +rmax.value - 10; else rmax.value = +rmin.value + 10; }
+    $('#pmin').textContent = rmin.value; $('#pmax').textContent = rmax.value;
+    const pct = (v) => (v - 40) / 145 * 100; const f = $('#pfill'); f.style.left = pct(rmin.value) + '%'; f.style.right = (100 - pct(rmax.value)) + '%';
+  };
+  [rmin, rmax].forEach(r => { r.addEventListener('input', () => { syncRange(); renderGrid(); }); });
+  const clear = () => { chips.forEach(c => c.setAttribute('aria-pressed', 'false')); rmin.value = 40; rmax.value = 185; syncRange(); render(); };
+  $('#clear').addEventListener('click', clear); $('#clear2').addEventListener('click', clear);
+  syncRange(); renderGrid(); renderCmp();
+})();
+</script>
+</body>
+</html>

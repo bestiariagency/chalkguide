@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Agenda v2 · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_editorial-v2/ev2.js"></script>
+<link rel="stylesheet" href="_editorial-v2/ev2.css">
+</head>
+<body>
+<div data-ev2="mockbar" data-title="/agenda v2 · propuesta para Xavi"><a href="#anexo-meses">Meses vacíos y pasados</a></div>
+<div data-ev2="header" data-active="agenda"></div>
+
+<main>
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-6 md:pt-10">
+    <p class="mock-note">Misma cabecera de listado que el blog. Los eventos son los datos dummy de la BD. Sin nivel, destacado ni imagen propia: la foto es la portada de la ficha del rocódromo y, si no hay rocódromo o no tiene foto, póster tipográfico de la fecha (D49).</p>
+    <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="#">Inicio</a></li><li><span aria-current="page">Agenda</span></li></ol></nav>
+    <div class="mt-4 md:mt-5 grid lg:grid-cols-12 gap-x-6 items-end">
+      <div class="lg:col-span-8">
+        <h1 class="title-section">Agenda</h1>
+        <p class="mt-3 md:mt-4 text-[17px] md:text-[18px] leading-[1.6] text-meta max-w-[56ch]">Competiciones, cursos y quedadas en los rocódromos de Barcelona durante los próximos dos meses. Las reviso una a una antes de publicarlas.</p>
+      </div>
+    </div>
+    <div class="mt-6 md:mt-8 flex items-center gap-4">
+      <div class="chips-scroll flex-1 min-w-0" role="group" aria-label="Tipo de actividad">
+        <button type="button" class="chip" aria-pressed="false">Competición</button>
+        <button type="button" class="chip" aria-pressed="false">Taller</button>
+        <button type="button" class="chip" aria-pressed="false">Curso</button>
+        <button type="button" class="chip" aria-pressed="false">Encuentro</button>
+        <button type="button" class="chip" aria-pressed="false">Quedada</button>
+      </div>
+      <p class="hidden md:block text-[15px] text-meta whitespace-nowrap" aria-live="polite"><span class="mono">7</span> actividades</p>
+    </div>
+  </section>
+
+  <!-- ========== NOVIEMBRE ========== -->
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-10 md:pt-14" aria-labelledby="m-nov">
+    <div class="flex items-baseline justify-between gap-4 border-b border-foreground pb-3">
+      <h2 id="m-nov" class="display-date text-[32px] md:text-[44px]">Noviembre</h2>
+      <p class="text-[15px] text-meta"><span class="mono">5</span> actividades</p>
+    </div>
+
+    <!-- Lo siguiente: primera fila del mes, en grande (no se repite debajo) -->
+    <article class="mt-6 md:mt-8 slab overflow-hidden bg-board grid lg:grid-cols-12" aria-labelledby="ev-1">
+      <div class="tile !rounded-none lg:col-span-7 aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[400px] p-5 md:p-8">
+        <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg" alt="" fetchpriority="high">
+        <span class="wd text-[15px] md:text-[17px]">Sábado</span>
+        <time datetime="2026-11-07T20:00" class="mt-2 self-start"><span class="chalk-circle display-date text-[72px] md:text-[120px] px-3 md:px-5">7 nov<svg viewBox="0 0 220 60" preserveAspectRatio="none" aria-hidden="true" data-draw style="--len:560;stroke:#e8923a"><path d="M30 8 C 90 -2, 200 2, 214 26 C 224 50, 120 60, 50 54 C 6 50, 2 22, 40 10" stroke-width="2.4"/></svg></span></time>
+      </div>
+      <div class="lg:col-span-5 p-5 md:p-8 lg:p-10 flex flex-col">
+        <p class="hand text-[28px] leading-none text-accent -rotate-1" aria-hidden="true">el siguiente</p>
+        <p class="sr-only">Próxima actividad</p>
+        <h3 id="ev-1" class="mt-4 text-[26px] md:text-[32px] leading-[1.12] tracking-[-.02em] font-medium text-balance">Liga interna de bloque · 2.ª jornada</h3>
+        <p class="mt-3 text-[16px] text-meta">Competición en <a href="#" class="link hit text-foreground">Magnesi Poblenou</a></p>
+        <dl class="mt-6 grid grid-cols-2 gap-4 border-t border-line-strong pt-4">
+          <div><dt class="text-[13px] text-meta">Hora</dt><dd class="mt-1 mono text-[18px]">20:00</dd></div>
+          <div><dt class="text-[13px] text-meta">Precio</dt><dd class="mt-1 text-[16px] leading-snug">Gratis para socios</dd></div>
+        </dl>
+        <div class="mt-auto pt-8"><a href="#" class="btn btn-ghost btn-lg w-full sm:w-auto">Más información <span class="sr-only">sobre Liga interna de bloque, en la web del organizador</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+      </div>
+    </article>
+
+    <ol class="mt-6 md:mt-8 border-t border-line-strong" aria-label="Más actividades de noviembre">
+      <li class="ev border-b border-line-strong">
+        <time datetime="2026-11-10" class="tile poster"><span class="wd text-[#5e584e]">Mar</span><span class="d display-date">10</span></time>
+        <div class="min-w-0"><h3 class="ev-title">Salida a Montserrat para principiantes</h3><p class="where">Quedada · Montserrat (Monistrol)</p></div>
+        <div class="data"><p class="when">10:00 <span>·</span> 35 €</p>
+          <a href="#" class="btn btn-ghost md:justify-self-end">Más información<span class="sr-only"> sobre Salida a Montserrat</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+      </li>
+      <li class="ev border-b border-line-strong">
+        <time datetime="2026-11-16" class="tile"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg" alt="" loading="lazy"><span class="wd">Lun</span><span class="d display-date">16</span></time>
+        <div class="min-w-0"><h3 class="ev-title">Competición abierta de dificultad</h3><p class="where">Competición en <a href="#" class="link hit text-foreground">La Paret de Gràcia</a></p></div>
+        <div class="data"><p class="when">11:00 <span>·</span> 20 €</p>
+          <a href="#" class="btn btn-ghost">Más información<span class="sr-only"> sobre Competición abierta</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+      </li>
+      <li class="ev border-b border-line-strong">
+        <time datetime="2026-11-19" class="tile"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg" alt="" loading="lazy"><span class="wd">Jue</span><span class="d display-date">19</span></time>
+        <div class="min-w-0"><h3 class="ev-title">Taller de técnica de pies</h3><p class="where">Taller en <a href="#" class="link hit text-foreground">Altura Cornellà</a></p></div>
+        <div class="data"><p class="when">19:00 <span>·</span> 25 €</p>
+          <a href="#" class="btn btn-ghost">Más información<span class="sr-only"> sobre Taller de técnica de pies</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+      </li>
+      <li class="ev is-cancelled border-b border-line-strong">
+        <time datetime="2026-11-28" class="tile off"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000001/1-escaladora-bloque-colores.jpg" alt="" loading="lazy"><span class="wd">Sáb</span><span class="d display-date">28</span></time>
+        <div class="min-w-0"><p class="mb-2"><span class="badge badge-stale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg>Cancelado</span></p><h3 class="ev-title">Encuentro para escalar solo y encontrar compañero</h3><p class="where">Encuentro en <a href="#" class="link hit text-foreground">Via Sants</a></p></div>
+        <div class="data"><p class="when text-meta">19:00</p>
+          <a href="#" class="btn btn-ghost">Más información<span class="sr-only"> sobre el encuentro cancelado</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ========== DICIEMBRE ========== -->
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-16 md:pt-20" aria-labelledby="m-dic">
+    <div class="flex items-baseline justify-between gap-4 border-b border-foreground pb-3">
+      <h2 id="m-dic" class="display-date text-[32px] md:text-[44px]">Diciembre</h2>
+      <p class="text-[15px] text-meta"><span class="mono">2</span> actividades</p>
+    </div>
+    <ol class="border-line-strong">
+      <li class="ev border-b border-line-strong">
+        <time datetime="2026-12-05" class="tile"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg" alt="" loading="lazy"><span class="wd">Sáb y dom</span><span class="d range display-date">5–6</span></time>
+        <div class="min-w-0"><h3 class="ev-title">Curso de iniciación a la cuerda</h3><p class="where">Curso en <a href="#" class="link hit text-foreground">La Paret de Gràcia</a></p></div>
+        <div class="data"><p class="when">10:00 <span>·</span> 90 €</p>
+          <a href="#" class="btn btn-ghost">Más información<span class="sr-only"> sobre el curso de iniciación</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+      </li>
+      <li class="ev border-b border-line-strong">
+        <time datetime="2026-12-13" class="tile poster"><span class="wd text-[#5e584e]">Dom</span><span class="d display-date">13</span></time>
+        <div class="min-w-0"><h3 class="ev-title">Bloque solidario de fin de año</h3><p class="where">Encuentro · Sala de ejemplo sin foto</p></div>
+        <div class="data"><p class="when">Todo el día</p><span aria-hidden="true" class="hidden md:block"></span></div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-10 pb-20 md:pb-28">
+    <p class="text-[15px] text-meta max-w-[64ch]">Cada actividad enlaza a la web del organizador; las fechas y los precios pueden cambiar.</p>
+    <nav class="mt-6 flex flex-wrap gap-3" aria-label="Meses de la agenda">
+      <a href="#anexo-meses" class="btn btn-ghost"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Octubre</a>
+    </nav>
+  </section>
+</main>
+
+<div data-ev2="newsletter"></div>
+<div data-ev2="footer"></div>
+
+<!-- ==================== ANEXO ==================== -->
+<section id="anexo-meses" class="annex">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2>Anexo · /agenda/aaaa-mm: un mensaje por estado, nunca dos</h2>
+    <p class="sub mt-2">Hoy un mes pasado sin eventos dice «Ya ha pasado» y debajo «Aún no hay actividades este mes». El estado se decide una sola vez con dos datos: ¿el mes ya terminó? y ¿tiene actividades? Sin Caveat ni pizarra: el mes vacío es texto normal con un siguiente paso.</p>
+  </div>
+</section>
+<div class="bg-background">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-12 grid md:grid-cols-3 gap-8">
+    <div>
+      <p class="text-[13px] font-medium text-meta">Mes futuro, sin actividades</p>
+      <div class="mt-3 border-t border-foreground pt-3"><p class="display-date text-[32px]">Enero</p>
+        <p class="mt-5 text-[18px] font-medium">Aún no hay nada en enero.</p>
+        <p class="mt-2 text-[16px] leading-[1.55] text-meta">Publico las actividades cuando las confirmo, con dos meses de margen como mucho.</p>
+        <a href="#" class="btn btn-ghost mt-5">Ver la agenda de ahora</a></div>
+    </div>
+    <div>
+      <p class="text-[13px] font-medium text-meta">Mes en curso, sin más actividades</p>
+      <div class="mt-3 border-t border-foreground pt-3"><p class="display-date text-[32px]">Noviembre</p>
+        <p class="mt-5 text-[18px] font-medium">No queda nada más este mes.</p>
+        <p class="mt-2 text-[16px] leading-[1.55] text-meta">Lo próximo está en diciembre.</p>
+        <a href="#" class="btn btn-ghost mt-5">Diciembre <svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    </div>
+    <div>
+      <p class="text-[13px] font-medium text-meta">Mes pasado (con o sin actividades)</p>
+      <div class="mt-3 border-t border-foreground pt-3"><p class="display-date text-[32px]">Octubre</p>
+        <p class="mt-5 text-[18px] font-medium">Sin actividades publicadas en octubre.</p>
+        <p class="mt-2 text-[16px] leading-[1.55] text-meta">Con actividades, el mes se ve como archivo: mismas filas, sin «el siguiente», fotos en gris y una sola línea arriba: «Octubre ya pasó. Lo dejo como archivo».</p>
+        <a href="#" class="btn btn-ghost mt-5">Lo próximo</a></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

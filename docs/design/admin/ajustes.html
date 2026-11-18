@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ajustes · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>.sub a{display:block;padding:6px 10px;border-radius:6px;font-size:13px;color:var(--meta)} .sub a:hover{background:var(--subtle);color:var(--fg)} .sub a[aria-current]{color:var(--fg);font-weight:500;background:var(--subtle)}
+ .aset{scroll-margin-top:24px}</style>
+</head>
+<body data-page="ajustes" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm"><h1 class="font-medium">Ajustes</h1></header>
+  <div class="px-4 md:px-6 py-6 lg:grid lg:grid-cols-[180px_minmax(0,760px)] gap-10 pb-32">
+    <nav class="sub hidden lg:block sticky top-6 self-start" aria-label="Secciones de ajustes"><a href="#general" aria-current="true">General</a><a href="#seo">SEO por defecto</a><a href="#redes">Redes y contacto</a><a href="#newsletter">Newsletter</a><a href="#opiniones">Opiniones</a><a href="#cuenta">Tu cuenta</a></nav>
+    <div class="space-y-10 min-w-0">
+      <section id="general" class="aset" aria-labelledby="h-g"><h2 id="h-g" class="text-base font-semibold">General</h2>
+        <div class="mt-4 space-y-4">
+          <div class="sm:w-1/2"><label class="lbl" for="sn">Nombre del sitio</label><input id="sn" class="input" value="ChalkGuide"></div>
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="tg">Lema <span class="lang-tag">ES</span></label><input id="tg" class="input" value="Escalar en Barcelona, explicado por alguien que escala"></div><div><label class="lbl" for="tge">Lema <span class="lang-tag">EN</span></label><input id="tge" class="input" value="Climbing in Barcelona, explained by a climber"></div></div>
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="ft">Texto del pie <span class="lang-tag">ES</span></label><textarea id="ft" rows="2" class="input">Guía independiente. Ninguna reseña se paga.</textarea></div><div><label class="lbl" for="fte">Texto del pie <span class="lang-tag">EN</span></label><textarea id="fte" rows="2" class="input">Independent guide. No review is paid for.</textarea></div></div>
+        </div></section>
+
+      <section id="seo" class="aset border-t border-line pt-8" aria-labelledby="h-s"><h2 id="h-s" class="text-base font-semibold">SEO por defecto</h2><p class="text-sm text-meta mt-1">Se usan cuando una página no tiene los suyos.</p>
+        <div class="mt-4 space-y-4">
+          <div class="grid lg:grid-cols-2 gap-4"><div><div class="lbl"><label for="st1">Título <span class="lang-tag">ES</span></label><span class="counter">51 / 70</span></div><input id="st1" class="input" value="ChalkGuide · Rocódromos y escalada en Barcelona"></div><div><div class="lbl"><label for="st2">Título <span class="lang-tag">EN</span></label><span class="counter">48 / 70</span></div><input id="st2" class="input" value="ChalkGuide · Climbing gyms in Barcelona, honestly"></div></div>
+          <div class="grid lg:grid-cols-2 gap-4"><div class="changed ml-3 lg:ml-3"><div class="lbl"><label for="sd1">Descripción <span class="lang-tag">ES</span></label><span class="chg-mark">Sin guardar</span><span class="counter">142 / 160</span></div><textarea id="sd1" rows="3" class="input">Fichas de rocódromos de Barcelona con precios, horarios y mi opinión, comparador de pies de gato, resoladores y artículos para empezar.</textarea></div><div><div class="lbl"><label for="sd2">Descripción <span class="lang-tag">EN</span></label><span class="counter">0 / 160</span></div><textarea id="sd2" rows="3" class="input" placeholder="Opcional"></textarea></div></div>
+          <div><p class="lbl">Imagen para redes (OG)</p><div class="flex items-center gap-3"><span class="photo w-32 h-[67px] rounded-md" style="background-image:linear-gradient(135deg,#7f6a4d,#2a221a)"></span><div class="text-xs text-meta"><p class="mono text-fg">sala-bloque-poblenou.jpg</p><p>1200 × 630 recomendado</p><button class="btn btn-ghost btn-sm mt-2">Cambiar</button></div></div></div>
+        </div></section>
+
+      <section id="redes" class="aset border-t border-line pt-8" aria-labelledby="h-r"><h2 id="h-r" class="text-base font-semibold">Redes y contacto</h2>
+        <div class="mt-4 grid sm:grid-cols-2 gap-4">
+          <div><label class="lbl" for="ig">Instagram</label><input id="ig" class="input" value="https://instagram.com/chalkguide"></div>
+          <div><label class="lbl" for="yt">YouTube</label><input id="yt" class="input" aria-invalid="true" aria-describedby="yt-e" value="youtube.com/@chalkguide"><p id="yt-e" class="err"><i data-lucide="circle-alert"></i>Falta https:// al principio.</p></div>
+          <div><label class="lbl" for="ce">Email de contacto público</label><input id="ce" class="input" type="email" placeholder="hola@…"><p class="help">Sale en el pie y en "Sobre mí".</p></div>
+        </div></section>
+
+      <section id="newsletter" class="aset border-t border-line pt-8" aria-labelledby="h-n"><h2 id="h-n" class="text-base font-semibold">Newsletter</h2><p class="text-sm text-meta mt-1">Textos del bloque de captación. El envío se hace en Brevo.</p>
+        <div class="mt-4 space-y-4">
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="nt">Título <span class="lang-tag">ES</span></label><input id="nt" class="input" value="Un email al mes, sin relleno"></div><div><label class="lbl" for="nte">Título <span class="lang-tag">EN</span></label><input id="nte" class="input" value="One email a month, no filler"></div></div>
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="nb">Texto <span class="lang-tag">ES</span></label><textarea id="nb" rows="2" class="input">Rocódromos nuevos, cambios de precio y lo que he aprendido. Te das de baja con un clic.</textarea></div><div><label class="lbl" for="nbe">Texto <span class="lang-tag">EN</span></label><textarea id="nbe" rows="2" class="input">New gyms, price changes and what I've learned. Unsubscribe in one click.</textarea></div></div>
+          <div class="rounded-lg border border-line p-4 space-y-4">
+            <div class="flex items-center gap-2"><p class="text-sm font-medium">Texto legal de la casilla</p><span class="chip st-neutral">Versión 3 · desde 14 sep</span></div>
+            <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="ct">Consentimiento <span class="lang-tag">ES</span> <span class="req">*</span></label><textarea id="ct" rows="3" class="input">Acepto recibir la newsletter de ChalkGuide y la política de privacidad. Puedo darme de baja cuando quiera.</textarea></div><div><label class="lbl" for="cte">Consentimiento <span class="lang-tag">EN</span></label><textarea id="cte" rows="3" class="input" placeholder="Si está vacío, /en muestra el texto en español"></textarea></div></div>
+            <div class="banner banner-warn"><i data-lucide="triangle-alert"></i><span>Si cambias este texto se crea la <b>versión 4</b>. Las altas nuevas guardarán la v4; las anteriores conservan la versión que aceptaron.</span></div>
+          </div>
+        </div></section>
+
+      <section id="opiniones" class="aset border-t border-line pt-8" aria-labelledby="h-o"><h2 id="h-o" class="text-base font-semibold">Opiniones</h2>
+        <div class="mt-4 space-y-4 text-sm">
+          <div class="flex items-start gap-3"><button role="switch" aria-checked="false" aria-labelledby="pm-l" aria-describedby="pm-h" class="switch mt-0.5"></button><div><p id="pm-l" class="font-medium">Revisar antes de publicar</p><p id="pm-h" class="text-meta text-xs mt-0.5">Apagado (P2): se publican al momento y las ocultas si hace falta. Encendido: esperan en "Pendientes".</p></div></div>
+          <div class="sm:w-64"><label class="lbl" for="mn">Opiniones mínimas para mostrar la media</label><input id="mn" class="input num" value="3" inputmode="numeric"><p class="help">Con menos, la ficha muestra "Aún pocas opiniones".</p></div>
+        </div></section>
+
+      <section id="cuenta" class="aset border-t border-line pt-8" aria-labelledby="h-c"><h2 id="h-c" class="text-base font-semibold">Tu cuenta</h2>
+        <div class="mt-4 card divide-y divide-line text-sm">
+          <div class="flex flex-wrap items-center gap-3 p-4"><div class="flex-1"><p class="font-medium">Email</p><p class="text-meta text-xs">Con el que entras al panel</p></div><span class="mono text-xs">x•••@•••.com</span></div>
+          <div class="flex flex-wrap items-center gap-3 p-4"><div class="flex-1"><p class="font-medium">Contraseña</p></div><button class="btn btn-ghost">Cambiar…</button></div>
+          <div class="flex flex-wrap items-center gap-3 p-4"><div class="flex-1"><p class="font-medium">Sesiones abiertas</p><p class="text-meta text-xs">Este Mac · iPhone (hace 2 h)</p></div><button class="btn btn-ghost">Cerrar las demás</button></div>
+        </div></section>
+    </div>
+  </div>
+
+  <!-- barra de cambios sin guardar -->
+  <div role="region" aria-label="Cambios sin guardar" class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-6 z-40 pop bg-elev border border-line-strong rounded-lg pl-4 pr-2 py-2 flex items-center gap-3 text-sm w-[calc(100vw-24px)] sm:w-auto">
+    <span class="flex items-center gap-2 flex-1"><span class="w-2 h-2 rounded-full bg-warn-icon"></span>2 cambios sin guardar</span>
+    <button class="btn btn-quiet">Descartar</button><button class="btn btn-primary" data-toast="Hay 1 error: YouTube necesita https://" data-type="err" data-action="Ir al campo">Guardar</button>
+  </div>
+</main>
+<script>
+const links=[...document.querySelectorAll('.sub a')];
+addEventListener('scroll',()=>{let cur=links[0];links.forEach(a=>{const s=document.querySelector(a.getAttribute('href'));if(s.getBoundingClientRect().top<120)cur=a;});links.forEach(a=>a.toggleAttribute('aria-current',a===cur));});
+</script>
+</body>
+</html>

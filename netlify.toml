@@ -1,6 +1,19 @@
+# Netlify build. Rendering strategy, headers and ISR live in nuxt.config.ts (routeRules), see
+# .ai/devops.md. Preset `netlify` (Nitro) is set in nuxt.config.ts: SSR runs in Netlify Functions.
+# Step-by-step setup: docs/deploy-netlify.md.
+
 [build]
-  command = "npm run build"
+  # Gates before and after the build (F4.1/F4.7): a broken deploy never goes live. `npm run build` stays
+  # plain so local builds are not slowed down. check:sanitizer = editorial HTML sanitizer batteries
+  # (no network); check:bundle = no sanitizer in public client chunks (needs the build output).
+  # NOT here: check:content-api (starts a nuxt dev server and talks to Supabase).
+  command = "npm run lint && npm run typecheck && npm run check:sanitizer && npm run build && npm run check:bundle"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "24"
+
+# Contexts: one build command for all of them. Indexing is NOT configured here: nuxt.config.ts reads Netlify's CONTEXT variable, so only
+# `production` (with a real NUXT_PUBLIC_SITE_URL) is indexable; deploy-preview and branch-deploy get
+# robots.txt `Disallow: /`, <meta robots noindex> and an empty sitemap. Do not set secrets here
+# (this file is in git); variables go in the Netlify UI (Site configuration -> Environment variables).

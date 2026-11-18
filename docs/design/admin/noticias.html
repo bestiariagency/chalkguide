@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Noticias · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=9"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* F8 · Noticias. Reutiliza la bandeja de Agenda (§9.3) y la tabla de Artículos. */
+  .q{position:relative}
+  .q[aria-current="true"]{background:var(--acc-soft)}
+  .q[aria-current="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--acc)}
+  .conf{display:inline-flex;gap:2px} .conf i{width:8px;height:6px;border-radius:2px;background:var(--line-strong)} .conf i.on{background:var(--fg)}
+  .inf{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--meta);font-weight:400} .inf svg{width:12px;height:12px}
+  .src{border:1px solid var(--line-strong);border-radius:8px;background:var(--elev)}
+  .src-ico{width:32px;height:32px;border-radius:6px;background:var(--subtle);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--meta);flex:none}
+  .sim{height:4px;border-radius:99px;background:var(--line);overflow:hidden;width:96px}
+  .sim>span{display:block;height:100%;border-radius:inherit;background:var(--ok)} .sim.warn>span{background:var(--warn-icon)}
+  .pv{background:var(--side);border:1px solid var(--line);border-radius:8px;padding:12px}
+  .bulk{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:35}
+  @media (max-width:767px){.bulk{left:12px;right:12px;transform:none;bottom:76px}}
+  .drawer.wide{width:min(640px,100vw)}
+  .pick{border:1px solid var(--line-strong);border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+  .pick:has(input:checked){border-color:var(--acc);background:var(--acc-soft)}
+  .tagi{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 4px 0 8px;border-radius:4px;background:var(--subtle);font-size:12px}
+  .pop-wrap{position:relative} .pop-wrap>.menu{position:absolute;top:calc(100% + 4px);z-index:40}
+  .det-actions{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line)}
+</style>
+</head>
+<body data-page="noticias" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Noticias</h1>
+    <span class="chip st-neutral ml-1 hidden md:inline-flex" title="Regla de indexación D73"><i data-lucide="eye-off"></i>Sin «Nota de Xavi», la ficha va con noindex</span>
+    <span class="ml-auto hidden xl:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · ver estado:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup"><option value="data">Con datos</option><option value="loading">Cargando</option><option value="empty">Al día</option><option value="error">Error</option></select></span>
+    <div class="ml-auto xl:ml-0 flex items-center gap-2">
+      <button type="button" class="btn btn-ghost hidden md:inline-flex" data-open="cats"><i data-lucide="folder-tree"></i>Categorías</button>
+      <a href="exportar.html?tipo=noticias" class="btn btn-ghost hidden lg:inline-flex"><i data-lucide="download"></i>Exportar</a>
+      <button type="button" class="btn btn-primary" data-open="editor" data-mode="new"><i data-lucide="plus"></i><span class="hidden sm:inline">Nueva noticia</span><span class="sm:hidden">Nueva</span></button>
+    </div>
+  </header>
+
+  <!-- última ingesta: enlaza a Ingesta; si la salud falla, pasa a banner -->
+  <div class="px-4 md:px-6 py-2 border-b border-line bg-side text-xs text-meta flex flex-wrap items-center gap-x-3 gap-y-1">
+    <span><i data-lucide="bot" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i>Última recogida: <b class="font-medium text-fg">lun 16 nov, 06:12</b> · 9 nuevas · 3 duplicadas</span>
+    <span class="hidden sm:inline">Próxima: jue 19 nov, 06:00</span>
+    <a href="ingesta.html" class="underline underline-offset-2 hover:text-fg sm:ml-auto">Ver en Ingesta</a>
+  </div>
+
+  <!-- vistas -->
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Vistas de noticias" class="flex gap-5 min-w-max" id="views">
+      <button role="tab" class="tab t" data-v="review" aria-selected="true" aria-controls="panel"><i data-lucide="inbox" class="w-4 h-4"></i>Por revisar <span class="count">14</span></button>
+      <button role="tab" class="tab t" data-v="pub" aria-selected="false" aria-controls="panel">Publicadas <span class="num text-muted">86</span></button>
+      <button role="tab" class="tab t" data-v="rej" aria-selected="false" aria-controls="panel">Rechazadas <span class="num text-muted">41</span></button>
+      <button role="tab" class="tab t" data-v="all" aria-selected="false" aria-controls="panel">Todas <span class="num text-muted">141</span></button>
+    </div>
+  </div>
+
+  <!-- barra -->
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+    <label class="input affix !w-full sm:!w-64 !h-8" for="q"><span class="pl-2.5 text-muted"><i data-lucide="search" class="w-4 h-4"></i></span><input id="q" type="search" placeholder="Buscar noticias" class="!pl-2 placeholder:text-muted"><span class="kbd mr-2 hidden md:inline">/</span></label>
+    <div class="flex items-center gap-2 overflow-x-auto max-w-full pb-0.5">
+      <div class="pop-wrap"><button type="button" class="btn btn-ghost btn-sm" aria-haspopup="true" aria-expanded="false" data-pop="m-cat"><i data-lucide="tag"></i>Categoría<i data-lucide="chevron-down"></i></button>
+        <div id="m-cat" class="menu hidden left-0" role="group" aria-label="Filtrar por categoría">
+          <label class="menu-i"><input type="checkbox" class="cb" checked> Competición <span class="ml-auto num text-xs text-meta">5</span></label>
+          <label class="menu-i"><input type="checkbox" class="cb"> Rocódromos <span class="ml-auto num text-xs text-meta">3</span></label>
+          <label class="menu-i"><input type="checkbox" class="cb"> Roca y acceso <span class="ml-auto num text-xs text-meta">3</span></label>
+          <label class="menu-i"><input type="checkbox" class="cb"> Material <span class="ml-auto num text-xs text-meta">2</span></label>
+          <label class="menu-i"><input type="checkbox" class="cb"> Comunidad <span class="ml-auto num text-xs text-meta">1</span></label>
+        </div></div>
+      <div class="seg" role="radiogroup" aria-label="Alcance">
+        <button role="radio" aria-checked="true">Todo</button><button role="radio" aria-checked="false">Cataluña</button><button role="radio" aria-checked="false">España</button><button role="radio" aria-checked="false">Intl.</button>
+      </div>
+      <div class="pop-wrap"><button type="button" class="btn btn-ghost btn-sm" aria-haspopup="true" aria-expanded="false" data-pop="m-src"><i data-lucide="link"></i>Fuente<i data-lucide="chevron-down"></i></button>
+        <div id="m-src" class="menu hidden left-0" role="group" aria-label="Filtrar por fuente">
+          <label class="menu-i"><input type="checkbox" class="cb"> FEEC <span class="ml-auto num text-xs text-meta">4</span></label>
+          <label class="menu-i"><input type="checkbox" class="cb"> IFSC <span class="ml-auto num text-xs text-meta">2</span></label>
+          <label class="menu-i"><input type="checkbox" class="cb"> Desnivel <span class="ml-auto num text-xs text-meta">3</span></label>
+          <label class="menu-i"><input type="checkbox" class="cb"> Parcs Naturals <span class="ml-auto num text-xs text-meta">1</span></label>
+          <div class="menu-sep"></div>
+          <a href="ingesta.html#fuentes" class="menu-i"><i data-lucide="settings-2"></i>Gestionar fuentes</a>
+        </div></div>
+      <button type="button" class="btn btn-ghost btn-sm whitespace-nowrap"><i data-lucide="bot"></i>Recogida: lun 16 nov<i data-lucide="chevron-down"></i></button>
+    </div>
+    <div class="w-full flex flex-wrap gap-1.5 text-xs" aria-label="Filtros activos">
+      <span class="chip st-acc">Categoría: Competición <button type="button" class="-mr-1 grid place-items-center w-5 h-5" aria-label="Quitar filtro Categoría: Competición"><i data-lucide="x"></i></button></span>
+      <button type="button" class="text-meta underline underline-offset-2 hover:text-fg">Quitar filtros</button>
+    </div>
+  </div>
+
+  <!-- ================= POR REVISAR: bandeja ================= -->
+  <section id="v-review" class="grid lg:grid-cols-[420px_minmax(0,1fr)] min-h-[640px]" aria-label="Por revisar">
+    <div class="min-w-0 lg:border-r border-line">
+      <p class="flex items-center gap-3 border-b border-line bg-side px-4 py-2 text-xs text-meta">
+        <input type="checkbox" class="cb" id="all" aria-label="Seleccionar todas las de la vista">
+        <span>Más recientes arriba · la fecha es la de la fuente</span>
+      </p>
+      <ul id="list" class="divide-y divide-line" aria-label="Noticias por revisar"></ul>
+      <p class="flex gap-2 border-t border-line px-4 py-3 text-xs text-meta"><i data-lucide="shield-check" class="w-4 h-4 flex-none"></i>Nada sale en el sitio sin tu aprobación. El agente recoge lunes y jueves; lo que rechazas no vuelve a proponerlo.</p>
+    </div>
+
+    <!-- detalle (≥ 1024). Por debajo se abre como hoja -->
+    <div id="detail" class="hidden lg:flex flex-col min-w-0" aria-live="polite">
+      <div class="flex-1 p-6 space-y-5 max-w-[760px]" id="det-body">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="chip st-warn"><i data-lucide="circle-dashed"></i>Por revisar</span>
+          <span class="chip st-neutral"><i data-lucide="sparkles"></i>Propuesta por el agente</span>
+          <span class="chip st-neutral"><i data-lucide="map-pin"></i>Cataluña</span>
+          <span class="chip st-neutral">Competición</span>
+          <span class="lang lang-ok" title="Tiene versión en inglés">EN</span>
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold tracking-tight [text-wrap:balance]">La FEEC abre inscripciones para el Campeonato de Cataluña de bloque</h2>
+          <p class="mt-1 text-xs text-meta">Recogida del lun 16 nov, 06:12 · <a href="ingesta.html#runs" class="underline underline-offset-2">recogida #41</a></p>
+        </div>
+
+        <!-- FUENTE: siempre visible, arriba -->
+        <section class="src p-3" aria-labelledby="h-src">
+          <h3 id="h-src" class="sr-only">Fuente</h3>
+          <div class="flex items-start gap-3">
+            <span class="src-ico" aria-hidden="true">FE</span>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-medium">FEEC · Federació d'Entitats Excursionistes de Catalunya</p>
+              <a href="#" class="block text-xs text-meta underline underline-offset-2 break-all">https://www.feec.cat/noticies/campionat-catalunya-bloc-2027-inscripcions/</a>
+              <p class="mt-1 text-xs text-meta">Publicada el <b class="font-medium text-fg">14 nov 2026</b> · en catalán · fuente activa desde oct 2026 (<span class="num">92 %</span> aprobadas)</p>
+            </div>
+            <a href="#" class="btn btn-ghost btn-sm flex-none">Abrir<i data-lucide="external-link"></i><span class="sr-only">(se abre en otra pestaña)</span></a>
+          </div>
+        </section>
+
+        <!-- Resumen propio + comprobación de parecido -->
+        <section aria-labelledby="h-sum">
+          <div class="flex items-center gap-2"><h3 id="h-sum" class="text-sm font-semibold">Resumen</h3><span class="lang-tag">ES</span><span class="counter">412 / 600</span></div>
+          <p class="mt-2 text-sm leading-6 max-w-[60ch] [text-wrap:pretty]">La Federació d'Entitats Excursionistes de Catalunya ha abierto las inscripciones del Campeonato de Cataluña de bloque, que se celebra el 6 de febrero en Sant Cugat. Hay categorías absoluta, sub-20 y sub-16, y las plazas son limitadas a 60 por categoría. La inscripción cierra el 25 de enero y requiere licencia federativa en vigor. La organización publicará el horario por rondas una semana antes.</p>
+          <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-meta">
+            <span class="inline-flex items-center gap-2">Parecido con la fuente <span class="sim" aria-hidden="true"><span style="width:14%"></span></span><b class="font-medium text-fg num">14 %</b> · bajo</span>
+            <span>Por encima del 35 % se marca: el resumen debe ser propio (D71).</span>
+          </div>
+          <details class="sec mt-3">
+            <summary class="inline-flex items-center gap-1.5 text-xs text-meta hover:text-fg"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5"></i>Ver la versión en inglés</summary>
+            <div class="mt-2 pl-5 text-sm leading-6" lang="en"><p class="font-medium">FEEC opens entries for the Catalan Bouldering Championship</p><p class="mt-1 text-meta">The Catalan mountaineering federation has opened entries for the Catalan Bouldering Championship, held on 6 February in Sant Cugat…</p></div>
+          </details>
+        </section>
+
+        <!-- Indexación (D73) -->
+        <div class="banner banner-info"><i data-lucide="eye-off"></i>
+          <div class="flex-1"><b class="font-medium">Sin nota: la ficha sale con noindex.</b> Si añades una «Nota de Xavi», Google puede indexarla y entra en el sitemap.</div>
+          <button type="button" class="btn btn-ghost btn-sm" data-open="editor" data-focus="nota"><i data-lucide="pen-line"></i>Añadir nota</button>
+        </div>
+
+        <!-- Lo que leyó el agente -->
+        <section class="rounded-lg border border-line p-3 text-sm" aria-labelledby="h-ag">
+          <h3 id="h-ag" class="flex items-center gap-2 font-semibold"><i data-lucide="sparkles" class="w-4 h-4 text-meta"></i>Qué encontró el agente</h3>
+          <dl class="mt-2 grid grid-cols-[110px_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-xs">
+            <dt class="text-meta">Confianza</dt><dd class="flex items-center gap-2"><span class="conf" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><span class="num">0,86</span> · alta</dd>
+            <dt class="text-meta">Nota</dt><dd>Fecha, sede y cierre de inscripción confirmados en la web de la FEEC. No indica precio.</dd>
+            <dt class="text-meta">Deducido</dt><dd><span class="inf"><i data-lucide="sparkles"></i>categoría</span> · <span class="inf"><i data-lucide="sparkles"></i>alcance</span></dd>
+            <dt class="text-meta">Imagen</dt><dd>Ninguna propuesta (la web no indica licencia).</dd>
+          </dl>
+          <blockquote class="mt-3 border-l-2 border-line-strong pl-3 text-meta text-xs leading-5" lang="ca">«Obertes les inscripcions al Campionat de Catalunya de Bloc 2027, que tindrà lloc el 6 de febrer a Sant Cugat del Vallès. Places limitades a 60 per categoria…»</blockquote>
+          <p class="mt-1 text-xs text-meta">Extracto literal de la fuente, solo para verificar. Nunca se publica.</p>
+        </section>
+
+        <!-- Así sale -->
+        <section aria-labelledby="h-pv">
+          <div class="flex items-center gap-2"><h3 id="h-pv" class="text-sm font-semibold">Así sale en /noticias</h3>
+            <div class="seg ml-auto" role="radiogroup" aria-label="Idioma de la vista previa"><button role="radio" aria-checked="true">ES</button><button role="radio" aria-checked="false">EN</button></div></div>
+          <div class="pv mt-2">
+            <p class="text-xs text-meta">Competición · Cataluña · 14 nov 2026</p>
+            <p class="mt-1 font-medium">La FEEC abre inscripciones para el Campeonato de Cataluña de bloque</p>
+            <p class="mt-1 text-xs text-meta line-clamp-2">La Federació d'Entitats Excursionistes de Catalunya ha abierto las inscripciones del Campeonato de Cataluña de bloque…</p>
+            <p class="mt-1.5 text-xs">Resumen de ChalkGuide · Fuente: <a href="#" class="underline underline-offset-2">FEEC</a></p>
+          </div>
+          <p class="mt-2 text-xs text-meta">Sale en menos de 10 minutos y entra en el borrador de la carta de esta semana.</p>
+        </section>
+      </div>
+      <div class="det-actions px-6 py-3 flex flex-wrap items-center gap-2">
+        <div class="pop-wrap"><button type="button" class="btn btn-ghost" aria-haspopup="true" aria-expanded="false" data-pop="m-rej"><i data-lucide="x"></i>Rechazar<i data-lucide="chevron-down"></i><span class="kbd ml-1">D</span></button>
+          <div id="m-rej" class="menu hidden left-0 !top-auto bottom-[calc(100%+4px)]" role="menu" aria-label="Motivo del rechazo">
+            <p class="grp-label px-2 pt-1.5 pb-1">Motivo</p>
+            <button role="menuitem" class="menu-i" data-toast="Rechazada · el agente no la volverá a proponer">Duplicada</button>
+            <button role="menuitem" class="menu-i" data-toast="Rechazada · el agente no la volverá a proponer">No es de escalada</button>
+            <button role="menuitem" class="menu-i" data-toast="Rechazada · el agente no la volverá a proponer">Fuera de alcance</button>
+            <button role="menuitem" class="menu-i" data-toast="Rechazada · el agente no la volverá a proponer">Poco relevante</button>
+            <button role="menuitem" class="menu-i" data-toast="Rechazada · el agente no la volverá a proponer">Datos incorrectos</button>
+            <button role="menuitem" class="menu-i" data-toast="Rechazada · el agente no la volverá a proponer">Fuente poco fiable</button>
+            <div class="menu-sep"></div>
+            <button role="menuitem" class="menu-i" data-toast="Rechazada">Sin motivo</button>
+          </div></div>
+        <button type="button" class="btn btn-ghost ml-auto" data-open="editor"><i data-lucide="pencil"></i>Editar<span class="kbd ml-1">E</span></button>
+        <button type="button" class="btn btn-primary" data-toast="Publicada · sale en /noticias en unos minutos"><i data-lucide="check"></i>Aprobar<span class="kbd ml-1 !bg-transparent !border-white/30 !text-white/70">A</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PUBLICADAS / TODAS: tabla ================= -->
+  <section id="v-pub" hidden aria-label="Publicadas">
+    <div class="px-4 md:px-6 py-2 text-xs text-meta border-b border-line bg-side flex items-center gap-2"><i data-lucide="globe" class="w-3.5 h-3.5"></i><span><b class="font-medium text-fg">86 publicadas</b> · 12 con nota (indexables) · 74 con noindex. El sitio pagina de 20 en 20.</span></div>
+    <div class="overflow-x-auto hidden md:block">
+      <table class="tbl">
+        <thead><tr>
+          <th class="w-10"><input type="checkbox" class="cb" aria-label="Seleccionar todas"></th>
+          <th aria-sort="descending"><span class="sort">Publicada<i data-lucide="arrow-down"></i></span></th>
+          <th>Noticia</th>
+          <th class="hidden lg:table-cell">Categoría</th>
+          <th class="hidden lg:table-cell">Alcance</th>
+          <th>Indexación</th>
+          <th class="hidden xl:table-cell">Origen</th>
+          <th>EN</th>
+          <th class="w-10"><span class="sr-only">Acciones</span></th>
+        </tr></thead>
+        <tbody id="pubrows"></tbody>
+      </table>
+    </div>
+    <ul id="pubcards" class="md:hidden divide-y divide-line"></ul>
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3 text-xs text-meta border-t border-line">1–25 de 86<div class="ml-auto flex gap-1"><button class="icon-btn" aria-label="Página anterior" disabled><i data-lucide="chevron-left"></i></button><button class="icon-btn" aria-label="Página siguiente"><i data-lucide="chevron-right"></i></button></div></div>
+  </section>
+
+  <!-- ================= Estados ================= -->
+  <section id="st-loading" hidden aria-busy="true" aria-label="Cargando" class="grid lg:grid-cols-[420px_minmax(0,1fr)]">
+    <div class="lg:border-r border-line divide-y divide-line">
+      <div class="p-4 space-y-2"><div class="sk h-4 w-11/12"></div><div class="sk h-3 w-1/2"></div><div class="sk h-4 w-40"></div></div>
+      <div class="p-4 space-y-2"><div class="sk h-4 w-10/12"></div><div class="sk h-3 w-1/2"></div><div class="sk h-4 w-32"></div></div>
+      <div class="p-4 space-y-2"><div class="sk h-4 w-9/12"></div><div class="sk h-3 w-1/3"></div><div class="sk h-4 w-40"></div></div>
+      <div class="p-4 space-y-2"><div class="sk h-4 w-11/12"></div><div class="sk h-3 w-1/2"></div><div class="sk h-4 w-28"></div></div>
+    </div>
+    <div class="hidden lg:block p-6 space-y-4"><div class="sk h-5 w-40"></div><div class="sk h-7 w-3/4"></div><div class="sk h-16 w-full"></div><div class="sk h-24 w-full"></div></div>
+  </section>
+  <section id="st-empty" hidden class="empty">
+    <span class="ico"><i data-lucide="inbox"></i></span>
+    <h2 class="text-sm font-semibold mt-1">Nada por revisar</h2>
+    <p>Has revisado todo lo que trajo el agente. La próxima recogida es el <b class="font-medium">jueves 19 nov a las 06:00</b>.</p>
+    <div class="flex gap-2 mt-2"><button class="btn btn-ghost" data-v-go="pub">Ver publicadas</button><a class="btn btn-quiet" href="ingesta.html">Ingesta</a></div>
+  </section>
+  <section id="st-error" hidden class="p-6">
+    <div class="banner banner-err max-w-xl" role="alert"><i data-lucide="circle-alert"></i><div class="flex-1"><b class="font-medium">No se han podido cargar las noticias.</b> Comprueba la conexión y vuelve a intentarlo. <span class="mono text-xs text-meta">PGRST301</span></div><button class="btn btn-ghost btn-sm">Reintentar</button></div>
+  </section>
+</main>
+
+<!-- barra de lote -->
+<div id="bulk" class="bulk hidden" role="region" aria-label="Acciones en lote">
+  <div class="menu !min-w-0 !p-1.5 flex items-center gap-1.5 !rounded-[10px]">
+    <span class="px-2 text-sm font-medium num" id="bulk-n" aria-live="polite">3 seleccionadas</span>
+    <button type="button" class="btn btn-primary btn-sm" data-open="lote"><i data-lucide="check"></i>Aprobar</button>
+    <button type="button" class="btn btn-ghost btn-sm" data-toast="3 rechazadas · el agente no las volverá a proponer"><i data-lucide="x"></i>Rechazar…</button>
+    <button type="button" class="icon-btn" id="bulk-x" aria-label="Quitar la selección"><i data-lucide="x"></i></button>
+  </div>
+</div>
+
+<!-- confirmar lote (solo si hay avisos; sin avisos aprueba al momento con Deshacer) -->
+<div id="lote" class="overlay" role="dialog" aria-modal="true" aria-labelledby="lote-h">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="lote-h">Aprobar 6 noticias</h2></div>
+    <div class="dialog-b space-y-3 text-sm">
+      <p>2 tienen avisos. Revísalas antes o apruébalas solo si ya las has comprobado.</p>
+      <ul class="rounded-lg border border-line divide-y divide-line">
+        <li class="px-3 py-2 flex items-start gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 text-warn-icon flex-none mt-0.5"></i><span class="flex-1 min-w-0"><span class="block truncate">Montserrat actualiza las restricciones por nidificación…</span><span class="text-xs text-meta">Confianza baja (0,58)</span></span></li>
+        <li class="px-3 py-2 flex items-start gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 text-warn-icon flex-none mt-0.5"></i><span class="flex-1 min-w-0"><span class="block truncate">Desnivel repasa las novedades de pies de gato para 2027</span><span class="text-xs text-meta">Parecido alto con la fuente (46 %)</span></span></li>
+      </ul>
+      <p class="text-xs text-meta">Se publican en menos de 10 minutos. Cada una se puede retirar después desde Publicadas.</p>
+    </div>
+    <div class="dialog-f">
+      <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+      <button type="button" class="btn btn-ghost" data-close data-toast="6 publicadas">Aprobar las 6</button>
+      <button type="button" class="btn btn-primary" data-close data-toast="4 publicadas · 2 siguen por revisar">Aprobar las 4 sin avisos</button>
+    </div>
+  </div>
+</div>
+
+<!-- detalle como hoja (< 1024) -->
+<div id="det" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-label="Noticia por revisar">
+  <div class="drawer wide"><div class="grab"></div>
+    <div class="drawer-h"><h2 class="text-sm font-semibold">Por revisar</h2><span class="text-xs text-meta num ml-1">1 de 14</span><button type="button" class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+    <div class="drawer-b !p-0" id="det-clone"></div>
+  </div>
+</div>
+
+<!-- ================= EDITOR (drawer 640; hoja en < 768) ================= -->
+<div id="editor" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="ed-h">
+  <div class="drawer wide"><div class="grab"></div>
+    <div class="drawer-h">
+      <h2 id="ed-h" class="text-sm font-semibold">Editar noticia</h2>
+      <span class="chip st-warn ml-1"><i data-lucide="circle-dashed"></i>Por revisar</span>
+      <span class="text-xs text-meta ml-2 hidden sm:inline">Guardado · hace 20 s</span>
+      <button type="button" class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button>
+    </div>
+    <div class="drawer-b space-y-6">
+      <div class="banner banner-info"><i data-lucide="sparkles"></i><div>Propuesta por el agente el lun 16 nov. Lo marcado <span class="inf"><i data-lucide="sparkles"></i>deducido</span> lo puso él: compruébalo. La marca se quita al tocar el campo.</div></div>
+
+      <!-- Texto ES/EN -->
+      <section aria-labelledby="ed-txt" class="space-y-4">
+        <div class="flex items-center gap-2">
+          <h3 id="ed-txt" class="text-sm font-semibold">Texto</h3>
+          <div class="ml-auto border-b border-line" role="tablist" aria-label="Idioma" data-tabs>
+            <button role="tab" class="tab t !h-8 px-1" aria-controls="ed-es" aria-selected="true">Español</button>
+            <button role="tab" class="tab t !h-8 px-1 ml-3" aria-controls="ed-en">Inglés <span class="w-1.5 h-1.5 rounded-full bg-warn-icon" title="Incompleto"></span><span class="sr-only">(incompleto)</span></button>
+          </div>
+        </div>
+        <div id="ed-es" role="tabpanel" class="space-y-4">
+          <div><label class="lbl" for="t-es">Título <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span><span class="counter">72 / 140</span></label>
+            <input id="t-es" class="input" autofocus value="La FEEC abre inscripciones para el Campeonato de Cataluña de bloque"></div>
+          <div><label class="lbl" for="s-es">Resumen propio <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span><span class="counter">412 / 600</span></label>
+            <textarea id="s-es" class="input" rows="6" aria-describedby="s-es-h">La Federació d'Entitats Excursionistes de Catalunya ha abierto las inscripciones del Campeonato de Cataluña de bloque, que se celebra el 6 de febrero en Sant Cugat. Hay categorías absoluta, sub-20 y sub-16, y las plazas son limitadas a 60 por categoría. La inscripción cierra el 25 de enero y requiere licencia federativa en vigor. La organización publicará el horario por rondas una semana antes.</textarea>
+            <div class="meter"><span style="width:69%"></span></div>
+            <p id="s-es-h" class="help flex flex-wrap gap-x-3">Con tus palabras: nunca frases copiadas de la fuente. <span class="inline-flex items-center gap-1.5">Parecido <span class="sim" aria-hidden="true"><span style="width:14%"></span></span><span class="num">14 %</span></span></p></div>
+          <div id="nota"><label class="lbl" for="n-es">Nota de Xavi <span class="opt">(opcional)</span><span class="counter">0 / 600</span></label>
+            <textarea id="n-es" class="input" rows="3" placeholder="Qué opinas, a quién le importa, qué harías tú…" aria-describedby="n-es-h"></textarea>
+            <p id="n-es-h" class="help flex items-center gap-2"><span class="chip st-neutral"><i data-lucide="eye-off"></i>noindex</span>Con nota, la ficha se indexa y entra en el sitemap (D73). Sale firmada, separada del resumen.</p></div>
+        </div>
+        <div id="ed-en" role="tabpanel" hidden class="space-y-4" lang="en">
+          <div><label class="lbl" for="t-en">Title <span class="opt">(opcional)</span><span class="counter">55 / 140</span></label>
+            <input id="t-en" class="input" value="FEEC opens entries for the Catalan Bouldering Championship"></div>
+          <div><label class="lbl" for="s-en">Summary <span class="counter">0 / 600</span></label>
+            <textarea id="s-en" class="input" rows="5" aria-invalid="true" aria-describedby="s-en-e"></textarea>
+            <p id="s-en-e" class="err"><i data-lucide="circle-alert"></i>Con título en inglés hace falta el resumen. Sin los dos, no sale en /en/news.</p></div>
+        </div>
+      </section>
+
+      <!-- Fuente -->
+      <section aria-labelledby="ed-src" class="space-y-4">
+        <h3 id="ed-src" class="text-sm font-semibold flex items-center gap-2">Fuente <span class="chip st-neutral">Siempre visible en la ficha y en la carta</span></h3>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div><label class="lbl" for="f-name">Medio <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label><input id="f-name" class="input" value="FEEC"><p class="help">Nombre corto: «Fuente: FEEC».</p></div>
+          <div><label class="lbl" for="f-date">Publicada el <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label><input id="f-date" type="date" class="input" value="2026-11-14"></div>
+        </div>
+        <div><label class="lbl" for="f-url">Enlace a la noticia original <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label>
+          <div class="input affix"><span class="pre">https://</span><input id="f-url" value="www.feec.cat/noticies/campionat-catalunya-bloc-2027-inscripcions/"></div>
+          <p class="help">El enlace de una noticia ya publicada no cambia sin avisar: el agente lo usa para no repetirla.</p></div>
+      </section>
+
+      <!-- Clasificación -->
+      <section aria-labelledby="ed-cls" class="space-y-4">
+        <h3 id="ed-cls" class="text-sm font-semibold">Clasificación</h3>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div><label class="lbl" for="c-cat">Categoría <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span><span class="inf ml-auto"><i data-lucide="sparkles"></i>deducido</span></label>
+            <select id="c-cat" class="select"><option>Competición</option><option>Rocódromos</option><option>Roca y acceso</option><option>Material</option><option>Comunidad</option></select></div>
+          <div><p class="lbl" id="c-sc">Alcance <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span><span class="inf ml-auto"><i data-lucide="sparkles"></i>deducido</span></p>
+            <div class="seg w-full grid grid-cols-3" role="radiogroup" aria-labelledby="c-sc"><button role="radio" aria-checked="true">Cataluña</button><button role="radio" aria-checked="false">España</button><button role="radio" aria-checked="false">Intl.</button></div></div>
+        </div>
+        <div><label class="lbl" for="c-tags">Etiquetas <span class="opt">(internas: búsqueda y carta)</span></label>
+          <div class="input !h-auto min-h-8 flex flex-wrap items-center gap-1.5 py-1"><span class="tagi">bloque<button type="button" class="icon-btn !w-5 !h-5" aria-label="Quitar bloque"><i data-lucide="x"></i></button></span><span class="tagi">sant cugat<button type="button" class="icon-btn !w-5 !h-5" aria-label="Quitar sant cugat"><i data-lucide="x"></i></button></span><input id="c-tags" class="flex-1 min-w-[80px] bg-transparent outline-none text-sm placeholder:text-muted" placeholder="Añadir…"></div></div>
+        <div><label class="lbl" for="c-slug">URL</label><div class="input affix"><span class="pre">/noticias/</span><input id="c-slug" value="feec-inscripciones-campeonato-cataluna-bloque-2027"></div></div>
+      </section>
+
+      <!-- Imagen -->
+      <section aria-labelledby="ed-img" class="space-y-3">
+        <h3 id="ed-img" class="text-sm font-semibold">Imagen</h3>
+        <div class="grid gap-2" role="radiogroup" aria-labelledby="ed-img">
+          <label class="pick"><input type="radio" name="img" class="radio mt-0.5" checked><span><span class="block text-sm font-medium">Sin imagen</span><span class="block text-xs text-meta">Lo normal. La ficha se sostiene con el texto y la fuente.</span></span></label>
+          <label class="pick"><input type="radio" name="img" class="radio mt-0.5"><span class="flex-1"><span class="block text-sm font-medium">De Medios, con licencia</span><span class="block text-xs text-meta">Foto propia, cedida con permiso o con licencia abierta. Nunca la de la fuente sin permiso.</span></span></label>
+        </div>
+        <div class="rounded-lg border border-dashed border-line-strong p-3 grid sm:grid-cols-2 gap-3 opacity-60" aria-disabled="true">
+          <div><label class="lbl" for="i-lic">Licencia <span class="req" aria-hidden="true">*</span></label><select id="i-lic" class="select" disabled><option>Elige…</option><option>Propia</option><option>Cedida con permiso</option><option>CC BY 4.0</option><option>CC BY-SA 4.0</option><option>CC0</option></select></div>
+          <div><label class="lbl" for="i-cr">Crédito <span class="req" aria-hidden="true">*</span></label><input id="i-cr" class="input" disabled placeholder="Foto: Nombre / Medio"></div>
+          <p class="help sm:col-span-2 !mt-0">Sin licencia y crédito no se puede publicar con imagen. Alt ES obligatorio, como en todo Medios (D27).</p>
+        </div>
+      </section>
+
+      <!-- Lo que leyó el agente -->
+      <details class="sec rounded-lg border border-line">
+        <summary class="flex items-center gap-2 px-3 h-10 text-sm font-medium"><i data-lucide="chevron-right" class="chev w-4 h-4 text-meta"></i>Lo que leyó el agente</summary>
+        <div class="px-3 pb-3 text-xs text-meta space-y-2"><blockquote class="border-l-2 border-line-strong pl-3 leading-5" lang="ca">«Obertes les inscripcions al Campionat de Catalunya de Bloc 2027, que tindrà lloc el 6 de febrer a Sant Cugat del Vallès…»</blockquote><p>Confianza 0,86 · Fecha, sede y cierre confirmados.</p></div>
+      </details>
+    </div>
+    <div class="drawer-f flex-wrap">
+      <button type="button" class="btn btn-ghost" data-close data-toast="Rechazada · el agente no la volverá a proponer"><i data-lucide="x"></i>Rechazar…</button>
+      <button type="button" class="btn btn-ghost ml-auto" data-close data-toast="Guardada · sigue por revisar">Guardar</button>
+      <button type="button" class="btn btn-primary" data-close data-toast="Publicada · sale en /noticias en unos minutos">Guardar y publicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= Categorías de noticias ================= -->
+<div id="cats" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="cats-h">
+  <div class="drawer"><div class="grab"></div>
+    <div class="drawer-h"><h2 id="cats-h" class="text-sm font-semibold">Categorías de noticias</h2><button type="button" class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+    <div class="drawer-b space-y-3">
+      <p class="text-xs text-meta">Son distintas de las del blog. Arrastra para cambiar el orden de los filtros de /noticias. El agente solo puede usar estas.</p>
+      <ul class="sortable divide-y divide-line border border-line rounded-lg">
+        <li data-label="Competición" class="flex items-center gap-2 px-2 h-11"><button type="button" class="handle" aria-label="Mover Competición"><i data-lucide="grip-vertical"></i></button><span class="flex-1 text-sm">Competición <span class="text-xs text-meta" lang="en">· Competition</span></span><span class="num text-xs text-meta">38</span></li>
+        <li data-label="Rocódromos" class="flex items-center gap-2 px-2 h-11"><button type="button" class="handle" aria-label="Mover Rocódromos"><i data-lucide="grip-vertical"></i></button><span class="flex-1 text-sm">Rocódromos <span class="text-xs text-meta" lang="en">· Climbing gyms</span></span><span class="num text-xs text-meta">21</span></li>
+        <li data-label="Roca y acceso" class="flex items-center gap-2 px-2 h-11"><button type="button" class="handle" aria-label="Mover Roca y acceso"><i data-lucide="grip-vertical"></i></button><span class="flex-1 text-sm">Roca y acceso <span class="text-xs text-meta" lang="en">· Crags and access</span></span><span class="num text-xs text-meta">17</span></li>
+        <li data-label="Material" class="flex items-center gap-2 px-2 h-11"><button type="button" class="handle" aria-label="Mover Material"><i data-lucide="grip-vertical"></i></button><span class="flex-1 text-sm">Material <span class="text-xs text-meta" lang="en">· Gear</span></span><span class="num text-xs text-meta">9</span></li>
+        <li data-label="Comunidad" class="flex items-center gap-2 px-2 h-11"><button type="button" class="handle" aria-label="Mover Comunidad"><i data-lucide="grip-vertical"></i></button><span class="flex-1 text-sm">Comunidad <span class="text-xs text-meta" lang="en">· Community</span></span><span class="num text-xs text-meta">1</span></li>
+      </ul>
+      <p class="text-xs text-meta">Nombres provisionales: los cierra loro-lola (8.3). Borrar una categoría con noticias pide reasignarlas (patrón de Categorías del blog).</p>
+    </div>
+    <div class="drawer-f"><button type="button" class="btn btn-ghost"><i data-lucide="plus"></i>Nueva categoría</button><button type="button" class="btn btn-primary ml-auto" data-close>Hecho</button></div>
+  </div>
+</div>
+
+<script>
+const N=[
+ {t:'La FEEC abre inscripciones para el Campeonato de Cataluña de bloque',src:'FEEC',ago:'14 nov',sc:'Cataluña',cat:'Competición',c:4,en:1,flags:[]},
+ {t:'Un nuevo rocódromo de bloque abrirá en Sabadell en enero con 900 m²',src:'Diari de Sabadell',ago:'15 nov',sc:'Cataluña',cat:'Rocódromos',c:4,en:1,flags:[]},
+ {t:'La IFSC publica el calendario de la Copa del Mundo 2027',src:'IFSC',ago:'13 nov',sc:'Intl.',cat:'Competición',c:5,en:1,flags:[]},
+ {t:'Montserrat actualiza las restricciones por nidificación en seis sectores',src:'Parcs Naturals',ago:'12 nov',sc:'Cataluña',cat:'Roca y acceso',c:2,en:0,flags:[['st-warn','Confianza baja']]},
+ {t:'Desnivel repasa las novedades de pies de gato para 2027',src:'Desnivel',ago:'12 nov',sc:'España',cat:'Material',c:4,en:0,flags:[['st-warn','Parecido alto · 46 %']]},
+ {t:'Siurana reequipa cuarenta vías del sector El Pati',src:'Club Muntanyenc',ago:'11 nov',sc:'Cataluña',cat:'Roca y acceso',c:3,en:0,flags:[]},
+ {t:'Barcelona acogerá una prueba abierta de velocidad en el Fòrum en marzo',src:'Betevé',ago:'10 nov',sc:'Cataluña',cat:'Competición',c:3,en:0,flags:[['st-warn','Posible duplicado']]},
+];
+const conf=n=>`<span class="conf" title="Confianza"><span class="sr-only">Confianza ${n>=4?'alta':n>=3?'media':'baja'}</span>${[1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}" aria-hidden="true"></i>`).join('')}</span>`;
+document.getElementById('list').innerHTML=N.map((n,i)=>`<li class="q">
+  <div class="flex gap-3 px-4 py-3">
+    <input type="checkbox" class="cb mt-1 rowcb" aria-label="Seleccionar «${n.t}»">
+    <button type="button" class="flex-1 min-w-0 text-left t" data-row="${i}" ${i===0?'aria-current="true"':''}>
+      <span class="block text-sm leading-5 font-medium line-clamp-2">${n.t}</span>
+      <span class="mt-0.5 block text-xs text-meta truncate">Fuente: <span class="text-fg">${n.src}</span> · ${n.ago} · ${n.cat}</span>
+      <span class="mt-1.5 flex flex-wrap items-center gap-1.5">
+        <span class="chip st-neutral"><i data-lucide="sparkles"></i>Agente</span>
+        <span class="chip st-neutral">${n.sc}</span>${conf(n.c)}
+        ${n.flags.map(f=>`<span class="chip ${f[0]}"><i data-lucide="triangle-alert"></i>${f[1]}</span>`).join('')}
+        <span class="lang ${n.en?'lang-ok':'lang-miss'}" title="${n.en?'Con inglés':'Sin inglés'}">EN</span>
+      </span>
+    </button>
+  </div>
+  <div class="flex gap-2 pr-4 pb-3 pl-[44px] lg:hidden">
+    <button type="button" class="btn btn-ghost flex-1" data-toast="Publicada"><i data-lucide="check"></i>Aprobar</button>
+    <button type="button" class="btn btn-ghost flex-1" data-open="editor"><i data-lucide="pencil"></i>Editar</button>
+    <button type="button" class="btn btn-ghost !px-0 w-11" aria-label="Rechazar «${n.t}»" data-toast="Rechazada"><i data-lucide="x"></i></button>
+  </div></li>`).join('');
+
+const P=[
+ ['13 nov','Abre en Gràcia una sala de bloque con zona infantil','Rocódromos','Cataluña',1,'Agente',1,'betevé'],
+ ['12 nov','La Federación Española confirma la sede del Nacional de dificultad','Competición','España',0,'Agente',1,'FEDME'],
+ ['10 nov','Por qué el cierre temporal de Sant Llorenç importa a los que empiezan','Roca y acceso','Cataluña',1,'Manual',1,'Parcs Naturals'],
+ ['9 nov','La IFSC cambia el formato de la combinada para 2027','Competición','Intl.',0,'Agente',0,'IFSC'],
+ ['6 nov','Dos rocódromos de Barcelona amplían horario los domingos','Rocódromos','Cataluña',0,'Agente',0,'El Periódico'],
+];
+document.getElementById('pubrows').innerHTML=P.map(p=>`<tr>
+  <td><input type="checkbox" class="cb" aria-label="Seleccionar «${p[1]}»"></td>
+  <td class="num text-meta">${p[0]}</td>
+  <td class="max-w-[420px]"><a href="#" class="row-link block truncate font-medium" data-open="editor">${p[1]}</a><span class="block text-xs text-meta -mt-1">Fuente: ${p[7]}</span></td>
+  <td class="hidden lg:table-cell">${p[2]}</td><td class="hidden lg:table-cell text-meta">${p[3]}</td>
+  <td>${p[4]?'<span class="chip st-pub"><i data-lucide="pen-line"></i>Con nota · indexable</span>':'<span class="chip st-neutral"><i data-lucide="eye-off"></i>noindex</span>'}</td>
+  <td class="hidden xl:table-cell"><span class="chip st-neutral"><i data-lucide="${p[5]==='Agente'?'sparkles':'user-pen'}"></i>${p[5]}</span></td>
+  <td><span class="lang ${p[6]?'lang-ok':'lang-miss'}">EN</span></td>
+  <td><button type="button" class="icon-btn" aria-label="Acciones de «${p[1]}»"><i data-lucide="more-horizontal"></i></button></td></tr>`).join('').replace(/<td>/g,'<td class="!h-14">');
+document.getElementById('pubcards').innerHTML=P.map(p=>`<li class="px-4 py-3 flex gap-3"><div class="flex-1 min-w-0"><p class="text-xs text-meta num">${p[0]} · ${p[2]}</p><p class="mt-0.5 text-sm font-medium leading-5">${p[1]}</p><p class="mt-0.5 text-xs text-meta">Fuente: ${p[7]}</p><p class="mt-1.5 flex gap-1.5">${p[4]?'<span class="chip st-pub">Con nota</span>':'<span class="chip st-neutral">noindex</span>'}<span class="lang ${p[6]?'lang-ok':'lang-miss'}">EN</span></p></div><button class="icon-btn" aria-label="Acciones de «${p[1]}»"><i data-lucide="more-horizontal"></i></button></li>`).join('');
+
+document.addEventListener('DOMContentLoaded',()=>{
+  CG.icons();
+  const views=[...document.querySelectorAll('#views [role=tab]')];
+  const show=v=>{views.forEach(t=>t.setAttribute('aria-selected',t.dataset.v===v));
+    document.getElementById('v-review').hidden=v!=='review';document.getElementById('v-pub').hidden=v==='review';
+    ['loading','empty','error'].forEach(s=>document.getElementById('st-'+s).hidden=true);document.getElementById('demoState').value='data';};
+  views.forEach(t=>t.onclick=()=>show(t.dataset.v));
+  document.querySelectorAll('[data-v-go]').forEach(b=>b.onclick=()=>show(b.dataset.vGo));
+  document.getElementById('demoState').onchange=e=>{const s=e.target.value;
+    document.getElementById('v-review').hidden=s!=='data';document.getElementById('v-pub').hidden=true;
+    ['loading','empty','error'].forEach(x=>document.getElementById('st-'+x).hidden=x!==s);};
+  // popovers
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-pop]');document.querySelectorAll('.pop-wrap>.menu').forEach(m=>{if(!b||m.id!==b.dataset.pop)m.classList.add('hidden');});
+    if(b){const m=document.getElementById(b.dataset.pop);m.classList.toggle('hidden');b.setAttribute('aria-expanded',!m.classList.contains('hidden'));}});
+  // filas: en < 1024 abren la hoja
+  document.getElementById('det-clone').innerHTML=document.getElementById('detail').innerHTML;CG.icons();
+  document.querySelectorAll('[data-row]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-row]').forEach(x=>x.removeAttribute('aria-current'));b.setAttribute('aria-current','true');
+    document.querySelectorAll('.q').forEach(q=>q.removeAttribute('aria-current'));b.closest('.q').setAttribute('aria-current','true');
+    if(innerWidth<1024)CG.open('det',b);});
+  // selección y lote
+  const cbs=[...document.querySelectorAll('.rowcb')],bulk=document.getElementById('bulk'),all=document.getElementById('all');
+  const upd=()=>{const n=cbs.filter(c=>c.checked).length;bulk.classList.toggle('hidden',!n);document.getElementById('bulk-n').textContent=n+(n===1?' seleccionada':' seleccionadas');all.indeterminate=n>0&&n<cbs.length;all.checked=n===cbs.length;};
+  cbs.forEach(c=>c.onchange=upd);all.onchange=()=>{cbs.forEach(c=>c.checked=all.checked);upd();};
+  document.getElementById('bulk-x').onclick=()=>{cbs.forEach(c=>c.checked=false);upd();};
+  if(location.hash==='#lote'){cbs.slice(0,6).forEach(c=>c.checked=true);upd();CG.open('lote');}
+  if(location.hash==='#editar')CG.open('editor');
+  if(location.hash==='#publicadas')show('pub');
+  if(location.hash==='#categorias')CG.open('cats');
+  // teclado de la bandeja
+  addEventListener('keydown',e=>{if(document.querySelector('.overlay.open')||['input','textarea','select'].includes((e.target.tagName||'').toLowerCase()))return;
+    if(e.key==='/'){e.preventDefault();document.getElementById('q').focus();}
+    if(e.key==='e'){CG.open('editor');} if(e.key==='a'){CG.toast('Publicada · sale en /noticias en unos minutos',{action:'Deshacer'});}});
+});
+</script>
+</body>
+</html>

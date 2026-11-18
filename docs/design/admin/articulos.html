@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Artículos · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+</head>
+<body data-page="articulos" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Artículos <span class="text-muted font-normal num ml-1">24</span></h1>
+    <div class="ml-auto flex items-center gap-2">
+      <a href="exportar.html?tipo=articulos" class="btn btn-ghost t hidden sm:inline-flex"><i data-lucide="download"></i>Exportar</a>
+      <a href="articulo-editor.html" class="btn btn-primary t"><i data-lucide="plus"></i><span class="hidden sm:inline">Nuevo artículo</span><span class="sm:hidden">Nuevo</span></a>
+    </div>
+  </header>
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Vistas" class="flex gap-5 min-w-max" id="views">
+      <button role="tab" aria-selected="true" class="tab t" data-v="all">Todos <span class="num text-muted">24</span></button>
+      <button role="tab" aria-selected="false" class="tab t" data-v="pub">Publicados <span class="num text-muted">15</span></button>
+      <button role="tab" aria-selected="false" class="tab t" data-v="rev"><span class="tdot" aria-hidden="true"></span>Con cambios <span class="num text-muted">2</span></button>
+      <button role="tab" aria-selected="false" class="tab t" data-v="sched">Programados <span class="num text-muted">2</span></button>
+      <button role="tab" aria-selected="false" class="tab t" data-v="draft">Borradores <span class="num text-muted">7</span></button>
+      <button role="tab" aria-selected="false" class="tab t" data-v="noen">Sin EN <span class="num text-muted">9</span></button>
+    </div>
+  </div>
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+    <div class="relative w-full sm:w-72"><label for="q" class="sr-only">Buscar artículos</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="q" class="input t !pl-8 !pr-8" placeholder="Buscar por título o slug"><span class="kbd absolute right-2 top-1/2 -translate-y-1/2 hidden sm:inline">/</span></div>
+    <button class="btn btn-ghost t" aria-haspopup="true"><i data-lucide="folder"></i>Categoría<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost t" aria-haspopup="true"><i data-lucide="languages"></i>Idioma<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-quiet t hidden sm:inline-flex" aria-pressed="false"><i data-lucide="star"></i>Destacados</button>
+    <div class="ml-auto hidden md:flex items-center gap-2 text-sm text-meta"><span class="hidden lg:inline text-xs border border-dashed border-line-strong rounded px-2 py-1">Mockup · ver estado:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup"><option value="data">Con datos</option><option value="loading">Cargando</option><option value="empty">Sin resultados</option><option value="error">Error</option></select></span></div>
+  </div>
+
+  <div id="st-data">
+    <div class="hidden md:block">
+      <table class="tbl table-fixed" aria-describedby="tbl-sum">
+        <caption id="tbl-sum" class="sr-only">Todos los artículos, ordenados por última actualización</caption>
+        <thead><tr>
+          <th class="w-12 !pl-4 md:!pl-6"><input type="checkbox" class="cb" id="all" aria-label="Seleccionar todos los artículos de la página"></th>
+          <th class="!pl-2" aria-sort="none"><button class="sort">Título<i data-lucide="chevrons-up-down"></i></button></th>
+          <th class="w-[172px]">Estado</th>
+          <th class="w-44 hidden lg:table-cell">Categoría</th>
+          <th class="w-24">Idiomas</th>
+          <th class="w-36 hidden xl:table-cell" aria-sort="none"><button class="sort">Publicación<i data-lucide="chevrons-up-down"></i></button></th>
+          <th class="w-28" aria-sort="descending"><button class="sort">Actualizado<i data-lucide="arrow-down"></i></button></th>
+          <th class="w-14 !pr-4"><span class="sr-only">Acciones</span></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <ul id="cards" class="md:hidden divide-y divide-line"></ul>
+    <div class="px-4 md:px-6 min-h-12 py-2 flex items-center gap-3 border-t border-line text-sm text-meta">
+      <span class="num">1–12 de 24</span><label class="hidden sm:flex items-center gap-2">Por página <select class="select !w-20 !h-7"><option>25</option><option>50</option></select></label>
+      <div class="ml-auto flex gap-1"><button class="icon-btn" aria-label="Página anterior" disabled style="opacity:.4"><i data-lucide="chevron-left"></i></button><button class="icon-btn" aria-label="Página siguiente"><i data-lucide="chevron-right"></i></button></div>
+    </div>
+  </div>
+
+  <!-- estados alternativos -->
+  <div id="st-loading" hidden aria-busy="true" aria-label="Cargando artículos" class="divide-y divide-line">
+    <div class="h-9 bg-side"></div>
+    <script>document.write(Array.from({length:8},(_, i)=>`<div class="h-10 px-6 flex items-center gap-4"><span class="sk w-4 h-4"></span><span class="sk w-8 h-6"></span><span class="sk h-3" style="width:${30+((i*17)%30)}%"></span><span class="sk h-5 w-20 ml-auto"></span><span class="sk h-4 w-14"></span><span class="sk h-3 w-16"></span></div>`).join(''))</script>
+  </div>
+  <div id="st-empty" hidden><div class="empty"><span class="ico"><i data-lucide="search-x"></i></span><h3>Nada con «resolado» en Borradores</h3><p>Hay 2 resultados en otros estados.</p><div class="flex gap-2 mt-2"><button class="btn btn-ghost">Buscar en todos</button><button class="btn btn-quiet">Limpiar búsqueda</button></div></div></div>
+  <div id="st-error" hidden><div class="empty"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se han podido cargar los artículos</h3><p>Comprueba la conexión. Si sigue, puede ser Supabase: mira su estado.</p><button class="btn btn-ghost mt-2"><i data-lucide="rotate-cw"></i>Reintentar</button></div></div>
+
+  <!-- menú de fila (ejemplo abierto) -->
+  <div id="rowmenu" class="menu fixed z-50 hidden" role="menu" aria-label="Acciones del artículo">
+    <a href="articulo-editor.html" class="menu-i" role="menuitem"><i data-lucide="pencil"></i>Editar</a>
+    <a href="#" class="menu-i" role="menuitem"><i data-lucide="eye"></i>Vista previa</a>
+    <a href="#" class="menu-i" role="menuitem"><i data-lucide="external-link"></i>Ver en el sitio</a>
+    <div class="menu-sep"></div>
+    <a href="articulo-editor.html#cambios" class="menu-i" role="menuitem"><i data-lucide="git-compare-arrows" class="!text-st-rev"></i>Ver cambios sin publicar</a>
+    <button class="menu-i" role="menuitem" data-toast="Cambios publicados en «Rocódromos para ir solo…»"><i data-lucide="upload"></i>Publicar cambios</button>
+    <button class="menu-i" role="menuitem" data-open="discard"><i data-lucide="undo-2"></i>Descartar cambios…</button>
+    <div class="menu-sep"></div>
+    <button class="menu-i" role="menuitem" data-toast="Duplicado como borrador: «… (copia)»" data-action="Abrir"><i data-lucide="copy"></i>Duplicar</button>
+    <button class="menu-i" role="menuitem"><i data-lucide="file-minus"></i>Despublicar…</button>
+    <button class="menu-i danger" role="menuitem" data-open="del"><i data-lucide="trash-2"></i>Eliminar…</button>
+  </div>
+
+  <div id="bulk" role="region" aria-label="Acciones en lote" class="hidden fixed left-1/2 -translate-x-1/2 bottom-20 md:bottom-6 z-40 pop bg-elev border border-line-strong rounded-lg px-2 py-1.5 items-center gap-1 text-sm max-w-[calc(100vw-24px)] overflow-x-auto">
+    <span class="px-2 font-medium num whitespace-nowrap" id="bulkCount" aria-live="polite">0 seleccionados</span><span class="w-px h-5 bg-line mx-1"></span>
+    <button class="btn btn-quiet"><i data-lucide="folder-input"></i>Mover a…</button>
+    <button class="btn btn-quiet"><i data-lucide="download"></i>Exportar</button>
+    <button class="btn btn-quiet !text-danger" data-open="del"><i data-lucide="trash-2"></i>Eliminar…</button>
+    <button id="bulkClose" class="icon-btn" aria-label="Quitar selección"><i data-lucide="x"></i></button>
+  </div>
+</main>
+
+<div id="discard" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="dc-h" aria-describedby="dc-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="dc-h">¿Descartar los 3 cambios sin publicar?</h2><p id="dc-d" class="text-sm text-meta mt-1">«Rocódromos para ir solo y encontrar compañero» vuelve a la versión publicada el 3 oct. Lo publicado no cambia.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Cambios descartados">Descartar cambios</button></div></div></div>
+<div id="del" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="del-h" aria-describedby="del-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="del-h">¿Eliminar 2 borradores?</h2><p id="del-d" class="text-sm text-meta mt-1">«Montserrat para principiantes…» y «Calentar los dedos…». Nunca se han publicado. Quedan en el registro de actividad por si hay que recuperarlos.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="2 borradores eliminados">Eliminar 2 borradores</button></div></div></div>
+
+<script>
+const ARTS=[
+ ['Rocódromos para ir solo y encontrar compañero','rocodromos-para-ir-solo','rev','Comunidad','#B56576',[1,0],'3 oct 2026','hace 4 min','linear-gradient(150deg,#a0603e,#3a2418)',false,3],
+ ['Dónde escalar en Barcelona cuando llueve','donde-escalar-en-barcelona-cuando-llueve','draft','Dónde escalar','#3D5A80',[1,0],'—','hace 2 h','linear-gradient(150deg,#5b6b78,#1c232a)'],
+ ['Cuándo resolar: señales de que tus pies de gato lo necesitan','cuando-resolar','sched','Material','#81B29A',[1,0],'14 oct · 08:00','ayer','linear-gradient(150deg,#8a7a5a,#3b3222)'],
+ ['Cuánto cuesta realmente escalar en Barcelona al mes','cuanto-cuesta-escalar','pub','Costes','#6D597A',[1,1],'8 oct 2026','hace 1 día','linear-gradient(150deg,#8b4a3a,#2b1712)',true],
+ ['Montserrat para principiantes: tres sectores para el primer día','montserrat-principiantes','draft','Dónde escalar','#3D5A80',[1,0],'—','hace 4 días','linear-gradient(150deg,#b0835a,#4b3422)'],
+ ['Calentar los dedos sin lesionarte en 10 minutos','calentar-dedos','draft','Progresión y cuidado','#F2CC8F',[1,0],'—','hace 6 días','linear-gradient(150deg,#6d7a62,#2b3227)'],
+ ['Magnesio líquido o en polvo: lo que uso y por qué','magnesio-liquido-o-en-polvo','draft','Material','#81B29A',[0,0],'—','hace 8 días',null],
+ ['Mi primer resolado: errores que cometí y qué revisar','mi-primer-resolado','pub','Progresión y cuidado','#F2CC8F',[1,1],'30 sep 2026','hace 9 días','linear-gradient(150deg,#7a5a48,#2e211a)'],
+ ['Primer bono o cuota mensual: qué conviene según cuántas veces vas','bono-o-cuota','pub','Costes','#6D597A',[1,1],'18 sep 2026','hace 12 días','linear-gradient(150deg,#5d6a7a,#232a33)'],
+ ['Rocódromos con zona infantil para ir con hijos','rocodromos-zona-infantil','sched','Dónde escalar','#3D5A80',[1,1],'21 oct · 08:00','hace 2 días','linear-gradient(150deg,#c9a24a,#5a4417)'],
+ ['Mi primer mes escalando: lo que me hubiera gustado saber','mi-primer-mes','pub','Empezar a escalar','#E07A5F',[1,2],'12 ago 2026','hace 3 sem','linear-gradient(150deg,#4f6b5a,#1e2a23)'],
+ ['Cómo elegir pies de gato según tu nivel y estilo','elegir-pies-de-gato','pub','Material','#81B29A',[1,1],'25 sep 2026','hace 3 sem','linear-gradient(150deg,#6a5a8a,#251e33)'],
+];
+const ST={draft:'<span class="chip st-draft"><span class="dot"></span>Borrador</span>',sched:'<span class="chip st-sched"><span class="dot"></span>Programado</span>',pub:'<span class="chip st-pub"><span class="dot"></span>Publicado</span>'};
+const stHtml=(st,n)=>st==='rev'?`<span class="chip-pair" title="${n} cambios sin publicar"><span class="chip st-pub"><span class="dot"></span>Publicado</span><span class="chip st-rev">${n} cambios</span></span>`:ST[st];
+const lang=l=>`<span class="lang ${l[0]?'lang-ok':'lang-part'}">ES</span> `+(l[1]===1?'<span class="lang lang-ok">EN</span>':l[1]===2?'<span class="lang lang-part" title="EN incompleto">EN</span>':'<span class="lang lang-miss" title="Sin versión en inglés">EN</span>');
+const rows=document.getElementById('rows'),cards=document.getElementById('cards');
+ARTS.forEach(a=>{const [t,slug,st,cat,col,l,pubd,upd,ph,feat,n]=a;
+  const thumb=ph?`<span class="photo w-8 h-6 rounded flex-none" style="background-image:${ph}"></span>`:`<span class="w-8 h-6 rounded flex-none border border-dashed border-line-strong grid place-items-center text-muted" title="Sin portada"><i data-lucide="image-off" class="w-3 h-3"></i></span>`;
+  rows.insertAdjacentHTML('beforeend',`<tr data-st="${st}" aria-selected="false">
+    <td class="!pl-4 md:!pl-6"><input type="checkbox" class="cb rowcb" aria-label="Seleccionar «${t}»"></td>
+    <td class="!pl-2 overflow-hidden"><a href="articulo-editor.html" class="flex items-center gap-2.5 min-w-0 row-link">${thumb}<span class="truncate font-medium">${t}</span>${feat?'<i data-lucide="star" class="w-3.5 h-3.5 text-acc flex-none" aria-label="Destacado"></i>':''}</a></td>
+    <td>${stHtml(st,n)}</td>
+    <td class="hidden lg:table-cell overflow-hidden"><span class="inline-flex items-center gap-2 text-meta truncate"><span class="w-2 h-2 rounded-full flex-none" style="background:${col}"></span>${cat}</span></td>
+    <td>${lang(l)}</td><td class="hidden xl:table-cell text-meta num">${pubd}</td><td class="text-meta num">${upd}</td>
+    <td class="!pr-4 text-right"><button class="icon-btn rm" aria-label="Acciones de «${t}»" aria-haspopup="menu" aria-expanded="false"><i data-lucide="more-horizontal"></i></button></td></tr>`);
+  cards.insertAdjacentHTML('beforeend',`<li class="flex gap-3 px-4 py-3 items-start" data-st="${st}">
+    <input type="checkbox" class="cb rowcb mt-3" aria-label="Seleccionar «${t}»">
+    <a href="articulo-editor.html" class="flex-1 min-w-0 min-h-[44px]"><p class="font-medium leading-5">${t}</p>
+    <p class="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-meta">${stHtml(st,n)}${lang(l)}<span class="num">${st==='draft'?upd:pubd}</span></p></a>
+    <button class="icon-btn -mr-2 rm" aria-label="Acciones de «${t}»" aria-haspopup="menu"><i data-lucide="more-horizontal"></i></button></li>`);
+});
+/* vistas */
+document.querySelectorAll('#views [role=tab]').forEach(tb=>tb.onclick=()=>{document.querySelectorAll('#views [role=tab]').forEach(x=>x.setAttribute('aria-selected',x===tb));const v=tb.dataset.v;
+  document.querySelectorAll('#rows tr,#cards li').forEach(r=>{const s=r.dataset.st;r.hidden=!(v==='all'||v===s||(v==='pub'&&s==='rev')||(v==='noen'));});});
+if(location.hash==='#cambios')document.querySelector('[data-v=rev]').click();
+/* menú de fila */
+const rm=document.getElementById('rowmenu');
+document.addEventListener('click',e=>{const b=e.target.closest('.rm');if(b){e.stopPropagation();const r=b.getBoundingClientRect();rm.classList.remove('hidden');const w=220;rm.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';const h=rm.offsetHeight;rm.style.top=(r.bottom+h+8>innerHeight?r.top-h-4:r.bottom+4)+'px';b.setAttribute('aria-expanded','true');rm.querySelector('.menu-i').focus();return;}
+  if(!e.target.closest('#rowmenu'))rm.classList.add('hidden');else if(e.target.closest('.menu-i'))rm.classList.add('hidden');});
+addEventListener('keydown',e=>{if(e.key==='Escape')rm.classList.add('hidden');});
+/* selección */
+const bulk=document.getElementById('bulk'),bc=document.getElementById('bulkCount'),all=document.getElementById('all');
+function sync(){const k=document.querySelectorAll('#rows .rowcb:checked').length,m=document.querySelectorAll('#cards .rowcb:checked').length,n=Math.max(k,m);
+  bc.textContent=n+(n===1?' seleccionado':' seleccionados');bulk.classList.toggle('hidden',!n);bulk.classList.toggle('flex',!!n);
+  all.checked=k===ARTS.length;all.indeterminate=k>0&&k<ARTS.length;document.querySelectorAll('#rows tr').forEach(r=>r.setAttribute('aria-selected',r.querySelector('.rowcb').checked));}
+document.addEventListener('change',e=>{if(e.target.classList.contains('rowcb'))sync();});
+all.onchange=()=>{document.querySelectorAll('#rows .rowcb').forEach(c=>c.checked=all.checked);sync();};
+document.getElementById('bulkClose').onclick=()=>{document.querySelectorAll('.rowcb').forEach(c=>c.checked=false);sync();};
+/* estado del mockup */
+document.getElementById('demoState').onchange=e=>{['data','loading','empty','error'].forEach(s=>document.getElementById('st-'+s).hidden=s!==e.target.value);};
+</script>
+</body>
+</html>

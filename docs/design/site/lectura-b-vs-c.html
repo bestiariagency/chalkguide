@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChalkGuide · 3.18 superficies de lectura: C (elegida) vs B</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :focus-visible { outline: 2px solid #1C1915; outline-offset: 3px; }
+  .frame { position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #D9D6CE; background: #0f0f0f; }
+  .frame iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; }
+  button[aria-pressed="true"] { background: #1C1915 !important; color: #F7F6F2 !important; border-color: #1C1915 !important; }
+</style>
+</head>
+<body class="bg-[#F7F6F2] text-[#1C1915] font-sans antialiased">
+<main class="max-w-[1600px] mx-auto px-4 py-8 md:py-12">
+  <p class="text-sm text-[#5E5A52]">ChalkGuide · 3.17 / 3.18 / 3.19 · 8 oct 2026 · Búho-Pixel · <a href="index.html" class="underline">índice de mockups</a></p>
+  <h1 class="text-3xl md:text-4xl font-bold tracking-tight mt-2">Superficies de lectura: C elegida vs B</h1>
+  <p class="mt-3 max-w-3xl text-[#5E5A52]">Decisión de Xavi: <strong class="text-[#1C1915]">C · tema claro con la navegación oscura</strong> (cabecera, menú, desplegable Guías y pie). B "papel sobre pizarra" queda solo como referencia. Mismo contenido en las dos columnas; cada mockup se abre a pantalla completa con el enlace.</p>
+
+  <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+    <div role="group" aria-label="Pantalla" class="flex flex-wrap gap-2" id="screens">
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white" data-p="lectura-articulo.html" aria-pressed="true">Artículo</button>
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white" data-p="lectura-comparador.html#comparacion" aria-pressed="false">Comparador (3 modelos)</button>
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white" data-p="lectura-pie-de-gato.html" aria-pressed="false">Ficha de pie de gato</button>
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white" data-p="buscador-rocodromos.html" aria-pressed="false">Buscador · rocódromos</button>
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white" data-p="buscador-blog.html?q=rocodromo" aria-pressed="false">Buscador · blog</button>
+    </div>
+    <div role="group" aria-label="Viewport" class="flex gap-2" id="vps">
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white font-mono text-sm" data-w="1440" aria-pressed="true">1440</button>
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white font-mono text-sm" data-w="768" aria-pressed="false">768</button>
+      <button type="button" class="px-3 min-h-[44px] rounded-md border border-[#D9D6CE] bg-white font-mono text-sm" data-w="390" aria-pressed="false">390</button>
+    </div>
+  </div>
+
+  <div class="mt-6 grid lg:grid-cols-2 gap-6" id="cols">
+    <section aria-labelledby="h-c">
+      <div class="flex items-baseline justify-between gap-3"><h2 id="h-c" class="font-semibold text-lg">C · claro + navegación oscura <span class="ml-2 text-xs font-semibold bg-[#E8923A] text-[#1a0a00] px-2 py-0.5 rounded-full align-middle">Elegida</span></h2><a class="text-sm underline" data-open="c" href="#">Abrir</a></div>
+      <div class="frame mt-2" data-frame="c"><iframe title="Opción C" loading="lazy"></iframe></div>
+    </section>
+    <section aria-labelledby="h-b">
+      <div class="flex items-baseline justify-between gap-3"><h2 id="h-b" class="font-semibold text-lg text-[#5E5A52]">B · papel sobre pizarra <span class="ml-2 text-xs font-semibold border border-[#5E5A52] px-2 py-0.5 rounded-full align-middle">Referencia</span></h2><a class="text-sm underline" data-open="b" href="#">Abrir</a></div>
+      <div class="frame mt-2" data-frame="b"><iframe title="Opción B" loading="lazy"></iframe></div>
+    </section>
+  </div>
+  <p class="mt-6 text-sm text-[#5E5A52] max-w-3xl">Las vistas de 1440 y 768 están reducidas para caber en dos columnas (el iframe mide de verdad 1440 o 768 px). El razonamiento, los tokens y los ratios están en <code class="bg-white border px-1 rounded">README.md §9</code>.</p>
+</main>
+<script>
+(() => {
+  let page = 'lectura-articulo.html', w = 1440;
+  const H = 900;
+  const url = (m) => { const [p, h] = page.split('#'); const sep = p.includes('?') ? '&' : '?'; return `pages/${p}${sep}modo=${m}${h ? '#' + h : ''}`; };
+  const layout = () => document.querySelectorAll('[data-frame]').forEach(f => {
+    const ifr = f.querySelector('iframe'), avail = f.parentElement.clientWidth, s = Math.min(1, avail / w);
+    ifr.style.width = w + 'px'; ifr.style.height = (H / s) + 'px'; ifr.style.transform = `scale(${s})`;
+    f.style.width = (w * s) + 'px'; f.style.height = H + 'px';
+  });
+  const load = () => {
+    document.querySelectorAll('[data-frame]').forEach(f => { const m = f.dataset.frame, src = url(m); const ifr = f.querySelector('iframe'); if (ifr.getAttribute('src') !== src) ifr.src = src; document.querySelector(`[data-open="${m}"]`).href = src; });
+    document.getElementById('cols').className = 'mt-6 grid gap-6 ' + (w === 390 ? 'sm:grid-cols-2 max-w-[860px]' : 'lg:grid-cols-2');
+    requestAnimationFrame(layout);
+  };
+  const group = (id, fn) => document.querySelectorAll(`#${id} button`).forEach(b => b.addEventListener('click', () => { document.querySelectorAll(`#${id} button`).forEach(x => x.setAttribute('aria-pressed', String(x === b))); fn(b); load(); }));
+  group('screens', b => page = b.dataset.p);
+  group('vps', b => w = +b.dataset.w);
+  addEventListener('resize', layout);
+  load();
+})();
+</script>
+</body>
+</html>

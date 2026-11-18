@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Blog · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="blog" data-route-es="/blog" data-route-en="/en/blog">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-8 md:pt-10">
+    <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Blog</span></li></ol></nav>
+    <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5">Blog</h1>
+    <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">Guías prácticas y lo que voy aprendiendo. Sin relleno.</p>
+    <nav aria-label="Categorías" class="mt-8 -mx-4 px-4 overflow-x-auto">
+      <ul class="flex gap-2 whitespace-nowrap">
+        <li><a href="blog.html" aria-current="page" class="chip !bg-accent-muted !border-accent !text-accent">Todo <span class="font-mono text-[13px] opacity-80">5</span></a></li>
+        <li><a href="blog-categoria.html" class="chip">Dónde escalar <span class="font-mono text-[13px] text-meta">2</span></a></li>
+        <li><a href="#" class="chip">Material <span class="font-mono text-[13px] text-meta">1</span></a></li>
+        <li><a href="#" class="chip">Costes <span class="font-mono text-[13px] text-meta">1</span></a></li>
+        <li><a href="#" class="chip">Comunidad <span class="font-mono text-[13px] text-meta">1</span></a></li>
+      </ul>
+    </nav>
+  </section>
+
+  <!-- Destacados -->
+  <section class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-12" aria-labelledby="h-feat">
+    <h2 id="h-feat" class="sr-only">Destacados</h2>
+    <div class="grid md:grid-cols-3 gap-3">
+      <article class="card md:col-span-2 flex flex-col" data-reveal>
+        <div class="photo aspect-[16/9]"><div class="zoom" style="background:linear-gradient(160deg,#3a2f27,#141210)"></div><span class="tag">foto · taquilla de un rocódromo</span></div>
+        <div class="p-6"><p class="label-mini">Costes</p><h3 class="display text-2xl md:text-[1.9rem] mt-3"><a href="blog-articulo.html" class="stretch t-link">Cuánto cuesta realmente escalar en Barcelona al mes</a></h3><p class="text-meta mt-2">Cuotas, bonos, matrícula y material: el número real a dos visitas por semana.</p></div>
+      </article>
+      <article class="card flex flex-col" data-reveal style="--i:1">
+        <div class="photo aspect-[16/9]"><div class="zoom" style="background:linear-gradient(160deg,#262c33,#121417)"></div></div>
+        <div class="p-6"><p class="label-mini">Dónde escalar</p><h3 class="text-xl font-medium leading-snug mt-3"><a href="#" class="stretch t-link">Dónde escalar en Barcelona cuando llueve</a></h3><p class="text-meta text-[15px] mt-2">Plan B para los días de lluvia: rocódromos con más metros, menos colas y buen ambiente.</p></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Últimos -->
+  <section class="max-w-page mx-auto px-4 md:px-6 pb-16 md:pb-24" aria-labelledby="h-last">
+    <h2 id="h-last" class="label-mini">Últimos</h2>
+    <ul class="mt-4 border-t-[0.5px] border-line">
+      <li class="border-b-[0.5px] border-line"><article class="relative grid md:grid-cols-[140px_minmax(0,1fr)_120px] gap-x-6 gap-y-1 py-6 group">
+        <p class="label-mini md:pt-1.5">Comunidad</p>
+        <div><h3 class="text-xl font-medium leading-snug"><a href="#" class="t-link group-hover:bg-[length:100%_1.5px] after:absolute after:inset-0">Rocódromos para ir solo y encontrar compañero</a></h3><p class="text-meta text-[15px] mt-1">Dónde es más fácil llegar solo y acabar escalando con alguien.</p></div>
+        <p class="font-mono text-[13px] text-meta md:text-right md:pt-1.5">28.09.26</p></article></li>
+      <li class="border-b-[0.5px] border-line"><article class="relative grid md:grid-cols-[140px_minmax(0,1fr)_120px] gap-x-6 gap-y-1 py-6 group">
+        <p class="label-mini md:pt-1.5">Material</p>
+        <div><h3 class="text-xl font-medium leading-snug"><a href="#" class="t-link group-hover:bg-[length:100%_1.5px] after:absolute after:inset-0">Mi primer resolado: errores que cometí y qué revisar</a></h3><p class="text-meta text-[15px] mt-1">Lo que aprendí la primera vez que llevé mis pies de gato a resolar.</p></div>
+        <p class="font-mono text-[13px] text-meta md:text-right md:pt-1.5">14.09.26</p></article></li>
+      <li class="border-b-[0.5px] border-line"><article class="relative grid md:grid-cols-[140px_minmax(0,1fr)_120px] gap-x-6 gap-y-1 py-6 group">
+        <p class="label-mini md:pt-1.5">Dónde escalar</p>
+        <div><h3 class="text-xl font-medium leading-snug"><a href="#" class="t-link group-hover:bg-[length:100%_1.5px] after:absolute after:inset-0">Rocódromos con zona infantil para ir con hijos</a></h3><p class="text-meta text-[15px] mt-1">Dónde escalar con niños en Barcelona sin que la sesión sea una carrera de obstáculos.</p></div>
+        <p class="font-mono text-[13px] text-meta md:text-right md:pt-1.5">05.09.26</p></article></li>
+    </ul>
+  </section>
+</main>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+</body>
+</html>

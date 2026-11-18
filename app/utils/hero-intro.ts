@@ -1,0 +1,26 @@
+/** sessionStorage flag of the home intro; also read by the inline head script (nuxt.config.ts). */
+export const HERO_INTRO_KEY = 'cg-hero-intro'
+
+/** Attribute useHeroIntro sets on <html> once it has taken over the intro (read by the head script). */
+export const HERO_INTRO_MOUNTED_ATTR = 'data-intro-mounted'
+/** Without hydration (blocked or failed chunks) the intro gives up after this long. */
+export const HERO_INTRO_FAILSAFE_MS = 3000
+
+/**
+ * Inline head script (nuxt.config.ts): marks `js`, decides the intro before first paint (home only,
+ * once per session, never with reduced motion) and, until the app takes over, covers two cases the
+ * Vue code cannot: a failsafe that removes `has-intro` after 3 s if hydration never happened, and the
+ * skip gesture (pointer / key) working before hydration.
+ */
+export function heroIntroHeadScript(): string {
+  return (
+    `(function(){var d=document.documentElement;d.classList.add('js');try{` +
+    `if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&/^\\/(en\\/?)?$/.test(location.pathname)&&!sessionStorage.getItem('${HERO_INTRO_KEY}')){` +
+    `d.classList.add('has-intro');` +
+    `var skip=function(){if(d.hasAttribute('${HERO_INTRO_MOUNTED_ATTR}'))return;` +
+    `d.classList.remove('has-intro');try{sessionStorage.setItem('${HERO_INTRO_KEY}','1')}catch(e){}};` +
+    `addEventListener('pointerdown',skip,{once:true});addEventListener('keydown',skip,{once:true});` +
+    `setTimeout(function(){if(!d.hasAttribute('${HERO_INTRO_MOUNTED_ATTR}'))d.classList.remove('has-intro')},${HERO_INTRO_FAILSAFE_MS})` +
+    `}}catch(e){}})()`
+  )
+}

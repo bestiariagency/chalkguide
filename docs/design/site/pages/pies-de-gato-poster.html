@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Póster de pies de gato sin foto · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: {
+      background:'var(--color-background)', board:'var(--color-board)', elevated:'var(--color-elevated)', tray:'var(--color-tray)',
+      line:'var(--color-line)', 'line-strong':'var(--color-line-strong)', control:'var(--color-control)',
+      accent:'var(--color-accent)', 'accent-fill':'var(--color-accent-fill)', 'accent-muted':'var(--color-accent-muted)', 'on-accent':'var(--color-on-accent)', chalk:'var(--color-chalk)',
+      foreground:'var(--color-foreground)', prose:'var(--color-prose)', meta:'var(--color-meta)', muted:'var(--color-muted)',
+      paper:'#f4f1ea', ink:'#1c1a17', 'meta-ink':'#5e584e', 'accent-ink':'#9a4a16',
+      'success-text':'var(--color-success-text)', 'danger-text':'var(--color-danger-text)',
+    },
+    fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['"JetBrains Mono"','ui-monospace','monospace'], hand:['Caveat','cursive'] },
+    maxWidth: { page:'1200px', read:'680px' },
+  } } }
+</script>
+<style>
+  /* ===== Tokens existentes (main.css) ===== */
+  :root {
+    --color-background:#f4f1ea; --color-board:#fbf9f5; --color-elevated:#ebe6dc; --color-tray:#efebe3;
+    --color-line:#dcd5c8; --color-line-strong:#c2b9a9; --color-control:#827a6d;
+    --color-accent:#9a4a16; --color-accent-fill:#e8923a; --color-accent-muted:#f7e4d0; --color-on-accent:#1a0a00; --color-chalk:#d2702a;
+    --color-foreground:#1c1a17; --color-prose:#34302a; --color-meta:#5e584e; --color-muted:#6b6559;
+    --color-success-text:#1a6e4e; --color-danger-text:#b02a25;
+    --bar-track:#e3ddd1;
+    --ring:0 0 0 2px var(--color-background),0 0 0 4px var(--color-accent);
+
+    /* ===== Tokens NUEVOS de esta propuesta ===== */
+    --text-section:clamp(2rem,1.55rem + 2.4vw,3.75rem);      /* 32-34 px en móvil, 60 px en 1440 */
+    --text-section-lg:clamp(2.375rem,1.6rem + 3.6vw,4.5rem); /* 38-40 px en móvil, 72 px en 1440 (solo la carta) */
+    --radius-slab:6px;
+    --shadow-slab:0 1px 0 #d6cfc1,0 2px 0 #c9c1b1,0 3px 0 #b8afa0,0 22px 34px -22px rgb(28 26 23 / .5);
+    --shadow-slab-dark:0 1px 0 #c8c0b1,0 2px 0 #8e8678,0 3px 0 #5c564b,0 28px 44px -22px #000;
+    --shadow-slab-ink:0 1px 0 #2a2a2a,0 2px 0 #3a3733,0 3px 0 #4d4942,0 18px 26px -20px rgb(28 26 23 / .55);
+    --dust:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  /* Ámbitos: igual que .chrome-dark en main.css, redeclaran la paleta. */
+  .chrome-dark {
+    --color-background:#0f0f0f; --color-board:#1a1a1a; --color-elevated:#242424; --color-tray:#242424;
+    --color-line:#2a2a2a; --color-line-strong:#333; --color-control:#75716a;
+    --color-accent:#e8923a; --color-accent-muted:#3a2010; --color-chalk:#e8923a;
+    --color-foreground:#f0ede8; --color-prose:#dcd8d1; --color-meta:#a19d94; --color-muted:#888880;
+    --color-success-text:#3dbe93; --color-danger-text:#f06a68;
+    --bar-track:#242424; --ring:0 0 0 2px #0f0f0f,0 0 0 4px #e8923a;
+    background-color:var(--color-background); color:var(--color-foreground);
+  }
+  /* NUEVO: el campo naranja. Texto #1a0a00 (7,91:1) y secundario #3d2008 (6,11:1). */
+  .field-orange {
+    --color-foreground:#1a0a00; --color-meta:#3d2008; --color-accent:#1a0a00;
+    --ring:0 0 0 2px #e8923a,0 0 0 4px #1a0a00;
+    background-color:#e8923a; color:#1a0a00;
+  }
+  /* Lo que va dentro de la placa de papel vuelve a la paleta clara. */
+  .on-paper {
+    --color-background:#f4f1ea; --color-foreground:#1c1a17; --color-meta:#5e584e; --color-accent:#9a4a16;
+    --ring:0 0 0 2px #f4f1ea,0 0 0 4px #9a4a16; color:#1c1a17;
+  }
+
+  html { scroll-behavior:smooth; background:#f4f1ea; }
+  body { font-family:Inter,system-ui,sans-serif; font-feature-settings:'cv11','ss01'; -webkit-font-smoothing:antialiased; }
+  :focus { outline:none; }
+  :focus-visible { box-shadow:var(--ring); border-radius:4px; }
+
+  /* ===== Título de sección (el token) ===== */
+  .title-section, .title-section-lg {
+    font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%;
+    text-transform:uppercase; letter-spacing:-.02em; line-height:1.04; text-wrap:balance;
+  }
+  .title-section { font-size:var(--text-section); }
+  .title-section-lg { font-size:var(--text-section-lg); }
+
+  /* ===== Materia ===== */
+  .slab { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab); }
+  .slab-dark { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab-dark); }
+  .slab-ink { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab-ink); }
+  .field-orange .slab-dark { box-shadow:0 1px 0 #d6cfc1,0 2px 0 #b8afa0,0 3px 0 #8e8678,0 24px 36px -24px rgb(26 10 0 / .6); }
+  .dust { position:relative; isolation:isolate; }
+  .dust::before { content:''; position:absolute; inset:0; z-index:-1; opacity:.26; pointer-events:none; background-image:var(--dust); }
+  .field-orange.dust::before { opacity:.34; }
+
+  /* ===== Segmentado (el componente actual, sin cambios) ===== */
+  .seg { display:inline-grid; grid-auto-flow:column; grid-auto-columns:1fr; padding:4px; border-radius:8px; background:var(--color-background); border:.5px solid var(--color-line-strong); }
+  .seg button { min-height:44px; padding:6px 16px; border-radius:6px; font-size:15px; line-height:1.2; font-weight:500; color:var(--color-meta); transition:color 200ms; border:.5px solid transparent; }
+  .seg button:hover { color:var(--color-foreground); }
+  .seg button[aria-selected=true], .seg button[aria-pressed=true] { color:var(--color-foreground); background:var(--color-elevated); border-color:var(--color-accent); }
+
+  /* ===== Botones ===== */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 18px; border-radius:8px; font-size:15px; font-weight:500; transition:background-color 200ms,border-color 200ms,color 200ms,transform 150ms; white-space:nowrap; }
+  .btn:active { transform:scale(.98); }
+  .btn .arr { transition:transform 200ms; }
+  .btn:hover .arr { transform:translateX(3px); }
+  .btn-ghost { border:1px solid var(--color-control); color:var(--color-foreground); }
+  .btn-ghost:hover { background:var(--color-elevated); border-color:var(--color-meta); }
+  .btn-ink { background:#1c1a17; color:#fbf9f5; min-height:52px; }
+  .btn-ink:hover { background:#000; }
+
+  /* ===== Etiquetas de transparencia: mismas reglas, ya no en mono ===== */
+  .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:4px; font-size:12px; line-height:1.35; font-weight:500; white-space:nowrap; }
+  .badge-acc { background:var(--color-accent-muted); color:var(--color-accent); }
+  .badge-stale { border:1px dashed var(--color-control); color:var(--color-meta); }
+  .badge-ok { background:var(--color-elevated); color:var(--color-meta); }
+  .badge svg { width:14px; height:14px; flex-shrink:0; }
+
+  /* ===== Filas con flecha ===== */
+  .uline { background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat; transition:background-size 300ms cubic-bezier(.2,.8,.2,1); padding-bottom:2px; }
+  a:hover > * .uline, a:hover .uline, .group:hover .uline { background-size:100% 1.5px; }
+  .path-row .arr { transition:transform 200ms cubic-bezier(.2,.8,.2,1); }
+  .path-row:hover .arr { transform:translateX(4px); }
+  .link { background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat; padding-bottom:2px; }
+  .link:hover { background-size:100% 1.5px; color:var(--color-foreground); }
+
+  .bar { display:block; height:4px; border-radius:99px; background:var(--bar-track); overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:99px; background:var(--color-chalk); }
+  th.sortable button { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:13px; font-weight:500; color:var(--color-meta); transition:color 150ms; }
+  th.sortable button:hover { color:var(--color-foreground); }
+  th[aria-sort] button { color:var(--color-foreground); }
+  th.sortable svg { opacity:.45; transition:opacity 150ms; }
+  th[aria-sort] svg, th.sortable button:hover svg { opacity:1; }
+  .gym-row { transition:background-color 150ms; }
+  .gym-row:hover { background:color-mix(in oklab,var(--color-elevated) 45%,transparent); }
+
+  /* ===== Póster tipográfico (spec en pies-de-gato-poster.html) ===== */
+  .poster { position:relative; display:block; overflow:hidden; background:var(--color-tray-fixed,#efebe3); color:#1c1a17; container-type:size; }
+  .poster__txt { position:absolute; inset:auto 5.5cqw 5cqw 5.5cqw; }
+  .poster__txt--top { inset:6cqw 5.5cqw auto 5.5cqw; }
+  .poster__brand { display:block; font-size:clamp(12px,4.4cqw,14px); line-height:1.2; font-weight:500; color:#5e584e; margin-bottom:.5em; }
+  .poster__name { display:block; font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%; text-transform:uppercase; letter-spacing:-.03em; line-height:.92;
+    font-size:min(31cqw,calc(89cqw / var(--n)),calc(58cqh / var(--l))); }
+  .poster__name span { display:block; white-space:nowrap; }
+  .poster__mono { display:none; }
+  @container (max-width:119px) {
+    .poster__brand { display:none; }
+    .poster[data-long] .poster__name { display:none; }
+    .poster[data-long] .poster__mono { display:block; font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%; line-height:.9; letter-spacing:-.03em; font-size:44cqw; }
+  }
+  .sheen { position:relative; }
+  .sheen::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(118deg,rgb(255 255 255 / 0) 30%,rgb(255 255 255 / .28) 46%,rgb(255 255 255 / 0) 62%); }
+  .sheen > * { z-index:1; }
+  .photo-empty { background:linear-gradient(150deg,#3a2f27 0%,#1f1b18 55%,#121212 100%); }
+  .ring-chalk { position:relative; display:inline-block; padding:.28em .5em; }
+  .ring-chalk svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; fill:none; stroke:var(--color-chalk); stroke-linecap:round; }
+
+  /* ===== Formulario sobre placa ===== */
+  .field-input { width:100%; min-height:52px; padding:0 14px; border-radius:8px; border:1px solid #827a6d; background:#fbf9f5; color:#1c1a17; font-size:16px; transition:border-color 150ms; }
+  .field-input::placeholder { color:#6b6559; }
+  .field-input:hover { border-color:#5e584e; }
+  .field-input:focus-visible { border-radius:8px; }
+  .field-input[aria-invalid=true] { border-color:#b02a25; }
+  .check { appearance:none; width:22px; height:22px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #827a6d; background:#fbf9f5; display:grid; place-items:center; transition:background-color 200ms,border-color 200ms; cursor:pointer; }
+  .check:checked { background:#e8923a; border-color:#e8923a; }
+  .check:checked::after { content:''; width:6px; height:11px; border:solid #1a0a00; border-width:0 2px 2px 0; transform:translateY(-1px) rotate(45deg); }
+  .check[aria-invalid=true] { border-color:#b02a25; }
+  .success-check circle { stroke-dasharray:152; stroke-dashoffset:152; animation:draw 600ms cubic-bezier(.2,.8,.2,1) forwards; }
+  .success-check path { stroke-dasharray:40; stroke-dashoffset:40; animation:draw 300ms cubic-bezier(.2,.8,.2,1) 450ms forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .spin { width:16px; height:16px; border-radius:50%; border:2px solid rgb(251 249 245 / .35); border-top-color:#fbf9f5; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ===== Dock: comportamiento propuesto (ver README §12.8) ===== */
+  .dock { position:fixed; top:8px; z-index:40; left:50%; transform:translate(-50%,0); display:flex; align-items:center; height:40px; padding-right:16px; border-radius:11px; background:#e8923a; color:#1a0a00; box-shadow:0 8px 24px -10px rgb(0 0 0 / .55); font-size:15px; font-weight:500; transition:opacity 220ms,visibility 0s; }
+  .dock[hidden-state] { opacity:0; visibility:hidden; transition:opacity 220ms,visibility 0s linear 220ms; }
+  .dock img { width:40px; height:40px; display:block; }
+  @media (max-width:1023px) { .dock { left:16px; transform:none; padding-right:0; } .dock span { display:none; } }
+
+  /* ===== Solo mockup ===== */
+  .mock-bar { font-size:13px; }
+  .mock-note { display:none; }
+  body.notes .mock-note { display:block; max-width:760px; margin-bottom:32px; padding:12px 14px; border:1px dashed currentColor; border-radius:6px; font-size:14px; line-height:1.5; color:inherit; }
+
+  @media (prefers-reduced-motion:reduce) {
+    *,*::before,*::after { animation-duration:0s !important; animation-iteration-count:1 !important; transition-duration:0s !important; transition-delay:0s !important; scroll-behavior:auto !important; }
+    .success-check circle,.success-check path { stroke-dashoffset:0; }
+  }
+
+  .tile { position:relative; display:block; }
+  .shoe-card { display:flex; flex-direction:column; height:100%; overflow:hidden; border-radius:12px; border:.5px solid var(--color-line-strong); background:var(--color-board); transition:border-color 200ms; }
+  .shoe-card:hover { border-color:var(--color-control); }
+  .shoe-card:hover .poster { background:#e6e0d5; }
+  .poster { transition:background-color 200ms; }
+  .poster__name { transform-origin:0 100%; transition:transform 600ms cubic-bezier(.2,.8,.2,1); }
+  .shoe-card:hover .poster__name { transform:scale(1.02); }
+  .icon-btn { display:grid; place-items:center; width:44px; height:44px; border-radius:99px; }
+  .icon-btn > span { display:grid; place-items:center; width:32px; height:32px; border-radius:99px; border:.5px solid var(--color-line-strong); background:var(--color-board); color:var(--color-foreground); }
+  .dots { display:inline-flex; gap:2px; } .dots i { display:block; width:12px; height:4px; border-radius:2px; background:var(--bar-track); } .dots i.on { background:var(--color-chalk); }
+  .spec { border-collapse:collapse; width:100%; font-size:14px; } .spec th,.spec td { text-align:left; padding:8px 12px 8px 0; border-bottom:.5px solid var(--color-line-strong); vertical-align:top; } .spec th { font-weight:500; white-space:nowrap; }
+</style>
+</head>
+<body class="bg-background text-foreground text-base leading-relaxed">
+<div class="mock-bar bg-white text-[#1c1a17] border-b border-[#ddd]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+    <strong class="font-medium">Póster de pies de gato sin foto · propuesta para Xavi</strong>
+    <a class="underline" href="home-v2.html#pies-de-gato">En la home</a>
+    <a class="underline" href="#real">Las 15 reales</a>
+    <a class="underline" href="#limites">Nombres largos</a>
+    <a class="underline" href="#spec">Spec</a>
+  </div>
+</div>
+
+<section class="max-w-page mx-auto px-4 md:px-6 py-14 md:py-20">
+  <div class="grid lg:grid-cols-12 gap-x-6 gap-y-10 items-center">
+    <div class="lg:col-span-5">
+      <h1 class="title-section">Sin foto, el nombre es el póster</h1>
+      <p class="mt-5 text-[17px] leading-[1.7] text-meta max-w-[46ch]">Es la misma idea que la tarjeta «7 NOV» del hero: cuando no hay imagen, la tipografía ocupa su sitio. La superficie no cambia respecto a las fotos (<code class="font-mono text-[14px]">bg-tray</code>), así que un listado mixto se lee como una sola familia.</p>
+    </div>
+    <div class="lg:col-span-7 grid grid-cols-2 gap-4 md:gap-6">
+      <figure>
+        <img src="_home-v2/hero-7nov.jpg" alt="Tarjeta «7 NOV» del hero actual." class="w-full" style="border-radius:6px">
+        <figcaption class="mt-3 text-sm text-meta">Hero, sin cambios</figcaption>
+      </figure>
+      <figure>
+        <span class="slab sheen block overflow-hidden relative bg-[#efebe3] text-ink" style="aspect-ratio:350/460">
+          <span class="poster absolute inset-x-0 top-0 h-[66%] !bg-transparent" style="--n:5.68;--l:2" aria-hidden="true"><span class="poster__txt poster__txt--top"><span class="poster__name"><span>Instinct</span><span>VS</span></span></span></span>
+          <span class="absolute inset-x-0 bottom-0 p-3 md:p-4"><span class="block text-[13px] leading-tight font-medium text-meta-ink">Scarpa</span><span class="block mt-1 text-[17px] md:text-[19px] leading-[1.25] font-medium tracking-[-.01em]">Instinct VS</span></span>
+        </span>
+        <figcaption class="mt-3 text-sm text-meta">Póster en placa</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="real" class="border-t border-line-strong">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-14 md:py-20">
+    <h2 class="text-[28px] leading-[1.2] tracking-[-.015em] font-medium">/pies-de-gato: las 15 tarjetas reales</h2>
+    <p class="mt-2 text-meta max-w-[62ch]">12 sin foto y 3 con foto. Solo cambia la baldosa: controles, etiquetas y datos siguen en su sitio. El nombre se ancla abajo para no chocar con «los uso» ni con los botones.</p>
+    <div id="grid" class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"></div>
+  </div>
+</section>
+
+<section id="limites" class="bg-elevated">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-14 md:py-20">
+    <h2 class="text-[28px] leading-[1.2] tracking-[-.015em] font-medium">Nombres largos y baldosas pequeñas</h2>
+    <p class="mt-2 text-meta max-w-[62ch]">Marcas y modelos de prueba, no del catálogo actual, para forzar el peor caso. Por debajo de 120 px de ancho, un nombre ancho sería ilegible y pasa a iniciales; a esa medida el nombre real siempre está al lado.</p>
+    <div id="stress" class="mt-8 space-y-10"></div>
+  </div>
+</section>
+
+<section id="spec" class="max-w-page mx-auto px-4 md:px-6 py-14 md:py-20">
+  <h2 class="text-[28px] leading-[1.2] tracking-[-.015em] font-medium">Spec para <code class="font-mono text-[22px]">ShoesPhotoTile</code></h2>
+  <div class="overflow-x-auto mt-6">
+    <table class="spec max-w-[860px]">
+      <tr><th>Props nuevas</th><td><code>brand</code> y <code>model</code>. Las pasan los 7 usos actuales: ShoesCard, ShoesGlanceTable, ShoesGlanceCards, ShoesCompareTable, ShoesCompareByAttribute, ShoesCompareTray y ShoesDetailDrawer.</td></tr>
+      <tr><th>Líneas</th><td>Una palabra por línea, como «7 / NOV». Con más de 3 palabras se une el par contiguo más corto hasta quedar en 3.</td></tr>
+      <tr><th>Tamaño</th><td><code>min(31cqw, 89cqw / n, 58cqh / l)</code>. <code>n</code> es el ancho en em de la línea más ancha, calculado con la tabla de anchos de Archivo que está en el script de este archivo; <code>l</code> es el número de líneas. 31cqw es el tamaño del «7 NOV». Contar letras no sirve: MOMENTUM y DRAGO se cortaban.</td></tr>
+      <tr><th>Posición</th><td>Abajo a la izquierda por defecto. Arriba, como el hero, solo en la placa de la home, donde no hay controles encima.</td></tr>
+      <tr><th>Pequeña</th><td>Menos de 120 px: sin marca. Si además <code>n ≥ 7</code>, dos iniciales como máximo.</td></tr>
+      <tr><th>Hover</th><td>Fondo <code>tray-hover</code> en 200 ms y nombre a <code>scale(1.02)</code> en 600 ms, igual que la foto. Sin movimiento con <code>prefers-reduced-motion</code>.</td></tr>
+      <tr><th>Accesibilidad</th><td>Decorativa, como hoy: <code>aria-hidden</code>. El nombre accesible lo lleva el enlace de al lado. Tinta sobre tray: 14,6:1; marca: 5,92:1.</td></tr>
+      <tr><th>Se retira</th><td><code>public/images/shoe-placeholder.png</code>, cuando ya no la use ningún componente.</td></tr>
+    </table>
+  </div>
+</section>
+
+<script>
+  /* Función pura: la misma que debe ir en utils/ */
+  function posterLines(model) {
+    const w = model.trim().split(/\s+/);
+    while (w.length > 3) {
+      let at = 0, min = Infinity;
+      for (let i = 0; i < w.length - 1; i++) { const l = w[i].length + w[i + 1].length; if (l < min) { min = l; at = i; } }
+      w.splice(at, 2, w[at] + ' ' + w[at + 1]);
+    }
+    return w;
+  }
+  /* Ancho real de Archivo Expanded 700 en em, medido en navegador. Tracking -.03em por carácter. */
+  const W = { A:.92,B:.9,C:.94,D:.93,E:.87,F:.79,G:1.01,H:.98,I:.36,J:.71,K:.93,L:.73,M:1.13,N:.97,O:1.02,P:.86,Q:1.02,R:.93,S:.86,T:.83,U:.95,V:.88,W:1.2,X:.92,Y:.88,Z:.84,0:.77,1:.68,2:.77,3:.77,4:.75,5:.77,6:.77,7:.7,8:.79,9:.77,'+':.73,'-':.42,'.':.33,' ':.31 };
+  const lineWidth = l => [...l.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')].reduce((sum, c) => sum + (W[c] ?? .92) - .03, 0);
+  function posterHTML(model, brand, top) {
+    const lines = posterLines(model), n = +Math.max(...lines.map(lineWidth)).toFixed(2);
+    const mono = model.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+    return `<span class="poster size-full" ${n >= 7 ? 'data-long' : ''} style="--n:${n};--l:${lines.length}" aria-hidden="true"><span class="poster__txt ${top ? 'poster__txt--top' : ''}">${brand ? `<span class="poster__brand">${brand}</span>` : ''}<span class="poster__name">${lines.map(l => `<span>${l}</span>`).join('')}</span><span class="poster__mono">${mono}</span></span></span>`;
+  }
+  const M = 'https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/';
+  const shoes = [
+    ['Simond','Rock+','Plano','Velcro','Simond Grip','40–55 €',0,0],
+    ['Evolv','Defy','Plano','Velcro','TRAX SAS','75–90 €',0,0],
+    ['Black Diamond','Momentum','Plano','Velcro','NeoFriction','80–95 €',0,0],
+    ['La Sportiva','Tarantulace','Plano','Cordones','FriXion RS','80–95 €',1,1,M+'fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg'],
+    ['Scarpa','Force V','Plano','Velcro','Vibram XS Edge','90–110 €',0,0],
+    ['Scarpa','Veloce','Moderado','Velcro','Vibram XS Grip','95–115 €',1,1],
+    ['La Sportiva','Finale','Moderado','Cordones','Vibram XS Edge','100–125 €',0,0],
+    ['Ocun','Ozone','Moderado','Velcro','Ocun CAT','120–140 €',0,0],
+    ['Scarpa','Vapor V','Moderado','Velcro','Vibram XS Edge','130–155 €',0,0],
+    ['La Sportiva','Skwama','Agresivo','Velcro','Vibram XS Grip2','145–170 €',0,1,M+'e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg'],
+    ['Scarpa','Instinct VS','Agresivo','Velcro','Vibram XS Edge','145–170 €',0,1],
+    ['Tenaya','Oasi','Moderado','Velcro','Vibram XS Grip2','145–165 €',0,0],
+    ['La Sportiva','Miura VS','Moderado','Velcro','Vibram XS Edge','150–175 €',0,0],
+    ['La Sportiva','Solution','Agresivo','Velcro','Vibram XS Grip2','150–175 €',1,1,M+'0fa13ccc-d282-42e8-a64a-08f3e2953a47/1-solution.jpg'],
+    ['Scarpa','Drago','Agresivo','Velcro','Vibram XS Grip2','160–185 €',0,0],
+  ];
+  const lvl = { Plano:1, Moderado:2, Agresivo:3 };
+  const ico = { eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>', plus:'<path d="M12 5v14M5 12h14"/>' };
+  const svg = p => `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+  document.getElementById('grid').innerHTML = shoes.map(([b, m, pr, cl, ru, pc, used, aff, img]) => `
+    <article class="shoe-card relative">
+      <div class="relative">
+        <span class="tile block" style="aspect-ratio:4/3">${img ? `<span class="absolute inset-0 bg-tray"><img src="${img}" alt="" class="size-full object-contain p-3 mix-blend-multiply"></span>` : posterHTML(m, b)}</span>
+        ${used ? '<span class="absolute top-3 left-3 rounded-[4px] bg-foreground text-background px-2 py-[5px] text-[12px] leading-[1.3] font-medium">los uso</span>' : ''}
+        <div class="absolute top-3 right-3 z-[2] flex items-center">
+          <button type="button" class="icon-btn" aria-label="Vista rápida de ${m}"><span>${svg(ico.eye)}</span></button>
+          <button type="button" class="icon-btn" aria-pressed="false" aria-label="Añadir ${m} a la comparación"><span>${svg(ico.plus)}</span></button>
+        </div>
+      </div>
+      <div class="flex flex-1 flex-col p-5">
+        <p class="text-[13px] font-medium text-meta">${b}</p>
+        <h3 class="mt-1 text-[18px] leading-snug font-medium"><a href="#" class="after:absolute after:inset-0">${m}</a></h3>
+        <p class="mt-2 flex items-center gap-2 text-sm text-meta"><span class="dots" aria-hidden="true">${[1,2,3].map(i => `<i class="${i <= lvl[pr] ? 'on' : ''}"></i>`).join('')}</span>${pr} · ${cl}</p>
+        <p class="mt-2 text-sm text-meta">${ru}</p>
+        <div class="mt-auto pt-4"><div class="flex items-center justify-between gap-2 border-t border-line pt-3"><p class="font-mono text-accent" style="font-variant-numeric:tabular-nums">${pc}</p>${aff ? '<span class="badge badge-acc">afiliado</span>' : ''}</div></div>
+      </div>
+    </article>`).join('');
+
+  const tests = [['La Sportiva','Tarantulace'],['Black Diamond','Momentum'],['Scarpa','Instinct VS'],['Red Chili','Voltage Lace LV Plus'],['Five Ten','Hiangle Pro Comp'],['Mad Rock','Drone Comp HV Super Long'],['Evolv','Defy'],['Simond','Rock+']];
+  const sizes = [[360,'4/3'],[270,'4/3'],[234,'4/5'],[200,'3/2'],[160,'4/3'],[120,'1/1'],[104,'4/5'],[88,'1/1']];
+  document.getElementById('stress').innerHTML = sizes.map(([w, r]) => `
+    <div>
+      <p class="font-mono text-[13px] text-meta">${w} px · ${r.replace('/', ':')}</p>
+      <div class="mt-3 flex flex-wrap gap-3">${tests.filter((_, i) => w > 200 ? i < 6 : true).map(([b, m]) => `<span class="slab block overflow-hidden" style="width:${w}px;max-width:100%;aspect-ratio:${r}" title="${b} ${m}">${posterHTML(m, b)}</span>`).join('')}</div>
+    </div>`).join('');
+</script>
+</body>
+</html>

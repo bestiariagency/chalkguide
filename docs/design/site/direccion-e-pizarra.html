@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>ChalkGuide · Dirección E · Pizarra</title>
+<link rel="icon" href="../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        background: '#0f0f0f', board: '#1a1a1a', elevated: '#242424',
+        line: '#2a2a2a', 'line-strong': '#333333', control: '#75716A',
+        accent: '#E8923A', 'accent-hover': '#C4721F', 'accent-muted': '#3a2010', 'on-accent': '#1a0a00',
+        foreground: '#F0EDE8', meta: '#A19D94', muted: '#888880', hint: '#444440',
+        success: '#1D9E75', 'success-text': '#3DBE93', 'success-muted': '#0a2a1e',
+        danger: '#E24B4A', 'danger-text': '#F06A68', 'danger-muted': '#2a0a0a'
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        hand: ['Caveat', 'cursive']
+      },
+      borderRadius: { sm: '4px', md: '8px', lg: '12px', xl: '16px' },
+      maxWidth: { page: '1200px', read: '680px' }
+    }
+  }
+}
+</script>
+<style>
+  /* ===== Tokens (→ @theme) ===== */
+  :root {
+    --background:#0f0f0f; --board:#1a1a1a; --elevated:#242424; --line:#2a2a2a; --line-strong:#333333; --control:#75716A;
+    --accent:#E8923A; --accent-hover:#C4721F; --accent-muted:#3a2010; --on-accent:#1a0a00;
+    --foreground:#F0EDE8; --meta:#A19D94; --muted:#888880; --hint:#444440;
+    --success:#1D9E75; --success-text:#3DBE93; --danger:#E24B4A; --danger-text:#F06A68;
+    --dur-fast:150ms; --dur-base:200ms; --dur-slow:300ms; --dur-draw:600ms;
+    --ease-out:cubic-bezier(.2,.8,.2,1); --ease-standard:cubic-bezier(.4,0,.2,1); --ease-in:cubic-bezier(.4,0,1,1);
+    --ring:0 0 0 2px var(--background), 0 0 0 4px var(--accent);
+  }
+  html { scroll-behavior:smooth; background:var(--background); }
+  [hidden] { display:none !important; }
+  body { font-feature-settings:"cv11","ss01"; -webkit-font-smoothing:antialiased; }
+  .num { font-variant-numeric: tabular-nums; }
+  .display { letter-spacing:-.025em; font-weight:500; line-height:1.12; }
+
+  /* Textura de pizarra: rayado muy tenue */
+  .board-tex { background-color:var(--board);
+    background-image: linear-gradient(rgba(240,237,232,.022) 1px, transparent 1px), linear-gradient(90deg, rgba(240,237,232,.014) 1px, transparent 1px);
+    background-size: 32px 32px; }
+  .ruled { background-image: linear-gradient(transparent calc(100% - 1px), rgba(240,237,232,.06) calc(100% - 1px)); background-size:100% 56px; }
+  /* Foto: placeholder con polvo de tiza */
+  .photo { position:relative; overflow:hidden; background:linear-gradient(150deg,#3a2f27 0%,#1f1b18 55%,#121212 100%); }
+  .photo::after { content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:.35;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.94 0 0 0 0 0.93 0 0 0 0 0.91 0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .photo .tag { position:absolute; left:12px; bottom:12px; font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--foreground); background:rgba(15,15,15,.75); padding:2px 8px; border-radius:4px; }
+
+  /* Foco */
+  :focus { outline:none; }
+  :focus-visible { box-shadow:var(--ring); border-radius:4px; }
+
+  /* ===== Botones ===== */
+  .btn { position:relative; isolation:isolate; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+    min-height:44px; padding:0 1.1rem; border-radius:8px; font-weight:500; font-size:15px; cursor:pointer; user-select:none;
+    transition: color var(--dur-base) var(--ease-standard), background-color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), transform var(--dur-fast) var(--ease-out); }
+  .btn:active:not(:disabled):not([aria-busy="true"]) { transform:scale(.98); }
+  .btn .arrow { transition: transform var(--dur-base) var(--ease-out); }
+  .btn-primary { background:var(--accent); color:var(--on-accent); }
+  .btn-primary::before { content:""; position:absolute; inset:0; z-index:-1; background:var(--accent-hover); transform:scaleX(0); transform-origin:right; transition: transform var(--dur-slow) var(--ease-out); }
+  .btn-ghost { background:transparent; color:var(--foreground); border:1px solid var(--control); }
+  .btn-ghost:active { background:var(--elevated); }
+  .btn-quiet { color:var(--accent); background:var(--accent-muted); }
+  @media (hover:hover) {
+    .btn-primary:hover:not(:disabled)::before { transform:scaleX(1); transform-origin:left; }
+    .btn-ghost:hover:not(:disabled) { background:var(--elevated); border-color:var(--meta); }
+    .btn-quiet:hover:not(:disabled) { background:var(--elevated); }
+    .btn:hover:not(:disabled) .arrow { transform:translateX(3px); }
+  }
+  .btn:disabled { background:var(--elevated); color:var(--muted); border-color:transparent; cursor:not-allowed; }
+  .btn:disabled::before { display:none; }
+  .btn .spinner { display:none; width:16px; height:16px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:spin .8s linear infinite; }
+  .btn[aria-busy="true"] { cursor:progress; }
+  .btn[aria-busy="true"] .label, .btn[aria-busy="true"] .arrow { opacity:0; }
+  .btn[aria-busy="true"] .spinner { display:block; position:absolute; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ===== Links ===== */
+  .link { color:var(--foreground); background-image:linear-gradient(var(--accent),var(--accent)), linear-gradient(var(--control),var(--control));
+    background-size:0% 1.5px, 100% 1px; background-position:0 100%, 0 100%; background-repeat:no-repeat; padding-bottom:2px;
+    transition: background-size var(--dur-slow) var(--ease-out), color var(--dur-base); }
+  .link-accent { color:var(--accent); background-image:linear-gradient(var(--accent),var(--accent)), linear-gradient(rgba(232,146,58,.35),rgba(232,146,58,.35)); }
+  @media (hover:hover) { .link:hover { background-size:100% 1.5px, 100% 1px; } }
+  .link:focus-visible { background-size:100% 1.5px, 100% 1px; }
+  .t-link { background-image:linear-gradient(var(--accent),var(--accent)); background-size:0% 1.5px; background-position:0 95%; background-repeat:no-repeat; transition: background-size var(--dur-slow) var(--ease-out); }
+  .navlink { position:relative; display:inline-flex; align-items:center; min-height:44px; color:var(--meta); transition: color var(--dur-fast) var(--ease-standard); }
+  .navlink::after { content:""; position:absolute; left:0; right:0; bottom:8px; height:1.5px; background:var(--accent); transform:scaleX(0); transform-origin:right; transition: transform var(--dur-base) var(--ease-out); }
+  .navlink[aria-current="page"] { color:var(--foreground); }
+  .navlink[aria-current="page"]::after { transform:scaleX(1); }
+  @media (hover:hover) { .navlink:hover { color:var(--foreground); } .navlink:hover::after { transform:scaleX(1); transform-origin:left; } }
+
+  /* ===== Tarjetas: profundidad por capa ===== */
+  .card { position:relative; background:var(--board); border:.5px solid var(--line); border-radius:12px; overflow:hidden;
+    transition: background-color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard); }
+  .card .photo > .zoom { position:absolute; inset:0; transition: transform 600ms var(--ease-out); }
+  .card .stretch::after { content:""; position:absolute; inset:0; z-index:1; }
+  .card .stretch:focus-visible { box-shadow:none; }
+  .card:focus-within { box-shadow:var(--ring); }
+  @media (hover:hover) {
+    .card:hover { background:var(--elevated); border-color:var(--line-strong); }
+    .card:hover .photo > .zoom { transform:scale(1.03); }
+    .card:hover .t-link { background-size:100% 1.5px; }
+  }
+
+  /* ===== Segmented ===== */
+  .seg { position:relative; display:inline-grid; grid-auto-flow:column; grid-auto-columns:1fr; padding:4px; background:var(--background); border:.5px solid var(--line-strong); border-radius:8px; }
+  .seg button { position:relative; z-index:1; min-height:44px; padding:.4rem .75rem; border-radius:6px; font-size:15px; line-height:1.25; font-weight:500; color:var(--meta); text-align:center; transition: color var(--dur-base) var(--ease-standard); }
+  .seg button[aria-selected="true"], .seg button[aria-pressed="true"] { color:var(--foreground); }
+  .seg .ind { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:0; border-radius:6px; background:var(--elevated); border:.5px solid var(--accent);
+    transition: transform var(--dur-slow) var(--ease-out), width var(--dur-slow) var(--ease-out); }
+  @media (min-width:768px) { .seg button { padding:.4rem 1rem; white-space:nowrap; } }
+  @media (hover:hover) { .seg button:not([aria-selected="true"]):not([aria-pressed="true"]):hover { color:var(--foreground); } }
+
+  /* ===== Chips ===== */
+  .chip { display:inline-flex; align-items:center; gap:.4rem; min-height:44px; padding:0 .85rem; border-radius:4px; border:1px solid var(--control); color:var(--foreground); font-size:15px; font-weight:500;
+    transition: background-color var(--dur-base) var(--ease-standard), border-color var(--dur-base), color var(--dur-base), transform var(--dur-fast) var(--ease-out); }
+  .chip:active { transform:scale(.97); }
+  .chip .tick { display:inline-flex; width:0; opacity:0; overflow:hidden; transition: width var(--dur-base) var(--ease-out), opacity var(--dur-base); }
+  .chip[aria-pressed="true"] { background:var(--accent-muted); border-color:var(--accent); color:var(--accent); }
+  .chip[aria-pressed="true"] .tick { width:14px; opacity:1; }
+  @media (hover:hover) { .chip:not([aria-pressed="true"]):hover { background:var(--elevated); border-color:var(--meta); } }
+
+  /* ===== Badges (como en la app) ===== */
+  .badge { display:inline-flex; align-items:center; gap:.35rem; font-family:"JetBrains Mono",monospace; font-size:12px; line-height:1; padding:5px 8px; border-radius:4px; background:var(--elevated); color:var(--meta); }
+  .badge-accent { background:var(--accent-muted); color:var(--accent); }
+
+  /* ===== Barras de índice ===== */
+  .bar { height:4px; background:var(--elevated); border-radius:999px; overflow:hidden; }
+  .bar > span { display:block; height:100%; width:var(--w); background:var(--accent); border-radius:999px; transform-origin:left; }
+
+  /* ===== Trazos de tiza (SVG) ===== */
+  .chalk-ul { position:relative; white-space:nowrap; }
+  .chalk-ul svg { position:absolute; left:-2%; width:104%; bottom:-.18em; height:.38em; overflow:visible; pointer-events:none; }
+  .chalk-ul path, .chalk-circle path { fill:none; stroke:var(--accent); stroke-linecap:round; stroke-linejoin:round; }
+  .chalk-circle { position:relative; display:inline-block; }
+  .chalk-circle svg { position:absolute; left:-6%; top:-24%; width:112%; height:148%; overflow:visible; pointer-events:none; }
+
+  /* ===== Checkbox con check dibujado ===== */
+  .check { position:relative; display:flex; gap:.75rem; align-items:flex-start; min-height:44px; padding:.5rem 0; cursor:pointer; }
+  .check input { position:absolute; opacity:0; width:22px; height:22px; margin:0; top:.6rem; left:0; }
+  .check .box { flex-shrink:0; width:22px; height:22px; margin-top:2px; border:1px solid var(--control); border-radius:4px; background:var(--elevated); display:grid; place-items:center;
+    transition: background-color var(--dur-base) var(--ease-standard), border-color var(--dur-base); }
+  .check .box path { stroke-dasharray:20; stroke-dashoffset:20; transition: stroke-dashoffset var(--dur-slow) var(--ease-out) 50ms; }
+  .check input:checked + .box { background:var(--accent); border-color:var(--accent); }
+  .check input:checked + .box path { stroke-dashoffset:0; }
+  .check input:focus-visible + .box { box-shadow:var(--ring); }
+  .check input[aria-invalid="true"] + .box { border-color:var(--danger-text); }
+  .field { min-height:48px; padding:0 .9rem; background:var(--elevated); color:var(--foreground); border:1px solid var(--control); border-radius:8px; font-size:16px;
+    transition: border-color var(--dur-base) var(--ease-standard); }
+  .field::placeholder { color:var(--muted); }
+  .field:focus { border-color:var(--accent); }
+  .field[aria-invalid="true"] { border-color:var(--danger-text); }
+
+  /* ===== Header compacto ===== */
+  .sticky-bar { position:fixed; inset:0 0 auto 0; z-index:40; transform:translateY(-105%); background:rgba(15,15,15,.78);
+    -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); border-bottom:.5px solid var(--line-strong); transition: transform var(--dur-slow) var(--ease-out); }
+  .sticky-bar.is-on { transform:translateY(0); }
+
+  /* Menú móvil (bottom sheet, como la app) */
+  .sheet { position:fixed; inset:0; z-index:50; visibility:hidden; transition: visibility 0s linear var(--dur-slow); }
+  .sheet .scrim { position:absolute; inset:0; background:rgba(0,0,0,.7); opacity:0; transition: opacity var(--dur-slow) var(--ease-standard); }
+  .sheet .panel { position:absolute; inset:auto 0 0 0; background:var(--board); border-top:.5px solid var(--line-strong); border-radius:16px 16px 0 0; padding-bottom:env(safe-area-inset-bottom);
+    transform:translateY(100%); transition: transform 250ms var(--ease-in); }
+  .sheet.is-open { visibility:visible; transition-delay:0s; }
+  .sheet.is-open .scrim { opacity:1; }
+  .sheet.is-open .panel { transform:none; transition: transform var(--dur-slow) var(--ease-out); }
+
+  .tabpanel.is-entering { animation: panelIn var(--dur-slow) var(--ease-out); }
+  @keyframes panelIn { from { opacity:0; } }
+
+  .success-check circle { stroke-dasharray:152; stroke-dashoffset:152; animation: draw var(--dur-draw) var(--ease-out) forwards; }
+  .success-check path { stroke-dasharray:40; stroke-dashoffset:40; animation: draw var(--dur-slow) var(--ease-out) 450ms forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+
+  /* ===== Dropdown "Guías" (desktop) ===== */
+  .dd { position:relative; }
+  .dd-btn { position:relative; display:inline-flex; align-items:center; gap:.35rem; min-height:44px; color:var(--meta); transition: color var(--dur-fast) var(--ease-standard); }
+  .dd-btn .chev { transition: transform var(--dur-base) var(--ease-out); }
+  .dd-btn[aria-expanded="true"] { color:var(--foreground); }
+  .dd-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  @media (hover:hover) { .dd-btn:hover { color:var(--foreground); } }
+  .dd-panel { position:absolute; z-index:45; top:100%; left:-14px; width:320px; margin-top:6px; padding:6px; background:var(--board); border:.5px solid var(--line-strong); border-radius:12px;
+    opacity:0; transform:translateY(-4px); visibility:hidden; transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base); }
+  .dd.is-open .dd-panel { opacity:1; transform:none; visibility:visible; transition-delay:0s; }
+  .dd-item { display:block; min-height:44px; padding:10px 12px; border-radius:8px; transition: background-color var(--dur-fast) var(--ease-standard); }
+  .dd-item:hover, .dd-item:focus-visible { background:var(--elevated); }
+  /* ===== Acordeón (menú móvil) ===== */
+  .acc { display:grid; grid-template-rows:0fr; transition: grid-template-rows var(--dur-base) var(--ease-out); }
+  .acc > div { overflow:hidden; visibility:hidden; transition: visibility 0s linear var(--dur-base); }
+  .acc.is-open { grid-template-rows:1fr; }
+  .acc.is-open > div { visibility:visible; transition-delay:0s; }
+  .acc-btn .chev { transition: transform var(--dur-base) var(--ease-out); }
+  .acc-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .label-mini { font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--meta); }
+
+  /* ===== Logo + etiqueta BARCELONA ===== */
+  .logo-lockup { display:flex; align-items:flex-end; gap:12px; }
+  .logo-lockup img { display:block; }
+  .logo-lockup--header { --logo-h:22px; }
+  @media (min-width:768px) { .logo-lockup--header { --logo-h:28px; gap:16px; } }
+  /* La línea base del wordmark está al 19,2 % de la altura del logo, desde abajo */
+  .logo-lockup .logo-tag { line-height:1; padding-bottom:calc(var(--logo-h, 28px) * .192 - 2px); }
+  /* ===== Movimiento solo con permiso ===== */
+  @media (prefers-reduced-motion: no-preference) {
+    .js [data-reveal] { opacity:0; transform:translateY(8px); transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out); transition-delay: calc(var(--i,0) * 60ms); }
+    .js [data-reveal].is-in { opacity:1; transform:none; }
+    .js .bar > span { transform:scaleX(0); transition: transform var(--dur-draw) var(--ease-out) 100ms; }
+    .js .bar.is-in > span { transform:scaleX(1); }
+    .js [data-draw] path { stroke-dasharray:var(--len,400); stroke-dashoffset:var(--len,400); transition: stroke-dashoffset var(--dur-draw) var(--ease-out) 200ms; }
+    .js [data-draw].is-in path { stroke-dashoffset:0; }
+    ::view-transition-old(*), ::view-transition-new(*) { animation-duration: var(--dur-slow); animation-timing-function: var(--ease-out); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:0s !important; animation-iteration-count:1 !important; transition-duration:0s !important; transition-delay:0s !important; scroll-behavior:auto !important; }
+    .success-check circle, .success-check path { stroke-dashoffset:0; }
+    .btn .spinner { animation:none; border-right-color:currentColor; opacity:.6; }
+  }
+</style>
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed">
+<script>document.documentElement.classList.add('js');</script>
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] bg-accent text-on-accent px-3 py-2 rounded-md">Saltar al contenido</a>
+
+<!-- Barra compacta (aparece al bajar) -->
+<div class="sticky-bar" id="stickyBar" aria-hidden="true" inert>
+  <div class="max-w-page mx-auto px-4 md:px-6 h-14 flex items-center justify-between gap-4">
+    <a href="/" class="flex items-center min-h-[44px]" aria-label="ChalkGuide, inicio"><svg viewBox="0 22 315 338" class="h-6 w-auto text-white md:hidden" fill="currentColor" aria-hidden="true" focusable="false"><rect y="102" width="69" height="258" rx="34.5"/><rect x="82" y="22" width="69" height="275" rx="34.5"/><rect x="164" y="84" width="69" height="246" rx="34.5"/><rect x="246" y="143" width="69" height="154" rx="34.5"/></svg><img src="../../../public/brand/logo-white.svg" alt="" width="2073" height="384" class="hidden md:block h-5 w-auto"></a>
+    <nav aria-label="Principal (compacta)" class="hidden md:block">
+      <ul class="flex items-center gap-7 text-[15px]">
+        <li class="dd" data-dd>
+          <button type="button" class="dd-btn" aria-expanded="false" aria-controls="dd-guias-2">Guías <svg class="chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+          <ul id="dd-guias-2" class="dd-panel">
+            <li><a class="dd-item" href="/rocodromos"><span class="block text-foreground">Rocódromos</span><span class="block text-sm text-meta">14 fichas con precios y mi reseña</span></a></li>
+            <li><a class="dd-item" href="/resolar-pies-de-gato"><span class="block text-foreground">Resolar pies de gato</span><span class="block text-sm text-meta">Precio por par, plazo y calidad</span></a></li>
+            <li><a class="dd-item" href="/pies-de-gato"><span class="block text-foreground">Pies de gato</span><span class="block text-sm text-meta">Comparador lado a lado</span></a></li>
+          </ul>
+        </li>
+        <li><a class="navlink" href="/blog">Blog</a></li>
+        <li><a class="navlink" href="/agenda">Agenda</a></li>
+        <li><a class="navlink" href="/sobre-mi">Sobre mí</a></li>
+      </ul>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="/newsletter" class="btn btn-primary hidden sm:inline-flex"><span class="label">Newsletter</span></a>
+      <button type="button" data-menu-toggle class="btn btn-ghost md:hidden" aria-controls="menu" aria-expanded="false"><span class="label">Menú</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Menú móvil: bottom sheet con acordeón -->
+<div class="sheet" id="menu" aria-hidden="true">
+  <div class="scrim" data-menu-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Menú">
+    <div class="w-12 h-1 bg-line-strong rounded-full mx-auto mt-3" aria-hidden="true"></div>
+    <nav aria-label="Principal (móvil)" class="px-5 pt-3 pb-2">
+      <ul class="text-xl">
+        <li class="border-b-[0.5px] border-line">
+          <button type="button" class="acc-btn w-full flex items-center justify-between min-h-[52px]" aria-expanded="false" aria-controls="acc-guias">Guías <svg class="chev" width="16" height="16" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
+          <div id="acc-guias" class="acc"><div>
+            <ul class="pb-3 pl-4 border-l-[0.5px] border-line-strong ml-1 text-[17px]">
+              <li><a class="flex items-center min-h-[44px] text-meta hover:text-foreground" href="/rocodromos" data-menu-close>Rocódromos</a></li>
+              <li><a class="flex items-center min-h-[44px] text-meta hover:text-foreground" href="/resolar-pies-de-gato" data-menu-close>Resolar pies de gato</a></li>
+              <li><a class="flex items-center min-h-[44px] text-meta hover:text-foreground" href="/pies-de-gato" data-menu-close>Pies de gato</a></li>
+            </ul>
+          </div></div>
+        </li>
+        <li><a class="flex items-center min-h-[52px] border-b-[0.5px] border-line" href="/blog" data-menu-close>Blog</a></li>
+        <li><a class="flex items-center min-h-[52px] border-b-[0.5px] border-line" href="/agenda" data-menu-close>Agenda</a></li>
+        <li><a class="flex items-center min-h-[52px]" href="/sobre-mi" data-menu-close>Sobre mí</a></li>
+      </ul>
+    </nav>
+    <div class="px-5 pb-6 flex items-center justify-between gap-3">
+      <div class="flex gap-1 font-mono text-sm"><a href="#" aria-current="true" class="px-3 min-h-[44px] inline-flex items-center rounded-sm bg-elevated">ES</a><a href="#" lang="en" class="px-3 min-h-[44px] inline-flex items-center text-meta">EN</a></div>
+      <button type="button" class="btn btn-ghost" data-menu-close><span class="label">Cerrar</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Cabecera -->
+<header id="masthead" class="border-b-[0.5px] border-line-strong">
+  <div class="max-w-page mx-auto px-4 md:px-6">
+    <div class="flex items-center justify-between gap-4 h-16 md:h-20">
+      <a href="/" class="logo-lockup logo-lockup--header" aria-label="ChalkGuide Barcelona, inicio">
+        <img src="../../../public/brand/logo-white.svg" alt="" width="2073" height="384" class="h-[22px] md:h-7 w-auto">
+        <span class="label-mini logo-tag" aria-hidden="true">Barcelona</span>
+      </a>
+      <nav aria-label="Principal" class="hidden md:block">
+        <ul class="flex items-center gap-7 text-[15px]">
+          <li class="dd" data-dd>
+            <button type="button" class="dd-btn" aria-expanded="false" aria-controls="dd-guias">Guías <svg class="chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <ul id="dd-guias" class="dd-panel">
+              <li><a class="dd-item" href="/rocodromos"><span class="block text-foreground">Rocódromos</span><span class="block text-sm text-meta">14 fichas con precios y mi reseña</span></a></li>
+              <li><a class="dd-item" href="/resolar-pies-de-gato"><span class="block text-foreground">Resolar pies de gato</span><span class="block text-sm text-meta">Precio por par, plazo y calidad</span></a></li>
+              <li><a class="dd-item" href="/pies-de-gato"><span class="block text-foreground">Pies de gato</span><span class="block text-sm text-meta">Comparador lado a lado</span></a></li>
+            </ul>
+          </li>
+          <li><a class="navlink" href="/blog">Blog</a></li>
+          <li><a class="navlink" href="/agenda">Agenda</a></li>
+          <li><a class="navlink" href="/sobre-mi">Sobre mí</a></li>
+        </ul>
+      </nav>
+      <div class="flex items-center gap-2">
+        <nav aria-label="Idioma" class="hidden sm:flex font-mono text-sm"><a href="#" aria-current="true" class="px-2.5 min-h-[44px] inline-flex items-center rounded-sm bg-elevated">ES</a><a href="#" lang="en" class="px-2.5 min-h-[44px] inline-flex items-center text-meta hover:text-foreground transition-colors">EN</a></nav>
+        <button type="button" data-menu-toggle class="btn btn-ghost md:hidden" aria-controls="menu" aria-expanded="false"><span class="label">Menú</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- 1 · Hero -->
+  <section class="board-tex border-b-[0.5px] border-line">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-14 md:py-24 grid lg:grid-cols-12 gap-12 lg:gap-16 items-end">
+      <article class="lg:col-span-8" data-reveal>
+        <p class="label-mini !text-accent">Costes · Guía práctica</p>
+        <h1 class="display text-[2.4rem] leading-[1.08] md:text-[3.75rem] md:leading-[1.04] mt-4 max-w-[16ch]">
+          <a href="#" class="hover:text-white transition-colors">Cuánto cuesta <span class="chalk-ul">realmente<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true" data-draw style="--len:220"><path d="M3 9 C 40 4, 80 12, 120 7 S 180 5, 197 8" stroke-width="3.2"/><path d="M14 12 C 60 9, 120 13, 186 10" stroke-width="1.4" opacity=".55"/></svg></span> escalar en Barcelona al mes</a>
+        </h1>
+        <p class="text-[18px] leading-[1.7] text-meta mt-6 max-w-[52ch]">Hice las cuentas de 14 rocódromos a dos visitas por semana. Y te digo cuál elegiría yo.</p>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <a href="#" class="btn btn-primary"><span class="label">Leer la guía</span><span class="arrow" aria-hidden="true">→</span></a>
+          <span class="font-mono text-[13px] text-meta">Precios verificados el 28.09.26</span>
+        </div>
+      </article>
+      <aside class="lg:col-span-4" data-reveal style="--i:2">
+        <p class="font-hand text-[28px] leading-[1.15] -rotate-1">«Empecé sin nadie a quien preguntar. Esto es lo que me habría gustado leer.»</p>
+        <div class="flex items-center gap-3 mt-5">
+          <div class="w-10 h-10 rounded-full bg-elevated border-[0.5px] border-line-strong grid place-items-center text-accent text-sm font-medium" aria-hidden="true">X</div>
+          <p class="text-sm text-meta"><span class="text-foreground">Xavi</span> · 6 años escalando en BCN · <a href="#" class="link">Sobre mí</a></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 2 · Entrada por perfil -->
+  <section class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24" aria-labelledby="h-perfil">
+    <div class="md:flex md:items-end md:justify-between gap-6" data-reveal>
+      <h2 id="h-perfil" class="display text-[1.75rem] md:text-4xl">¿Por dónde empiezas?</h2>
+      <div class="seg mt-5 md:mt-0 w-full md:w-auto" role="tablist" aria-label="Elige tu perfil" data-seg>
+        <span class="ind" aria-hidden="true"></span>
+        <button role="tab" id="t-nuevo" aria-controls="p-nuevo" aria-selected="true" tabindex="0">Acabo de empezar</button>
+        <button role="tab" id="t-habitual" aria-controls="p-habitual" aria-selected="false" tabindex="-1">Ya escalo cada semana</button>
+      </div>
+    </div>
+    <div id="p-nuevo" role="tabpanel" aria-labelledby="t-nuevo" class="tabpanel mt-8 grid sm:grid-cols-3 gap-3">
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">01</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Qué rocódromo me conviene si estoy empezando</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">02</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Bono o cuota mensual: qué conviene</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">03</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Cómo elegir tus primeros pies de gato</span></a>
+    </div>
+    <div id="p-habitual" role="tabpanel" aria-labelledby="t-habitual" class="tabpanel mt-8 grid sm:grid-cols-3 gap-3" hidden>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">01</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Comparar los 14 rocódromos</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">02</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Cuándo resolar y dónde</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">03</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Roca a menos de 2 horas</span></a>
+    </div>
+  </section>
+
+  <!-- 3 · Rocódromos (3 filas, 3 datos) -->
+  <section id="rocodromos" class="board-tex border-y-[0.5px] border-line scroll-mt-14" aria-labelledby="h-gyms">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24">
+      <div class="md:flex md:items-end md:justify-between gap-6" data-reveal>
+        <div>
+          <p class="label-mini">Rocódromos</p>
+          <h2 id="h-gyms" class="display text-[1.75rem] md:text-4xl mt-3">Los rocódromos, uno a uno</h2>
+        </div>
+        <div class="seg mt-6 md:mt-0 w-full md:w-auto" role="group" aria-label="Ordenar por" data-seg data-sort>
+          <span class="ind" aria-hidden="true"></span>
+          <button type="button" aria-pressed="true" data-key="score">Nota autor</button>
+          <button type="button" aria-pressed="false" data-key="price">Precio</button>
+          <button type="button" aria-pressed="false" data-key="beginner">Principiante</button>
+        </div>
+      </div>
+
+      <table class="hidden md:table w-full mt-10 text-left num">
+        <caption class="sr-only">Comparativa de rocódromos destacados</caption>
+        <thead>
+          <tr class="border-b-[0.5px] border-line-strong label-mini">
+            <th scope="col" class="py-3 pr-4 font-normal">Rocódromo</th>
+            <th scope="col" class="py-3 pr-4 font-normal text-right">Mensual</th>
+            <th scope="col" class="py-3 pr-4 font-normal">Índice principiante</th>
+            <th scope="col" class="py-3 font-normal text-right">Nota autor</th>
+          </tr>
+        </thead>
+        <tbody data-sortable>
+          <tr data-score="4.5" data-price="59" data-beginner="8.7" style="view-transition-name:gym-bloc" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+            <th scope="row" class="py-5 pr-4 font-normal"><a href="#" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">Bloc Poblenou</a><span class="block text-sm text-meta">Bloque · L4 Poblenou</span></th>
+            <td class="py-5 pr-4 text-right font-mono">59 €</td>
+            <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:87%"></span></span><span class="font-mono">8.7</span></span></td>
+            <td class="py-5 text-right"><span class="badge badge-accent !text-[15px] !py-1.5">4.5<span class="opacity-70">/5</span></span></td>
+          </tr>
+          <tr data-score="4.2" data-price="72" data-beginner="7.9" style="view-transition-name:gym-sants" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+            <th scope="row" class="py-5 pr-4 font-normal"><a href="#" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">Vertical Sants</a><span class="block text-sm text-meta">Cuerda + bloque · L5 Sants <span class="badge badge-accent ml-1">visita invitada</span></span></th>
+            <td class="py-5 pr-4 text-right font-mono">72 €</td>
+            <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:79%"></span></span><span class="font-mono">7.9</span></span></td>
+            <td class="py-5 text-right"><span class="badge !text-[15px] !py-1.5 !text-foreground">4.2<span class="text-meta">/5</span></span></td>
+          </tr>
+          <tr data-score="4.0" data-price="54" data-beginner="9.1" style="view-transition-name:gym-paret" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+            <th scope="row" class="py-5 pr-4 font-normal"><a href="#" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">La Paret Gràcia</a><span class="block text-sm text-meta">Bloque · L3 Fontana</span></th>
+            <td class="py-5 pr-4 text-right font-mono">54 €</td>
+            <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:91%"></span></span><span class="font-mono">9.1</span></span></td>
+            <td class="py-5 text-right"><span class="badge !text-[15px] !py-1.5 !text-foreground">4.0<span class="text-meta">/5</span></span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="md:hidden mt-8 space-y-3 num" data-sortable>
+        <li class="bg-background border-[0.5px] border-line rounded-md p-4" data-score="4.5" data-price="59" data-beginner="8.7" style="view-transition-name:gymm-bloc">
+          <div class="flex justify-between items-start gap-3"><div><a href="#" class="text-lg font-medium">Bloc Poblenou</a><p class="text-sm text-meta">Bloque · L4 Poblenou</p></div><span class="badge badge-accent !text-[15px] !py-1.5">4.5<span class="opacity-70">/5</span></span></div>
+          <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">59 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">8.7</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:87%"></span></dd></div></dl>
+        </li>
+        <li class="bg-background border-[0.5px] border-line rounded-md p-4" data-score="4.2" data-price="72" data-beginner="7.9" style="view-transition-name:gymm-sants">
+          <div class="flex justify-between items-start gap-3"><div><a href="#" class="text-lg font-medium">Vertical Sants</a><p class="text-sm text-meta">Cuerda + bloque · L5 Sants</p><span class="badge badge-accent mt-1.5">visita invitada</span></div><span class="badge !text-[15px] !py-1.5 !text-foreground">4.2<span class="text-meta">/5</span></span></div>
+          <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">72 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">7.9</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:79%"></span></dd></div></dl>
+        </li>
+        <li class="bg-background border-[0.5px] border-line rounded-md p-4" data-score="4.0" data-price="54" data-beginner="9.1" style="view-transition-name:gymm-paret">
+          <div class="flex justify-between items-start gap-3"><div><a href="#" class="text-lg font-medium">La Paret Gràcia</a><p class="text-sm text-meta">Bloque · L3 Fontana</p></div><span class="badge !text-[15px] !py-1.5 !text-foreground">4.0<span class="text-meta">/5</span></span></div>
+          <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">54 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">9.1</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:91%"></span></dd></div></dl>
+        </li>
+      </ul>
+      <p class="sr-only" aria-live="polite" id="sort-status"></p>
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
+        <p class="font-mono text-[13px] text-meta">Datos verificados en septiembre de 2026 · <a href="#" class="link">cómo calculo el índice</a></p>
+        <a href="/rocodromos" class="btn btn-ghost"><span class="label">Ver los 14 rocódromos</span><span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Pies de gato + Pizarra del mes -->
+  <section class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24 grid lg:grid-cols-12 gap-14">
+    <div id="pies" class="lg:col-span-7 min-w-0 scroll-mt-20" aria-labelledby="h-shoes" data-reveal>
+      <p class="label-mini">Pies de gato</p>
+      <h2 id="h-shoes" class="display text-[1.75rem] md:text-4xl mt-3">Tus primeros pies de gato, lado a lado</h2>
+      <div class="mt-8 border-[0.5px] border-line-strong rounded-lg overflow-hidden bg-board">
+        <table class="w-full text-left num table-fixed">
+          <caption class="sr-only">Comparativa de tres pies de gato para iniciación</caption>
+          <thead>
+            <tr class="border-b-[0.5px] border-line-strong align-bottom">
+              <th scope="col" class="w-[22%] md:w-[26%] py-3 px-3 md:px-4 label-mini font-normal"><span class="sr-only">Modelo</span></th>
+              <th scope="col" class="py-3 px-1.5 md:px-3 font-normal"><span class="block font-medium leading-tight text-[14px] md:text-base">Tarantulace</span><span class="text-[12px] md:text-[13px] text-meta">La Sportiva</span></th>
+              <th scope="col" class="py-3 px-1.5 md:px-3 font-normal"><span class="block font-medium leading-tight text-[14px] md:text-base">Origin</span><span class="text-[13px] text-meta">Scarpa</span></th>
+              <th scope="col" class="py-3 px-1.5 md:px-3 font-normal"><span class="block font-medium leading-tight text-[14px] md:text-base">Defy</span><span class="text-[13px] text-meta">Evolv</span></th>
+            </tr>
+          </thead>
+          <tbody class="text-[15px]">
+            <tr class="border-b-[0.5px] border-line"><th scope="row" class="py-3 px-3 md:px-4 font-normal text-meta">Cierre</th><td class="px-1.5 md:px-3">Cordones</td><td class="px-1.5 md:px-3">Velcro</td><td class="px-1.5 md:px-3">Velcro</td></tr>
+            <tr class="border-b-[0.5px] border-line"><th scope="row" class="py-3 px-3 md:px-4 font-normal text-meta">Rigidez</th>
+              <td class="px-1.5 md:px-3"><span class="bar w-14 block" role="img" aria-label="3 de 5"><span style="--w:60%"></span></span></td>
+              <td class="px-1.5 md:px-3"><span class="bar w-14 block" role="img" aria-label="3 de 5"><span style="--w:60%"></span></span></td>
+              <td class="px-1.5 md:px-3"><span class="bar w-14 block" role="img" aria-label="4 de 5"><span style="--w:80%"></span></span></td></tr>
+            <tr><th scope="row" class="py-3 px-3 md:px-4 font-normal">Precio</th><td class="px-1.5 md:px-3 font-mono text-accent text-[14px]">80–95 €</td><td class="px-1.5 md:px-3 font-mono text-accent text-[14px]">85–99 €</td><td class="px-1.5 md:px-3 font-mono text-accent text-[14px]">95–110 €</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-8 border-l-2 border-accent pl-4 max-w-read">
+        <p class="font-hand text-[26px] leading-tight text-accent">Lo que aprendí</p>
+        <p class="text-[17px] leading-[1.7] mt-1">Mis primeros fueron unos Tarantulace: los cordones me obligaron a ajustarlos bien y aguantaron dos resolados.</p>
+      </div>
+      <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <a href="/pies-de-gato" class="btn btn-ghost"><span class="label">Abrir el comparador</span><span class="arrow" aria-hidden="true">→</span></a>
+        <span class="badge badge-accent">contiene enlaces de afiliado</span>
+      </div>
+    </div>
+
+    <div id="agenda" class="lg:col-span-5 min-w-0 scroll-mt-20" aria-labelledby="h-agenda" data-reveal style="--i:1">
+      <div class="board-tex border-[0.5px] border-line-strong rounded-xl p-6 md:p-7">
+        <div class="flex items-baseline justify-between gap-3">
+          <h2 id="h-agenda" class="font-hand text-[44px] leading-none -rotate-1">Octubre</h2>
+          <span class="label-mini">Pizarra del mes</span>
+        </div>
+        <ol class="mt-6 divide-y divide-[rgba(240,237,232,.08)]">
+          <li class="grid grid-cols-[4.25rem_1fr] gap-3 py-3.5 items-baseline"><span class="font-mono text-[13px] text-meta">SÁB 10</span><span><span class="block leading-snug">Contest de bloque para principiantes</span><span class="text-sm text-meta">Bloc Poblenou</span></span></li>
+          <li class="grid grid-cols-[4.25rem_1fr] gap-3 py-3.5 items-baseline"><span class="font-mono text-[13px] text-meta">JUE 15</span><span><span class="block leading-snug"><span class="chalk-circle">Taller: asegurar con Grigri<svg viewBox="0 0 220 60" preserveAspectRatio="none" aria-hidden="true" data-draw style="--len:560"><path d="M30 8 C 90 -2, 200 2, 214 26 C 224 50, 120 60, 50 54 C 6 50, 2 22, 40 10" stroke-width="2"/></svg></span></span><span class="text-sm text-meta">Vertical Sants</span></span></li>
+          <li class="grid grid-cols-[4.25rem_1fr] gap-3 py-3.5 items-baseline"><span class="font-mono text-[13px] text-meta">DOM 18</span><span><span class="block leading-snug">Salida a Montserrat: iniciación en roca</span><span class="text-sm text-meta">La Paret Gràcia</span></span></li>
+        </ol>
+        <p class="font-hand text-[24px] text-accent mt-5 -rotate-1">↑ yo voy al del 15</p>
+        <a href="/agenda" class="link inline-block mt-3 text-[15px]">Toda la agenda</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Blog (3 piezas) -->
+  <section id="blog" class="border-t-[0.5px] border-line scroll-mt-20" aria-labelledby="h-art">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24">
+      <div class="flex items-end justify-between gap-4">
+        <h2 id="h-art" class="display text-[1.75rem] md:text-4xl">Del blog</h2>
+        <a href="/blog" class="link text-[15px] shrink-0">Todo el blog</a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-3 mt-8">
+        <article class="card md:col-span-2 flex flex-col" data-reveal>
+          <div class="photo aspect-[16/9]"><div class="zoom" style="background:linear-gradient(160deg,#2c3328,#141614)"></div><span class="tag">foto · pies de gato en la mochila</span></div>
+          <div class="p-6"><p class="label-mini">Material</p><h3 class="display text-2xl md:text-[1.9rem] mt-3"><a href="#" class="stretch t-link">Cómo elegir pies de gato según tu nivel y estilo</a></h3></div>
+        </article>
+        <div class="grid gap-3">
+          <article class="card p-6" data-reveal style="--i:1"><p class="label-mini">Dónde escalar</p><h3 class="text-lg font-medium leading-snug mt-3"><a href="#" class="stretch t-link">Dónde escalar en Barcelona cuando llueve</a></h3></article>
+          <article class="card p-6" data-reveal style="--i:2"><p class="label-mini">Experiencia</p><h3 class="text-lg font-medium leading-snug mt-3"><a href="#" class="stretch t-link">Mi primer resolado: errores que cometí y qué revisar</a></h3></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Encuentra compañero -->
+  <section class="board-tex border-y-[0.5px] border-line" aria-labelledby="h-partner">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24 grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+      <div class="lg:col-span-5" data-reveal>
+        <p class="label-mini !text-accent">Chalk app</p>
+        <h2 id="h-partner" class="display text-[1.75rem] md:text-4xl mt-3">¿Vas solo? Apúntate en la pizarra de tu rocódromo.</h2>
+        <p class="text-meta mt-4 text-[17px] leading-[1.7] max-w-[44ch]">Escribe qué día vas y a qué nivel, y mira quién más va.</p>
+        <a href="#" class="btn btn-primary mt-7"><span class="label">Abrir Chalk app</span><span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="lg:col-span-7" data-reveal style="--i:1">
+        <div class="bg-background border-[0.5px] border-line-strong rounded-xl p-4 md:p-6">
+          <div class="flex items-baseline justify-between mb-4"><p class="text-lg font-medium">Bloc Poblenou</p><p class="font-mono text-[12px] text-meta">JUE 8 OCT</p></div>
+          <div class="space-y-2">
+            <div class="bg-board border-[0.5px] border-line rounded-md p-4 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-elevated border-[0.5px] border-line grid place-items-center text-xs font-medium text-accent shrink-0" aria-hidden="true">X</div>
+              <div class="flex-1 min-w-0"><p class="text-sm font-medium">Xavi</p><p class="text-xs text-meta"><span class="font-mono">7b</span> · Tarde</p></div>
+              <span class="badge badge-accent shrink-0">autor</span>
+            </div>
+            <div class="relative">
+              <div class="blur-[3px] select-none pointer-events-none" aria-hidden="true"><div class="bg-board border-[0.5px] border-line rounded-md h-[68px]"></div></div>
+              <p class="absolute inset-0 grid place-items-center text-sm text-center px-4 bg-background/60 rounded-md">Hay 4 personas más apuntadas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · Newsletter -->
+  <section id="newsletter" class="scroll-mt-14" aria-labelledby="h-news">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24 grid md:grid-cols-12 gap-10 items-start">
+      <div class="md:col-span-6" data-reveal>
+        <p class="label-mini !text-accent">Newsletter mensual</p>
+        <h2 id="h-news" class="display text-[2rem] md:text-5xl leading-[1.08] mt-3">Una carta al mes. Nada más.</h2>
+        <p class="text-meta mt-4 max-w-[44ch] text-[17px] leading-[1.7]">Novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.</p>
+      </div>
+      <div class="md:col-span-6 bg-board border-[0.5px] border-line-strong rounded-xl p-5 md:p-7" data-reveal style="--i:1">
+        <form id="nlForm" novalidate>
+          <label for="email-e" class="block text-sm text-meta mb-2">Tu email</label>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input id="email-e" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" class="field flex-1" aria-describedby="err-email">
+            <button type="submit" class="btn btn-primary"><span class="spinner" aria-hidden="true"></span><span class="label">Suscribirme</span><span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+          <p id="err-email" class="hidden mt-2 text-[15px] text-danger-text items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5v4.5M8 11v.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Escribe un email válido, por ejemplo nombre@correo.com.</p>
+          <label class="check mt-3" for="consent-e">
+            <input id="consent-e" name="consent" type="checkbox" aria-describedby="err-consent">
+            <span class="box" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="#1a0a00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="text-[15px]">Quiero recibir la newsletter mensual. He leído la <a href="#" class="link">política de privacidad</a>.</span>
+          </label>
+          <p id="err-consent" class="hidden mt-1 text-[15px] text-danger-text items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5v4.5M8 11v.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Marca la casilla para confirmar que quieres recibirla.</p>
+          <p class="mt-2 text-sm text-meta">Sin spam. Baja en un clic.</p>
+        </form>
+        <div id="nlSuccess" class="hidden text-center py-4" role="status" tabindex="-1">
+          <svg class="success-check mx-auto" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" fill="none" stroke="#3DBE93" stroke-width="2.5"/><path d="M17 29l7 7 15-16" fill="none" stroke="#3DBE93" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p class="text-xl font-medium mt-3">¡Casi está!</p>
+          <p class="text-meta mt-1">Te he enviado un email para confirmar la suscripción.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Muestrario (solo mockup) -->
+  <details class="border-t-[0.5px] border-line">
+    <summary class="max-w-page mx-auto px-4 md:px-6 min-h-[56px] flex items-center cursor-pointer label-mini">Solo en el mockup · muestrario de estados</summary>
+    <div class="max-w-page mx-auto px-4 md:px-6 pb-10 flex flex-wrap gap-3 items-center">
+      <button type="button" class="btn btn-primary"><span class="label">Primario</span><span class="arrow" aria-hidden="true">→</span></button>
+      <button type="button" class="btn btn-ghost"><span class="label">Ghost</span></button>
+      <button type="button" class="btn btn-quiet"><span class="label">Discreto</span></button>
+      <button type="button" class="btn btn-primary" disabled><span class="label">Deshabilitado</span></button>
+      <button type="button" class="btn btn-primary" data-demo-loading><span class="spinner" aria-hidden="true"></span><span class="label">Cargando</span><span class="arrow" aria-hidden="true">→</span></button>
+      <a href="#" class="link">Link editorial</a>
+      <span class="badge">6c+</span><span class="badge badge-accent">visita invitada</span>
+    </div>
+  </details>
+</main>
+
+<footer class="border-t-[0.5px] border-line-strong">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-12 grid grid-cols-2 md:grid-cols-5 gap-8 text-[15px]">
+    <div class="col-span-2">
+      <p class="logo-lockup" style="--logo-h:24px"><img src="../../../public/brand/logo-white.svg" alt="ChalkGuide" width="2073" height="384" class="h-6 w-auto"><span class="label-mini logo-tag" aria-hidden="true">Barcelona</span></p>
+      <p class="text-meta mt-3 max-w-[36ch]">Escalar en Barcelona, con datos y voz de autor. Hermano de <a href="#" class="link">Chalk app</a>.</p>
+    </div>
+    <nav aria-label="Guías"><p class="label-mini">Guías</p><ul class="mt-2"><li><a href="/rocodromos" class="navlink">Rocódromos</a></li><li><a href="/resolar-pies-de-gato" class="navlink">Resolar pies de gato</a></li><li><a href="/pies-de-gato" class="navlink">Pies de gato</a></li></ul></nav>
+    <nav aria-label="Medio"><p class="label-mini">Medio</p><ul class="mt-2"><li><a href="/blog" class="navlink">Blog</a></li><li><a href="/agenda" class="navlink">Agenda</a></li><li><a href="/newsletter" class="navlink">Newsletter</a></li><li><a href="/sobre-mi" class="navlink">Sobre mí</a></li></ul></nav>
+    <nav aria-label="Transparencia y legal"><p class="label-mini">Cuentas claras</p><ul class="mt-2"><li><a href="/transparencia" class="navlink">Transparencia</a></li><li><a href="/privacidad" class="navlink">Privacidad</a></li><li><a href="/cookies" class="navlink">Cookies</a></li><li><a href="/aviso-legal" class="navlink">Aviso legal</a></li><li><a href="/en" lang="en" class="navlink">English</a></li></ul></nav>
+  </div>
+  <p class="max-w-page mx-auto px-4 md:px-6 pb-8 label-mini !tracking-[.08em]">© 2026 ChalkGuide · Ninguna reseña se compra · Lo pagado se marca</p>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const vt = (fn) => (!reduce && document.startViewTransition) ? document.startViewTransition(fn) : fn();
+
+  /* Barra compacta */
+  const bar = $('#stickyBar');
+  new IntersectionObserver(([e]) => {
+    const on = !e.isIntersecting;
+    bar.classList.toggle('is-on', on); bar.setAttribute('aria-hidden', String(!on)); bar.inert = !on;
+    if (!on) $$('[data-dd]', bar).forEach(dd => dd._close && dd._close(false));
+  }).observe($('#masthead'));
+
+  /* Dropdown "Guías": disclosure accesible */
+  $$('[data-dd]').forEach(dd => {
+    const btn = $('.dd-btn', dd), links = $$('.dd-panel a', dd);
+    let tOpen, tClose;
+    const open = (focusFirst) => { dd.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true'); if (focusFirst) links[0].focus(); };
+    const close = (returnFocus) => { dd.classList.remove('is-open'); btn.setAttribute('aria-expanded', 'false'); if (returnFocus) btn.focus(); };
+    dd._close = close;
+    btn.addEventListener('click', () => dd.classList.contains('is-open') ? close(false) : open(false));
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); open(true); }
+      if (e.key === 'Escape') close(true);
+    });
+    dd.addEventListener('keydown', (e) => {
+      if (e.target === btn) return;
+      const i = links.indexOf(e.target);
+      if (e.key === 'Escape') { e.preventDefault(); close(true); }
+      if (i < 0) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); links[(i + 1) % links.length].focus(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); i === 0 ? btn.focus() : links[i - 1].focus(); }
+      if (e.key === 'Home') { e.preventDefault(); links[0].focus(); }
+      if (e.key === 'End') { e.preventDefault(); links[links.length - 1].focus(); }
+    });
+    dd.addEventListener('focusout', (e) => { if (!dd.contains(e.relatedTarget)) close(false); });
+    links.forEach(a => a.addEventListener('click', () => close(false)));
+    if (finePointer) {
+      dd.addEventListener('mouseenter', () => { clearTimeout(tClose); tOpen = setTimeout(() => open(false), 120); });
+      dd.addEventListener('mouseleave', () => { clearTimeout(tOpen); tClose = setTimeout(() => close(false), 300); });
+    }
+  });
+  document.addEventListener('click', (e) => $$('[data-dd].is-open').forEach(dd => { if (!dd.contains(e.target)) dd._close(false); }));
+
+  /* Acordeón del menú móvil */
+  $$('.acc-btn').forEach(b => b.addEventListener('click', () => {
+    const open = b.getAttribute('aria-expanded') !== 'true';
+    b.setAttribute('aria-expanded', open);
+    document.getElementById(b.getAttribute('aria-controls')).classList.toggle('is-open', open);
+  }));
+
+  /* Reveal, barras y trazos */
+  const io = new IntersectionObserver((ents) => ents.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: .1 });
+  $$('[data-reveal], .bar, [data-draw]').forEach(el => io.observe(el));
+
+  /* Segmented */
+  const place = (seg) => {
+    const act = seg.querySelector('[aria-selected="true"],[aria-pressed="true"]'), ind = seg.querySelector('.ind');
+    if (!act || !ind) return;
+    ind.style.width = act.offsetWidth + 'px'; ind.style.transform = `translateX(${act.offsetLeft}px)`;
+  };
+  const segs = $$('[data-seg]'); segs.forEach(place);
+  addEventListener('resize', () => segs.forEach(place));
+  document.fonts && document.fonts.ready.then(() => segs.forEach(place));
+
+  /* Tabs de perfil */
+  const tabs = $$('[role="tab"]');
+  const select = (tab, focus) => {
+    tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1;
+      const p = document.getElementById(t.getAttribute('aria-controls')); p.hidden = !on;
+      if (on) { p.classList.remove('is-entering'); void p.offsetWidth; p.classList.add('is-entering'); } });
+    place(tab.closest('[data-seg]')); if (focus) tab.focus();
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault();
+        select(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length], true); }
+    });
+  });
+
+  /* Ordenar rocódromos */
+  const sortSeg = $('[data-sort]'), status = $('#sort-status');
+  const names = { score: 'nota del autor', price: 'precio, de menor a mayor', beginner: 'índice principiante' };
+  $$('button', sortSeg).forEach(b => b.addEventListener('click', () => {
+    if (b.getAttribute('aria-pressed') === 'true') return;
+    const key = b.dataset.key;
+    $$('button', sortSeg).forEach(x => x.setAttribute('aria-pressed', x === b)); place(sortSeg);
+    vt(() => $$('[data-sortable]').forEach(list => {
+      [...list.children].sort((a, c) => key === 'price' ? a.dataset.price - c.dataset.price : c.dataset[key] - a.dataset[key]).forEach(n => list.appendChild(n));
+    }));
+    status.textContent = 'Ordenado por ' + names[key];
+  }));
+
+  /* Menú (bottom sheet) */
+  const sheet = $('#menu'); let lastFocus;
+  const setMenu = (open) => {
+    sheet.classList.toggle('is-open', open); sheet.setAttribute('aria-hidden', String(!open));
+    $$('[data-menu-toggle]').forEach(b => b.setAttribute('aria-expanded', open));
+    if (open) { lastFocus = document.activeElement; setTimeout(() => $('button, a', $('.panel', sheet)).focus(), 60); }
+    else if (lastFocus) lastFocus.focus();
+  };
+  $$('[data-menu-toggle]').forEach(b => b.addEventListener('click', () => setMenu(true)));
+  $$('[data-menu-close]').forEach(b => b.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheet.classList.contains('is-open')) setMenu(false); });
+
+  /* Cargando */
+  const busy = (btn, ms) => new Promise(r => { btn.setAttribute('aria-busy', 'true'); setTimeout(() => { btn.removeAttribute('aria-busy'); r(); }, ms); });
+  $$('[data-demo-loading]').forEach(b => b.addEventListener('click', () => { if (b.getAttribute('aria-busy') !== 'true') busy(b, 1500); }));
+
+  /* Newsletter */
+  const form = $('#nlForm'), email = $('#email-e'), consent = $('#consent-e');
+  const showErr = (input, id, bad) => { input.setAttribute('aria-invalid', bad); const m = document.getElementById(id); m.classList.toggle('hidden', !bad); m.classList.toggle('flex', bad); };
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const badEmail = !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value.trim());
+    showErr(email, 'err-email', badEmail); showErr(consent, 'err-consent', !consent.checked);
+    if (badEmail) return email.focus();
+    if (!consent.checked) return consent.focus();
+    const btn = form.querySelector('[type="submit"]'); if (btn.getAttribute('aria-busy') === 'true') return;
+    await busy(btn, 1100);
+    vt(() => { form.classList.add('hidden'); const s = $('#nlSuccess'); s.classList.remove('hidden'); s.focus(); });
+  });
+  consent.addEventListener('change', () => consent.checked && showErr(consent, 'err-consent', false));
+})();
+</script>
+</body>
+</html>

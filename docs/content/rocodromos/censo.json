@@ -1,0 +1,146 @@
+[
+  {
+    "name": "Climbat La Foixarda",
+    "slug": "climbat-la-foixarda",
+    "chain": "Climbat",
+    "municipality": "Barcelona",
+    "website_url": "https://climbat.com/centro/la-foixarda/",
+    "verified": true,
+    "note": "Camí de la Foixarda 14-18, 08038 (Montjuïc). Web con noticias 2026. Bloque y cuerda. Única sede Climbat en Cataluña en la web (Badalona ya no aparece; Magnesio pasó a Indoorwall)."
+  },
+  {
+    "name": "Sharma Climbing Poble Nou",
+    "slug": "sharma-climbing-poble-nou",
+    "chain": "Sharma Climbing",
+    "municipality": "Barcelona",
+    "website_url": "https://sharmaclimbing.com/espana/barcelona-poble-nou/",
+    "verified": true,
+    "note": "Carrer del Marroc 204, 08019. Web © 2020-2026. Bloque y cuerda. Dirección tomada de la web (otras guías ponen Pallars)."
+  },
+  {
+    "name": "Sharma Climbing Gavà",
+    "slug": "sharma-climbing-gava",
+    "chain": "Sharma Climbing",
+    "municipality": "Gavà",
+    "website_url": "https://sharmaclimbing.com/espana/barcelona-gava/",
+    "verified": true,
+    "note": "Carrer Girona 25, 08850. Rodalies R2 Sud. Tarifas 2025-26 en web. Bloque y cuerda."
+  },
+  {
+    "name": "Bloc District Marina",
+    "slug": "bloc-district-marina",
+    "chain": "Bloc District",
+    "municipality": "Barcelona",
+    "website_url": "https://www.blocdistrict.com/marina/",
+    "verified": true,
+    "note": "Carrer de Zamora 96-106, 08018 (Poblenou). Bloque. Web © 2026."
+  },
+  {
+    "name": "Bloc District Tetuan",
+    "slug": "bloc-district-tetuan",
+    "chain": "Bloc District",
+    "municipality": "Barcelona",
+    "website_url": "https://www.blocdistrict.com/tetuan/",
+    "verified": true,
+    "note": "Carrer de Nàpols 128, 08013. Abierta 2024 según blog de terceros (no verificado en web). USC indica cuerda con casco; confirmar si hay cuerda."
+  },
+  {
+    "name": "Monobloc Sants",
+    "slug": "monobloc-sants",
+    "chain": "Monobloc",
+    "municipality": "Barcelona",
+    "website_url": "https://www.monobloc.es/sants",
+    "verified": true,
+    "note": "Carrer de la Mineria 51, 08038. Dirección y horario de la portada monobloc.es (2026). No abrí la subpágina /sants."
+  },
+  {
+    "name": "Monobloc La Sagrera",
+    "slug": "monobloc-la-sagrera",
+    "chain": "Monobloc",
+    "municipality": "Barcelona",
+    "website_url": "https://www.monobloc.es/la-sagrera",
+    "verified": true,
+    "note": "Carrer d'Olesa 71, 08027. Bloque. Pase día 13 EUR en web. Cadena también en Reus (fuera de alcance)."
+  },
+  {
+    "name": "Indoorwall El Clot",
+    "slug": "indoorwall-el-clot",
+    "chain": "Indoorwall",
+    "municipality": "Barcelona",
+    "website_url": "https://www.indoorwall.com/centros-indoorwall-rocodromos/indoorwall-el-clot-barcelona/",
+    "verified": true,
+    "note": "Carrer Gabriel y Galán 3, 08026. Mismo local que Climbat Magnesio / Sala Magnesi (nombres antiguos). Un blog (mayo 2024) dudó de su continuidad; la web 2026 lo lista y da horario."
+  },
+  {
+    "name": "Indoorwall L'Hospitalet",
+    "slug": "indoorwall-hospitalet",
+    "chain": "Indoorwall",
+    "municipality": "L'Hospitalet de Llobregat",
+    "website_url": "https://www.indoorwall.com/centros-indoorwall-rocodromos/indoorwall-hospitalet-llobregat/",
+    "verified": true,
+    "note": "Avinguda Fabregada 33, 08907. Misma duda de blog 2024 que El Clot; web 2026 lo lista. Cuerda y bloque."
+  },
+  {
+    "name": "Freebloc",
+    "slug": "freebloc",
+    "chain": "Freebloc",
+    "municipality": "Barcelona",
+    "website_url": "https://freebloc.com/",
+    "verified": true,
+    "note": "Carrer Rossend Arús 11-15, 08014 (Sants). Piso con salas de bloque. Horario 7-24 h en web; curso anunciado dic 2026."
+  },
+  {
+    "name": "BDN Climb",
+    "slug": "bdn-climb",
+    "chain": "BDN Climb",
+    "municipality": "Badalona",
+    "website_url": "https://bdnclimb.com/",
+    "verified": true,
+    "note": "Carrer del Torrent Vallmajor 106, 08915 (Pol. Les Guixeres). Web © 2026. Bloque, cuerda, circo. Pase adulto 10 EUR en web. Sustituyó al antiguo Climbat Badalona (Isidre Nonell 11)."
+  },
+  {
+    "name": "Flashh Barcelona",
+    "slug": "flashh-barcelona",
+    "chain": "Flashh",
+    "municipality": "Sant Cugat del Vallès",
+    "website_url": "https://flashh.es/",
+    "verified": true,
+    "note": "Carrer de Vic 12, 08173. Bloque. Web activa, sin fecha 2026 explícita (listado USC vigente). Pese al nombre, está en Sant Cugat."
+  },
+  {
+    "name": "Kimera Climbing Bcn",
+    "slug": "kimera-climbing-bcn",
+    "chain": "Kimera Climbing",
+    "municipality": "Gavà",
+    "website_url": "https://kimeraclimbingbcn.com/",
+    "verified": true,
+    "note": "Carrer de Barcelona 1E, 08850. Web modificada oct 2026. Bloque, cuerda, gimnasio y bar."
+  },
+  {
+    "name": "9a Poblenou Climbing",
+    "slug": "9a-poblenou-climbing",
+    "chain": null,
+    "municipality": "Barcelona",
+    "website_url": "https://www.9poble9.cat/",
+    "verified": false,
+    "note": "Carrer d'Espronceda 21-23, 08005 (guia.barcelona.cat). Web oficial falla: error de certificado SSL (no abre; http da 403). Un blog dice que solo entra quien hace curso; sin confirmar entrada por día."
+  },
+  {
+    "name": "Els Bous de La Salle",
+    "slug": "els-bous-la-salle",
+    "chain": null,
+    "municipality": "Barcelona",
+    "website_url": null,
+    "verified": false,
+    "note": "Dentro de La Salle Sport & Fitness, Lluçanès 41-43. Time Out: cuota de socio incluye rocódromo. Sin web propia ni entrada de pago por día verificada. Probable excluir."
+  },
+  {
+    "name": "Espai Jove Boca Nord",
+    "slug": "espai-jove-boca-nord",
+    "chain": null,
+    "municipality": "Barcelona",
+    "website_url": null,
+    "verified": false,
+    "note": "Municipal (Nou Barris), 12-35 años, entrada 1 EUR y reserva (Time Out, ene 2025). Web oficial no abierta. Probable excluir por municipal."
+  }
+]

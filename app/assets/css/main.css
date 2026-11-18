@@ -1,24 +1,555 @@
 @import 'tailwindcss';
+/* Home hero carousel (D38-D41) */
+@import './hero.css';
 
 /*
- * PROVISIONAL design tokens.
- * The brand is not defined yet: every value below is a placeholder to prove the
- * pipeline works. Replace them wholesale once the visual identity is decided.
+ * ChalkGuide · design system v1 (Dirección E "Pizarra", aprobada).
+ * Fuente de verdad: docs/design/site/README.md §5 y §7 + design-system.html.
+ * Fuentes autoalojadas (@fontsource, ver nuxt.config.ts `css`): nada se carga desde Google.
  */
+
+/* CSS fallback: Archivo variable with the width axis, latin subset only. @fontsource-variable
+   ships no latin-only wdth stylesheet (wdth.css pulls every subset), so the face is declared here
+   from the package file. Display type of D40 (hero H1, section titles, poster). */
+@font-face {
+  font-family: 'Archivo Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url('@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
-  /* Colors (provisional) */
-  --color-brand: oklch(0.55 0.15 250);
-  --color-brand-contrast: oklch(0.98 0 0);
-  --color-accent: oklch(0.75 0.16 70);
-  --color-ink: oklch(0.22 0.01 260);
-  --color-ink-muted: oklch(0.45 0.01 260);
-  --color-surface: oklch(0.99 0 0);
-  --color-surface-muted: oklch(0.96 0.005 260);
+  /* --- Color: tema claro (sitio). La paleta oscura vive en .chrome-dark (README §9) --- */
+  --color-background: #f4f1ea; /* papel */
+  --color-board: #fbf9f5;
+  --color-elevated: #ebe6dc;
+  --color-tray: #efebe3; /* bandeja de foto de producto (la foto se funde con multiply) */
+  --color-tray-paper: #efebe3; /* bandeja de producto fija: no cambia en .chrome-dark (placas y póster) */
+  --color-tray-paper-hover: #e6e0d5;
+  --color-line: #dcd5c8; /* bordes 0.5px decorativos */
+  --color-line-strong: #c2b9a9;
+  --color-control: #827a6d; /* borde 1px de inputs, ghost y chips (≥3:1) */
+  /* --- Color: acento --- */
+  --color-accent: #9a4a16; /* TEXTO y bordes de acento (AA sobre papel) */
+  --color-accent-fill: #e8923a; /* RELLENOS: primario, checkbox, nota, rango, selección */
+  --color-accent-hover: #c4721f;
+  --color-accent-muted: #f7e4d0;
+  --color-on-accent: #1a0a00; /* texto sobre accent-fill */
+  --color-chalk: #d2702a; /* trazo de tiza y barras (decorativo, siempre con el número) */
+  /* --- Color: tarjeta de papel y cuerda del hero (no cambian en .chrome-dark) --- */
+  --color-paper: #f4f1ea;
+  --color-ink: #1c1a17;
+  --color-accent-ink: #9a4a16; /* etiqueta de acento sobre papel */
+  --color-meta-ink: #5e584e; /* secundario sobre papel */
+  --color-rope-shade: #8f5013; /* sombra del trenzado de la cuerda */
+  --color-nav-card: #1c1c1e; /* cara de la tarjeta del menú de escritorio */
+  --color-nav-tile: #2c2c2f; /* baldosa numérica de esa tarjeta */
+  --color-accent-fill-hover: #dd8630; /* pieza naranja del dock al pasar el ratón */
+  --color-on-field-meta: #3d2008; /* secundario sobre el campo naranja (6,11:1) */
+  /* --- Color: texto --- */
+  --color-foreground: #1c1a17;
+  --color-prose: #34302a; /* cuerpo de texto largo */
+  --color-meta: #5e584e; /* secundario */
+  --color-muted: #6b6559; /* placeholder */
+  --color-hint: #b5ac9c; /* solo decorativo */
+  /* --- Color: semánticos --- */
+  --color-success: #17855f;
+  --color-success-text: #1a6e4e;
+  --color-success-muted: #e3f0e8;
+  --color-danger: #c23b37;
+  --color-danger-text: #b02a25;
+  --color-danger-muted: #f8e1de;
 
-  /* Font families (provisional, system stacks: no web fonts loaded yet) */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* --- Tipografía --- */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-hand: 'Caveat', cursive;
+  --font-display: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif; /* títulos de presencia, ver D40 (hero, secciones, listados, póster) */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500; /* máximo: no hay bold */
+  /* Títulos de sección de la home y H1 de listados (D40 ampliada): 34 px en 390, 59 en 1440 */
+  --text-section: clamp(2rem, 1.55rem + 2.4vw, 3.75rem);
+  --text-section--line-height: 1.04;
+  --text-section--letter-spacing: -0.02em;
+  /* Solo la carta de la newsletter: 40 px en 390, 72 en 1440 */
+  --text-section-lg: clamp(2.375rem, 1.6rem + 3.6vw, 4.5rem);
+  --text-section-lg--line-height: 1.04;
+  --text-section-lg--letter-spacing: -0.02em;
+  --text-title-1: clamp(2.125rem, 1.6rem + 2.2vw, 3rem);
+  --text-title-1--line-height: 1.08;
+  --text-title-1--letter-spacing: -0.025em;
+  --text-title-2: clamp(1.75rem, 1.45rem + 1.2vw, 2.25rem);
+  --text-title-2--line-height: 1.12;
+  --text-title-2--letter-spacing: -0.025em;
+  --text-title-3: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+  --text-title-3--line-height: 1.2;
+  --text-title-4: 1.25rem;
+  --text-title-4--line-height: 1.3;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.7; /* lectura */
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.5; /* controles */
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.45;
+  --text-micro: 0.75rem; /* 12px, metadatos mínimos */
+  --text-note: 0.8125rem; /* 13px, notas y ayudas */
+  --text-lead: 1.0625rem; /* 17px, entradilla */
+  --text-lead--line-height: 1.7;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1;
+  --text-label--letter-spacing: 0.14em; /* mono, mayúsculas */
+  --text-data: 0.9375rem;
+  --text-data--line-height: 1.4; /* mono, tabular-nums */
+  --text-read: clamp(1.125rem, 1.08rem + 0.2vw, 1.1875rem); /* 18 → 19, cuerpo de lectura */
+  --text-read--line-height: 1.65;
+  --text-read-h2: clamp(1.625rem, 1.4rem + 0.9vw, 2.125rem); /* 26 → 34 */
+  --text-read-h2--line-height: 1.15;
+  --text-read-h2--letter-spacing: -0.02em;
+  --text-read-h3: clamp(1.25rem, 1.17rem + 0.3vw, 1.375rem); /* 20 → 22 */
+  --text-read-h3--line-height: 1.25;
+  --text-quote: clamp(1.375rem, 1.1rem + 1.1vw, 1.75rem); /* 22 → 28 */
+  --text-quote--line-height: 1.25;
+  --text-article-title: clamp(2.25rem, 1.6rem + 2.8vw, 4rem); /* 36 → 64, Inter 500 (D49) */
+  --text-article-title--line-height: 1.04;
+  --text-article-title--letter-spacing: -0.025em;
+  --text-about-title: clamp(2.125rem, 0.964rem + 4.76vw, 3.75rem); /* 34 → 60, H1 de Sobre mí (§13.8) */
+  --text-about-title--line-height: 1.06;
+  --text-about-title--letter-spacing: -0.03em;
+  --text-hand: 1.625rem;
+  --text-hand--line-height: 1.15;
+  --text-hand-lg: 2.75rem;
+  --text-hand-lg--line-height: 1;
 
-  /* Spacing scale (provisional): Tailwind derives p-*, m-*, gap-*… from this base unit */
+  /* --- Espaciado (escala de 4px) --- */
   --spacing: 0.25rem;
+
+  /* --- Radios (Chalk app) --- */
+  --radius-sm: 4px; /* chip, badge */
+  --radius-xs: 6px; /* segmentado, skeleton */
+  --radius-md: 8px; /* botón, input, fila */
+  --radius-lg: 12px; /* tarjeta, panel, dropdown */
+  --radius-xl: 16px; /* sheet, bloque destacado */
+  --radius-slab: 6px; /* placas destacadas (tabla, póster, pizarra, formulario), como el hero */
+
+  /* --- Anchos y breakpoints --- */
+  --container-read: 680px;
+  --container-prose: 640px; /* columna de lectura del artículo (editorial v2, §13.4) */
+  --container-page: 1200px;
+  --container-measure: 52ch; /* texto corto legible */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+
+  /* --- Motion --- */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --animate-skeleton: skeleton 1.4s linear infinite;
+  --animate-spin: spin 0.8s linear infinite;
+  --animate-toast-in: toast-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-panel-in: panel-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-flash: flash 900ms ease-out;
+
+  @keyframes skeleton {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes flash {
+    from {
+      background-color: var(--color-accent-muted);
+    }
+    to {
+      background-color: transparent;
+    }
+  }
+}
+
+:root {
+  /* v4 no tiene namespace de duración: variables CSS + utilidades duration-150/200/300 */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-draw: 600ms;
+  --shadow-slab: 0 1px 0 #d6cfc1, 0 2px 0 #c9c1b1, 0 3px 0 #b8afa0, 0 22px 34px -22px rgb(28 26 23 / 0.5);
+  --shadow-slab-dark: 0 1px 0 #c8c0b1, 0 2px 0 #8e8678, 0 3px 0 #5c564b, 0 28px 44px -22px #000;
+  --shadow-slab-ink: 0 1px 0 #2a2a2a, 0 2px 0 #3a3733, 0 3px 0 #4d4942, 0 18px 26px -20px rgb(28 26 23 / 0.55);
+  --ring: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent);
+  /* Variables de apoyo que cambian por ámbito (claro aquí, oscuro en .chrome-dark) */
+  --bar-track: #e3ddd1;
+  --tex-line: rgb(28 26 23 / 0.035);
+  --tex-line-2: rgb(28 26 23 / 0.022);
+  --hl-bg: var(--color-accent-muted);
+  --hl-line: var(--color-chalk);
+  --scrim: rgb(28 26 23 / 0.45);
+  --photo-dust: 0.18;
+  --photo-edge: rgb(0 0 0 / 0.12);
+  --photo-a: #3a2f27;
+  --photo-b: #1f1b18;
+  --photo-c: #121212;
+  --shadow-bar: 0 1px 0 rgb(0 0 0 / 0.35), 0 10px 24px -14px rgb(28 26 23 / 0.55);
+  color-scheme: light;
+}
+
+/* Ámbito oscuro: cabecera, barra fija, menú móvil, desplegable Guías, pie (+ newsletter del pie)
+   y hero de la home. Redeclara la paleta oscura (§5); lo que va dentro la hereda sin tocar
+   componentes. En @layer base para que las utilidades (bg-*, board-tex) sigan ganando. */
+@layer base {
+  .chrome-dark {
+    --color-background: #0f0f0f;
+    --color-board: #1a1a1a;
+    --color-elevated: #242424;
+    --color-tray: #242424;
+    --color-line: #2a2a2a;
+    --color-line-strong: #333333;
+    --color-control: #75716a;
+    --color-accent: #e8923a;
+    --color-accent-fill: #e8923a;
+    --color-accent-hover: #c4721f;
+    --color-accent-muted: #3a2010;
+    --color-on-accent: #1a0a00;
+    --color-chalk: #e8923a;
+    --color-foreground: #f0ede8;
+    --color-prose: #dcd8d1;
+    --color-meta: #a19d94;
+    --color-muted: #888880;
+    --color-hint: #444440;
+    --color-success: #1d9e75;
+    --color-success-text: #3dbe93;
+    --color-success-muted: #0a2a1e;
+    --color-danger: #e24b4a;
+    --color-danger-text: #f06a68;
+    --color-danger-muted: #2a0a0a;
+    --bar-track: #242424;
+    --tex-line: rgb(240 237 232 / 0.022);
+    --tex-line-2: rgb(240 237 232 / 0.014);
+    --hl-bg: #3a2010;
+    --hl-line: #e8923a;
+    --photo-dust: 0.35;
+    --photo-edge: transparent;
+    --ring: 0 0 0 2px #0f0f0f, 0 0 0 4px #e8923a;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    color-scheme: dark;
+  }
+}
+
+/* Campo naranja (newsletter): ámbito como .chrome-dark. Tinta #1a0a00 sobre naranja (7,91:1);
+   .on-paper devuelve la paleta clara dentro de la placa de papel (errores, casilla y enlace AA). */
+@layer base {
+  .field-orange {
+    --color-foreground: #1a0a00;
+    --color-meta: var(--color-on-field-meta);
+    --color-accent: #1a0a00;
+    --ring: 0 0 0 2px #e8923a, 0 0 0 4px #1a0a00;
+    background-color: #e8923a;
+    color: #1a0a00;
+  }
+  .on-paper {
+    --color-background: #f4f1ea;
+    --color-foreground: #1c1a17;
+    --color-meta: #5e584e;
+    --color-accent: #9a4a16;
+    --color-danger-text: #b02a25;
+    --color-success-text: #1a6e4e;
+    --ring: 0 0 0 2px #f4f1ea, 0 0 0 4px #9a4a16;
+    color: #1c1a17;
+  }
+}
+
+/* ===== Base global ===== */
+@layer base {
+  html {
+    background-color: var(--color-background);
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background font-sans text-body text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    background-color: var(--color-accent-fill);
+    color: var(--color-on-accent);
+  }
+  [hidden] {
+    display: none !important;
+  }
+  /* Foco visible común (anillo de 2px sobre el fondo + 2px acento) */
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    box-shadow: var(--ring);
+    border-radius: var(--radius-sm);
+  }
+  /* Lucide: trazo 1.75 en todo el sitio (el DS lo fija; el atributo por defecto es 2) */
+  svg.lucide {
+    stroke-width: 1.75;
+    flex-shrink: 0;
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ===== Utilidades propias del DS ===== */
+
+/* CSS fallback: rejilla de pizarra con dos degradados; Tailwind no compone varias capas de fondo. */
+@utility board-tex {
+  background-color: var(--color-board);
+  background-image:
+    linear-gradient(var(--tex-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--tex-line-2) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* CSS fallback: placeholder de foto (degradado + polvo de tiza con SVG de ruido) del DS;
+   se usa mientras una portada no tiene imagen. */
+@utility photo-placeholder {
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 0.5px var(--photo-edge);
+  background: linear-gradient(150deg, var(--photo-a) 0%, var(--photo-b) 55%, var(--photo-c) 100%);
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: var(--photo-dust);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.94 0 0 0 0 0.93 0 0 0 0 0.91 0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+}
+
+/* Título de sección (D40 ampliada): Archivo Expanded 700, mayúsculas. Sin max-w. */
+@utility title-section {
+  font-family: var(--font-display);
+  font-size: var(--text-section);
+  line-height: var(--text-section--line-height);
+  letter-spacing: var(--text-section--letter-spacing);
+  font-weight: 700;
+  font-stretch: 125%;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+@utility title-section-lg {
+  font-family: var(--font-display);
+  font-size: var(--text-section-lg);
+  line-height: var(--text-section-lg--line-height);
+  letter-spacing: var(--text-section-lg--letter-spacing);
+  font-weight: 700;
+  font-stretch: 125%;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Placas: radio de 6 px y grosor por sombra (sin borde de 0,5 px). */
+@utility slab {
+  border-radius: var(--radius-slab);
+  box-shadow: var(--shadow-slab);
+}
+@utility slab-dark {
+  border-radius: var(--radius-slab);
+  box-shadow: var(--shadow-slab-dark);
+  /* CSS fallback: sobre el campo naranja la sombra de la placa cambia de base; Tailwind no cubre el ámbito padre. */
+  .field-orange & {
+    box-shadow:
+      0 1px 0 #d6cfc1,
+      0 2px 0 #b8afa0,
+      0 3px 0 #8e8678,
+      0 24px 36px -24px rgb(26 10 0 / 0.6);
+  }
+}
+@utility slab-ink {
+  border-radius: var(--radius-slab);
+  box-shadow: var(--shadow-slab-ink);
+}
+
+/* CSS fallback: polvo de tiza (ruido SVG de .hero-ground, sin máscara); el pseudo-elemento va tras el contenido. */
+@utility dust {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.26;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  &.field-orange::before {
+    opacity: 0.34;
+  }
+}
+
+/* Fecha de evento (D49): Archivo 700, 125 %, mayúsculas y cifras tabulares. */
+@utility display-date {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-stretch: 125%;
+  line-height: 1.25;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* CSS fallback: área táctil de 44 px en enlaces en línea (padding vertical 12 px) sin mover la línea; Tailwind no combina background-origin/clip con el padding en una sola utilidad. */
+@utility hit {
+  padding-block: 12px;
+  background-origin: content-box;
+  background-clip: content-box;
+}
+
+@utility label-mini {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: 1;
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-meta);
+}
+
+/* CSS fallback: resaltado de término buscado (fondo + línea inferior 2px); Tailwind no combina ambos en un <mark> global. */
+@layer base {
+  mark {
+    background-color: var(--hl-bg);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 0.08em;
+    box-shadow: inset 0 -2px 0 var(--hl-line);
+  }
+}
+
+@utility ring-focus {
+  box-shadow: var(--ring);
+}
+
+/* CSS fallback: subrayado de enlace con dos capas de fondo animadas (background-size). */
+@utility link-underline {
+  background-image:
+    linear-gradient(var(--color-accent), var(--color-accent)),
+    linear-gradient(var(--link-base, var(--color-control)), var(--link-base, var(--color-control)));
+  background-size:
+    0% 1.5px,
+    100% 1px;
+  background-position:
+    0 100%,
+    0 100%;
+  background-repeat: no-repeat;
+  padding-bottom: 2px;
+  transition:
+    background-size var(--duration-slow) var(--ease-out),
+    color var(--duration-base);
+  &:focus-visible {
+    background-size:
+      100% 1.5px,
+      100% 1px;
+  }
+  @media (hover: hover) {
+    &:hover {
+      background-size:
+        100% 1.5px,
+        100% 1px;
+    }
+  }
+}
+
+/* Success check and chalk strokes: drawn once (stroke-dashoffset). */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* CSS fallback: fachada de vídeo (D26). Sin JS no hay botón: el marco es un enlace a youtube.com.
+   Fuera del @media de movimiento: es lógica JS/sin JS y debe aplicarse también con reduced-motion. */
+[data-video-play] {
+  display: none;
+}
+.js [data-video-play] {
+  display: block;
+}
+.js [data-video-nojs] {
+  display: none;
+}
+
+/* ===== Movimiento solo con permiso ===== */
+@media (prefers-reduced-motion: no-preference) {
+  /* CSS fallback: reveal de sección (fade + 8px, 300ms); solo se oculta con .reveal-ready (puesta al hidratar), así sin JS todo se ve. */
+  .reveal-ready [data-reveal]:not(.is-in) {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  [data-reveal] {
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* CSS fallback: trazos de tiza que se dibujan una vez (stroke-dashoffset) cuando entran en pantalla. */
+  .js [data-draw] path {
+    stroke-dasharray: var(--len, 400);
+    stroke-dashoffset: var(--len, 400);
+    transition: stroke-dashoffset var(--duration-draw) var(--ease-out) 200ms;
+  }
+  .js [data-draw].is-in path {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* CSS fallback: check de éxito que se dibuja una vez (stroke-dashoffset + keyframes; Tailwind no cubre dasharray animado). */
+.success-check circle {
+  stroke-dasharray: 152;
+  stroke-dashoffset: 152;
+  animation: draw var(--duration-draw) var(--ease-out) forwards;
+}
+.success-check path {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: draw var(--duration-slow) var(--ease-out) 450ms forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .success-check circle,
+  .success-check path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* CSS fallback: regla global de reduced motion (duraciones a 0); no existe utilidad equivalente. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
 }

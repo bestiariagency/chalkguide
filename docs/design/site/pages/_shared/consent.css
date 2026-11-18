@@ -1,0 +1,112 @@
+/* ChalkGuide · estilos de los mockups D66. Copia de los de pages/newsletter.html (tokens actuales de main.css
+   + home v2) y las piezas nuevas de D66, marcadas con «D66». No hay tokens nuevos. */
+:root {
+  --color-background:#f4f1ea; --color-board:#fbf9f5; --color-elevated:#ebe6dc; --color-tray:#efebe3;
+  --color-line:#dcd5c8; --color-line-strong:#c2b9a9; --color-control:#827a6d;
+  --color-accent:#9a4a16; --color-accent-fill:#e8923a; --color-accent-muted:#f7e4d0; --color-on-accent:#1a0a00; --color-chalk:#d2702a;
+  --color-foreground:#1c1a17; --color-prose:#34302a; --color-meta:#5e584e; --color-muted:#6b6559;
+  --color-success-text:#1a6e4e; --color-danger-text:#b02a25;
+  --ring:0 0 0 2px var(--color-background),0 0 0 4px var(--color-accent);
+  --text-section:clamp(2rem,1.55rem + 2.4vw,3.75rem);
+  --text-section-lg:clamp(2.375rem,1.6rem + 3.6vw,4.5rem);
+  --radius-slab:6px;
+  --shadow-slab:0 1px 0 #d6cfc1,0 2px 0 #c9c1b1,0 3px 0 #b8afa0,0 22px 34px -22px rgb(28 26 23 / .5);
+  --shadow-slab-dark:0 1px 0 #c8c0b1,0 2px 0 #8e8678,0 3px 0 #5c564b,0 28px 44px -22px #000;
+  --dust:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.chrome-dark {
+  --color-background:#0f0f0f; --color-board:#1a1a1a; --color-elevated:#242424; --color-line:#2a2a2a; --color-line-strong:#333;
+  --color-accent:#e8923a; --color-foreground:#f0ede8; --color-meta:#a19d94; --color-muted:#888880;
+  --ring:0 0 0 2px #0f0f0f,0 0 0 4px #e8923a; background-color:var(--color-background); color:var(--color-foreground);
+}
+.field-orange { --color-foreground:#1a0a00; --color-meta:#3d2008; --color-accent:#1a0a00; --ring:0 0 0 2px #e8923a,0 0 0 4px #1a0a00; background-color:#e8923a; color:#1a0a00; }
+.on-paper { --color-background:#f4f1ea; --color-foreground:#1c1a17; --color-meta:#5e584e; --color-accent:#9a4a16; --ring:0 0 0 2px #f4f1ea,0 0 0 4px #9a4a16; color:#1c1a17; }
+
+html { background:#f4f1ea; }
+body { font-family:Inter,system-ui,sans-serif; font-feature-settings:'cv11','ss01'; -webkit-font-smoothing:antialiased; }
+:focus { outline:none; }
+:focus-visible { box-shadow:var(--ring); border-radius:4px; }
+
+.title-section, .title-section-lg { font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%; text-transform:uppercase; letter-spacing:-.02em; line-height:1.04; text-wrap:balance; }
+.title-section { font-size:var(--text-section); }
+.title-section-lg { font-size:var(--text-section-lg); }
+.slab { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab); }
+.slab-dark { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab-dark); }
+.field-orange .slab-dark { box-shadow:0 1px 0 #d6cfc1,0 2px 0 #b8afa0,0 3px 0 #8e8678,0 24px 36px -24px rgb(26 10 0 / .6); }
+.dust { position:relative; isolation:isolate; }
+.dust::before { content:''; position:absolute; inset:0; z-index:-1; opacity:.26; pointer-events:none; background-image:var(--dust); }
+.field-orange.dust::before { opacity:.34; }
+
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 18px; border-radius:8px; font-size:15px; font-weight:500; transition:background-color 200ms,border-color 200ms,color 200ms,transform 150ms; white-space:nowrap; }
+.btn:active { transform:scale(.98); }
+.btn .arr { transition:transform 200ms; }
+.btn:hover .arr { transform:translateX(3px); }
+.btn-primary { background:#e8923a; color:#1a0a00; }
+.btn-primary:hover { background:#d2702a; }
+.btn-ghost { border:1px solid var(--color-control); color:var(--color-foreground); }
+.btn-ghost:hover { background:var(--color-elevated); border-color:var(--color-meta); }
+.btn-ink { background:#1c1a17; color:#fbf9f5; min-height:52px; }
+.btn-ink:hover { background:#000; }
+.btn[aria-busy=true] { cursor:progress; }
+.btn:disabled { cursor:not-allowed; }
+.link { background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat; padding-bottom:2px; }
+.link:hover { background-size:100% 1.5px; color:var(--color-foreground); }
+
+.field-input { width:100%; min-height:52px; padding:0 14px; border-radius:8px; border:1px solid #827a6d; background:#fbf9f5; color:#1c1a17; font-size:16px; transition:border-color 150ms; }
+.field-input::placeholder { color:#6b6559; }
+.field-input:hover { border-color:#5e584e; }
+.field-input:focus-visible { border-radius:8px; }
+.field-input[aria-invalid=true] { border-color:#b02a25; }
+.check { appearance:none; width:22px; height:22px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #827a6d; background:#fbf9f5; display:grid; place-items:center; transition:background-color 200ms,border-color 200ms; cursor:pointer; }
+.check:checked { background:#e8923a; border-color:#e8923a; }
+.check:checked::after { content:''; width:6px; height:11px; border:solid #1a0a00; border-width:0 2px 2px 0; transform:translateY(-1px) rotate(45deg); }
+.check[aria-invalid=true] { border-color:#b02a25; }
+.success-check circle { stroke-dasharray:152; stroke-dashoffset:152; animation:draw 600ms cubic-bezier(.2,.8,.2,1) forwards; }
+.success-check path { stroke-dasharray:40; stroke-dashoffset:40; animation:draw 300ms cubic-bezier(.2,.8,.2,1) 450ms forwards; }
+@keyframes draw { to { stroke-dashoffset:0; } }
+.spin { width:16px; height:16px; border-radius:50%; border:2px solid rgb(28 26 23 / .25); border-top-color:currentColor; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ===== D66 · casilla con «Más información» (fuera del label) ===== */
+.consent-row { display:grid; grid-template-columns:22px minmax(0,1fr); column-gap:12px; }
+.consent-row > label { display:contents; cursor:pointer; }
+.consent-row .consent-text { font-size:15px; line-height:1.45; padding-top:1px; }
+.consent-row .consent-more { grid-column:2; justify-self:start; }
+.more-btn { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:15px; font-weight:500; color:var(--color-accent); }
+.more-btn span { background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat; padding-bottom:2px; }
+.more-btn:hover span { background-size:100% 1.5px; }
+.opt { color:var(--color-meta); }
+
+/* ===== D66 · diálogo «Más información» (modal centrado; hoja inferior < 640) ===== */
+dialog.info { width:min(640px,calc(100vw - 32px)); max-height:min(86dvh,760px); padding:0; border:0; border-radius:var(--radius-slab); background:#fbf9f5; color:#1c1a17; box-shadow:0 30px 60px -20px rgb(0 0 0 / .45); }
+dialog.info::backdrop { background:rgb(15 15 15 / .55); }
+dialog.info[open] { display:flex; flex-direction:column; animation:pop 180ms cubic-bezier(.2,.8,.2,1); }
+@keyframes pop { from { opacity:0; transform:translateY(8px); } }
+@media (max-width:639px) {
+  dialog.info { width:100vw; max-width:100vw; max-height:88dvh; margin:auto 0 0; border-radius:12px 12px 0 0; }
+  @keyframes pop { from { transform:translateY(24px); opacity:0; } }
+}
+.info-body h3 { font-size:15px; font-weight:500; color:#1c1a17; }
+.info-body p { font-size:15px; line-height:1.55; color:#34302a; }
+.info-body section + section { margin-top:16px; }
+
+/* ===== D66 · fila de preferencia ===== */
+.pref { display:grid; gap:16px; padding:20px; }
+@media (min-width:768px) { .pref { grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:24px; padding:28px; } }
+.state { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:4px; font-size:13px; line-height:1.3; font-weight:500; white-space:nowrap; }
+.state svg { width:14px; height:14px; flex-shrink:0; }
+.state-on { background:#dcebe2; color:#1a5c41; }
+.state-wait { background:#f7e4d0; color:#8a4212; }
+.state-off { background:var(--color-elevated); color:var(--color-meta); }
+.sk { display:block; border-radius:4px; background:linear-gradient(90deg,#e7e1d6 0%,#efebe3 50%,#e7e1d6 100%); background-size:200% 100%; animation:sk 1.4s ease-in-out infinite; }
+@keyframes sk { to { background-position:-200% 0; } }
+
+/* ===== Solo mockup ===== */
+.mock-bar { font-size:13px; }
+.mock-bar a { min-height:28px; display:inline-flex; align-items:center; }
+.mock-sel[aria-pressed=true] { background:#1c1a17; color:#fff; }
+
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:0s !important; animation-iteration-count:1 !important; transition-duration:0s !important; transition-delay:0s !important; scroll-behavior:auto !important; }
+  .success-check circle,.success-check path { stroke-dashoffset:0; }
+}

@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Home v2 · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: {
+      background:'var(--color-background)', board:'var(--color-board)', elevated:'var(--color-elevated)', tray:'var(--color-tray)',
+      line:'var(--color-line)', 'line-strong':'var(--color-line-strong)', control:'var(--color-control)',
+      accent:'var(--color-accent)', 'accent-fill':'var(--color-accent-fill)', 'accent-muted':'var(--color-accent-muted)', 'on-accent':'var(--color-on-accent)', chalk:'var(--color-chalk)',
+      foreground:'var(--color-foreground)', prose:'var(--color-prose)', meta:'var(--color-meta)', muted:'var(--color-muted)',
+      paper:'#f4f1ea', ink:'#1c1a17', 'meta-ink':'#5e584e', 'accent-ink':'#9a4a16',
+      'success-text':'var(--color-success-text)', 'danger-text':'var(--color-danger-text)',
+    },
+    fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['"JetBrains Mono"','ui-monospace','monospace'], hand:['Caveat','cursive'] },
+    maxWidth: { page:'1200px', read:'680px' },
+  } } }
+</script>
+<style>
+  /* ===== Tokens existentes (main.css) ===== */
+  :root {
+    --color-background:#f4f1ea; --color-board:#fbf9f5; --color-elevated:#ebe6dc; --color-tray:#efebe3;
+    --color-line:#dcd5c8; --color-line-strong:#c2b9a9; --color-control:#827a6d;
+    --color-accent:#9a4a16; --color-accent-fill:#e8923a; --color-accent-muted:#f7e4d0; --color-on-accent:#1a0a00; --color-chalk:#d2702a;
+    --color-foreground:#1c1a17; --color-prose:#34302a; --color-meta:#5e584e; --color-muted:#6b6559;
+    --color-success-text:#1a6e4e; --color-danger-text:#b02a25;
+    --bar-track:#e3ddd1;
+    --ring:0 0 0 2px var(--color-background),0 0 0 4px var(--color-accent);
+
+    /* ===== Tokens NUEVOS de esta propuesta ===== */
+    --text-section:clamp(2rem,1.55rem + 2.4vw,3.75rem);      /* 32-34 px en móvil, 60 px en 1440 */
+    --text-section-lg:clamp(2.375rem,1.6rem + 3.6vw,4.5rem); /* 38-40 px en móvil, 72 px en 1440 (solo la carta) */
+    --radius-slab:6px;
+    --shadow-slab:0 1px 0 #d6cfc1,0 2px 0 #c9c1b1,0 3px 0 #b8afa0,0 22px 34px -22px rgb(28 26 23 / .5);
+    --shadow-slab-dark:0 1px 0 #c8c0b1,0 2px 0 #8e8678,0 3px 0 #5c564b,0 28px 44px -22px #000;
+    --shadow-slab-ink:0 1px 0 #2a2a2a,0 2px 0 #3a3733,0 3px 0 #4d4942,0 18px 26px -20px rgb(28 26 23 / .55);
+    --dust:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  /* Ámbitos: igual que .chrome-dark en main.css, redeclaran la paleta. */
+  .chrome-dark {
+    --color-background:#0f0f0f; --color-board:#1a1a1a; --color-elevated:#242424; --color-tray:#242424;
+    --color-line:#2a2a2a; --color-line-strong:#333; --color-control:#75716a;
+    --color-accent:#e8923a; --color-accent-muted:#3a2010; --color-chalk:#e8923a;
+    --color-foreground:#f0ede8; --color-prose:#dcd8d1; --color-meta:#a19d94; --color-muted:#888880;
+    --color-success-text:#3dbe93; --color-danger-text:#f06a68;
+    --bar-track:#242424; --ring:0 0 0 2px #0f0f0f,0 0 0 4px #e8923a;
+    background-color:var(--color-background); color:var(--color-foreground);
+  }
+  /* NUEVO: el campo naranja. Texto #1a0a00 (7,91:1) y secundario #3d2008 (6,11:1). */
+  .field-orange {
+    --color-foreground:#1a0a00; --color-meta:#3d2008; --color-accent:#1a0a00;
+    --ring:0 0 0 2px #e8923a,0 0 0 4px #1a0a00;
+    background-color:#e8923a; color:#1a0a00;
+  }
+  /* Lo que va dentro de la placa de papel vuelve a la paleta clara. */
+  .on-paper {
+    --color-background:#f4f1ea; --color-foreground:#1c1a17; --color-meta:#5e584e; --color-accent:#9a4a16;
+    --ring:0 0 0 2px #f4f1ea,0 0 0 4px #9a4a16; color:#1c1a17;
+  }
+
+  html { scroll-behavior:smooth; background:#f4f1ea; }
+  body { font-family:Inter,system-ui,sans-serif; font-feature-settings:'cv11','ss01'; -webkit-font-smoothing:antialiased; }
+  :focus { outline:none; }
+  :focus-visible { box-shadow:var(--ring); border-radius:4px; }
+
+  /* ===== Título de sección (el token) ===== */
+  .title-section, .title-section-lg {
+    font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%;
+    text-transform:uppercase; letter-spacing:-.02em; line-height:1.04; text-wrap:balance;
+  }
+  .title-section { font-size:var(--text-section); }
+  .title-section-lg { font-size:var(--text-section-lg); }
+
+  /* ===== Materia ===== */
+  .slab { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab); }
+  .slab-dark { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab-dark); }
+  .slab-ink { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab-ink); }
+  .field-orange .slab-dark { box-shadow:0 1px 0 #d6cfc1,0 2px 0 #b8afa0,0 3px 0 #8e8678,0 24px 36px -24px rgb(26 10 0 / .6); }
+  .dust { position:relative; isolation:isolate; }
+  .dust::before { content:''; position:absolute; inset:0; z-index:-1; opacity:.26; pointer-events:none; background-image:var(--dust); }
+  .field-orange.dust::before { opacity:.34; }
+
+  /* ===== Segmentado (el componente actual, sin cambios) ===== */
+  .seg { display:inline-grid; grid-auto-flow:column; grid-auto-columns:1fr; padding:4px; border-radius:8px; background:var(--color-background); border:.5px solid var(--color-line-strong); }
+  .seg button { min-height:44px; padding:6px 16px; border-radius:6px; font-size:15px; line-height:1.2; font-weight:500; color:var(--color-meta); transition:color 200ms; border:.5px solid transparent; }
+  .seg button:hover { color:var(--color-foreground); }
+  .seg button[aria-selected=true], .seg button[aria-pressed=true] { color:var(--color-foreground); background:var(--color-elevated); border-color:var(--color-accent); }
+
+  /* ===== Botones ===== */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 18px; border-radius:8px; font-size:15px; font-weight:500; transition:background-color 200ms,border-color 200ms,color 200ms,transform 150ms; white-space:nowrap; }
+  .btn:active { transform:scale(.98); }
+  .btn .arr { transition:transform 200ms; }
+  .btn:hover .arr { transform:translateX(3px); }
+  .btn-ghost { border:1px solid var(--color-control); color:var(--color-foreground); }
+  .btn-ghost:hover { background:var(--color-elevated); border-color:var(--color-meta); }
+  .btn-ink { background:#1c1a17; color:#fbf9f5; min-height:52px; }
+  .btn-ink:hover { background:#000; }
+
+  /* ===== Etiquetas de transparencia: mismas reglas, ya no en mono ===== */
+  .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:4px; font-size:12px; line-height:1.35; font-weight:500; white-space:nowrap; }
+  .badge-acc { background:var(--color-accent-muted); color:var(--color-accent); }
+  .badge-stale { border:1px dashed var(--color-control); color:var(--color-meta); }
+  .badge-ok { background:var(--color-elevated); color:var(--color-meta); }
+  .badge svg { width:14px; height:14px; flex-shrink:0; }
+
+  /* ===== Filas con flecha ===== */
+  .uline { background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat; transition:background-size 300ms cubic-bezier(.2,.8,.2,1); padding-bottom:2px; }
+  a:hover > * .uline, a:hover .uline, .group:hover .uline { background-size:100% 1.5px; }
+  .path-row .arr { transition:transform 200ms cubic-bezier(.2,.8,.2,1); }
+  .path-row:hover .arr { transform:translateX(4px); }
+  .link { background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat; padding-bottom:2px; }
+  .link:hover { background-size:100% 1.5px; color:var(--color-foreground); }
+
+  .bar { display:block; height:4px; border-radius:99px; background:var(--bar-track); overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:99px; background:var(--color-chalk); }
+  th.sortable button { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:13px; font-weight:500; color:var(--color-meta); transition:color 150ms; }
+  th.sortable button:hover { color:var(--color-foreground); }
+  th[aria-sort] button { color:var(--color-foreground); }
+  th.sortable svg { opacity:.45; transition:opacity 150ms; }
+  th[aria-sort] svg, th.sortable button:hover svg { opacity:1; }
+  .gym-row { transition:background-color 150ms; }
+  .gym-row:hover { background:color-mix(in oklab,var(--color-elevated) 45%,transparent); }
+
+  /* ===== Póster tipográfico (spec en pies-de-gato-poster.html) ===== */
+  .poster { position:relative; display:block; overflow:hidden; background:var(--color-tray-fixed,#efebe3); color:#1c1a17; container-type:size; }
+  .poster__txt { position:absolute; inset:auto 5.5cqw 5cqw 5.5cqw; }
+  .poster__txt--top { inset:6cqw 5.5cqw auto 5.5cqw; }
+  .poster__brand { display:block; font-size:clamp(12px,4.4cqw,14px); line-height:1.2; font-weight:500; color:#5e584e; margin-bottom:.5em; }
+  .poster__name { display:block; font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%; text-transform:uppercase; letter-spacing:-.03em; line-height:.92;
+    font-size:min(31cqw,calc(89cqw / var(--n)),calc(58cqh / var(--l))); }
+  .poster__name span { display:block; white-space:nowrap; }
+  .poster__mono { display:none; }
+  @container (max-width:119px) {
+    .poster__brand { display:none; }
+    .poster[data-long] .poster__name { display:none; }
+    .poster[data-long] .poster__mono { display:block; font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%; line-height:.9; letter-spacing:-.03em; font-size:44cqw; }
+  }
+  .sheen { position:relative; }
+  .sheen::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(118deg,rgb(255 255 255 / 0) 30%,rgb(255 255 255 / .28) 46%,rgb(255 255 255 / 0) 62%); }
+  .sheen > * { z-index:1; }
+  .photo-empty { background:linear-gradient(150deg,#3a2f27 0%,#1f1b18 55%,#121212 100%); }
+  .ring-chalk { position:relative; display:inline-block; padding:.28em .5em; }
+  .ring-chalk svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; fill:none; stroke:var(--color-chalk); stroke-linecap:round; }
+
+  /* ===== Formulario sobre placa ===== */
+  .field-input { width:100%; min-height:52px; padding:0 14px; border-radius:8px; border:1px solid #827a6d; background:#fbf9f5; color:#1c1a17; font-size:16px; transition:border-color 150ms; }
+  .field-input::placeholder { color:#6b6559; }
+  .field-input:hover { border-color:#5e584e; }
+  .field-input:focus-visible { border-radius:8px; }
+  .field-input[aria-invalid=true] { border-color:#b02a25; }
+  .check { appearance:none; width:22px; height:22px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #827a6d; background:#fbf9f5; display:grid; place-items:center; transition:background-color 200ms,border-color 200ms; cursor:pointer; }
+  .check:checked { background:#e8923a; border-color:#e8923a; }
+  .check:checked::after { content:''; width:6px; height:11px; border:solid #1a0a00; border-width:0 2px 2px 0; transform:translateY(-1px) rotate(45deg); }
+  .check[aria-invalid=true] { border-color:#b02a25; }
+  .success-check circle { stroke-dasharray:152; stroke-dashoffset:152; animation:draw 600ms cubic-bezier(.2,.8,.2,1) forwards; }
+  .success-check path { stroke-dasharray:40; stroke-dashoffset:40; animation:draw 300ms cubic-bezier(.2,.8,.2,1) 450ms forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .spin { width:16px; height:16px; border-radius:50%; border:2px solid rgb(251 249 245 / .35); border-top-color:#fbf9f5; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ===== Dock: comportamiento propuesto (ver README §12.8) ===== */
+  .dock { position:fixed; top:8px; z-index:40; left:50%; transform:translate(-50%,0); display:flex; align-items:center; height:40px; padding-right:16px; border-radius:11px; background:#e8923a; color:#1a0a00; box-shadow:0 8px 24px -10px rgb(0 0 0 / .55); font-size:15px; font-weight:500; transition:opacity 220ms,visibility 0s; }
+  .dock[hidden-state] { opacity:0; visibility:hidden; transition:opacity 220ms,visibility 0s linear 220ms; }
+  .dock img { width:40px; height:40px; display:block; }
+  @media (max-width:1023px) { .dock { left:16px; transform:none; padding-right:0; } .dock span { display:none; } }
+
+  /* ===== Solo mockup ===== */
+  .mock-bar { font-size:13px; }
+  .mock-note { display:none; }
+  body.notes .mock-note { display:block; max-width:760px; margin-bottom:32px; padding:12px 14px; border:1px dashed currentColor; border-radius:6px; font-size:14px; line-height:1.5; color:inherit; }
+
+  @media (prefers-reduced-motion:reduce) {
+    *,*::before,*::after { animation-duration:0s !important; animation-iteration-count:1 !important; transition-duration:0s !important; transition-delay:0s !important; scroll-behavior:auto !important; }
+    .success-check circle,.success-check path { stroke-dashoffset:0; }
+  }
+</style>
+</head>
+<body class="bg-background text-foreground text-base leading-relaxed">
+
+<!-- ========== BARRA DEL MOCKUP (no forma parte del diseño) ========== -->
+<div class="mock-bar bg-white text-[#1c1a17] border-b border-[#ddd]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+    <strong class="font-medium">Home v2 · propuesta para Xavi</strong>
+    <a class="underline" href="#anexo-titulos">Títulos internos</a>
+    <a class="underline" href="#anexo-datos">Sin foto y transparencia</a>
+    <a class="underline" href="pies-de-gato-poster.html">Póster</a>
+    <a class="underline" href="newsletter.html">/newsletter</a>
+    <button id="toggle-notes" type="button" class="underline min-h-8">Ver notas de composición</button>
+  </div>
+</div>
+
+<!-- ========== HERO: captura real, no se toca ========== -->
+<picture>
+  <source media="(max-width:639px)" srcset="_home-v2/hero-390.jpg">
+  <img src="_home-v2/hero-1440.jpg" alt="Captura del hero actual, sin cambios: «Escalar en Barcelona», carrusel y cuerda." class="block w-full">
+</picture>
+
+<main>
+
+<!-- ========== 1 · ¿POR DÓNDE EMPIEZAS? ========== -->
+<section id="paths" class="bg-background" aria-labelledby="t-paths">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-28 lg:py-[120px]">
+    <p class="mock-note">Título y control juntos a la izquierda, y las tres entradas como índice de revista a la derecha. Sin tarjetas: la fila y su filete son la pieza.</p>
+    <div class="grid lg:grid-cols-12 gap-x-6 gap-y-10">
+      <div class="lg:col-span-6">
+        <h2 id="t-paths" class="title-section">¿Por dónde empiezas?</h2>
+        <div class="seg mt-8 w-full sm:w-auto" role="tablist" aria-label="Tu perfil">
+          <button type="button" role="tab" id="tab-new" aria-selected="true" aria-controls="panel-new" tabindex="0">Acabo de empezar</button>
+          <button type="button" role="tab" id="tab-regular" aria-selected="false" aria-controls="panel-regular" tabindex="-1">Ya escalo cada semana</button>
+        </div>
+      </div>
+      <div class="lg:col-span-6">
+        <ul id="panel-new" role="tabpanel" aria-labelledby="tab-new" class="border-t border-foreground">
+          <li class="border-b border-line-strong"><a href="#" class="path-row group flex items-center gap-4 md:gap-6 min-h-[96px] md:min-h-[112px] py-4">
+            <span class="font-mono text-sm text-accent w-7 shrink-0">01</span>
+            <span class="flex-1 text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium"><span class="uline">Qué rocódromo me conviene si estoy empezando</span></span>
+            <svg class="arr shrink-0" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li class="border-b border-line-strong"><a href="#" class="path-row group flex items-center gap-4 md:gap-6 min-h-[96px] md:min-h-[112px] py-4">
+            <span class="font-mono text-sm text-accent w-7 shrink-0">02</span>
+            <span class="flex-1 text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium"><span class="uline">Bono o cuota mensual: qué conviene</span></span>
+            <svg class="arr shrink-0" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li class="border-b border-line-strong"><a href="#" class="path-row group flex items-center gap-4 md:gap-6 min-h-[96px] md:min-h-[112px] py-4">
+            <span class="font-mono text-sm text-accent w-7 shrink-0">03</span>
+            <span class="flex-1 text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium"><span class="uline">Cómo elegir tus primeros pies de gato</span></span>
+            <svg class="arr shrink-0" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+        </ul>
+        <ul id="panel-regular" role="tabpanel" aria-labelledby="tab-regular" class="border-t border-foreground" hidden>
+          <li class="border-b border-line-strong"><a href="#" class="path-row group flex items-center gap-4 md:gap-6 min-h-[96px] md:min-h-[112px] py-4">
+            <span class="font-mono text-sm text-accent w-7 shrink-0">01</span>
+            <span class="flex-1 text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium"><span class="uline">Comparar los rocódromos de Barcelona</span></span>
+            <svg class="arr shrink-0" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li class="border-b border-line-strong"><a href="#" class="path-row group flex items-center gap-4 md:gap-6 min-h-[96px] md:min-h-[112px] py-4">
+            <span class="font-mono text-sm text-accent w-7 shrink-0">02</span>
+            <span class="flex-1 text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium"><span class="uline">Cuándo resolar y dónde</span></span>
+            <svg class="arr shrink-0" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li class="border-b border-line-strong"><a href="#" class="path-row group flex items-center gap-4 md:gap-6 min-h-[96px] md:min-h-[112px] py-4">
+            <span class="font-mono text-sm text-accent w-7 shrink-0">03</span>
+            <span class="flex-1 text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium"><span class="uline">Roca a menos de 2 horas</span></span>
+            <svg class="arr shrink-0" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 2 · ROCÓDROMOS ========== -->
+<section id="rocodromos" class="bg-elevated" aria-labelledby="t-gyms">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-28 lg:py-[120px]">
+    <p class="mock-note">Título a todo el ancho y la tabla debajo: el control de orden desaparece de la cabecera porque ya vive en las columnas. En móvil vuelve el segmentado, porque las filas-tarjeta no tienen columnas.</p>
+    <h2 id="t-gyms" class="title-section">Los rocódromos, uno a uno</h2>
+
+    <!-- Móvil: segmentado -->
+    <div class="seg mt-8 w-full md:hidden" role="group" aria-label="Ordenar por" id="sort-mobile">
+      <button type="button" data-sort="score" aria-pressed="true">Nota autor</button>
+      <button type="button" data-sort="price" aria-pressed="false">Precio</button>
+      <button type="button" data-sort="beginner" aria-pressed="false">Principiante</button>
+    </div>
+
+    <!-- Escritorio: tabla en placa, columnas ordenables -->
+    <div class="slab bg-board mt-12 hidden md:block px-6 lg:px-8">
+      <table class="w-full text-left" style="font-variant-numeric:tabular-nums">
+        <caption class="sr-only">Comparativa de rocódromos destacados</caption>
+        <thead>
+          <tr class="border-b border-line-strong">
+            <th scope="col" class="py-1 pr-4 text-[13px] font-medium text-meta">Rocódromo</th>
+            <th scope="col" class="sortable py-1 pr-6 text-right w-[14%]" data-col="price"><button type="button">Mensual <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button></th>
+            <th scope="col" class="sortable py-1 pr-6 w-[26%]" data-col="beginner"><button type="button">Índice principiante <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button></th>
+            <th scope="col" class="sortable py-1 text-right w-[16%]" data-col="score" aria-sort="descending"><button type="button">Nota del autor <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button></th>
+          </tr>
+        </thead>
+        <tbody id="gyms-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Móvil: filas-tarjeta -->
+    <ul id="gyms-cards" class="mt-6 space-y-4 md:hidden" style="font-variant-numeric:tabular-nums"></ul>
+    <p class="sr-only" aria-live="polite" id="sort-status">Ordenado por Nota del autor</p>
+
+    <div class="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+      <p class="text-sm text-meta">Precios verificados en septiembre de 2026 · <a href="#" class="link">Cómo calculo el índice</a></p>
+      <a href="#" class="btn btn-ghost">Comparar los 5 rocódromos <svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 3 · CHALK APP (sube de sitio) ========== -->
+<section class="bg-background" aria-labelledby="t-partner">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-24">
+    <p class="mock-note">Pieza a la izquierda y texto a la derecha, la composición inversa. Sube a continuación de los rocódromos porque habla de ellos, y deja de competir con la newsletter. La pizarra es literal, y el ejemplo se dice dos veces.</p>
+    <div class="grid lg:grid-cols-12 gap-x-6 gap-y-10 items-center">
+      <!-- Pizarra de ejemplo -->
+      <figure class="order-2 lg:order-1 lg:col-span-7">
+        <div class="chrome-dark slab-ink dust overflow-hidden p-5 md:p-8" style="background-image:linear-gradient(rgb(240 237 232 / .022) 1px,transparent 1px),linear-gradient(90deg,rgb(240 237 232 / .014) 1px,transparent 1px);background-size:32px 32px">
+          <div class="flex items-start justify-between gap-4">
+            <p class="font-hand text-[30px] md:text-[36px] leading-[1.1]">Viernes, tarde</p>
+            <span class="badge shrink-0" style="background:#f4f1ea;color:#1c1a17">Ejemplo</span>
+          </div>
+          <ul class="mt-5 md:mt-6 font-hand text-[28px] md:text-[32px] leading-[1.2]">
+            <li class="flex items-center gap-3 border-b border-line-strong pb-3">
+              <span>Xavi</span><span class="text-accent">7b</span>
+              <span class="badge badge-acc ml-auto font-sans">autor</span>
+            </li>
+            <li class="border-b border-line-strong h-[52px]" aria-hidden="true"></li>
+            <li class="pt-3 flex items-center gap-1 text-meta">
+              <span class="ring-chalk text-foreground">+4 más
+                <svg viewBox="0 0 220 60" preserveAspectRatio="none" aria-hidden="true"><path d="M30 8 C 90 -2, 200 2, 214 26 C 224 50, 120 60, 50 54 C 6 50, 2 22, 40 10" stroke-width="2"/></svg>
+              </span>
+            </li>
+          </ul>
+        </div>
+        <figcaption class="mt-5 text-sm text-meta">Pizarra de ejemplo: el día y la cifra no son reales.</figcaption>
+      </figure>
+      <div class="order-1 lg:order-2 lg:col-span-4 lg:col-start-9">
+        <h2 id="t-partner" class="title-section">¿Vas solo?</h2>
+        <p class="mt-5 text-[17px] leading-[1.7] text-meta max-w-[44ch]">Apúntate en la pizarra de tu rocódromo. Escribe qué día vas y a qué nivel, y mira quién más va.</p>
+        <a href="#" class="btn btn-ghost mt-7">Abrir Chalk app <svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 4 · PIES DE GATO ========== -->
+<section id="pies-de-gato" class="chrome-dark dust" aria-labelledby="t-shoes">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-28 lg:py-[120px]">
+    <p class="mock-note">Título centrado sobre pizarra, como el H1 del hero. Debajo, la nota del autor ya no es lo más pequeño de la página, y las placas actúan de cabecera de la tabla. La Veloce no tiene foto: es el caso real del póster.</p>
+    <h2 id="t-shoes" class="title-section text-center">Pies de gato de un vistazo</h2>
+    <blockquote class="mt-8 mx-auto max-w-[34ch] text-center">
+      <p class="font-hand text-[26px] leading-none text-accent -rotate-1">Lo que aprendí</p>
+      <p class="mt-3 font-hand text-[32px] md:text-[44px] leading-[1.08]">Lo que aprendí con mis Tarantulace después de muchas sesiones.</p>
+    </blockquote>
+
+    <!-- md+: tabla traspuesta con las placas como cabecera -->
+    <div class="hidden md:block mt-14" style="font-variant-numeric:tabular-nums">
+      <table class="w-full table-fixed text-left text-[15px]">
+        <caption class="sr-only">Comparativa rápida de pies de gato</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="w-[88px] lg:w-[120px]"><span class="sr-only">Modelo</span></th>
+            <th scope="col" class="px-2 lg:px-3 pb-5 align-top font-normal">
+              <a href="#" class="group block">
+                <span class="slab-dark sheen block overflow-hidden bg-[#efebe3] aspect-[4/5] relative text-ink">
+                  <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg" alt="" class="absolute inset-x-0 top-0 h-[66%] w-full object-contain p-3 mix-blend-multiply">
+                  <span class="absolute inset-x-0 bottom-0 p-3 lg:p-4">
+                    <span class="block text-[13px] leading-tight font-medium text-meta-ink">La Sportiva</span>
+                    <span class="block mt-1 text-[17px] lg:text-[19px] leading-[1.25] font-medium tracking-[-.01em]"><span class="uline">Tarantulace</span></span>
+                  </span>
+                </span>
+              </a>
+              <span class="mt-3 flex flex-wrap gap-1.5"><span class="badge badge-acc">los uso</span><span class="badge badge-acc">afiliado</span></span>
+            </th>
+            <th scope="col" class="px-2 lg:px-3 pb-5 align-top font-normal">
+              <a href="#" class="group block">
+                <span class="slab-dark sheen block overflow-hidden bg-[#efebe3] aspect-[4/5] relative text-ink">
+                  <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg" alt="" class="absolute inset-x-0 top-0 h-[66%] w-full object-contain p-3 mix-blend-multiply">
+                  <span class="absolute inset-x-0 bottom-0 p-3 lg:p-4">
+                    <span class="block text-[13px] leading-tight font-medium text-meta-ink">La Sportiva</span>
+                    <span class="block mt-1 text-[17px] lg:text-[19px] leading-[1.25] font-medium tracking-[-.01em]"><span class="uline">Skwama</span></span>
+                  </span>
+                </span>
+              </a>
+              <span class="mt-3 flex flex-wrap gap-1.5"><span class="badge badge-acc">afiliado</span></span>
+            </th>
+            <th scope="col" class="px-2 lg:px-3 pb-5 align-top font-normal">
+              <a href="#" class="group block">
+                <span class="slab-dark sheen block overflow-hidden bg-[#efebe3] aspect-[4/5] relative text-ink">
+                  <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/0fa13ccc-d282-42e8-a64a-08f3e2953a47/1-solution.jpg" alt="" class="absolute inset-x-0 top-0 h-[66%] w-full object-contain p-3 mix-blend-multiply">
+                  <span class="absolute inset-x-0 bottom-0 p-3 lg:p-4">
+                    <span class="block text-[13px] leading-tight font-medium text-meta-ink">La Sportiva</span>
+                    <span class="block mt-1 text-[17px] lg:text-[19px] leading-[1.25] font-medium tracking-[-.01em]"><span class="uline">Solution</span></span>
+                  </span>
+                </span>
+              </a>
+              <span class="mt-3 flex flex-wrap gap-1.5"><span class="badge badge-acc">los uso</span><span class="badge badge-acc">afiliado</span></span>
+            </th>
+            <th scope="col" class="px-2 lg:px-3 pb-5 align-top font-normal">
+              <a href="#" class="group block">
+                <span class="slab-dark sheen block overflow-hidden bg-[#efebe3] aspect-[4/5] relative text-ink">
+                  <span class="poster absolute inset-x-0 top-0 h-[66%] !bg-transparent" style="--n:5.13;--l:1" aria-hidden="true"><span class="poster__txt poster__txt--top"><span class="poster__name"><span>Veloce</span></span></span></span>
+                  <span class="absolute inset-x-0 bottom-0 p-3 lg:p-4">
+                    <span class="block text-[13px] leading-tight font-medium text-meta-ink">Scarpa</span>
+                    <span class="block mt-1 text-[17px] lg:text-[19px] leading-[1.25] font-medium tracking-[-.01em]"><span class="uline">Veloce</span></span>
+                  </span>
+                </span>
+              </a>
+              <span class="mt-3 flex flex-wrap gap-1.5"><span class="badge badge-acc">los uso</span><span class="badge badge-acc">afiliado</span></span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-line-strong"><th scope="row" class="py-3 pr-2 font-normal text-meta">Cierre</th><td class="px-2 lg:px-3 py-3">Cordones</td><td class="px-2 lg:px-3 py-3">Velcro</td><td class="px-2 lg:px-3 py-3">Velcro</td><td class="px-2 lg:px-3 py-3">Velcro</td></tr>
+          <tr class="border-t border-line-strong"><th scope="row" class="py-3 pr-2 font-normal text-meta">Perfil</th><td class="px-2 lg:px-3 py-3">Plano</td><td class="px-2 lg:px-3 py-3">Agresivo</td><td class="px-2 lg:px-3 py-3">Agresivo</td><td class="px-2 lg:px-3 py-3">Moderado</td></tr>
+          <tr class="border-t border-line-strong"><th scope="row" class="py-3 pr-2 font-normal text-meta">Rigidez</th>
+            <td class="px-2 lg:px-3 py-3"><span class="flex flex-col-reverse items-start gap-1.5 lg:flex-row lg:items-center lg:gap-2.5"><span class="bar w-full max-w-20" aria-hidden="true"><i style="width:90%"></i></span>Rígido</span></td>
+            <td class="px-2 lg:px-3 py-3"><span class="flex flex-col-reverse items-start gap-1.5 lg:flex-row lg:items-center lg:gap-2.5"><span class="bar w-full max-w-20" aria-hidden="true"><i style="width:30%"></i></span>Blando</span></td>
+            <td class="px-2 lg:px-3 py-3"><span class="flex flex-col-reverse items-start gap-1.5 lg:flex-row lg:items-center lg:gap-2.5"><span class="bar w-full max-w-20" aria-hidden="true"><i style="width:60%"></i></span>Medio</span></td>
+            <td class="px-2 lg:px-3 py-3"><span class="flex flex-col-reverse items-start gap-1.5 lg:flex-row lg:items-center lg:gap-2.5"><span class="bar w-full max-w-20" aria-hidden="true"><i style="width:30%"></i></span>Blando</span></td>
+          </tr>
+          <tr class="border-y border-line-strong"><th scope="row" class="py-3 pr-2 font-normal">Precio</th><td class="px-2 lg:px-3 py-3 font-mono text-accent whitespace-nowrap">80–95 €</td><td class="px-2 lg:px-3 py-3 font-mono text-accent whitespace-nowrap">145–170 €</td><td class="px-2 lg:px-3 py-3 font-mono text-accent whitespace-nowrap">150–175 €</td><td class="px-2 lg:px-3 py-3 font-mono text-accent whitespace-nowrap">95–115 €</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Móvil: fila con placa + datos -->
+    <ul class="md:hidden mt-10 border-t border-line-strong" style="font-variant-numeric:tabular-nums">
+      <li class="py-5 border-b border-line-strong"><a href="#" class="group flex gap-4">
+        <span class="slab-dark block overflow-hidden bg-[#efebe3] w-[104px] h-[130px] shrink-0"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg" alt="" class="size-full object-contain p-2 mix-blend-multiply"></span>
+        <span class="min-w-0 flex-1"><span class="block text-[13px] text-meta">La Sportiva</span><span class="block text-[20px] leading-tight font-medium">Tarantulace</span><span class="block mt-1 font-mono text-accent">80–95 €</span><span class="mt-2 flex flex-wrap gap-1.5"><span class="badge badge-acc">los uso</span><span class="badge badge-acc">afiliado</span></span></span>
+      </a><dl class="mt-4 grid grid-cols-3 gap-3 text-sm"><div><dt class="text-meta">Cierre</dt><dd>Cordones</dd></div><div><dt class="text-meta">Perfil</dt><dd>Plano</dd></div><div><dt class="text-meta">Rigidez</dt><dd>Rígido</dd></div></dl></li>
+      <li class="py-5 border-b border-line-strong"><a href="#" class="group flex gap-4">
+        <span class="slab-dark block overflow-hidden bg-[#efebe3] w-[104px] h-[130px] shrink-0"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg" alt="" class="size-full object-contain p-2 mix-blend-multiply"></span>
+        <span class="min-w-0 flex-1"><span class="block text-[13px] text-meta">La Sportiva</span><span class="block text-[20px] leading-tight font-medium">Skwama</span><span class="block mt-1 font-mono text-accent">145–170 €</span><span class="mt-2 flex flex-wrap gap-1.5"><span class="badge badge-acc">afiliado</span></span></span>
+      </a><dl class="mt-4 grid grid-cols-3 gap-3 text-sm"><div><dt class="text-meta">Cierre</dt><dd>Velcro</dd></div><div><dt class="text-meta">Perfil</dt><dd>Agresivo</dd></div><div><dt class="text-meta">Rigidez</dt><dd>Blando</dd></div></dl></li>
+      <li class="py-5 border-b border-line-strong"><a href="#" class="group flex gap-4">
+        <span class="slab-dark block overflow-hidden bg-[#efebe3] w-[104px] h-[130px] shrink-0"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/0fa13ccc-d282-42e8-a64a-08f3e2953a47/1-solution.jpg" alt="" class="size-full object-contain p-2 mix-blend-multiply"></span>
+        <span class="min-w-0 flex-1"><span class="block text-[13px] text-meta">La Sportiva</span><span class="block text-[20px] leading-tight font-medium">Solution</span><span class="block mt-1 font-mono text-accent">150–175 €</span><span class="mt-2 flex flex-wrap gap-1.5"><span class="badge badge-acc">los uso</span><span class="badge badge-acc">afiliado</span></span></span>
+      </a><dl class="mt-4 grid grid-cols-3 gap-3 text-sm"><div><dt class="text-meta">Cierre</dt><dd>Velcro</dd></div><div><dt class="text-meta">Perfil</dt><dd>Agresivo</dd></div><div><dt class="text-meta">Rigidez</dt><dd>Medio</dd></div></dl></li>
+      <li class="py-5 border-b border-line-strong"><a href="#" class="group flex gap-4">
+        <span class="slab-dark block overflow-hidden w-[104px] h-[130px] shrink-0" aria-hidden="true"><span class="poster size-full" style="--n:5.13;--l:1"><span class="poster__txt"><span class="poster__name"><span>Veloce</span></span></span></span></span>
+        <span class="min-w-0 flex-1"><span class="block text-[13px] text-meta">Scarpa</span><span class="block text-[20px] leading-tight font-medium">Veloce</span><span class="block mt-1 font-mono text-accent">95–115 €</span><span class="mt-2 flex flex-wrap gap-1.5"><span class="badge badge-acc">los uso</span><span class="badge badge-acc">afiliado</span></span></span>
+      </a><dl class="mt-4 grid grid-cols-3 gap-3 text-sm"><div><dt class="text-meta">Cierre</dt><dd>Velcro</dd></div><div><dt class="text-meta">Perfil</dt><dd>Moderado</dd></div><div><dt class="text-meta">Rigidez</dt><dd>Blando</dd></div></dl></li>
+    </ul>
+
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
+      <a href="#" class="btn btn-ghost">Abrir el comparador <svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <span class="badge badge-acc"><svg fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 1 1 0 10h-2M8 12h8"/></svg>Contiene enlaces de afiliado</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 5 · BLOG ========== -->
+<section id="blog" class="bg-background" aria-labelledby="t-blog">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-28 lg:py-[120px]">
+    <p class="mock-note">Espejo de «¿Por dónde empiezas?»: aquí el título va a la derecha, sobre su lista, y el artículo principal ocupa la izquierda a toda altura. Las dos piezas secundarias dejan de ser fotos con texto encima: son filas legibles.</p>
+    <div class="grid lg:grid-cols-12 gap-x-8 gap-y-8">
+      <div class="lg:col-span-5 lg:col-start-8 lg:row-start-1">
+        <h2 id="t-blog" class="title-section">Del blog</h2>
+      </div>
+      <article class="slab group relative isolate overflow-hidden bg-neutral-900 lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:row-span-2 aspect-[4/3] lg:aspect-auto lg:min-h-[560px] text-white">
+        <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000001/1-escaladora-bloque-colores.jpg" alt="" class="absolute inset-0 -z-20 size-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.03]">
+        <div class="absolute inset-0 -z-10 bg-gradient-to-b from-black/0 from-20% via-black/45 via-55% to-black/85" aria-hidden="true"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-8">
+          <p class="text-[13px] font-medium text-white/90">Costes</p>
+          <h3 class="mt-2 text-[24px] md:text-[36px] leading-[1.12] tracking-[-.025em] font-medium max-w-[22ch]"><a href="#" class="after:absolute after:inset-0"><span class="uline">Cuánto cuesta realmente escalar en Barcelona al mes</span></a></h3>
+        </div>
+      </article>
+      <div class="lg:col-span-5 lg:col-start-8 lg:row-start-2 flex flex-col">
+        <ul class="border-t border-foreground">
+          <li class="border-b border-line-strong"><a href="#" class="group flex items-center gap-4 py-5">
+            <span class="relative block w-[104px] h-[78px] md:w-[128px] md:h-[96px] shrink-0 overflow-hidden" style="border-radius:6px"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000003/1-bloque-granito-bosque.jpg" alt="" class="size-full object-cover"></span>
+            <span class="min-w-0"><span class="block text-[13px] font-medium text-meta">Comunidad</span><span class="block mt-1 text-[18px] md:text-[20px] leading-[1.3] font-medium"><span class="uline">Rocódromos para ir solo y encontrar compañero</span></span></span>
+          </a></li>
+          <li class="border-b border-line-strong"><a href="#" class="group flex items-center gap-4 py-5">
+            <span class="relative block w-[104px] h-[78px] md:w-[128px] md:h-[96px] shrink-0 overflow-hidden" style="border-radius:6px"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000004/1-techo-roca-mar.jpg" alt="" class="size-full object-cover"></span>
+            <span class="min-w-0"><span class="block text-[13px] font-medium text-meta">Material</span><span class="block mt-1 text-[18px] md:text-[20px] leading-[1.3] font-medium"><span class="uline">Mi primer resolado: errores que cometí y qué revisar</span></span></span>
+          </a></li>
+        </ul>
+        <a href="#" class="btn btn-ghost self-start mt-6">Todo el blog <svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ========== 6 · NEWSLETTER: el único campo naranja ========== -->
+<section id="newsletter" class="field-orange dust scroll-mt-14" aria-labelledby="t-news">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-28 lg:py-[120px]">
+    <p class="mock-note">El único campo naranja a sangre, y el único naranja de CTA al final de la home. Título a todo el ancho al tamaño del H1 del hero, y formulario en una placa de papel, como la tarjeta «7 NOV». El botón es negro porque un botón naranja sobre placa dentro de campo naranja parece un agujero.</p>
+    <h2 id="t-news" class="title-section-lg">Una carta al mes.<br>Nada más.</h2>
+    <div class="mt-10 lg:mt-14 grid lg:grid-cols-12 gap-x-6 gap-y-8 items-start">
+      <div class="lg:col-span-5">
+        <p class="text-[20px] md:text-[24px] leading-[1.35] tracking-[-.01em] font-medium max-w-[26ch]">Novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.</p>
+        <p class="mt-4 text-[15px] text-meta">Sin spam. Baja en un clic.</p>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <div class="on-paper slab-dark bg-paper p-5 md:p-7" id="nl-box">
+          <form id="nl-form" method="post" novalidate>
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-start">
+              <div class="flex-1 min-w-0">
+                <label for="nl-email" class="block text-[15px] font-medium mb-2">Tu email</label>
+                <input id="nl-email" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" class="field-input">
+                <p id="nl-email-err" class="mt-2 hidden items-center gap-1.5 text-[15px] leading-snug text-danger-text"><svg width="16" height="16" class="shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>Escribe un email válido, por ejemplo nombre@correo.com.</span></p>
+              </div>
+              <button type="submit" class="btn btn-ink w-full lg:w-auto lg:mt-[32px]"><span>Suscribirme</span><svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </div>
+            <label class="mt-4 flex items-start gap-3 min-h-11 cursor-pointer text-[15px] leading-[1.45]">
+              <input id="nl-consent" name="consent" type="checkbox" class="check">
+              <span>Quiero recibir novedades de ChalkGuide por email. Puedo darme de baja cuando quiera. <a href="#" class="link text-accent">Política de privacidad</a>.</span>
+            </label>
+            <p id="nl-consent-err" class="mt-1 hidden items-center gap-1.5 text-[15px] leading-snug text-danger-text"><svg width="16" height="16" class="shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>Marca la casilla para confirmar que quieres recibirla.</span></p>
+          </form>
+          <div id="nl-ok" role="status" tabindex="-1" class="hidden py-3">
+            <svg class="success-check" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" fill="none" stroke="#1a6e4e" stroke-width="2.5"/><path d="M17 29l7 7 15-16" fill="none" stroke="#1a6e4e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="mt-3 text-[20px] font-medium">¡Casi está!</p>
+            <p class="mt-1 text-meta">Te he enviado un email para confirmar la suscripción. Revisa también la carpeta de spam.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 7 · FOOTER ========== -->
+<footer class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-16 md:pt-20 pb-8">
+    <p class="mock-note">Pasa de cinco columnas iguales a una frase y tres listas. El lema dummy desaparece: lo sustituye la promesa de transparencia, que ya existe como texto. Chalk app pasa a ser un enlace más. Las etiquetas de columna dejan de ser mono.</p>
+    <div class="grid lg:grid-cols-12 gap-x-6 gap-y-12">
+      <div class="lg:col-span-5">
+        <span class="flex items-end gap-2"><img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-7 w-auto block"><span class="font-mono text-[12px] tracking-[.14em] leading-none pb-[3px] text-meta" aria-hidden="true">BCN</span></span>
+        <p class="mt-8 text-[24px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium max-w-[20ch]">Ninguna reseña se compra. Lo pagado se marca.</p>
+      </div>
+      <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10 text-[15px]">
+        <nav aria-label="Guías">
+          <p class="text-[13px] font-medium text-meta">Guías</p>
+          <ul class="mt-2">
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Rocódromos</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Pies de gato</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Resolar pies de gato</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Medio">
+          <p class="text-[13px] font-medium text-meta">Medio</p>
+          <ul class="mt-2">
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Blog</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Agenda</a></li>
+            <li><a href="newsletter.html" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Newsletter</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Sobre mí</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Chalk app</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Cuentas claras">
+          <p class="text-[13px] font-medium text-meta">Cuentas claras</p>
+          <ul class="mt-2">
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Transparencia</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Privacidad</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Cookies</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Aviso legal</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="mt-12 pt-5 border-t border-line-strong flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-[13px] text-meta">
+      <p>© 2026 ChalkGuide</p>
+      <a href="#" lang="en" hreflang="en" class="flex items-center min-h-11 hover:text-foreground transition-colors duration-150">English</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Dock: isotipo original sin tocar -->
+<a href="#newsletter" class="dock" id="dock" hidden-state aria-label="Ir a la newsletter"><img src="../../../../public/brand/iso-chalk-white.svg" alt=""><span>Newsletter</span></a>
+
+<!-- ==================== ANEXOS (no forman parte de la home) ==================== -->
+<div id="anexo-titulos" class="bg-white text-[#1c1a17] border-t-4 border-[#1c1a17]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2 class="text-[22px] font-medium">Anexo 1 · Títulos de páginas internas</h2>
+    <p class="mt-2 max-w-[70ch] text-[15px] text-[#5e584e]">Solo cambia el H1 de los listados, que pasa a <code>title-section</code>. No se recompone nada: miga de pan, entradilla, buscador y contenido quedan como están. Fichas y artículos conservan su H1 actual.</p>
+  </div>
+</div>
+<div class="bg-background">
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-12 md:pt-10 md:pb-16 border-b border-line">
+    <p class="text-[13px] font-medium text-meta mb-6">/rocodromos · antes</p>
+    <nav class="font-mono text-[12px] tracking-[.14em] uppercase text-meta" aria-label="Migas de pan, antes"><span>Inicio</span> <span class="mx-1">/</span> <span class="text-foreground">Rocódromos</span></nav>
+    <p class="mt-5 max-w-[18ch] text-[34px] md:text-[48px] leading-[1.08] tracking-[-.025em] font-medium">Rocódromos en Barcelona</p>
+    <p class="mt-4 max-w-read text-lg leading-[1.7] text-meta">Rocódromos visitados uno a uno, con precios verificados y mi nota. Los índices se calculan igual para todos.</p>
+  </div>
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-12 md:pt-10 md:pb-16 border-b border-line">
+    <p class="text-[13px] font-medium text-meta mb-6">/rocodromos · después</p>
+    <nav class="font-mono text-[12px] tracking-[.14em] uppercase text-meta" aria-label="Migas de pan, después"><span>Inicio</span> <span class="mx-1">/</span> <span class="text-foreground">Rocódromos</span></nav>
+    <p class="title-section mt-5" role="heading" aria-level="2">Rocódromos en Barcelona</p>
+    <p class="mt-5 max-w-read text-lg leading-[1.7] text-meta">Rocódromos visitados uno a uno, con precios verificados y mi nota. Los índices se calculan igual para todos.</p>
+  </div>
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-12 md:pt-10 md:pb-16">
+    <p class="text-[13px] font-medium text-meta mb-6">/blog · después</p>
+    <nav class="font-mono text-[12px] tracking-[.14em] uppercase text-meta" aria-label="Migas de pan, blog"><span>Inicio</span> <span class="mx-1">/</span> <span class="text-foreground">Blog</span></nav>
+    <p class="title-section mt-5" role="heading" aria-level="2">Blog</p>
+    <p class="mt-5 max-w-read text-lg leading-[1.7] text-meta">Guías prácticas y lo que voy aprendiendo. Sin relleno.</p>
+  </div>
+</div>
+
+<div id="anexo-datos" class="bg-white text-[#1c1a17] border-t-4 border-[#1c1a17]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2 class="text-[22px] font-medium">Anexo 2 · Sin foto y transparencia</h2>
+    <p class="mt-2 max-w-[70ch] text-[15px] text-[#5e584e]">Lo que ya funciona se conserva. Las etiquetas dicen lo mismo; solo dejan la mono porque no son datos. La fecha compacta es la que devuelve hoy <code>ItemsVerified</code>.</p>
+  </div>
+</div>
+<div class="bg-elevated">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-12 grid lg:grid-cols-2 gap-8 items-start">
+    <div>
+      <p class="text-[13px] font-medium text-meta mb-3">Fila de rocódromo sin foto, con visita invitada y dato antiguo</p>
+      <div class="slab bg-board p-4 md:p-6">
+        <div class="flex items-start gap-4">
+          <div class="photo-empty w-[72px] h-[72px] md:w-[112px] md:h-[84px] shrink-0" style="border-radius:6px" aria-hidden="true"></div>
+          <div class="min-w-0 flex-1">
+            <p class="text-[18px] md:text-[20px] leading-tight font-medium">Via Sants</p>
+            <p class="text-sm text-meta mt-0.5">Bloque · Sants · Sants Estació (L3)</p>
+            <div class="mt-2 flex flex-wrap gap-1.5">
+              <span class="badge badge-acc"><svg fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Visita invitada</span>
+              <span class="badge badge-stale"><svg fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="font-mono">03/02/26</span> · puede haber cambiado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="text-[13px] font-medium text-meta mt-6 mb-3">Resto del sistema</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="badge badge-ok"><svg class="text-success-text" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Dato verificado el <span class="font-mono">01/09/26</span></span>
+        <span class="badge badge-acc">los uso</span>
+        <span class="badge badge-acc"><svg fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 1 1 0 10h-2M8 12h8"/></svg>afiliado</span>
+      </div>
+    </div>
+    <div>
+      <p class="text-[13px] font-medium text-meta mb-3">Artículo principal sin portada</p>
+      <article class="slab relative overflow-hidden photo-empty aspect-[4/3] text-white">
+        <div class="absolute inset-x-0 bottom-0 p-5 md:p-8">
+          <p class="text-[13px] font-medium text-white/90">Costes</p>
+          <p class="mt-2 text-[24px] md:text-[36px] leading-[1.12] tracking-[-.025em] font-medium max-w-[22ch]">Cuánto cuesta realmente escalar en Barcelona al mes</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Solo mockup */
+  document.getElementById('toggle-notes').addEventListener('click', e => {
+    const on = document.body.classList.toggle('notes');
+    e.currentTarget.textContent = on ? 'Ocultar notas de composición' : 'Ver notas de composición';
+  });
+
+  /* Pestañas */
+  const tabs = [...document.querySelectorAll('[role=tab]')];
+  function selectTab(tab) {
+    tabs.forEach(t => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    tab.focus({ preventScroll: true });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => selectTab(t));
+    t.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') selectTab(tabs[(i + 1) % tabs.length]);
+      if (e.key === 'ArrowLeft') selectTab(tabs[(i - 1 + tabs.length) % tabs.length]);
+    });
+  });
+
+  /* Rocódromos: datos reales de http://localhost:3000 */
+  const M = 'https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/';
+  const gyms = [
+    { name:'Presa Badalona', meta:'Bloque · Badalona · Badalona Pompeu Fabra (L2)', price:55, beginner:4.5, score:4.3, img:M+'d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg' },
+    { name:'Altura Cornellà', meta:'Bloque y cuerda · Cornellà de Llobregat · Cornellà Centre (L5)', price:58, beginner:4.5, score:4.1, img:M+'d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg' },
+    { name:'Magnesi Poblenou', meta:'Bloque · Poblenou · Llacuna (L4)', price:62, beginner:5, score:4.0, img:M+'d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg' },
+  ];
+  const fmt = n => n.toFixed(1).replace('.', ',');
+  const ring = '<svg viewBox="0 0 220 60" preserveAspectRatio="none" aria-hidden="true"><path d="M30 8 C 90 -2, 200 2, 214 26 C 224 50, 120 60, 50 54 C 6 50, 2 22, 40 10" stroke-width="2"/></svg>';
+  const score = (g, best) => `<span class="font-mono text-[24px] md:text-[32px] leading-none ${best ? 'ring-chalk' : 'inline-block py-[.28em] pr-[.5em]'}" aria-label="${fmt(g.score)} sobre 5">${fmt(g.score)}<span class="text-[14px] text-meta">/5</span>${best ? ring : ''}</span>`;
+  const labels = { score:'Nota del autor', price:'Precio', beginner:'Principiante' };
+  let sortKey = 'score';
+  function render() {
+    const best = [...gyms].sort((a, b) => b.score - a.score)[0];
+    const list = [...gyms].sort((a, b) => sortKey === 'price' ? a.price - b.price : b[sortKey] - a[sortKey]);
+    document.getElementById('gyms-body').innerHTML = list.map((g, i) => `
+      <tr class="gym-row group relative ${i < list.length - 1 ? 'border-b border-line' : ''}">
+        <th scope="row" class="py-5 pr-4 font-normal">
+          <div class="flex items-center gap-5">
+            <div class="w-[112px] h-[84px] shrink-0 overflow-hidden" style="border-radius:6px" aria-hidden="true"><img src="${g.img}" alt="" class="size-full object-cover"></div>
+            <div class="min-w-0"><a href="#" class="block text-[20px] leading-tight font-medium after:absolute after:inset-0"><span class="uline">${g.name}</span></a><span class="block mt-1 text-sm text-meta">${g.meta}</span></div>
+          </div>
+        </th>
+        <td class="py-5 pr-6 text-right font-mono text-[18px] whitespace-nowrap">${g.price} €</td>
+        <td class="py-5 pr-6"><span class="flex items-center gap-3"><span class="bar w-28 lg:w-32" aria-hidden="true"><i style="width:${g.beginner * 20}%"></i></span><span class="font-mono text-[18px]">${fmt(g.beginner)}</span></span></td>
+        <td class="py-5 text-right whitespace-nowrap">${score(g, g === best)}</td>
+      </tr>`).join('');
+    document.getElementById('gyms-cards').innerHTML = list.map(g => `
+      <li class="slab bg-board relative p-4">
+        <div class="flex items-start gap-3">
+          <div class="w-[72px] h-[72px] shrink-0 overflow-hidden" style="border-radius:6px" aria-hidden="true"><img src="${g.img}" alt="" class="size-full object-cover"></div>
+          <div class="min-w-0 flex-1"><a href="#" class="block text-[18px] leading-tight font-medium after:absolute after:inset-0">${g.name}</a><p class="mt-1 text-sm leading-snug text-meta">${g.meta}</p></div>
+          ${score(g, g === best)}
+        </div>
+        <dl class="mt-4 grid grid-cols-2 gap-4 text-sm">
+          <div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base mt-0.5">${g.price} €</dd></div>
+          <div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base mt-0.5">${fmt(g.beginner)}</dd><dd class="mt-1.5"><span class="bar" aria-hidden="true"><i style="width:${g.beginner * 20}%"></i></span></dd></div>
+        </dl>
+      </li>`).join('');
+    document.querySelectorAll('th.sortable').forEach(th => th.dataset.col === sortKey ? th.setAttribute('aria-sort', sortKey === 'price' ? 'ascending' : 'descending') : th.removeAttribute('aria-sort'));
+    document.querySelectorAll('#sort-mobile button').forEach(b => b.setAttribute('aria-pressed', b.dataset.sort === sortKey));
+    document.getElementById('sort-status').textContent = 'Ordenado por ' + labels[sortKey];
+  }
+  document.querySelectorAll('th.sortable button').forEach(b => b.addEventListener('click', () => { sortKey = b.closest('th').dataset.col; render(); }));
+  document.querySelectorAll('#sort-mobile button').forEach(b => b.addEventListener('click', () => { sortKey = b.dataset.sort; render(); }));
+  render();
+
+  /* Newsletter: misma lógica que useNewsletterForm (valida al enviar, foco en el primer error) */
+  const form = document.getElementById('nl-form');
+  const emailEl = document.getElementById('nl-email'), consentEl = document.getElementById('nl-consent');
+  const emailErr = document.getElementById('nl-email-err'), consentErr = document.getElementById('nl-consent-err');
+  function setErr(input, box, on, id) {
+    input.setAttribute('aria-invalid', on ? 'true' : 'false');
+    on ? input.setAttribute('aria-describedby', id) : input.removeAttribute('aria-describedby');
+    box.classList.toggle('hidden', !on); box.classList.toggle('flex', on);
+  }
+  emailErr.id = 'nl-email-err'; consentErr.id = 'nl-consent-err';
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const badEmail = !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailEl.value.trim());
+    const badConsent = !consentEl.checked;
+    setErr(emailEl, emailErr, badEmail, 'nl-email-err');
+    setErr(consentEl, consentErr, badConsent, 'nl-consent-err');
+    if (badEmail) return emailEl.focus();
+    if (badConsent) return consentEl.focus();
+    const box = document.getElementById('nl-box');
+    box.style.minHeight = box.offsetHeight + 'px';
+    form.classList.add('hidden');
+    const ok = document.getElementById('nl-ok'); ok.classList.remove('hidden'); ok.focus();
+  });
+  consentEl.addEventListener('change', () => { if (consentEl.checked) setErr(consentEl, consentErr, false, 'nl-consent-err'); });
+
+  /* Dock: aparece pasado el hero; se oculta desde que #newsletter entra en pantalla hasta el final */
+  const dock = document.getElementById('dock');
+  const firstSection = document.getElementById('paths'), nl = document.getElementById('newsletter');
+  function dockState() {
+    const past = firstSection.getBoundingClientRect().top < 80;
+    const reached = nl.getBoundingClientRect().top < innerHeight;
+    const annex = document.getElementById('anexo-titulos').getBoundingClientRect().top < innerHeight;
+    (past && !reached && !annex) ? dock.removeAttribute('hidden-state') : dock.setAttribute('hidden-state', '');
+  }
+  addEventListener('scroll', dockState, { passive:true }); dockState();
+</script>
+</body>
+</html>

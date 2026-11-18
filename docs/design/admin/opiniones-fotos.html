@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Opiniones · Fotos por revisar · Panel · ChalkGuide (F6.11b)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .op[aria-current="true"]{background:var(--acc-soft)}
+  .op[aria-current="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--acc)}
+  .op.is-hidden .op-body{opacity:.6}
+  .meter5{display:inline-flex;gap:2px} .meter5 i{width:10px;height:6px;border-radius:2px;background:var(--line-strong)} .meter5 i.on{background:var(--fg)}
+  /* F6.11b · fotos */
+  .mini{width:32px;height:32px;border-radius:4px;background-size:cover;background-position:center;position:relative;flex:none}
+  .mini::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgb(0 0 0/.08)}
+  .mini.pend{outline:1.5px dashed var(--warn-icon);outline-offset:1px}
+  .mini.rej{opacity:.35}
+  .pt{position:relative;border-radius:8px;overflow:hidden;background:var(--subtle);aspect-ratio:4/3;display:block;width:100%}
+  .pt img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .15s var(--ease)}
+  .pt::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgb(0 0 0/.08);pointer-events:none}
+  .pt:hover img{transform:scale(1.02)}
+  .pt .chip{position:absolute;left:6px;top:6px}
+  .pt .zoom{position:absolute;right:6px;bottom:6px;width:24px;height:24px;border-radius:4px;background:rgb(0 0 0/.55);color:#fff;display:grid;place-items:center;opacity:0;transition:opacity .15s var(--ease)}
+  .pt:hover .zoom,.pt:focus-visible .zoom{opacity:1}
+  .pt .zoom svg{width:14px;height:14px}
+  .pcard.is-rej .pt img{opacity:.4;filter:grayscale(1)}
+  .pop-menu{position:absolute;z-index:30;top:calc(100% + 4px);left:0}
+  @media (max-width:1023px){ .pact .btn{height:44px} }
+  .viewer img{max-height:calc(100dvh - 220px);width:100%;object-fit:contain;background:#0E0E10;border-radius:6px}
+  @media (prefers-reduced-motion:reduce){ .pt img{transition:none} .pt:hover img{transform:none} }
+</style>
+</head>
+<body data-page="opiniones" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Opiniones</h1>
+    <span class="chip st-neutral ml-1 hidden sm:inline-flex" title="Ajustes · Opiniones"><i data-lucide="zap"></i>Texto al momento · fotos tras revisión</span>
+    <div class="ml-auto flex items-center gap-2">
+      <a href="?vacio" class="btn btn-quiet hidden md:inline-flex" title="Solo mockup">Ver vacío</a>
+      <a href="exportar.html?tipo=opiniones" class="btn btn-ghost hidden sm:inline-flex"><i data-lucide="download"></i>Exportar</a>
+    </div>
+  </header>
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Vistas" class="flex gap-5 min-w-max">
+      <button role="tab" aria-selected="false" tabindex="-1" class="tab">Recientes <span class="text-muted">· 7 días</span> <span class="count">7 nuevas</span></button>
+      <button role="tab" aria-selected="true" class="tab"><i data-lucide="image" class="w-3.5 h-3.5"></i>Fotos por revisar <span class="count" id="tabCount">5</span></button>
+      <button role="tab" aria-selected="false" tabindex="-1" class="tab">Nota ≤ 2 <span class="num text-muted">2</span></button>
+      <button role="tab" aria-selected="false" tabindex="-1" class="tab">Ocultas <span class="num text-muted">3</span></button>
+      <button role="tab" aria-selected="false" tabindex="-1" class="tab">Todas <span class="num text-muted">146</span></button>
+    </div>
+  </div>
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+    <div class="relative w-full sm:w-64"><label for="q" class="sr-only">Buscar en opiniones</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="q" class="input !pl-8" placeholder="Buscar texto o autor"></div>
+    <button class="btn btn-ghost"><i data-lucide="layers"></i>Tipo<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost"><i data-lucide="mountain"></i>Ficha<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <p class="ml-auto text-xs text-meta hidden lg:flex items-center gap-2"><span class="kbd">J</span><span class="kbd">K</span> moverse · <span class="kbd">A</span> aprobar fotos y siguiente · <span class="kbd">V</span> está bien · <span class="kbd">H</span> ocultar</p>
+  </div>
+
+  <div class="lg:grid lg:grid-cols-[420px_minmax(0,1fr)] lg:h-[calc(100vh-32px-48px-41px-57px)]">
+    <div class="lg:border-r border-line lg:overflow-y-auto min-w-0">
+      <p class="px-4 py-2 text-xs text-meta bg-side border-b border-line flex items-center gap-2"><i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>El texto ya está publicado. Las fotos salen en la ficha solo cuando las apruebas. Más antiguas primero.</p>
+      <ul id="list" class="divide-y divide-line" aria-label="Opiniones con fotos por revisar"></ul>
+    </div>
+    <section id="detail" class="hidden lg:block lg:overflow-y-auto min-w-0" aria-labelledby="d-h" aria-live="polite"></section>
+  </div>
+</main>
+
+<!-- detalle en hoja (< 1024) -->
+<div id="sheet" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="d-h-m"><div class="drawer"><div class="grab"></div><div id="sheetBody" class="flex flex-col min-h-0 flex-1"></div></div></div>
+
+<!-- visor de foto -->
+<div id="viewer" class="overlay" role="dialog" aria-modal="true" aria-labelledby="v-h"><div class="dialog xl viewer"><div class="grab"></div>
+  <div class="flex items-center gap-2 h-12 px-4 border-b border-line">
+    <h2 id="v-h" class="text-sm font-semibold truncate">Foto 1 de 3 · Marta G.</h2><span id="v-chip"></span>
+    <span class="ml-auto flex gap-1"><button class="icon-btn" id="v-prev" aria-label="Foto anterior (←)"><i data-lucide="chevron-left"></i></button><button class="icon-btn" id="v-next" aria-label="Foto siguiente (→)"><i data-lucide="chevron-right"></i></button><button class="icon-btn" data-close aria-label="Cerrar (Esc)"><i data-lucide="x"></i></button></span>
+  </div>
+  <div class="p-4"><img id="v-img" src="" alt=""></div>
+  <div class="px-4 pb-1 text-xs text-meta flex flex-wrap gap-x-3 gap-y-1"><span class="num" id="v-meta">1600 × 1200 · 412 KB · WebP</span><span class="inline-flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[color:var(--ok)]"></i>Sin ubicación ni datos de cámara (comprobado al subir)</span></div>
+  <div class="dialog-f" id="v-actions"></div>
+</div></div>
+
+<div id="rgpd" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="rg-h" aria-describedby="rg-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="rg-h">¿Borrar la opinión de Marta G.?</h2><p id="rg-d" class="text-sm text-meta mt-1">Solo para solicitudes de supresión (RGPD) o contenido ilegal. Se borran el texto, las notas <b class="text-fg">y sus 3 fotos</b>, y se recalcula la media de la ficha. <b class="text-fg">No se puede deshacer.</b> Para el resto de casos, ocúltala.</p></div>
+  <div class="dialog-b"><label class="lbl" for="rg-r">Motivo <span class="req">*</span></label><select id="rg-r" class="select"><option>Solicitud de supresión del autor</option><option>Contenido ilegal</option></select><p class="help">Queda en Actividad con el motivo.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Opinión y fotos borradas" data-action="">Borrar opinión</button></div></div></div>
+
+<script>
+const U=(id,w=480,h=360)=>`https://images.unsplash.com/${id}?w=${w}&h=${h}&fit=crop&q=65&auto=format`;
+const UL=id=>`https://images.unsplash.com/${id}?w=1600&q=75&auto=format`;
+const REASONS=['Sin relación con la ficha','Se ve gente reconocible','Borrosa o de mala calidad','Publicidad o datos de contacto','Contenido inapropiado'];
+// fotos: s = pend | ok | rej ; r = motivo de rechazo
+const OPS=[
+ {n:'Marta G.',f:'Magnesi Poblenou',ic:'mountain',t:'Rocódromo',s:5,x:'Muy buen ambiente y bloques renovados cada semana. Por la tarde se llena, pero vale la pena. El café de la entrada es de los mejores de la zona.',d:'hace 2 días',l:'ES',c:[['Variedad',5],['Afluencia',3]],
+  ph:[{id:'photo-1564769662533-4f00a87b4056',s:'pend',m:'1600 × 1200 · 412 KB'},{id:'photo-1689775884353-b01c7a8ad1b2',s:'pend',m:'1600 × 1067 · 388 KB'},{id:'photo-1730659071194-4c833ac5da4e',s:'ok',m:'1600 × 1200 · 455 KB'}]},
+ {n:'Tom H.',f:'La Paret de Gràcia',ic:'mountain',t:'Rocódromo',s:4,x:'',d:'ayer, 23:40',l:'EN',c:[],ph:[{id:'photo-1704030641902-b10c41ebc147',s:'pend',m:'1200 × 1600 · 301 KB'},{id:'photo-1689775884478-9ed19b79d659',s:'pend',m:'1600 × 1200 · 420 KB'}]},
+ {n:'Anna R.',f:'Taller Goma Fina',ic:'wrench',t:'Resolador',s:5,x:'Resolaron mis Solution en 6 días y quedaron como nuevas. Te explican qué goma usan y por qué.',d:'hace 5 h',l:'ES',c:[['Calidad',5],['Plazo',5]],ph:[{id:'photo-1775654792524-739718a3b001',s:'pend',m:'1600 × 1200 · 397 KB'}]},
+ {n:'Pau M.',f:'Presa Badalona',ic:'mountain',t:'Rocódromo',s:5,x:'La zona de entreno es enorme. Y la cerveza después, en la terraza, no tiene precio.',d:'7 oct',l:'ES',c:[],ph:[{id:'photo-1601224748193-d24f166b5c77',s:'rej',r:'Sin relación con la ficha',m:'1600 × 1200 · 510 KB'},{id:'photo-1704030641902-b10c41ebc147',s:'ok',m:'1600 × 1200 · 330 KB'}]},
+];
+const EMPTY=location.search.includes('vacio');
+const pend=o=>o.ph.filter(p=>p.s==='pend').length;
+const meter=s=>`<span class="meter5" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i class="${i<=s?'on':''}"></i>`).join('')}</span><span class="num text-xs ${s<=2?'text-danger font-medium':''}">${s}<span class="sr-only"> de 5</span></span>`;
+const chipFor=p=>p.s==='pend'?'<span class="chip st-warn"><i data-lucide="clock"></i>Por revisar</span>':p.s==='ok'?'<span class="chip st-pub"><span class="dot"></span>Publicada</span>':'<span class="chip st-hidden"><i data-lucide="x"></i>Rechazada</span>';
+const photoChip=o=>{const n=pend(o);return n?`<span class="chip st-warn !h-[18px]"><i data-lucide="image"></i>${n} ${n===1?'foto':'fotos'} por revisar</span>`:o.ph.length?`<span class="inline-flex items-center gap-1 text-muted"><i data-lucide="image" class="w-3.5 h-3.5"></i><span class="num">${o.ph.filter(p=>p.s==='ok').length}</span><span class="sr-only"> fotos publicadas</span></span>`:''};
+const list=document.getElementById('list');let cur=0;
+
+function renderList(){
+  const rows=OPS.filter(o=>pend(o));
+  document.getElementById('tabCount').textContent=OPS.reduce((a,o)=>a+pend(o),0);
+  if(EMPTY||!rows.length){list.innerHTML=`<li class="px-6 py-14 text-center"><i data-lucide="image" class="w-6 h-6 mx-auto text-muted"></i><p class="mt-3 text-sm font-medium">No hay fotos por revisar</p><p class="mt-1 text-xs text-meta max-w-[280px] mx-auto">Cuando un lector suba fotos con su opinión, aparecen aquí. El texto se publica al momento; las fotos esperan a que las apruebes.</p></li>`;
+    document.getElementById('detail').innerHTML=`<div class="h-full grid place-items-center text-sm text-meta p-6">Nada pendiente. Las fotos aprobadas se ven en cada opinión, en “Todas”.</div>`;CG.icons();return;}
+  list.innerHTML=OPS.map((o,i)=>!pend(o)?'':`<li class="op relative" data-i="${i}" ${i===cur?'aria-current="true"':''}>
+  <div class="flex gap-3 px-4 py-3">
+    <input type="checkbox" class="cb mt-1" aria-label="Seleccionar la opinión de ${o.n}">
+    <button class="op-body flex-1 min-w-0 text-left" data-i="${i}">
+      <span class="flex items-center gap-2 text-sm"><span class="font-medium truncate">${o.n}</span>${meter(o.s)}<span class="ml-auto text-xs text-muted num whitespace-nowrap">${o.d}</span></span>
+      <span class="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-meta"><i data-lucide="${o.ic}" class="w-3.5 h-3.5"></i><span class="truncate">${o.f}</span><span class="lang !h-4">${o.l}</span>${photoChip(o)}</span>
+      <span class="mt-1.5 block text-sm ${o.x?'text-fg':'text-meta'} line-clamp-2">${o.x||'Sin texto: solo puntuación y fotos.'}</span>
+      <span class="mt-2 flex gap-1.5" aria-hidden="true">${o.ph.map(p=>`<span class="mini ${p.s==='pend'?'pend':p.s==='rej'?'rej':''}" style="background-image:url('${U(p.id,80,80)}')"></span>`).join('')}</span>
+    </button>
+  </div>
+  <div class="lg:hidden flex gap-2 px-4 pb-3 pl-[44px] pact"><button class="btn btn-ghost flex-1" data-review="${i}"><i data-lucide="images"></i>Revisar ${pend(o)} ${pend(o)===1?'foto':'fotos'}</button></div>
+</li>`).join('');CG.icons();}
+
+function photos(o,i,mobile){
+  const n=pend(o);
+  return `<section aria-labelledby="ph-h-${mobile?'m':'d'}">
+    <div class="flex flex-wrap items-center gap-2 mb-2">
+      <h3 id="ph-h-${mobile?'m':'d'}" class="text-xs font-medium text-meta">Fotos <span class="num">· ${o.ph.length}</span>${n?` <span class="text-[color:var(--warn)]">· ${n} por revisar</span>`:''}</h3>
+      ${n>1?`<button class="btn btn-ghost btn-sm ml-auto ${mobile?'!h-11 w-full !ml-0':''}" data-approve-all="${i}"><i data-lucide="check-check"></i>Aprobar las ${n}</button>`:''}
+    </div>
+    <ul class="grid grid-cols-3 gap-3 ${mobile?'!gap-2':''}">${o.ph.map((p,k)=>`<li class="pcard ${p.s==='rej'?'is-rej':''} min-w-0">
+      <button class="pt" data-view="${i}:${k}" aria-label="Ampliar la foto ${k+1} de ${o.ph.length}">
+        <img src="${U(p.id)}" alt="Foto ${k+1} de ${o.n} en ${o.f}">${chipFor(p).replace('class="chip','class="chip '+(mobile?'max-sm:!px-1':''))}<span class="zoom" aria-hidden="true"><i data-lucide="maximize-2"></i></span>
+      </button>
+      ${p.s==='rej'?`<p class="mt-1.5 text-xs text-meta truncate" title="${p.r}">${p.r}</p>`:mobile?'':`<p class="mt-1.5 text-[11px] text-muted num truncate">${p.m}</p>`}
+      <div class="mt-1.5 flex gap-1.5 relative pact">${act(p,i,k,mobile)}</div>
+    </li>`).join('')}</ul>
+  </section>`;}
+
+function act(p,i,k,mobile){
+  const lbl=t=>mobile?`<span class="sr-only">${t}</span>`:t;
+  const sq=mobile?'!px-0 flex-1':'flex-1';
+  if(p.s==='pend')return `<button class="btn btn-ghost btn-sm ${sq}" data-ok="${i}:${k}" aria-label="${mobile?'Aprobar la foto '+(k+1):''}"><i data-lucide="check"></i>${lbl('Aprobar')}</button><button class="btn btn-ghost btn-sm ${sq}" data-rej="${i}:${k}" aria-haspopup="menu" aria-expanded="false" aria-label="${mobile?'Rechazar la foto '+(k+1):''}"><i data-lucide="x"></i>${lbl('Rechazar')}</button>`;
+  if(p.s==='ok')return `<button class="btn btn-quiet btn-sm ${mobile?'flex-1':''}" data-retire="${i}:${k}"><i data-lucide="eye-off"></i>Retirar</button>`;
+  return `<button class="btn btn-quiet btn-sm ${mobile?'flex-1':''}" data-ok="${i}:${k}"><i data-lucide="undo-2"></i>Aprobar</button>`;
+}
+
+function detail(o,i,mobile){const h=mobile?'d-h-m':'d-h';return `
+  <div class="${mobile?'drawer-h':'h-12 px-6 flex items-center gap-2 border-b border-line'}"><h2 id="${h}" class="text-base font-semibold">${o.n}</h2>${meter(o.s)}${mobile?'<button class="icon-btn ml-auto !w-11 !h-11" data-close aria-label="Cerrar"><i data-lucide="x"></i></button>':'<span class="ml-auto flex gap-1"><button class="icon-btn" aria-label="Anterior (K)"><i data-lucide="chevron-up"></i></button><button class="icon-btn" aria-label="Siguiente (J)"><i data-lucide="chevron-down"></i></button><button class="icon-btn" aria-label="Borrar opinión (solo supresión RGPD o contenido ilegal)" data-open="rgpd"><i data-lucide="trash-2"></i></button></span>'}</div>
+  <div class="${mobile?'drawer-b':'p-6'} space-y-5 max-w-[720px]">
+    <div class="flex flex-wrap items-center gap-2 text-sm"><i data-lucide="${o.ic}" class="w-4 h-4 text-meta"></i><a href="rocodromo-editor.html" class="font-medium underline underline-offset-2">${o.f}</a><span class="text-meta">· ${o.t} · ${o.d} · escrita en ${o.l==='ES'?'español':'inglés'}</span><span class="chip st-pub"><span class="dot"></span>Visible en la ficha</span></div>
+    ${o.x?`<blockquote class="text-[15px] leading-7 border-l-2 border-line-strong pl-4">${o.x}</blockquote>`:'<p class="text-sm text-meta">Sin texto: solo puntuación y fotos.</p>'}
+    ${photos(o,i,mobile)}
+    ${o.c.length?`<div><p class="text-xs font-medium text-meta mb-2">Notas por criterio (opcionales)</p><dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">${o.c.map(([k,v])=>`<div class="flex items-center gap-2"><dt class="flex-1 text-meta">${k}</dt><dd class="flex items-center gap-2">${meter(v)}</dd></div>`).join('')}</dl></div>`:'<p class="text-xs text-meta">Sin notas por criterio.</p>'}
+    <div class="rounded-lg bg-side border border-line p-3 text-xs text-meta space-y-1"><p>Media de lectores de la ficha: <b class="text-fg num">3,4</b> con 5 opiniones visibles. Las fotos no cambian la media.</p><p>Si ocultas la opinión, sus fotos tampoco salen. Las fotos de lectores no entran en Medios.</p><p>Es su opinión: no se edita ni el texto ni la nota. Las fotos se aprueban o se rechazan una a una.</p></div>
+  </div>
+  <div class="${mobile?'drawer-f':'px-6 pb-6 flex flex-wrap gap-2'}">
+    ${pend(o)?`<button class="btn btn-primary ${mobile?'flex-1 !h-11':''}" data-approve-all="${i}" data-next><i data-lucide="check-check"></i>Aprobar fotos y siguiente <span class="kbd hidden lg:inline !border-white/30 !text-white/70 !bg-transparent">A</span></button>`:''}
+    <button class="btn btn-ghost ${mobile?'flex-1 !h-11':''}" data-toast="Opinión oculta · ni el texto ni las fotos salen en la ficha"><i data-lucide="eye-off"></i>Ocultar opinión <span class="kbd hidden lg:inline">H</span></button>
+  </div>`;}
+
+const det=document.getElementById('detail');
+const paint=()=>{renderList();if(EMPTY||!OPS.some(pend))return;if(!pend(OPS[cur]))cur=OPS.findIndex(pend);det.innerHTML=detail(OPS[cur],cur);
+  if(document.getElementById('sheet').classList.contains('open'))document.getElementById('sheetBody').innerHTML=detail(OPS[cur],cur,true);CG.icons();};
+const nextPending=()=>{const j=OPS.findIndex((o,k)=>k!==cur&&pend(o));if(j>=0)cur=j;};
+const parse=s=>s.split(':').map(Number);
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.op-body,[data-review]');
+  if(b){cur=+(b.dataset.i??b.dataset.review);if(matchMedia('(min-width:1024px)').matches)paint();else{document.getElementById('sheetBody').innerHTML=detail(OPS[cur],cur,true);CG.open('sheet',b);CG.icons();renderList();}return;}
+  const ok=e.target.closest('[data-ok]');if(ok){const[i,k]=parse(ok.dataset.ok);const was=OPS[i].ph[k].s;OPS[i].ph[k].s='ok';delete OPS[i].ph[k].r;CG.toast(was==='rej'?'Foto aprobada · ya sale en la ficha':'Foto aprobada · ya sale en la ficha',{action:'Deshacer'});closeMenus();paint();return;}
+  const all=e.target.closest('[data-approve-all]');if(all){const i=+all.dataset.approveAll;const n=pend(OPS[i]);OPS[i].ph.forEach(p=>p.s==='pend'&&(p.s='ok'));CG.toast(`${n} ${n===1?'foto aprobada':'fotos aprobadas'} · ya salen en la ficha`,{action:'Deshacer'});if(all.hasAttribute('data-next'))nextPending();paint();return;}
+  const rt=e.target.closest('[data-retire]');if(rt){const[i,k]=parse(rt.dataset.retire);OPS[i].ph[k].s='rej';OPS[i].ph[k].r='Retirada tras publicarla';CG.toast('Foto retirada · ya no sale en la ficha',{action:'Deshacer'});paint();return;}
+  const rj=e.target.closest('[data-rej]');if(rj){closeMenus();rj.setAttribute('aria-expanded','true');const[i,k]=parse(rj.dataset.rej);
+    rj.parentElement.insertAdjacentHTML('beforeend',`<div class="pop-menu menu" role="menu" aria-label="Motivo del rechazo"><p class="grp-label px-2 pt-1.5 pb-1">Motivo</p>${REASONS.map(r=>`<button class="menu-i max-lg:!h-11" role="menuitem" data-reason="${i}:${k}:${r}">${r}</button>`).join('')}<div class="menu-sep"></div><button class="menu-i max-lg:!h-11 text-meta" role="menuitem" data-reason="${i}:${k}:">Rechazar sin motivo</button></div>`);
+    rj.parentElement.querySelector('[role=menuitem]').focus();return;}
+  const rs=e.target.closest('[data-reason]');if(rs){const[i,k,...r]=rs.dataset.reason.split(':');OPS[+i].ph[+k].s='rej';OPS[+i].ph[+k].r=r.join(':')||'Sin motivo';CG.toast('Foto rechazada · no sale en la ficha',{action:'Deshacer'});closeMenus();paint();return;}
+  const v=e.target.closest('[data-view]');if(v){view(...parse(v.dataset.view),v);return;}
+  if(!e.target.closest('.pop-menu'))closeMenus();
+});
+function closeMenus(){document.querySelectorAll('.pop-menu').forEach(m=>{m.previousElementSibling?.setAttribute('aria-expanded','false');m.remove();});}
+
+// visor
+let vi=0,vk=0;
+function view(i,k,from){vi=i;vk=k;const o=OPS[i],p=o.ph[k];
+  document.getElementById('v-h').textContent=`Foto ${k+1} de ${o.ph.length} · ${o.n}`;
+  document.getElementById('v-chip').innerHTML=chipFor(p);
+  const img=document.getElementById('v-img');img.src=UL(p.id);img.alt=`Foto ${k+1} de ${o.n} en ${o.f}`;
+  document.getElementById('v-meta').textContent=p.m+' · WebP';
+  document.getElementById('v-prev').disabled=k===0;document.getElementById('v-next').disabled=k===o.ph.length-1;
+  document.getElementById('v-actions').innerHTML=act(p,i,k,false).replaceAll('btn-sm','')+'';
+  if(from)CG.open('viewer',from);CG.icons();}
+document.getElementById('v-prev').onclick=()=>view(vi,Math.max(0,vk-1));
+document.getElementById('v-next').onclick=()=>view(vi,Math.min(OPS[vi].ph.length-1,vk+1));
+document.getElementById('viewer').addEventListener('click',e=>{if(e.target.closest('[data-ok],[data-reason],[data-retire]'))setTimeout(()=>{if(document.getElementById('viewer').classList.contains('open'))view(vi,vk);},0);});
+
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.querySelector('.pop-menu')){closeMenus();return;}
+  if(document.getElementById('viewer').classList.contains('open')){if(e.key==='ArrowLeft')document.getElementById('v-prev').click();if(e.key==='ArrowRight')document.getElementById('v-next').click();return;}
+  if(['input','textarea'].includes((e.target.tagName||'').toLowerCase())||document.querySelector('.overlay.open'))return;
+  const k=e.key.toLowerCase();
+  if(k==='a'&&pend(OPS[cur])){const n=pend(OPS[cur]);OPS[cur].ph.forEach(p=>p.s==='pend'&&(p.s='ok'));CG.toast(`${n} ${n===1?'foto aprobada':'fotos aprobadas'} · siguiente`,{action:'Deshacer'});nextPending();paint();}
+  if(k==='h')CG.toast('Opinión oculta · ni el texto ni las fotos salen en la ficha');
+  if(k==='j'||k==='k'){const idx=OPS.map((o,i)=>pend(o)?i:-1).filter(i=>i>=0);let p=idx.indexOf(cur);p=Math.max(0,Math.min(idx.length-1,p+(k==='j'?1:-1)));cur=idx[p];paint();list.querySelector(`.op-body[data-i="${cur}"]`)?.focus();}
+});
+paint();
+</script>
+</body>
+</html>

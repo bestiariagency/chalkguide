@@ -1,31 +1,28 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const site = useSiteConfig()
+const siteUrl = useSiteUrl()
 
-// lang/dir on <html>, hreflang alternates, canonical and og:locale from @nuxtjs/i18n.
-const i18nHead = useLocaleHead()
+// lang/dir, title template, canonical, hreflang (only versions that exist, D3), og:url/locale
+// and the route-level robots rules (legal, utility, newsletter states).
+useSiteSeo()
 
-useHead(() => ({
-  htmlAttrs: {
-    lang: i18nHead.value.htmlAttrs.lang,
-    dir: i18nHead.value.htmlAttrs.dir,
-  },
-  link: [...(i18nHead.value.link ?? [])],
-  meta: [...(i18nHead.value.meta ?? [])],
-}))
+// Site-wide defaults. Pages override them with their own usePageSeo (title, description,
+// og:*, twitter:*, image); the default share image is /og-default[-en].png.
+usePageSeo(() => ({ title: t('seo.defaultTitle'), description: t('seo.defaultDescription') }))
 
-// Site-wide SEO defaults. Pages override title/description with their own useSeoMeta.
-useSeoMeta({
-  title: () => t('seo.defaultTitle'),
-  description: () => t('seo.defaultDescription'),
-  ogType: 'website',
-  ogSiteName: 'ChalkGuide',
-  ogTitle: () => t('seo.defaultTitle'),
-  ogDescription: () => t('seo.defaultDescription'),
-  // TODO: add ogImage / twitterImage once a default share image exists.
-  twitterCard: 'summary_large_image',
-  twitterTitle: () => t('seo.defaultTitle'),
-  twitterDescription: () => t('seo.defaultDescription'),
-})
+// Organization + WebSite (JSON-LD) for every page.
+const { data: settings } = await useSiteSettings()
+useJsonLd('site', () =>
+  siteGraphLd({
+    siteUrl,
+    name: String(site.name || 'ChalkGuide'),
+    description: t('seo.defaultDescription'),
+    logoUrl: `${siteUrl}/icon-512.png`,
+    sameAs: Object.values(settings.value?.socialLinks ?? {}).filter((url) => /^https?:\/\//.test(url)),
+    locale: locale.value === 'en' ? 'en' : 'es',
+  }),
+)
 </script>
 
 <template>

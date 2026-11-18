@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Autor y Autores · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=7"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .sub a{display:block;padding:6px 10px;border-radius:6px;font-size:13px;color:var(--meta)} .sub a:hover{background:var(--subtle);color:var(--fg)} .sub a[aria-current]{color:var(--fg);font-weight:500;background:var(--subtle)}
+  .aset{scroll-margin-top:24px}
+  [hidden]{display:none!important}
+  textarea.input.input{line-height:1.5} /* 13 → 19,5 px; 16 px en móvil → 24 px (admin.css deja 20 px fijos: 1,25) */
+  .avatar{border-radius:999px;display:inline-grid;place-items:center;flex:none;background:var(--subtle);color:var(--meta);font-weight:600}
+  .pick{position:relative;border-radius:8px;outline-offset:2px}
+  .pick[aria-checked="true"]{box-shadow:0 0 0 2px var(--elev),0 0 0 4px var(--fg)}
+  .pick[aria-disabled="true"]{cursor:not-allowed}
+  .pick[aria-disabled="true"] .photo{opacity:.45}
+  .num-tile{border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-height:64px}
+  .num-tile.calc{background:var(--subtle);border-style:dashed}
+  .new-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 40%,transparent);border-radius:3px;padding:0 4px;line-height:16px}
+  @media (max-width:767px){ .row-btn{min-height:44px} .icon-btn.t44{width:44px;height:44px} }
+</style>
+</head>
+<body data-page="ajustes" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+
+<!-- ═════════════════════ VISTA 1 · AJUSTES (con la sección Autor del sitio) ═════════════════════ -->
+<div id="v-ajustes">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm"><h1 class="font-medium">Ajustes</h1>
+    <span class="ml-auto hidden lg:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Propuesta · Autor (D51) y «Tu cuenta» sin fecha de contraseña</span></header>
+  <div class="px-4 md:px-6 py-6 lg:grid lg:grid-cols-[180px_minmax(0,760px)] gap-10 pb-32">
+    <nav class="sub hidden lg:block sticky top-6 self-start" aria-label="Secciones de ajustes"><a href="#general">General</a><a href="#autor" aria-current="true">Autor del sitio</a><a href="#seo">SEO por defecto</a><a href="#redes">Redes y contacto</a><a href="#newsletter">Newsletter</a><a href="#opiniones">Opiniones</a><a href="#cuenta">Tu cuenta</a></nav>
+    <div class="space-y-10 min-w-0">
+      <section id="general" class="aset" aria-labelledby="h-g"><h2 id="h-g" class="text-base font-semibold">General</h2>
+        <div class="mt-4 space-y-4">
+          <div class="sm:w-1/2"><label class="lbl" for="sn">Nombre del sitio</label><input id="sn" class="input" value="ChalkGuide"></div>
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="tg">Lema <span class="lang-tag">ES</span></label><input id="tg" class="input" value="Escalar en Barcelona, explicado por alguien que escala"></div><div><label class="lbl" for="tge">Lema <span class="lang-tag">EN</span></label><input id="tge" class="input" value="Climbing in Barcelona, explained by a climber"></div></div>
+        </div></section>
+
+      <!-- ─────────── AUTOR DEL SITIO (D51) ─────────── -->
+      <section id="autor" class="aset border-t border-line pt-8" aria-labelledby="h-a">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1"><h2 id="h-a" class="text-base font-semibold">Autor del sitio</h2><span class="new-tag">Nuevo</span>
+          <a href="#autores" class="ml-auto text-sm text-meta hover:text-fg inline-flex items-center gap-1 underline-offset-2 hover:underline row-btn">Otros autores<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a></div>
+        <p class="text-sm text-meta mt-1 max-w-[60ch]">Tu firma en los artículos y la cabecera de «Sobre mí». Los artículos sin autor asignado los firmas tú.</p>
+
+        <div id="a-empty-banner" class="banner banner-info mt-4" hidden><i data-lucide="info"></i><span>Todo vacío hasta que cargues el contenido real (D46). Mientras tanto, la firma sale sin foto y «En números» no se pinta. Nunca sale un «0».</span></div>
+        <div id="a-conflict" class="banner banner-warn mt-4" role="alert" hidden><i data-lucide="triangle-alert"></i><span class="flex-1"><b>«Bio corta ES» cambió en otra pestaña</b> mientras editabas. No se ha guardado nada de esta sección. <span class="block mt-2 flex flex-wrap gap-2"><button class="btn btn-ghost btn-sm">Ver la otra versión</button><button class="btn btn-primary btn-sm" data-toast="Guardado · tu versión de «Bio corta ES» sustituye a la otra">Guardar la mía</button></span></span></div>
+
+        <div class="mt-4 space-y-5">
+          <!-- foto -->
+          <div><p class="lbl" id="a-photo-l">Foto</p>
+            <div class="flex items-start gap-4">
+              <span id="a-photo" class="photo w-24 h-[120px] rounded-md flex-none" style="background-image:linear-gradient(160deg,#9b7a5a,#3a2a1e)" role="img" aria-label="Foto del autor: Xavi en la pared de bloque de Poblenou, con magnesio en las manos"></span>
+              <span id="a-photo-empty" class="w-24 h-[120px] rounded-md flex-none border border-dashed border-line-strong grid place-items-center text-muted" hidden><i data-lucide="user-round"></i></span>
+              <div class="min-w-0 space-y-2">
+                <p class="text-xs text-meta" id="a-photo-meta"><span class="mono text-fg block truncate">xavi-poblenou-4x5.jpg</span>1600 × 2000 · alt ES y EN <i data-lucide="check" class="inline w-3.5 h-3.5 text-ok"></i></p>
+                <p class="text-xs text-meta" id="a-photo-none" hidden>Sin foto: la firma sale sin círculo y «Sobre mí» con el titular a todo el ancho.</p>
+                <div class="flex flex-wrap gap-2"><button class="btn btn-ghost row-btn" data-picker="ajustes" aria-describedby="a-photo-l"><i data-lucide="images"></i><span id="a-pick-l">Cambiar…</span></button><button class="btn btn-quiet row-btn" id="a-remove">Quitar</button></div>
+              </div>
+            </div>
+            <p class="help">Vertical 4:5, mínimo 1200 px de alto. Solo se pueden elegir fotos con texto alternativo en ES y EN.</p>
+            <div class="banner banner-info mt-2"><i data-lucide="globe"></i><span>Al guardar, <b>la foto pasa a ser pública</b>: sale en «Sobre mí» y en tu firma, aunque no esté en ningún artículo. Al quitarla, vuelve a ser privada si no se usa en otro sitio.</span></div>
+          </div>
+
+          <div class="sm:w-1/2"><div class="lbl"><label for="an">Nombre</label><span class="counter" data-for="an" data-max="80"></span></div><input id="an" class="input" maxlength="80" value="Xavi" placeholder="Como firmas"><p class="help">Sale en la firma, en «Sobre mí» y como autor en los buscadores.</p></div>
+
+          <div class="grid lg:grid-cols-2 gap-4">
+            <div><div class="lbl"><label for="ar">Rol <span class="lang-tag">ES</span></label><span class="counter" data-for="ar" data-max="80"></span></div><input id="ar" class="input" maxlength="80" value="Escalador y autor de ChalkGuide" placeholder="Debajo del nombre"></div>
+            <div><div class="lbl"><label for="are">Rol <span class="lang-tag">EN</span></label><span class="counter" data-for="are" data-max="80"></span></div><input id="are" class="input" maxlength="80" value="Climber and author of ChalkGuide" placeholder="Opcional"></div>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-4">
+            <div id="al-wrap"><div class="lbl"><label for="al">Frase de «Sobre mí» <span class="lang-tag">ES</span></label><span class="counter" data-for="al" data-max="120"></span></div><textarea id="al" rows="3" class="input" aria-describedby="al-h al-e" placeholder="En primera persona. Es el titular de la página.">Escalo en Barcelona desde 2014 y pruebo cada rocódromo antes de opinar sobre él.</textarea><p id="al-h" class="help">Es el titular grande de «Sobre mí». Máximo 120.</p><p id="al-e" class="err" hidden><i data-lucide="circle-alert"></i><span>Sobran <b id="al-n">11</b> caracteres. Máximo 120.</span></p></div>
+            <div><div class="lbl"><label for="ale">Frase de «Sobre mí» <span class="lang-tag">EN</span></label><span class="counter" data-for="ale" data-max="120"></span></div><textarea id="ale" rows="3" class="input" placeholder="Opcional">I've climbed in Barcelona since 2014 and I try every gym before I review it.</textarea></div>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-4">
+            <div class="changed ml-3" id="ab-wrap"><div class="lbl"><label for="ab">Bio corta <span class="lang-tag">ES</span></label><span class="chg-mark">Sin guardar</span><span class="counter" data-for="ab" data-max="160"></span></div><textarea id="ab" rows="3" class="input" maxlength="160" placeholder="Dos frases para el final de cada artículo">Escalo en Barcelona desde 2014. Pago mi entrada, pruebo cada sala y cuento lo que le diría a un amigo antes de ir.</textarea><p class="help">Va en la firma del final del artículo.</p></div>
+            <div><div class="lbl"><label for="abe">Bio corta <span class="lang-tag">EN</span></label><span class="counter" data-for="abe" data-max="160"></span></div><textarea id="abe" rows="3" class="input" maxlength="160" placeholder="Opcional"></textarea><p class="help">Si está vacía, en /en la firma sale sin bio.</p></div>
+          </div>
+
+          <!-- En números -->
+          <fieldset class="rounded-lg border border-line p-4" aria-describedby="st-help">
+            <legend class="px-1 -ml-1 text-sm font-medium">«En números»</legend>
+            <p id="st-help" class="text-xs text-meta">Hasta 2 cifras que escribes tú. Las otras 2 se calculan solas. Si una casilla está vacía, no se muestra.</p>
+            <ol id="stats" class="mt-3 space-y-4 sm:space-y-3"></ol>
+            <div class="mt-3 flex flex-wrap items-center gap-3"><button class="btn btn-ghost row-btn" id="st-add"><i data-lucide="plus"></i>Añadir cifra</button><p id="st-full" class="text-xs text-meta" hidden>Ya tienes las 2 cifras. Quita una para cambiarla.</p></div>
+            <div class="mt-4 border-t border-line pt-3"><p class="text-xs font-medium text-meta">Se calculan solas</p>
+              <ul class="mt-2 grid grid-cols-2 gap-2 text-sm"><li class="num-tile calc"><span class="mono text-lg">14</span><span class="block text-xs text-meta">rocódromos con ficha</span></li><li class="num-tile calc"><span class="mono text-lg">9</span><span class="block text-xs text-meta">pies de gato comparados</span></li></ul></div>
+          </fieldset>
+
+          <!-- vista previa -->
+          <section class="card p-4" aria-labelledby="h-prev">
+            <div class="flex flex-wrap items-center gap-2"><h3 id="h-prev" class="text-sm font-semibold">Así se ve</h3>
+              <div class="seg ml-auto" role="radiogroup" aria-label="Vista previa" id="prevSeg"><button role="radio" aria-checked="true" data-pv="firma">Firma</button><button role="radio" aria-checked="false" data-pv="sobre">Sobre mí</button></div>
+              <div class="seg" role="radiogroup" aria-label="Idioma de la vista previa" id="prevLang"><button role="radio" aria-checked="true" data-lg="es">ES</button><button role="radio" aria-checked="false" data-lg="en">EN</button></div></div>
+            <div id="pv-firma" class="mt-4 flex gap-4 items-start">
+              <span class="pv-ph photo w-16 h-16 rounded-full flex-none" style="background-image:linear-gradient(160deg,#9b7a5a,#3a2a1e)" aria-hidden="true"></span>
+              <div class="min-w-0"><p class="font-semibold" id="pv-n">Xavi</p><p class="text-sm text-meta" id="pv-r"></p><p class="text-sm mt-2 max-w-[56ch]" id="pv-b"></p><p class="text-sm mt-2 flex gap-4"><span class="underline underline-offset-2">Sobre mí</span><span class="underline underline-offset-2">Cómo trabajo</span></p></div>
+            </div>
+            <div id="pv-sobre" class="mt-4 rounded-md bg-[#18181B] text-white p-5" hidden>
+              <div class="flex gap-5 items-start"><p class="text-[22px] leading-[30px] font-semibold flex-1 max-w-[20ch]" id="pv-l"></p><span class="pv-ph photo w-20 h-24 rounded flex-none" style="background-image:linear-gradient(160deg,#9b7a5a,#3a2a1e)" aria-hidden="true"></span></div>
+              <ul class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2" id="pv-nums"></ul>
+            </div>
+            <p class="help">Aproximada. Tipografía y colores del sitio en la vista real.</p>
+          </section>
+        </div>
+      </section>
+
+      <section id="seo" class="aset border-t border-line pt-8" aria-labelledby="h-s"><h2 id="h-s" class="text-base font-semibold">SEO por defecto</h2><p class="text-sm text-meta mt-1">Sin cambios en esta propuesta.</p></section>
+      <section id="redes" class="aset border-t border-line pt-8" aria-labelledby="h-r"><h2 id="h-r" class="text-base font-semibold">Redes y contacto</h2><p class="text-sm text-meta mt-1">Sin cambios en esta propuesta.</p></section>
+      <section id="newsletter" class="aset border-t border-line pt-8" aria-labelledby="h-n"><h2 id="h-n" class="text-base font-semibold">Newsletter</h2><p class="text-sm text-meta mt-1">Sin cambios en esta propuesta.</p></section>
+      <section id="opiniones" class="aset border-t border-line pt-8" aria-labelledby="h-o"><h2 id="h-o" class="text-base font-semibold">Opiniones</h2><p class="text-sm text-meta mt-1">Sin cambios en esta propuesta.</p></section>
+
+      <section id="cuenta" class="aset border-t border-line pt-8" aria-labelledby="h-c"><h2 id="h-c" class="text-base font-semibold">Tu cuenta</h2>
+        <div class="mt-4 card divide-y divide-line text-sm">
+          <div class="flex flex-wrap items-center gap-3 p-4"><div class="flex-1"><p class="font-medium">Email</p><p class="text-meta text-xs">Con el que entras al panel</p></div><span class="mono text-xs">x•••@•••.com</span></div>
+          <div class="flex flex-wrap items-center gap-3 p-4"><div class="flex-1"><p class="font-medium">Contraseña</p></div><button class="btn btn-ghost row-btn">Cambiar…</button></div>
+          <div class="flex flex-wrap items-center gap-3 p-4"><div class="flex-1"><p class="font-medium">Sesiones abiertas</p><p class="text-meta text-xs">Este Mac · iPhone (hace 2 h)</p></div><button class="btn btn-ghost row-btn">Cerrar las demás</button></div>
+        </div></section>
+
+      <p class="text-xs text-meta border border-dashed border-line-strong rounded px-3 py-2">Mockup · Ajustes: <a class="underline" href="#autor">#autor</a> · <a class="underline" href="#autor-vacio">#autor-vacio</a> (estado real hoy, D46) · <a class="underline" href="#autor-foto">#autor-foto</a> (elegir de Medios) · <a class="underline" href="#autor-error">#autor-error</a> · <a class="underline" href="#autor-conflicto">#autor-conflicto</a>. Autores: <a class="underline" href="#autores">#autores</a> · <a class="underline" href="#autores-vacio">#autores-vacio</a> · <a class="underline" href="#autores-cargando">#autores-cargando</a> · <a class="underline" href="#autores-error">#autores-error</a> · <a class="underline" href="#autor-nuevo">#autor-nuevo</a> · <a class="underline" href="#autor-editar">#autor-editar</a> · <a class="underline" href="#autor-borrar">#autor-borrar</a> · <a class="underline" href="#autor-borrar-sin">#autor-borrar-sin</a></p>
+    </div>
+  </div>
+
+  <!-- barra de cambios sin guardar (como en ajustes.html) -->
+  <div id="savebar" role="region" aria-label="Cambios sin guardar" class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-6 z-40 pop bg-elev border border-line-strong rounded-lg pl-4 pr-2 py-2 flex items-center gap-3 text-sm w-[calc(100vw-24px)] sm:w-auto">
+    <span class="flex items-center gap-2 flex-1"><span class="w-2 h-2 rounded-full bg-warn-icon"></span><span id="sb-t">1 cambio sin guardar</span></span>
+    <button class="btn btn-quiet">Descartar</button><button class="btn btn-primary" id="sb-save">Guardar</button>
+  </div>
+</div>
+
+<!-- ═════════════════════ VISTA 2 · EDITORIAL → AUTORES (D57) ═════════════════════ -->
+<div id="v-autores" hidden>
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Autores <span class="text-muted font-normal num ml-1" id="au-count">2</span></h1>
+    <div class="ml-auto"><button class="btn btn-primary" id="btnNew"><i data-lucide="plus"></i><span class="hidden sm:inline">Nuevo autor</span><span class="sm:hidden">Nuevo</span></button></div>
+  </header>
+
+  <div class="px-4 md:px-6 py-6 max-w-[1440px] grid grid-cols-[minmax(0,1fr)] xl:grid-cols-[minmax(0,760px)_320px] gap-6 items-start">
+    <div class="min-w-0 space-y-6">
+      <!-- autor del sitio: fijo, no se ordena ni se borra -->
+      <section aria-labelledby="h-site">
+        <h2 id="h-site" class="text-sm font-semibold">Autor del sitio</h2>
+        <p class="text-xs text-meta mt-0.5">Firma por defecto: todo artículo sin autor asignado. Se edita en Ajustes porque también es «Sobre mí».</p>
+        <div class="card mt-3 flex items-center gap-3 px-3 py-2.5">
+          <span class="photo w-10 h-10 rounded-full flex-none" style="background-image:linear-gradient(160deg,#9b7a5a,#3a2a1e)" aria-hidden="true"></span>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">Xavi <span class="chip st-neutral ml-1 align-middle">Por defecto</span></p><p class="text-xs text-meta truncate">Escalador y autor de ChalkGuide</p></div>
+          <span class="text-xs text-meta num hidden sm:inline">3 artículos</span>
+          <span class="lang lang-part hidden sm:inline-grid" title="Falta la bio en inglés">EN</span>
+          <a href="#autor" class="btn btn-ghost row-btn"><span class="hidden sm:inline">Editar en Ajustes</span><span class="sm:hidden">Ajustes</span><i data-lucide="arrow-up-right"></i></a>
+        </div>
+      </section>
+
+      <!-- autores ordenables -->
+      <section aria-labelledby="h-list" id="st-data">
+        <h2 id="h-list" class="text-sm font-semibold">Otros autores</h2>
+        <p class="text-xs text-meta mt-0.5">Orden del selector «Autor» del editor. Arrastra desde <i data-lucide="grip-vertical" class="inline w-3.5 h-3.5"></i> o usa Espacio y flechas.</p>
+        <ul class="sortable card mt-3 divide-y divide-line" id="list" aria-label="Autores, ordenables"></ul>
+        <p class="mt-2 text-xs text-meta flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-ok"></i><span>Orden guardado</span></p>
+      </section>
+
+      <div id="st-empty" hidden><div class="card"><div class="empty"><span class="ico"><i data-lucide="users-round"></i></span><h3>Solo firmas tú</h3><p>Añade un autor si alguien más escribe en el blog. Lo eliges en el editor de cada artículo, en «Autor».</p><button class="btn btn-primary mt-2" data-new><i data-lucide="plus"></i>Nuevo autor</button></div></div></div>
+      <div id="st-loading" hidden aria-busy="true" aria-label="Cargando autores"><span class="sk block h-4 w-32"></span><span class="sk block h-3 w-72 max-w-full mt-2"></span>
+        <div class="card mt-3 divide-y divide-line"><div class="h-14 px-3 flex items-center gap-3"><span class="sk w-4 h-4"></span><span class="sk w-10 h-10 !rounded-full"></span><span class="sk h-3 w-40"></span><span class="sk h-3 w-16 ml-auto"></span></div><div class="h-14 px-3 flex items-center gap-3"><span class="sk w-4 h-4"></span><span class="sk w-10 h-10 !rounded-full"></span><span class="sk h-3 w-28"></span><span class="sk h-3 w-16 ml-auto"></span></div></div></div>
+      <div id="st-error" hidden><div class="card"><div class="empty"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se han podido cargar los autores</h3><p>Comprueba la conexión. Si sigue, puede ser Supabase: mira su estado.</p><p class="mono text-2xs text-muted">PGRST301 · guide.authors</p><button class="btn btn-ghost mt-2"><i data-lucide="rotate-cw"></i>Reintentar</button></div></div></div>
+    </div>
+
+    <aside class="card p-4 space-y-3 text-sm min-w-0" aria-labelledby="h-how">
+      <h2 id="h-how" class="text-sm font-semibold">Cómo funciona la firma</h2>
+      <ul class="space-y-3">
+        <li class="flex gap-3"><span class="w-7 h-7 rounded-md bg-subtle text-meta grid place-items-center flex-none"><i data-lucide="file-pen-line" class="w-4 h-4"></i></span><span><span class="block font-medium">Se asigna en el artículo</span><span class="block text-xs text-meta">Editor → Ajustes del artículo → «Autor». En un publicado, el cambio va como cualquier otro: por «Publicar cambios».</span></span></li>
+        <li class="flex gap-3"><span class="w-7 h-7 rounded-md bg-subtle text-meta grid place-items-center flex-none"><i data-lucide="languages" class="w-4 h-4"></i></span><span><span class="block font-medium">EN completo</span><span class="block text-xs text-meta">Con rol y bio en inglés. Si falta alguno, en /en la firma sale con lo que haya.</span></span></li>
+        <li class="flex gap-3"><span class="w-7 h-7 rounded-md bg-subtle text-meta grid place-items-center flex-none"><i data-lucide="user-x" class="w-4 h-4"></i></span><span><span class="block font-medium">Al eliminar un autor</span><span class="block text-xs text-meta">Sus artículos pasan a firmarlos tú, también los publicados y al momento. Su foto se queda en Medios.</span></span></li>
+      </ul>
+      <p class="text-xs text-meta border-t border-line pt-3">No hay página pública por autor: la firma enlaza a «Sobre mí» solo cuando el autor eres tú.</p>
+    </aside>
+  </div>
+</div>
+</main>
+
+<!-- ═════════════ drawer de autor (alta / edición) ═════════════ -->
+<div id="edit" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="ed-h"><div class="drawer"><div class="grab"></div>
+  <div class="drawer-h"><h2 id="ed-h" class="text-base font-semibold">Editar «Ana»</h2><button class="icon-btn ml-auto t44" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="drawer-b space-y-5">
+    <div id="ed-err" class="banner banner-err" role="alert" hidden><i data-lucide="circle-alert"></i><span>No se ha podido crear: ya hay un autor con el identificador <span class="mono">ana</span>. <a href="#d-slug" class="underline">Cámbialo</a>.</span></div>
+
+    <div><p class="lbl">Foto</p>
+      <div class="flex items-center gap-3">
+        <span id="d-ph" class="photo w-16 h-16 rounded-full flex-none" style="background-image:linear-gradient(150deg,#b07a62,#3b2620)" role="img" aria-label="Foto de Ana"></span>
+        <span id="d-ph0" class="avatar w-16 h-16 text-lg" aria-hidden="true" hidden>A</span>
+        <div class="flex flex-wrap gap-2"><button class="btn btn-ghost row-btn" data-picker="drawer"><i data-lucide="images"></i><span id="d-pick-l">Cambiar…</span></button><button class="btn btn-quiet row-btn" id="d-rm">Quitar</button></div>
+      </div>
+      <p class="help" id="d-ph-help">Al guardar, la foto pasa a ser pública (sale en su firma). Sin foto, la firma no lleva círculo.</p></div>
+
+    <div><div class="lbl"><label for="d-n">Nombre <span class="req">*</span><span class="sr-only">(obligatorio)</span></label><span class="counter" data-for="d-n" data-max="80"></span></div><input id="d-n" class="input" maxlength="80" value="Ana" aria-describedby="d-n-e"><p id="d-n-e" class="err" hidden><i data-lucide="circle-alert"></i>Escribe el nombre con el que firma.</p></div>
+    <div><label class="lbl" for="d-slug">Identificador</label><input id="d-slug" class="input mono !text-[12.5px]" value="ana" aria-describedby="d-slug-h"><p id="d-slug-h" class="help">Se rellena con el nombre. Lo usan los datos para buscadores; no es una URL pública. Minúsculas, números y guiones.</p></div>
+
+    <fieldset class="grid gap-3"><legend class="sr-only">Rol</legend>
+      <div><div class="lbl"><label for="d-r">Rol <span class="lang-tag">ES</span></label><span class="counter" data-for="d-r" data-max="80"></span></div><input id="d-r" class="input" maxlength="80" value="Redactora" placeholder="Debajo del nombre"></div>
+      <div><div class="lbl"><label for="d-re">Rol <span class="lang-tag">EN</span></label><span class="counter" data-for="d-re" data-max="80"></span></div><input id="d-re" class="input" maxlength="80" value="Writer" placeholder="Opcional"></div>
+    </fieldset>
+    <fieldset class="grid gap-3"><legend class="sr-only">Bio</legend>
+      <div><div class="lbl"><label for="d-b">Bio <span class="lang-tag">ES</span></label><span class="counter" data-for="d-b" data-max="160"></span></div><textarea id="d-b" rows="3" class="input" maxlength="160" placeholder="Una o dos frases para el final del artículo">Escribe sobre escalada en Barcelona para ChalkGuide.</textarea></div>
+      <div><div class="lbl"><label for="d-be">Bio <span class="lang-tag">EN</span></label><span class="counter" data-for="d-be" data-max="160"></span></div><textarea id="d-be" rows="3" class="input" maxlength="160" placeholder="Opcional">Writes about climbing in Barcelona for ChalkGuide.</textarea>
+        <p class="help flex items-center gap-1.5"><span class="lang" id="d-en-chip">EN</span><span id="d-en-t">Inglés completo: rol y bio.</span></p></div>
+    </fieldset>
+
+    <div><p class="lbl">Así firma</p>
+      <div class="card p-3 flex gap-3 items-start"><span class="d-pv-ph photo w-12 h-12 rounded-full flex-none" style="background-image:linear-gradient(150deg,#b07a62,#3b2620)" aria-hidden="true"></span><span class="d-pv-0 avatar w-12 h-12" aria-hidden="true" hidden>A</span>
+        <div class="min-w-0"><p class="text-sm font-semibold" id="d-pv-n">Ana</p><p class="text-xs text-meta" id="d-pv-r">Redactora</p><p class="text-sm mt-1" id="d-pv-b"></p></div></div></div>
+
+    <section id="d-use" class="border-t border-line pt-4" aria-labelledby="d-use-h">
+      <h3 id="d-use-h" class="text-sm font-semibold">Dónde firma</h3>
+      <div class="mt-2 flex items-center gap-3 text-sm"><span class="num" id="d-use-t">12 artículos · 12 publicados</span><a href="articulos.html" class="ml-auto text-meta underline underline-offset-2 hover:text-fg inline-flex items-center row-btn">Ver en Artículos</a></div>
+    </section>
+  </div>
+  <div class="drawer-f"><button class="btn btn-danger-ghost row-btn" id="btnDel"><i data-lucide="trash-2"></i>Eliminar…</button><button class="btn btn-ghost ml-auto row-btn" data-close>Cancelar</button><button class="btn btn-primary row-btn" id="btnSave">Guardar</button></div>
+</div></div>
+
+<!-- ═════════════ eliminar autor ═════════════ -->
+<div id="del" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="del-h" aria-describedby="del-d"><div class="dialog !max-w-[520px]"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="del-h">¿Eliminar a «Ana»?</h2><p id="del-d" class="text-sm text-meta mt-1"></p></div>
+  <div class="dialog-b space-y-3 text-sm" id="del-b"></div>
+  <div class="dialog-f"><button class="btn btn-ghost row-btn" data-close autofocus>Cancelar</button><button class="btn btn-danger row-btn" id="delOk">Eliminar</button></div></div></div>
+
+<!-- ═════════════ elegir foto de Medios (MediaPicker) ═════════════ -->
+<div id="picker" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pk-h"><div class="dialog lg"><div class="grab"></div>
+  <div class="dialog-h flex items-start gap-2"><div><h2 id="pk-h">Elegir foto de Medios</h2><p class="text-sm text-meta mt-0.5" id="pk-sub">Para tu firma y «Sobre mí». Mejor vertical.</p></div><button class="icon-btn ml-auto -mr-2 t44" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="dialog-b space-y-3">
+    <div class="flex flex-wrap gap-2 items-center"><label class="flex-1 min-w-[200px]"><span class="sr-only">Buscar en Medios</span><input class="input" placeholder="Busca por nombre o texto alternativo" value="retrato"></label>
+      <div class="seg" role="radiogroup" aria-label="Filtro"><button role="radio" aria-checked="true">Todas</button><button role="radio" aria-checked="false">Verticales</button></div></div>
+    <ul id="pk-grid" class="grid grid-cols-3 sm:grid-cols-5 gap-3 items-start" role="radiogroup" aria-label="Fotos" aria-describedby="pk-why"></ul>
+    <p id="pk-why" class="text-xs text-meta flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i>Las fotos sin texto alternativo en ES y EN no se pueden elegir. <a href="medios.html" class="underline">Complétalo en Medios</a>.</p>
+    <div class="banner banner-info"><i data-lucide="globe"></i><span id="pk-pub">La foto que elijas <b>será pública al guardar</b>, aunque hoy no salga en ninguna página.</span></div>
+  </div>
+  <div class="dialog-f"><a href="medios.html" class="btn btn-quiet mr-auto row-btn"><i data-lucide="upload"></i>Subir en Medios</a><button class="btn btn-ghost row-btn" data-close>Cancelar</button><button class="btn btn-primary row-btn" id="pkOk">Usar esta foto</button></div></div></div>
+
+<script>
+/* ───── datos de ejemplo ───── */
+const AUTHORS=[ // [nombre, slug, rol, bio, rolEn, bioEn, foto, artículos, publicados, ejemplo]
+  ['Ana','ana','Redactora','Escribe sobre escalada en Barcelona para ChalkGuide.','Writer','Writes about climbing in Barcelona for ChalkGuide.',null,12,12,0],
+  ['Laia Ferrer','laia-ferrer','Fotografía y reportajes','','','','linear-gradient(150deg,#6a5a8a,#251e33)',0,0,1],
+];
+let STATS=[{v:'11 años',es:'escalando',en:'climbing'},{v:'7a',es:'grado máximo a vista',en:''}];
+const MEDIA=[ // [archivo, gradiente, altEs, altEn, vertical]
+  ['xavi-poblenou-4x5.jpg','linear-gradient(160deg,#9b7a5a,#3a2a1e)',1,1,1],['ana-retrato.jpg','linear-gradient(150deg,#b07a62,#3b2620)',0,1,1],
+  ['retrato-gracia-pared.jpg','linear-gradient(160deg,#6d7a62,#2b3227)',1,0,1],['xavi-magnesio.jpg','linear-gradient(150deg,#7f6a4d,#2a221a)',0,0,0],
+  ['retrato-bloque-sants.jpg','linear-gradient(150deg,#5d6a7a,#232a33)',1,1,1],['equipo-boulder-bcn.jpg','linear-gradient(150deg,#8a7a5a,#3b3222)',1,1,0],
+  ['retrato-montserrat.jpg','linear-gradient(160deg,#9b5a3a,#3d2a22)',1,1,0],['laia-camara.jpg','linear-gradient(150deg,#6a5a8a,#251e33)',1,1,1]];
+const $=id=>document.getElementById(id);
+
+/* ───── contadores ───── */
+function counters(){document.querySelectorAll('.counter[data-for]').forEach(c=>{const el=$(c.dataset.for),max=+c.dataset.max,n=el.value.length;c.textContent=`${n} / ${max}`;c.classList.toggle('over',n>max);c.classList.toggle('warn',n<=max&&n>max*.9);});}
+document.addEventListener('input',e=>{if(e.target.matches('.input')){counters();preview();dpreview();}});
+
+/* ───── En números ───── */
+function renderStats(err){
+  $('stats').innerHTML=STATS.map((s,i)=>{const bad=err&&i===1;return `<li class="grid grid-cols-[minmax(0,1fr)_44px] sm:grid-cols-[120px_minmax(0,1fr)_minmax(0,1fr)_32px] gap-x-2 gap-y-3 items-start">
+    <div><label class="lbl" for="sv${i}">Cifra ${i+1}</label><input id="sv${i}" class="input mono" maxlength="24" value="${s.v}" placeholder="11 años" ${bad?'aria-invalid="true" aria-describedby="sv1-e"':''}>${bad?'<p id="sv1-e" class="err"><i data-lucide="circle-alert"></i>Falta la cifra. Escríbela o quita la fila.</p>':''}</div>
+    <button class="icon-btn t44 mt-[22px] sm:order-last" data-rm="${i}" aria-label="Quitar la cifra ${i+1}"><i data-lucide="x"></i></button>
+    <div class="col-span-2 sm:col-span-1"><label class="lbl" for="se${i}">Etiqueta <span class="lang-tag">ES</span></label><input id="se${i}" class="input" maxlength="60" value="${s.es}" placeholder="escalando"></div>
+    <div class="col-span-2 sm:col-span-1"><label class="lbl" for="sn${i}">Etiqueta <span class="lang-tag">EN</span></label><input id="sn${i}" class="input" maxlength="60" value="${s.en}" placeholder="Opcional"></div></li>`;}).join('');
+  $('st-add').disabled=STATS.length>=2; $('st-full').hidden=STATS.length<2; $('stats').hidden=!STATS.length;
+  CG.icons(); preview();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(b){const s=STATS.splice(+b.dataset.rm,1)[0];renderStats();CG.toast(`Cifra «${s.v||'vacía'}» quitada`,{action:'Deshacer'});CG.announce('Cifra quitada');}});
+$('st-add').onclick=()=>{if(STATS.length<2){STATS.push({v:'',es:'',en:''});renderStats();$('sv'+(STATS.length-1)).focus();}};
+
+/* ───── vista previa (Ajustes) ───── */
+let pv='firma',lg='es',hasPhoto=true;
+function preview(){
+  const en=lg==='en',v=id=>($(id)||{}).value||'';
+  $('pv-n').textContent=v('an')||'Nombre';
+  $('pv-r').textContent=(en&&v('are'))||v('ar');
+  const b=en?v('abe'):v('ab'); $('pv-b').textContent=b; $('pv-b').hidden=!b;
+  $('pv-l').textContent=(en&&v('ale'))||v('al')||'Tu frase de «Sobre mí»';
+  const nums=STATS.map((s,i)=>({v:($('sv'+i)||{}).value||s.v,l:en?(($('sn'+i)||{}).value||s.en):(($('se'+i)||{}).value||s.es)})).filter(x=>x.v&&x.l)
+    .concat([{v:'14',l:en?'gyms reviewed':'rocódromos con ficha'},{v:'9',l:en?'shoes compared':'pies de gato comparados'}]);
+  $('pv-nums').innerHTML=nums.length<2?'':nums.map(n=>`<li class="border border-white/20 rounded p-2"><span class="block font-mono text-lg">${n.v}</span><span class="block text-[11px] text-white/70">${n.l}</span></li>`).join('');
+  document.querySelectorAll('.pv-ph').forEach(p=>p.hidden=!hasPhoto);
+  $('pv-firma').hidden=pv!=='firma'; $('pv-sobre').hidden=pv!=='sobre';
+}
+$('prevSeg').addEventListener('seg',e=>{pv=e.target.dataset.pv;preview();});
+$('prevLang').addEventListener('seg',e=>{lg=e.target.dataset.lg;preview();});
+function setPhoto(on){hasPhoto=on;$('a-photo').hidden=!on;$('a-photo-empty').hidden=on;$('a-photo-meta').hidden=!on;$('a-photo-none').hidden=on;$('a-remove').hidden=!on;$('a-pick-l').textContent=on?'Cambiar…':'Elegir de Medios…';preview();}
+$('a-remove').onclick=()=>{setPhoto(false);$('sb-t').textContent='2 cambios sin guardar';CG.toast('Foto quitada. Se aplica al guardar',{action:'Deshacer'});};
+
+/* ───── selector de medios ───── */
+let pkFrom='ajustes',pkSel=0;
+function openPicker(from){
+  pkFrom=from; pkSel=from==='drawer'?1:0;
+  $('pk-sub').textContent=from==='drawer'?`Para la firma de ${$('d-n').value||'este autor'}. Mejor cuadrada o vertical.`:'Para tu firma y «Sobre mí». Mejor vertical, 4:5.';
+  $('pk-grid').innerHTML=MEDIA.map(([n,g,ae,an,vert],i)=>{const ok=ae&&an,why=!ae&&!an?'Sin alt':!an?'Falta alt EN':'Falta alt ES';
+    return `<li><button class="pick block w-full text-left" role="radio" aria-checked="${i===pkSel}" ${ok?'':`aria-disabled="true" aria-describedby="pk-why"`} data-pk="${i}" aria-label="${n}${ok?'':', '+why.toLowerCase()+', no se puede elegir'}">
+      <span class="photo block w-full ${vert?'aspect-[4/5]':'aspect-[4/3]'} rounded-lg" style="background-image:${g}"></span>
+      ${ok?'':`<span class="absolute left-1.5 top-1.5 chip st-warn !h-[18px] !text-[11px]"><i data-lucide="triangle-alert" class="!w-3 !h-3"></i>${why}</span>`}
+      ${i===pkSel?'<span class="absolute right-1.5 top-1.5 w-6 h-6 rounded-full bg-fg text-bg grid place-items-center"><i data-lucide="check" class="!w-3.5 !h-3.5"></i></span>':''}
+      <span class="mono block truncate text-[11px] text-meta mt-1">${n}</span></button></li>`;}).join('');
+  CG.icons(); CG.open('picker');
+}
+document.addEventListener('click',e=>{const p=e.target.closest('[data-picker]');if(p){openPicker(p.dataset.picker);return;}
+  const k=e.target.closest('[data-pk]');if(k){if(k.getAttribute('aria-disabled')==='true'){CG.toast(`«${MEDIA[+k.dataset.pk][0]}» no tiene texto alternativo completo. Añádelo en Medios`,{type:'info',action:'Ir a Medios'});return;}
+    pkSel=+k.dataset.pk;document.querySelectorAll('#pk-grid [data-pk]').forEach(b=>b.setAttribute('aria-checked',b===k));openPicker(pkFrom);}});
+$('pkOk').onclick=()=>{CG.close('picker');const m=MEDIA[pkSel];
+  if(pkFrom==='ajustes'){$('a-photo').style.backgroundImage=m[1];document.querySelectorAll('.pv-ph').forEach(p=>p.style.backgroundImage=m[1]);setPhoto(true);$('a-photo-meta').querySelector('.mono').textContent=m[0];$('sb-t').textContent='2 cambios sin guardar';CG.toast('Foto elegida. Será pública al guardar',{type:'info',action:null});}
+  else{$('d-ph').style.backgroundImage=m[1];document.querySelector('.d-pv-ph').style.backgroundImage=m[1];setDPhoto(true);CG.toast('Foto elegida. Será pública al guardar el autor',{type:'info',action:null});}};
+
+/* ───── guardar Ajustes ───── */
+let errMode=false;
+$('sb-save').onclick=()=>{if(errMode){CG.toast('Hay 2 errores en «Autor del sitio»',{type:'err',action:'Ir al primero'});$('al').focus();return;}$('savebar').hidden=true;$('ab-wrap').classList.remove('changed','ml-3');$('ab-wrap').querySelector('.chg-mark').remove();CG.toast('Ajustes guardados · la firma ya sale con los datos nuevos',{action:null});};
+
+/* ───── Autores: lista ───── */
+function initial(n){return n.trim().charAt(0).toUpperCase();}
+function renderList(){
+  $('list').innerHTML=AUTHORS.map((a,i)=>{const en=a[4]&&a[5],part=!en&&(a[4]||a[5]);return `<li class="flex items-center gap-2 sm:gap-3 pl-1 pr-2 py-1.5" data-label="${a[0]}">
+    <button class="handle" aria-label="Reordenar: ${a[0]}" aria-roledescription="elemento ordenable"><i data-lucide="grip-vertical"></i></button>
+    ${a[6]?`<span class="photo w-10 h-10 rounded-full flex-none" style="background-image:${a[6]}" aria-hidden="true"></span>`:`<span class="avatar w-10 h-10" aria-hidden="true">${initial(a[0])}</span>`}
+    <button class="flex-1 min-w-0 text-left py-1 row-btn" data-edit="${i}"><span class="block text-sm font-medium truncate">${a[0]}${a[9]?' <span class="text-2xs text-muted font-normal">(ejemplo)</span>':''}</span><span class="block text-xs text-meta truncate">${a[2]||'Sin rol'}<span class="sm:hidden"> · ${a[7]} art.</span></span></button>
+    <span class="text-xs text-meta num hidden sm:inline w-24 text-right">${a[7]?`${a[7]} artículos`:'Sin artículos'}</span>
+    <span class="lang ${en?'lang-ok':part?'lang-part':'lang-miss'} hidden sm:inline-grid" ${en?'':'title="Sin rol o bio en inglés"'}>EN</span>
+    <button class="icon-btn t44" data-edit="${i}" aria-label="Editar ${a[0]}"><i data-lucide="pencil"></i></button></li>`;}).join('');
+  $('au-count').textContent=AUTHORS.length+1; CG.icons(); CG.initSortable($('list'));
+}
+$('list').addEventListener('sorted',()=>CG.toast('Orden guardado',{action:'Deshacer'}));
+
+/* ───── drawer ───── */
+let cur=null;
+function setDPhoto(on){$('d-ph').hidden=!on;$('d-ph0').hidden=on;$('d-rm').hidden=!on;$('d-pick-l').textContent=on?'Cambiar…':'Elegir de Medios…';document.querySelector('.d-pv-ph').hidden=!on;document.querySelector('.d-pv-0').hidden=on;}
+$('d-rm').onclick=()=>setDPhoto(false);
+function dpreview(){const n=$('d-n').value;$('d-pv-n').textContent=n||'Nombre';$('d-pv-r').textContent=$('d-r').value;$('d-pv-b').textContent=$('d-b').value;document.querySelector('.d-pv-0').textContent=initial(n||'?');$('d-ph0').textContent=initial(n||'?');
+  const en=$('d-re').value&&$('d-be').value,part=!en&&($('d-re').value||$('d-be').value);$('d-en-chip').className='lang '+(en?'lang-ok':part?'lang-part':'lang-miss');$('d-en-t').textContent=en?'Inglés completo: rol y bio.':part?'Inglés a medias: falta '+($('d-re').value?'la bio.':'el rol.'):'Sin inglés: en /en la firma sale en español.';
+  if(!cur){$('d-slug').value=n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}}
+function openEdit(i){
+  cur=i==null?null:AUTHORS[i]; const a=cur||['','','','','','',null,0,0,0];
+  $('ed-h').textContent=cur?`Editar «${a[0]}»`:'Nuevo autor'; $('ed-err').hidden=true; $('d-n-e').hidden=true; $('d-n').removeAttribute('aria-invalid');
+  $('d-n').value=a[0];$('d-slug').value=a[1];$('d-r').value=a[2];$('d-b').value=a[3];$('d-re').value=a[4];$('d-be').value=a[5];
+  if(a[6]){$('d-ph').style.backgroundImage=a[6];document.querySelector('.d-pv-ph').style.backgroundImage=a[6];} setDPhoto(!!a[6]);
+  $('d-use').hidden=!cur; $('btnDel').hidden=!cur; $('btnSave').textContent=cur?'Guardar':'Crear autor';
+  if(cur)$('d-use-t').textContent=a[7]?`${a[7]} artículos · ${a[8]} publicados`:'Aún no firma ningún artículo';
+  counters(); dpreview(); CG.open('edit');
+}
+$('btnSave').onclick=()=>{if(!$('d-n').value.trim()){$('d-n-e').hidden=false;$('d-n').setAttribute('aria-invalid','true');$('d-n').focus();return;}CG.close('edit');CG.toast(cur?`«${$('d-n').value}» guardado`:`«${$('d-n').value}» creado · ya sale en el selector «Autor» del editor`,{action:null});};
+document.addEventListener('click',e=>{const ed=e.target.closest('[data-edit]');if(ed){openEdit(+ed.dataset.edit);return;} if(e.target.closest('#btnNew,[data-new]'))openEdit(null);});
+
+/* ───── eliminar ───── */
+function openDel(a){
+  cur=a; $('del-h').textContent=`¿Eliminar a «${a[0]}»?`;
+  if(a[7]){
+    $('del-d').innerHTML=`Firma <b class="text-fg font-medium">${a[7]} artículos (${a[8]} publicados)</b>. Pasarán a firmarlos <b class="text-fg font-medium">Xavi</b>, el autor del sitio.`;
+    $('del-b').innerHTML=`<ul class="card divide-y divide-line">${['Rocódromos de Barcelona para empezar: guía 2026','Cuánto cuesta escalar en Barcelona','Pies de gato para principiantes: qué mirar'].map(t=>`<li class="px-3 py-2 flex items-center gap-2"><span class="chip st-pub"><span class="dot"></span>Publicado</span><span class="truncate">${t}</span></li>`).join('')}<li class="px-3 py-2 text-meta">y ${a[7]-3} más</li></ul>
+      <div class="banner banner-warn"><i data-lucide="triangle-alert"></i><span>En los publicados <b>la firma cambia al momento</b>, sin pasar por «Publicar cambios». Sus borradores también pasan a Xavi. No se puede deshacer de golpe: habría que reasignarlos uno a uno.</span></div>
+      ${a[6]?'<p class="text-meta">Su foto se queda en Medios. Deja de ser pública si no se usa en otro sitio.</p>':''}`;
+    $('delOk').textContent=`Eliminar y pasar ${a[7]} artículos a Xavi`;
+  } else {
+    $('del-d').innerHTML='No firma ningún artículo, así que no cambia ninguna firma del sitio.';
+    $('del-b').innerHTML=''; $('delOk').textContent='Eliminar';
+  }
+  CG.icons(); CG.open('del');
+}
+$('btnDel').onclick=()=>{CG.close('edit');openDel(cur);};
+$('delOk').onclick=()=>{const a=cur;CG.close('del');const i=AUTHORS.indexOf(a);if(i>-1)AUTHORS.splice(i,1);renderList();show('data');CG.toast(a[7]?`«${a[0]}» eliminado · ${a[7]} artículos firmados ahora por Xavi`:`«${a[0]}» eliminado`,{action:null});CG.announce(`${a[0]} eliminado`);};
+
+/* ───── vistas y estados ───── */
+function view(v){$('v-ajustes').hidden=v!=='ajustes';$('v-autores').hidden=v!=='autores';document.title=(v==='ajustes'?'Ajustes':'Autores')+' · Panel · ChalkGuide';
+  document.querySelectorAll('#sidebar a[data-k]').forEach(a=>{const k=a.dataset.k;a.removeAttribute('aria-current');if(k===v)a.setAttribute('aria-current','page');});}
+function show(s){['data','loading','empty','error'].forEach(x=>$('st-'+x).hidden=x!==s);}
+function resetAjustes(){errMode=false;$('a-empty-banner').hidden=true;$('a-conflict').hidden=true;$('al-e').hidden=true;$('al').removeAttribute('aria-invalid');$('savebar').hidden=false;$('sb-t').textContent='1 cambio sin guardar';
+  STATS=[{v:'11 años',es:'escalando',en:'climbing'},{v:'7a',es:'grado máximo a vista',en:''}];
+  $('an').value='Xavi';$('ar').value='Escalador y autor de ChalkGuide';$('are').value='Climber and author of ChalkGuide';$('al').value='Escalo en Barcelona desde 2014 y pruebo cada rocódromo antes de opinar sobre él.';$('ale').value="I've climbed in Barcelona since 2014 and I try every gym before I review it.";
+  $('ab').value='Escalo en Barcelona desde 2014. Pago mi entrada, pruebo cada sala y cuento lo que le diría a un amigo antes de ir.';setPhoto(true);renderStats();counters();}
+function fromHash(){
+  const h=location.hash.slice(1)||'autor';
+  document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));document.body.style.overflow='';
+  const aut=['autores','autores-vacio','autores-cargando','autores-error','autor-nuevo','autor-editar','autor-borrar','autor-borrar-sin'].includes(h);
+  view(aut?'autores':'ajustes');
+  if(aut){show({'autores-vacio':'empty','autores-cargando':'loading','autores-error':'error'}[h]||'data');
+    if(h==='autor-nuevo')openEdit(null); if(h==='autor-editar')openEdit(0);
+    if(h==='autor-borrar')openDel(AUTHORS[0]); if(h==='autor-borrar-sin')openDel(AUTHORS[1]);
+    scrollTo(0,0); return;}
+  resetAjustes();
+  if(h==='autor-vacio'){['an','ar','are','al','ale','ab','abe'].forEach(id=>$(id).value='');STATS=[];renderStats();setPhoto(false);$('a-empty-banner').hidden=false;$('savebar').hidden=true;counters();}
+  if(h==='autor-error'){errMode=true;$('al').value='Escalo en Barcelona desde 2014, pruebo cada rocódromo antes de opinar y pago siempre mi entrada, como cualquier otro escalador.';$('al').setAttribute('aria-invalid','true');$('al-e').hidden=false;$('al-n').textContent=$('al').value.length-120;STATS[1].v='';renderStats(true);$('sb-t').textContent='3 cambios sin guardar';counters();}
+  if(h==='autor-conflicto'){$('a-conflict').hidden=false;}
+  if(h==='autor-foto'){openPicker('ajustes');}
+  const sec=['general','seo','redes','newsletter','opiniones','cuenta'].includes(h)?h:'autor';
+  setTimeout(()=>$(sec).scrollIntoView({block:'start'}),50);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  /* menú: «Autores» en Editorial, junto a Categorías (propuesta; admin.js no se toca) */
+  const cat=document.querySelector('#sidebar a.navi[href="categorias.html"]');
+  if(cat){cat.insertAdjacentHTML('afterend',`<a href="#autores" data-k="autores" class="${cat.className}" title="Autores"><i data-lucide="users-round"></i><span class="md:sr-only xl:not-sr-only">Autores</span><span class="new-tag ml-auto md:hidden xl:inline">Nuevo</span></a>`);}
+  document.querySelectorAll('#sidebar a[href="ajustes.html"]').forEach(a=>{a.dataset.k='ajustes';a.setAttribute('href','#autor');});
+  renderStats(); renderList(); counters(); fromHash(); CG.icons();
+});
+addEventListener('hashchange',fromHash);
+</script>
+</body>
+</html>

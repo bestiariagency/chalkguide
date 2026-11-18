@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ingesta · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=9"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* F8 · Ingesta: runs de la rutina, fuentes y tokens (D70, D72) */
+  .tbl td.n,.tbl th.n{text-align:right;font-variant-numeric:tabular-nums}
+  .tbl tr.exp td{height:auto;white-space:normal;background:var(--side);padding:12px 16px}
+  .tbl tbody tr.exp:hover td{background:var(--side)}
+  .kpi{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .kpi p:first-child{font-size:12px;color:var(--meta)} .kpi .v{font-size:20px;line-height:28px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:2px}
+  .tok{font-family:'JetBrains Mono',monospace;font-size:13px;word-break:break-all;background:var(--side);border:1px solid var(--line-strong);border-radius:6px;padding:10px 12px;line-height:20px}
+  [data-health]{display:none} body[data-h="ok"] [data-health="ok"],body[data-h="alert"] [data-health="alert"]{display:flex}
+  .pop-wrap{position:relative} .pop-wrap>.menu{position:absolute;top:calc(100% + 4px);right:0;z-index:40}
+</style>
+</head>
+<body data-page="ingesta" data-h="ok" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Ingesta</h1>
+    <span class="chip st-neutral ml-1 hidden md:inline-flex"><i data-lucide="bot"></i>Rutina en la nube · lunes y jueves, 06:00</span>
+    <span class="ml-auto hidden xl:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · salud:
+      <select id="demoH" class="bg-transparent outline-none text-fg" aria-label="Salud del mockup"><option value="ok">Correcta</option><option value="alert">Alerta</option></select></span>
+    <a href="#" class="btn btn-ghost ml-auto xl:ml-0"><i data-lucide="book-open"></i><span class="hidden sm:inline">Runbook</span><span class="sr-only sm:hidden">Runbook</span></a>
+  </header>
+
+  <!-- Salud -->
+  <div class="px-4 md:px-6 pt-4">
+    <div data-health="ok" class="banner banner-info items-center"><i data-lucide="circle-check" class="!text-ok"></i><div class="flex-1"><b class="font-medium">Todo en marcha.</b> Última recogida correcta: lun 16 nov, 06:12 (hace 3 días). Próximo: jue 19 nov, 06:00.</div></div>
+    <div data-health="alert" class="banner banner-err" role="alert"><i data-lucide="siren"></i>
+      <div class="flex-1"><b class="font-medium">Sin una recogida correcta desde hace 5 días</b> (último: jue 12 nov). El aviso salta a los 4 días. La recogida del lun 16 nov falló con <span class="mono text-xs">token_revoked</span>: la rutina sigue usando un token revocado.
+        <div class="mt-2 flex flex-wrap gap-2"><button class="btn btn-ghost btn-sm" data-tab-go="t-tok"><i data-lucide="key-round"></i>Crear token nuevo</button><a href="#" class="btn btn-quiet btn-sm">Runbook: rotar el token<i data-lucide="external-link"></i></a></div></div></div>
+  </div>
+
+  <div class="px-4 md:px-6 mt-4 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Ingesta" class="flex gap-5 min-w-max" data-tabs id="tabs">
+      <button role="tab" id="t-runs" class="tab t" aria-controls="p-runs" aria-selected="true">Recogidas</button>
+      <button role="tab" id="t-src" class="tab t" aria-controls="p-src">Fuentes <span class="num text-muted">18</span></button>
+      <button role="tab" id="t-tok" class="tab t" aria-controls="p-tok">Tokens <span class="num text-muted">1</span></button>
+    </div>
+  </div>
+
+  <!-- ===================== RUNS ===================== -->
+  <div id="p-runs" role="tabpanel" aria-labelledby="t-runs">
+    <div class="px-4 md:px-6 py-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div class="kpi"><p>Recogidas correctas · 30 días</p><p class="v">8 <span class="text-sm text-meta font-normal">de 9</span></p></div>
+      <div class="kpi"><p>Borradores creados</p><p class="v">112</p></div>
+      <div class="kpi"><p>Aprobados de esos</p><p class="v">71 %</p></div>
+      <div class="kpi"><p>Duplicados evitados</p><p class="v">38</p></div>
+    </div>
+    <div class="overflow-x-auto hidden md:block border-t border-line">
+      <table class="tbl">
+        <thead><tr>
+          <th class="w-8"><span class="sr-only">Desplegar</span></th>
+          <th aria-sort="descending"><span class="sort">Empezó<i data-lucide="arrow-down"></i></span></th>
+          <th>Estado</th><th class="hidden lg:table-cell">Modo</th><th class="hidden lg:table-cell n">Duración</th>
+          <th class="n">Encontrados</th><th class="n">Nuevos</th><th class="n">Duplicados</th><th class="n">Rechazados</th><th class="n">Errores</th>
+        </tr></thead>
+        <tbody id="runs"></tbody>
+      </table>
+    </div>
+    <ul id="runc" class="md:hidden divide-y divide-line border-t border-line"></ul>
+    <p class="px-4 md:px-6 py-3 text-xs text-meta border-t border-line">«Rechazados» = filas que la base de datos no aceptó (formato, fuera de alcance o tope de 40 por recogida). Lo que tú rechazas está en Noticias y Agenda. Topes: 1 recogida abierta, 3 cada 24 h.</p>
+  </div>
+
+  <!-- ===================== FUENTES ===================== -->
+  <div id="p-src" role="tabpanel" aria-labelledby="t-src" hidden>
+    <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+      <label class="input affix !w-full sm:!w-64 !h-8" for="sq"><span class="pl-2.5 text-muted"><i data-lucide="search" class="w-4 h-4"></i></span><input id="sq" type="search" placeholder="Buscar fuente" class="!pl-2 placeholder:text-muted"></label>
+      <div class="seg" role="radiogroup" aria-label="Tipo"><button role="radio" aria-checked="true">Todas</button><button role="radio" aria-checked="false">Eventos</button><button role="radio" aria-checked="false">Noticias</button></div>
+      <button type="button" class="btn btn-primary sm:ml-auto" data-open="srcd"><i data-lucide="plus"></i>Nueva fuente</button>
+    </div>
+    <div class="overflow-x-auto hidden md:block">
+      <table class="tbl">
+        <thead><tr><th>Fuente</th><th>Para</th><th>Alcance</th><th class="hidden lg:table-cell">Idioma</th><th class="hidden xl:table-cell">Última vez</th><th class="n hidden lg:table-cell">Aprobadas</th><th>Activa</th><th class="w-10"><span class="sr-only">Acciones</span></th></tr></thead>
+        <tbody id="srcs"></tbody>
+      </table>
+    </div>
+    <ul id="srcc" class="md:hidden divide-y divide-line"></ul>
+    <p class="px-4 md:px-6 py-3 text-xs text-meta border-t border-line">La rutina solo lee las fuentes activas. Una fuente con borradores no se elimina: se desactiva, y así el historial sigue sabiendo de dónde vino cada cosa.</p>
+  </div>
+
+  <!-- ===================== TOKENS ===================== -->
+  <div id="p-tok" role="tabpanel" aria-labelledby="t-tok" hidden>
+    <div class="px-4 md:px-6 py-4 space-y-4 max-w-4xl">
+      <div class="banner banner-info"><i data-lucide="shield"></i><div>El token deja a la rutina <b class="font-medium">solo crear borradores</b>, con topes. Guardamos su huella (SHA-256), nunca el token. Máximo 2 activos, para poder rotar sin cortar: crea el nuevo, pégalo en la rutina y revoca el viejo.</div></div>
+      <div class="flex items-center"><h2 class="text-sm font-semibold">Tokens</h2><button type="button" class="btn btn-primary ml-auto" data-open="newtok"><i data-lucide="plus"></i>Crear token</button></div>
+      <ul class="border border-line rounded-lg divide-y divide-line">
+        <li class="p-3 sm:px-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div class="min-w-0 flex-1"><p class="text-sm font-medium flex items-center gap-2">Rutina cloud · nov 2026 <span class="chip st-pub"><span class="dot"></span>Activo</span></p>
+            <p class="mt-0.5 text-xs text-meta"><span class="mono">cgi_7f3a…</span> · creado el 2 nov · último uso: lun 16 nov, 06:12 · caduca el 31 ene 2027</p></div>
+          <button type="button" class="btn btn-danger-ghost btn-sm" data-open="revoke">Revocar…</button>
+        </li>
+        <li class="p-3 sm:px-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-meta">
+          <div class="min-w-0 flex-1"><p class="text-sm font-medium flex items-center gap-2 text-fg">Piloto dry_run <span class="chip st-hidden">Revocado</span></p>
+            <p class="mt-0.5 text-xs"><span class="mono">cgi_1c90…</span> · creado el 20 oct · revocado el 2 nov por ti</p></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<!-- Fuente: drawer -->
+<div id="srcd" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="srcd-h">
+  <div class="drawer"><div class="grab"></div>
+    <div class="drawer-h"><h2 id="srcd-h" class="text-sm font-semibold">Nueva fuente</h2><button type="button" class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+    <div class="drawer-b space-y-4">
+      <div><label class="lbl" for="s-n">Nombre <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label><input id="s-n" class="input" value="FEEC"><p class="help">Es el que sale en «Fuente: …».</p></div>
+      <div><label class="lbl" for="s-u">Web <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label><div class="input affix"><span class="pre">https://</span><input id="s-u" value="www.feec.cat/noticies/"></div><p class="help">La página que debe revisar: la de noticias o la de calendario, no la portada.</p></div>
+      <div><p class="lbl" id="s-t">Para <span class="req" aria-hidden="true">*</span></p><div class="seg w-full grid grid-cols-3" role="radiogroup" aria-labelledby="s-t"><button role="radio" aria-checked="false">Eventos</button><button role="radio" aria-checked="false">Noticias</button><button role="radio" aria-checked="true">Las dos</button></div></div>
+      <div><p class="lbl" id="s-a">Alcance <span class="req" aria-hidden="true">*</span></p><div class="seg w-full grid grid-cols-3" role="radiogroup" aria-labelledby="s-a"><button role="radio" aria-checked="true">Cataluña</button><button role="radio" aria-checked="false">España</button><button role="radio" aria-checked="false">Intl.</button></div><p class="help">Los eventos solo se aceptan de Barcelona y Cataluña (D71).</p></div>
+      <div><label class="lbl" for="s-l">Idioma de la web</label><select id="s-l" class="select"><option>Catalán</option><option>Español</option><option>Inglés</option><option>Francés</option></select></div>
+      <div><label class="lbl" for="s-note">Indicaciones <span class="opt">(opcional)</span><span class="counter">64 / 280</span></label><textarea id="s-note" class="input" rows="3">Solo competiciones y avisos de acceso. Ignora montaña y senderismo.</textarea><p class="help">Para el agente: qué mirar y qué no. Nunca enlaces ni datos personales.</p></div>
+      <label class="flex items-center gap-3 h-10"><button type="button" role="switch" class="switch" aria-checked="true" aria-labelledby="s-on"></button><span id="s-on" class="text-sm">Activa: la rutina la revisa</span></label>
+    </div>
+    <div class="drawer-f"><button type="button" class="btn btn-ghost" data-close>Cancelar</button><button type="button" class="btn btn-primary ml-auto" data-close data-toast="Fuente guardada · se revisará en la próxima recogida" data-action="">Guardar</button></div>
+  </div>
+</div>
+
+<!-- Crear token -->
+<div id="newtok" class="overlay" role="dialog" aria-modal="true" aria-labelledby="nt-h">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="nt-h">Crear token</h2></div>
+    <div class="dialog-b space-y-4">
+      <div><label class="lbl" for="nt-n">Nombre <span class="req" aria-hidden="true">*</span></label><input id="nt-n" class="input" value="Rutina cloud · feb 2027"></div>
+      <div><label class="lbl" for="nt-e">Caduca</label><select id="nt-e" class="select"><option>En 90 días (recomendado)</option><option>En 30 días</option><option>En 180 días</option></select><p class="help">Te avisamos en Inicio 7 días antes.</p></div>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close>Cancelar</button><button type="button" class="btn btn-primary" id="mk">Crear</button></div>
+  </div>
+</div>
+
+<!-- Token creado: se muestra una vez -->
+<div id="shown" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="sh-h" aria-describedby="sh-d">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="sh-h">Copia el token ahora</h2></div>
+    <div class="dialog-b space-y-3">
+      <p id="sh-d" class="text-sm">Solo se muestra esta vez. Pégalo en el entorno de la rutina (paso 3 del runbook). Si lo pierdes, revócalo y crea otro.</p>
+      <p class="tok" id="tokv" aria-label="Token">cgi_9b2e4f1d0c7a8e3b5f6d2c1a9e8b7d4c3f2a1b0e9d8c7b6a</p>
+      <button type="button" class="btn btn-ghost w-full" id="cp"><i data-lucide="copy"></i>Copiar</button>
+      <label class="flex items-start gap-3 text-sm min-h-11 pt-1"><input type="checkbox" class="cb mt-0.5" id="ack"><span>Lo he copiado y guardado en la rutina.</span></label>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-primary" id="done" disabled data-close data-toast="Token creado · ahora tienes 2 activos: revoca el viejo cuando la rutina use el nuevo" data-action="">Hecho</button></div>
+  </div>
+</div>
+
+<!-- Revocar -->
+<div id="revoke" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="rv-h" aria-describedby="rv-d">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="rv-h">¿Revocar «Rutina cloud · nov 2026»?</h2></div>
+    <div class="dialog-b text-sm space-y-3" id="rv-d">
+      <div class="banner banner-warn"><i data-lucide="triangle-alert"></i><div>Es el único token activo. La rutina dejará de poder escribir hasta que pegues uno nuevo, y saltará la alerta de salud a los 4 días.</div></div>
+      <p>Se revoca al momento y no se puede deshacer. Los borradores ya creados no cambian.</p>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close autofocus>Cancelar</button><button type="button" class="btn btn-danger" data-close data-toast="Token revocado" data-action="">Revocar</button></div>
+  </div>
+</div>
+
+<script>
+const R=[
+ ['jue 19 nov, 06:00','run','real','—',null,null,null,null,null],
+ ['lun 16 nov, 06:12','ok','real','6 min 40 s',31,12,9,1,0],
+ ['jue 12 nov, 06:04','warn','real','11 min 02 s',47,40,3,4,2],
+ ['lun 9 nov, 06:01','ok','real','5 min 51 s',22,9,13,0,0],
+ ['jue 5 nov, 06:02','fail','real','0 min 03 s',0,0,0,0,1],
+ ['lun 2 nov, 06:00','ok','dry_run','4 min 12 s',19,0,0,0,0],
+];
+const S={run:'<span class="chip st-sched"><i data-lucide="loader-circle"></i>En curso</span>',ok:'<span class="chip st-pub"><i data-lucide="check"></i>Correcto</span>',warn:'<span class="chip st-warn"><i data-lucide="triangle-alert"></i>Con avisos</span>',fail:'<span class="chip st-danger"><i data-lucide="circle-alert"></i>Fallido</span>'};
+const M=m=>m==='dry_run'?'<span class="chip st-neutral">dry_run · no escribe</span>':'<span class="text-meta">Real</span>';
+const n=v=>v===null?'<span class="text-muted">—</span>':v;
+document.getElementById('runs').innerHTML=R.map((r,i)=>`<tr>
+  <td>${i===2?`<button class="icon-btn !w-7 !h-7" aria-expanded="true" aria-controls="x2" aria-label="Ocultar detalle"><i data-lucide="chevron-down"></i></button>`:`<button class="icon-btn !w-7 !h-7" aria-expanded="false" aria-label="Ver detalle"><i data-lucide="chevron-right"></i></button>`}</td>
+  <td class="num">${r[0]}</td><td>${S[r[1]]}</td><td class="hidden lg:table-cell">${M(r[2])}</td><td class="hidden lg:table-cell n text-meta">${r[3]}</td>
+  <td class="n">${n(r[4])}</td><td class="n font-medium">${n(r[5])}</td><td class="n">${n(r[6])}</td><td class="n">${n(r[7])}</td><td class="n ${r[8]?'text-danger font-medium':''}">${n(r[8])}</td></tr>`+
+  (i===2?`<tr class="exp" id="x2"><td></td><td colspan="9">
+    <div class="grid lg:grid-cols-3 gap-4 text-xs">
+      <div><p class="font-medium text-sm">Nuevos</p><p class="mt-1 text-meta">28 noticias · 12 eventos</p><p class="mt-2 flex gap-3"><a href="noticias.html" class="underline underline-offset-2">Ver noticias de esta recogida</a><a href="agenda.html" class="underline underline-offset-2">Ver eventos</a></p></div>
+      <div><p class="font-medium text-sm">Avisos</p><ul class="mt-1 space-y-1 text-meta"><li class="flex gap-1.5"><i data-lucide="triangle-alert" class="w-3.5 h-3.5 text-warn-icon flex-none mt-px"></i>Tope de 40 filas alcanzado: 4 no entraron.</li></ul></div>
+      <div><p class="font-medium text-sm">Errores</p><ul class="mt-1 space-y-1 text-meta"><li><span class="mono">fetch_timeout</span> · Club Muntanyenc (30 s)</li><li><span class="mono">invalid_date</span> · 1 evento de La Foixarda sin fecha</li></ul></div>
+    </div></td></tr>`:'')).join('');
+document.getElementById('runc').innerHTML=R.map(r=>`<li class="px-4 py-3"><div class="flex items-center gap-2"><span class="text-sm num font-medium">${r[0]}</span><span class="ml-auto">${S[r[1]]}</span></div>
+  <p class="mt-1.5 text-xs text-meta num">${r[4]===null?'En curso…':`${r[4]} encontrados · <b class="text-fg font-medium">${r[5]} nuevos</b> · ${r[6]} dup. · ${r[7]} rech.${r[8]?` · <span class="text-danger font-medium">${r[8]} ${r[8]===1?'error':'errores'}</span>`:''}`}${r[2]==='dry_run'?' · dry_run':''}</p></li>`).join('');
+const F=[
+ ['FEEC','feec.cat/noticies','Las dos','Cataluña','Catalán','lun 16 nov','92 %',1],
+ ['IFSC','ifsc-climbing.org/news','Noticias','Intl.','Inglés','lun 16 nov','80 %',1],
+ ['Desnivel','desnivel.com/escalada','Noticias','España','Español','lun 16 nov','64 %',1],
+ ['La Foixarda','lafoixarda.cat/agenda','Eventos','Cataluña','Catalán','lun 16 nov','88 %',1],
+ ['Parcs Naturals','parcsnaturals.gencat.cat','Noticias','Cataluña','Catalán','jue 12 nov','—',1],
+ ['Club Muntanyenc','clubmuntanyenc.cat','Las dos','Cataluña','Catalán','jue 12 nov · error','40 %',0],
+];
+document.getElementById('srcs').innerHTML=F.map(f=>`<tr class="${f[7]?'':'text-meta'}"><td><span class="block font-medium ${f[7]?'':'text-meta'}">${f[0]}</span><span class="block text-xs text-meta -mt-1 mono">${f[1]}</span></td><td>${f[2]}</td><td>${f[3]}</td><td class="hidden lg:table-cell">${f[4]}</td><td class="hidden xl:table-cell text-meta">${f[5]}</td><td class="n hidden lg:table-cell">${f[6]}</td>
+  <td><button type="button" role="switch" class="switch" aria-checked="${f[7]?'true':'false'}" aria-label="${f[0]} activa"></button></td><td><button class="icon-btn" aria-label="Acciones de ${f[0]}" data-open="srcd"><i data-lucide="more-horizontal"></i></button></td></tr>`).join('').replace(/<td>/g,'<td class="!h-14">');
+document.getElementById('srcc').innerHTML=F.map(f=>`<li class="px-4 py-3 flex items-center gap-3"><div class="flex-1 min-w-0"><p class="text-sm font-medium">${f[0]}</p><p class="text-xs text-meta">${f[2]} · ${f[3]} · ${f[6]} aprobadas</p></div><button type="button" role="switch" class="switch" aria-checked="${f[7]?'true':'false'}" aria-label="${f[0]} activa"></button><button class="icon-btn" aria-label="Acciones de ${f[0]}" data-open="srcd"><i data-lucide="more-horizontal"></i></button></li>`).join('');
+
+document.addEventListener('DOMContentLoaded',()=>{
+  CG.icons();
+  const setH=h=>{document.body.dataset.h=h;document.getElementById('demoH').value=h;};
+  document.getElementById('demoH').onchange=e=>setH(e.target.value);
+  const h=location.hash.slice(1);
+  if(h==='alerta')setH('alert');
+  if(h==='fuentes')document.getElementById('t-src').click();
+  if(h==='tokens')document.getElementById('t-tok').click();
+  if(h==='token-creado'){document.getElementById('t-tok').click();CG.open('shown');}
+  document.querySelectorAll('[data-tab-go]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.tabGo).click());
+  document.getElementById('mk').onclick=()=>{CG.close('newtok');CG.open('shown');};
+  document.getElementById('ack').onchange=e=>document.getElementById('done').disabled=!e.target.checked;
+  document.getElementById('cp').onclick=e=>{navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('tokv').textContent);e.currentTarget.innerHTML='<i data-lucide="check"></i>Copiado';CG.icons();CG.announce('Token copiado');};
+});
+</script>
+</body>
+</html>

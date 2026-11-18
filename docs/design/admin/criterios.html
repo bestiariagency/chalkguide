@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Criterios de nota · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=7"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .crit-bar{height:6px;border-radius:99px;background:var(--subtle);overflow:hidden}
+  .crit-bar>span{display:block;height:100%;background:var(--fg);border-radius:99px}
+  li.is-off .nm{color:var(--meta)}
+</style>
+</head>
+<body data-page="criterios" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Criterios de nota</h1>
+    <span class="ml-auto hidden lg:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · ver estado:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup"><option value="data">Con datos</option><option value="loading">Cargando</option><option value="empty">Sin criterios</option><option value="error">Error</option></select></span>
+    <div class="ml-auto lg:ml-0"><button class="btn btn-primary" id="btnNew"><i data-lucide="plus"></i><span class="hidden sm:inline">Nuevo criterio</span><span class="sm:hidden">Nuevo</span></button></div>
+  </header>
+
+  <div class="px-4 md:px-6 py-6 max-w-[1440px] space-y-5">
+    <!-- selector de categoría (AdminSegmented) -->
+    <div class="flex flex-wrap items-end gap-3">
+      <div class="w-full sm:w-auto">
+        <p id="cat-l" class="sr-only">Categoría de ficha</p>
+        <div class="seg !grid grid-cols-3 w-full sm:!inline-flex sm:w-auto" role="radiogroup" aria-labelledby="cat-l" id="catSeg">
+          <button role="radio" data-cat="gym" aria-checked="true"><i data-lucide="mountain" class="w-3.5 h-3.5 hidden sm:inline"></i>Rocódromos <span class="num opacity-70">7</span></button>
+          <button role="radio" data-cat="resoler" aria-checked="false"><i data-lucide="wrench" class="w-3.5 h-3.5 hidden sm:inline"></i>Resoladores <span class="num opacity-70">4</span></button>
+          <button role="radio" data-cat="shoe" aria-checked="false"><i data-lucide="footprints" class="w-3.5 h-3.5 hidden sm:inline"></i>Pies de gato <span class="num opacity-70">5</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="st-data" class="grid grid-cols-[minmax(0,1fr)] xl:grid-cols-[minmax(0,1fr)_400px] gap-6 items-start">
+      <!-- lista ordenable -->
+      <section aria-labelledby="h-list" class="min-w-0">
+        <h2 id="h-list" class="text-sm font-semibold">Orden al puntuar y en la ficha</h2>
+        <p class="text-xs text-meta mt-0.5">Es el orden de tu editor de fichas, del formulario de opiniones y del bloque de notas del sitio. Arrastra desde <i data-lucide="grip-vertical" class="inline w-3.5 h-3.5"></i>, usa Espacio y flechas o el menú «Mover».</p>
+        <div id="listWrap" class="mt-3"></div>
+        <p class="mt-2 text-xs text-meta flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-ok"></i><span>Orden guardado</span></p>
+
+        <div id="offWrap" class="mt-6"></div>
+      </section>
+
+      <!-- lateral: cómo cuenta + vista previa -->
+      <aside class="space-y-4 min-w-0" aria-label="Cómo se usan estos criterios">
+        <section class="card p-4" aria-labelledby="h-where">
+          <h2 id="h-where" class="text-sm font-semibold">Dónde cuentan</h2>
+          <ul id="whereList" class="mt-3 space-y-3 text-sm"></ul>
+        </section>
+        <section class="card p-4" aria-labelledby="h-prev">
+          <div class="flex items-baseline gap-2"><h2 id="h-prev" class="text-sm font-semibold">Así se ve en una ficha</h2><span class="text-xs text-meta ml-auto truncate" id="prevItem">Magnesi Poblenou</span></div>
+          <p class="text-xs text-meta mt-0.5">Nota del autor. Solo criterios activos con nota; «Sin nota» no sale ni cuenta.</p>
+          <div class="mt-3 flex items-baseline justify-between"><span class="grp-label">Nota del autor</span><span><span class="mono text-2xl" id="prevAvg">4,1</span><span class="text-xs text-meta ml-1">/ 5</span></span></div>
+          <ul id="prevRows" class="mt-2 space-y-1 text-sm num"></ul>
+        </section>
+      </aside>
+    </div>
+
+    <!-- estados alternativos -->
+    <div id="st-loading" hidden aria-busy="true" aria-label="Cargando criterios" class="grid xl:grid-cols-[minmax(0,1fr)_400px] gap-6">
+      <div><span class="sk block h-4 w-48"></span><span class="sk block h-3 w-80 max-w-full mt-2"></span>
+        <div class="card mt-3 divide-y divide-line"><script>document.write(Array.from({length:7},(_,i)=>`<div class="h-12 px-3 flex items-center gap-3"><span class="sk w-4 h-4"></span><span class="sk h-3" style="width:${28+((i*13)%26)}%"></span><span class="sk h-5 w-24 ml-auto hidden sm:block"></span><span class="sk h-4 w-8"></span></div>`).join(''))</script></div></div>
+      <div class="card p-4 space-y-3 hidden xl:block"><span class="sk block h-4 w-32"></span><span class="sk block h-3 w-full"></span><span class="sk block h-3 w-4/5"></span><span class="sk block h-3 w-3/5"></span></div>
+    </div>
+    <div id="st-empty" hidden><div class="card"><div class="empty"><span class="ico"><i data-lucide="list-checks"></i></span><h3 id="emptyH">Pies de gato no tiene criterios todavía</h3><p>Sin criterios, las fichas de esta categoría no muestran nota del autor ni medias de lectores por criterio. Empieza por 3 o 4.</p><button class="btn btn-primary mt-2" data-new><i data-lucide="plus"></i>Nuevo criterio</button></div></div></div>
+    <div id="st-error" hidden><div class="card"><div class="empty"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se han podido cargar los criterios</h3><p>Comprueba la conexión. Si sigue, puede ser Supabase: mira su estado.</p><p class="mono text-2xs text-muted">PGRST301 · guide.criteria</p><button class="btn btn-ghost mt-2"><i data-lucide="rotate-cw"></i>Reintentar</button></div></div></div>
+
+    <p class="text-xs text-meta border border-dashed border-line-strong rounded px-3 py-2">Mockup: <a class="underline" href="#editar">#editar</a> abre «Para familias» (no se puede desactivar: entra en un índice) · <a class="underline" href="#desactivar">#desactivar</a> confirma desactivar «Afluencia» · <a class="underline" href="#nuevo-criterio">#nuevo-criterio</a> · <a class="underline" href="#eliminar">#eliminar</a> borra «Sensibilidad» (sin notas) · <a class="underline" href="#cargando">#cargando</a> · <a class="underline" href="#vacio">#vacio</a> · <a class="underline" href="#error">#error</a></p>
+  </div>
+</main>
+
+<!-- drawer de edición / alta -->
+<div id="edit" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="ed-h"><div class="drawer"><div class="grab"></div>
+  <div class="drawer-h"><h2 id="ed-h" class="text-base font-semibold">Editar «Para familias»</h2><button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="drawer-b space-y-5">
+    <div id="ed-err" class="banner banner-err" role="alert" hidden><i data-lucide="circle-alert"></i><span>No se ha podido guardar. Revisa la clave: <a href="#k" class="underline">ya existe en Rocódromos</a>.</span></div>
+    <div id="ed-newinfo" class="banner banner-info" hidden><i data-lucide="info"></i><span>Se añade al final de <b id="ed-cat">Rocódromos</b>. Las fichas ya puntuadas no tienen nota en este criterio: su media no cambia hasta que lo puntúes.</span></div>
+
+    <fieldset class="grid gap-3 lg:grid-cols-1"><legend class="sr-only">Nombre</legend>
+      <div><label class="lbl" for="n-es">Nombre <span class="lang-tag">ES</span> <span class="req">*</span><span class="sr-only">(obligatorio)</span><span class="counter" id="c-nes">13 / 80</span></label><input id="n-es" class="input" maxlength="80" value="Para familias"></div>
+      <div><label class="lbl" for="n-en">Nombre <span class="lang-tag">EN</span><span class="counter" id="c-nen">15 / 80</span></label><input id="n-en" class="input" maxlength="80" value="Family friendly"><p class="help">Si está vacío, en /en sale el nombre en español.</p></div>
+    </fieldset>
+
+    <div id="keyRO"><span class="lbl">Clave interna</span>
+      <p class="flex items-center gap-2 text-sm"><i data-lucide="lock" class="w-3.5 h-3.5 text-muted"></i><span class="mono text-[12.5px]" id="keyVal">family_friendly</span></p>
+      <p class="help">Fija desde que se crea: la usan las fórmulas, las medias de lectores y las exportaciones.</p></div>
+    <div id="keyRW" hidden><label class="lbl" for="k">Clave interna <span class="req">*</span><span class="sr-only">(obligatorio)</span></label>
+      <input id="k" class="input mono !text-[12.5px]" value="" aria-describedby="k-h">
+      <p id="k-h" class="help">Sigue al nombre. Minúsculas y guion bajo (<span class="mono">a-z _</span>), máx. 40. No se podrá cambiar después.</p>
+      <p id="k-e" class="err" hidden><i data-lucide="circle-alert"></i>Ya hay un criterio <span class="mono">value</span> en Rocódromos. Prueba <span class="mono">value_2</span> o cambia el nombre.</p></div>
+
+    <fieldset class="grid gap-3"><legend class="sr-only">Ayuda al puntuar</legend>
+      <div><label class="lbl" for="d-es">Ayuda al puntuar <span class="lang-tag">ES</span><span class="counter" id="c-des">0 / 300</span></label><textarea id="d-es" rows="3" maxlength="300" class="input" placeholder="Opcional. Qué miras para dar un 1 o un 5."></textarea><p class="help">Sale debajo del nombre al puntuar. No se publica en la ficha.</p></div>
+      <div><label class="lbl" for="d-en">Ayuda al puntuar <span class="lang-tag">EN</span><span class="counter" id="c-den">0 / 300</span></label><textarea id="d-en" rows="3" maxlength="300" class="input" placeholder="Opcional"></textarea></div>
+    </fieldset>
+
+    <div><p class="lbl">Así sale al puntuar</p>
+      <div class="card p-3"><p class="text-sm" id="pv-n">Para familias</p><p class="text-xs text-meta mt-0.5" id="pv-d" hidden></p>
+        <div class="seg score !inline-grid mt-2" aria-hidden="true"><button tabindex="-1">1</button><button tabindex="-1">2</button><button tabindex="-1">3</button><button tabindex="-1">4</button><button tabindex="-1" aria-checked="true">5</button><button tabindex="-1" class="none">Sin nota</button></div></div></div>
+
+    <section id="stateBox" aria-labelledby="st-h" class="border-t border-line pt-4">
+      <h3 id="st-h" class="text-sm font-semibold">Estado</h3>
+      <div class="mt-2 flex items-start gap-3">
+        <span id="stChip" class="chip st-pub mt-0.5"><span class="dot"></span>Activo</span>
+        <p class="text-sm text-meta flex-1" id="stText">Se puntúa y cuenta en medias e índices.</p>
+      </div>
+      <dl class="mt-3 grid grid-cols-2 gap-2 text-sm">
+        <div class="card px-3 py-2"><dt class="text-xs text-meta">Tus notas</dt><dd class="num font-medium" id="useA">4 fichas</dd></div>
+        <div class="card px-3 py-2"><dt class="text-xs text-meta">Notas de lectores</dt><dd class="num font-medium" id="useR">9</dd></div>
+      </dl>
+      <div id="lockBox" class="banner banner-info mt-3"><i data-lucide="sigma"></i><span id="lockText">Entra en el <b>índice familiar</b> (20 % de la fórmula). No se puede desactivar mientras la fórmula lo use: primero habría que cambiar el índice.</span></div>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <button class="btn btn-ghost" id="btnOff" aria-describedby="lockText"><i data-lucide="eye-off"></i>Desactivar…</button>
+        <button class="btn btn-ghost" id="btnOn" hidden><i data-lucide="eye"></i>Reactivar</button>
+      </div>
+      <p class="help mt-2" id="delWhy">No se puede eliminar: tiene 13 notas guardadas. Desactivar lo saca de medias e índices y conserva las notas.</p>
+    </section>
+  </div>
+  <div class="drawer-f"><button class="btn btn-danger-ghost" id="btnDel" disabled aria-describedby="delWhy"><i data-lucide="trash-2"></i>Eliminar…</button><button class="btn btn-ghost ml-auto" data-close>Cancelar</button><button class="btn btn-primary" id="btnSave">Guardar</button></div>
+</div></div>
+
+<!-- confirmar desactivar -->
+<div id="off" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="off-h" aria-describedby="off-d"><div class="dialog !max-w-[520px]"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="off-h">¿Desactivar «Afluencia»?</h2><p id="off-d" class="text-sm text-meta mt-1">Deja de contar en el sitio en cuanto confirmes. <b class="text-fg font-medium">Las notas no se borran</b>: si lo reactivas, vuelven a contar igual.</p></div>
+  <div class="dialog-b space-y-4 text-sm" id="offBody"></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" id="offOk">Desactivar</button></div></div></div>
+
+<!-- confirmar eliminar (solo sin notas) -->
+<div id="del" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="del-h" aria-describedby="del-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="del-h">¿Eliminar «Sensibilidad»?</h2><p id="del-d" class="text-sm text-meta mt-1">No tiene notas guardadas, así que no cambia ninguna media. Se quita de Pies de gato y la clave <span class="mono text-xs">sensitivity</span> queda libre.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Criterio «Sensibilidad» eliminado">Eliminar</button></div></div></div>
+
+<script>
+/* name_es, name_en, key, desc_es, active, fichas con tu nota, notas de lectores, uso en fórmula/tabla */
+const CATS={
+ gym:{label:'Rocódromos',rows:[
+  ['Equipamiento de vías y bloques','Route setting','setting','',1,5,24],
+  ['Variedad','Variety','variety','',1,5,22,{kind:'table',t:'Tabla de la home',d:'Columna «Variedad» de la tabla de rocódromos de la home.'}],
+  ['Afluencia','Crowding','crowding','',1,5,19],
+  ['Instalaciones','Facilities','facilities','',1,5,21],
+  ['Para principiantes','Beginner friendly','beginner_friendly','',1,5,17,{kind:'index',t:'Índice principiantes',d:'50 % del índice principiantes.',lock:'Entra en el <b>índice principiantes</b> (50 % de la fórmula). No se puede desactivar mientras la fórmula lo use: primero habría que cambiar el índice.'}],
+  ['Para familias','Family friendly','family_friendly','',1,4,9,{kind:'index',t:'Índice familiar',d:'20 % del índice familiar.',lock:'Entra en el <b>índice familiar</b> (20 % de la fórmula). No se puede desactivar mientras la fórmula lo use: primero habría que cambiar el índice.'}],
+  ['Relación calidad-precio','Value for money','value','',1,4,23],
+  ['Vestuarios','','changing_rooms','',0,3,11]],
+  samples:[['Magnesi Poblenou',{setting:4,variety:5,crowding:2,facilities:5,beginner_friendly:4,family_friendly:5,value:4,changing_rooms:4}],['La Paret de Gràcia',{setting:5,variety:4,crowding:3,facilities:4,beginner_friendly:3,family_friendly:2,value:3}],['Via Sants',{setting:3,variety:3,crowding:4,facilities:2,beginner_friendly:4,family_friendly:4,value:5,changing_rooms:2}]]},
+ resoler:{label:'Resoladores',rows:[
+  ['Calidad del trabajo','Work quality','quality','',1,3,8],['Plazo','Turnaround','turnaround','',1,3,8],['Trato','Service','service','',1,3,7],['Relación calidad-precio','Value for money','value','',1,3,8]],
+  samples:[['Taller Goma Fina',{quality:5,turnaround:4,service:5,value:4}],['Sola Nova Badalona',{quality:4,turnaround:3,service:4,value:5}]]},
+ shoe:{label:'Pies de gato',rows:[
+  ['Comodidad','Comfort','comfort','',1,6,0],['Canteo','Edging','edging','',1,6,0],['Adherencia','Smearing','smearing','',1,6,0],['Durabilidad','Durability','durability','',1,5,0],['Sensibilidad','Sensitivity','sensitivity','',1,0,0]],
+  samples:[['La Sportiva Solution',{comfort:3,edging:5,smearing:4,durability:3}],['Scarpa Instinct VS',{comfort:4,edging:4,smearing:4,durability:3}]]}
+};
+let cat='gym';
+const fmt=n=>n.toFixed(1).replace('.',',');
+const notes=r=>r[5]+r[6];
+const usage=r=>notes(r)?`${r[5]} ${r[5]===1?'ficha':'fichas'}${r[6]?` · ${r[6]} lectores`:''}`:'Sin notas';
+const avgOf=(s,keys)=>{const v=keys.map(k=>s[k]).filter(x=>x);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;};
+const activeKeys=()=>CATS[cat].rows.filter(r=>r[4]).map(r=>r[2]);
+
+function rowHTML(r,i){
+  const [n,en,k,d,on,a,rd,use]=r; const idx=CATS[cat].rows.indexOf(r);
+  const chip=use?`<span class="chip st-neutral" title="${use.d}"><i data-lucide="${use.kind==='index'?'sigma':'table-2'}"></i><span class="hidden sm:inline">${use.t}</span><span class="sm:hidden sr-only">${use.t}</span></span>`:'';
+  if(!on) return `<li class="is-off flex items-center gap-2 pl-3 pr-2 py-1.5" data-i="${idx}">
+    <span class="flex-1 min-w-0"><span class="nm block text-sm font-medium truncate">${n}</span><span class="hidden md:block mono text-[11px] text-muted truncate">${k}</span><span class="md:hidden block text-xs text-meta num truncate">${usage(r)} · conservadas</span></span>
+    <span class="chip st-hidden">Inactivo</span>
+    <span class="text-xs text-meta num hidden md:inline" title="Notas conservadas">${usage(r)}</span>
+    <button class="btn btn-quiet btn-sm" data-on="${idx}"><i data-lucide="eye"></i><span class="hidden sm:inline">Reactivar</span><span class="sr-only sm:hidden">Reactivar ${n}</span></button>
+    <button class="icon-btn" data-edit="${idx}" aria-label="Editar ${n}"><i data-lucide="pencil"></i></button></li>`;
+  return `<li class="flex items-center gap-2 pl-1 pr-2 py-1.5" data-label="${n}" data-i="${idx}">
+    <button class="handle" aria-label="Reordenar: ${n}" aria-roledescription="elemento ordenable"><i data-lucide="grip-vertical"></i></button>
+    <span class="num text-xs text-muted w-4 text-right hidden sm:inline">${i+1}</span>
+    <button class="flex-1 min-w-0 text-left py-1" data-edit="${idx}"><span class="block text-sm font-medium truncate">${n}</span><span class="hidden md:block mono text-[11px] text-muted truncate">${k}</span><span class="md:hidden block text-xs text-meta num truncate">${usage(r)}</span></button>
+    ${chip}
+    <span class="text-xs num w-36 text-right hidden md:inline ${notes(r)?'text-meta':'text-muted italic'}">${usage(r)}</span>
+    <span class="lang ${en?'lang-ok':'lang-miss'} hidden sm:inline-grid" ${en?'title="Nombre en inglés"':'title="Sin nombre en inglés"'}>EN</span>
+    <button class="icon-btn" data-edit="${idx}" aria-label="Editar ${n}"><i data-lucide="pencil"></i></button></li>`;
+}
+function render(){
+  const C=CATS[cat];
+  const act=C.rows.filter(r=>r[4]), off=C.rows.filter(r=>!r[4]);
+  const wrap=document.getElementById('listWrap');
+  wrap.innerHTML=`<ul class="sortable card divide-y divide-line" id="list" aria-label="Criterios activos de ${C.label}, ordenables">${act.map(rowHTML).join('')}</ul>`;
+  const list=document.getElementById('list'); CG.initSortable(list);
+  list.addEventListener('sorted',()=>{const order=[...list.children].map(li=>C.rows[+li.dataset.i]);C.rows=order.concat(C.rows.filter(r=>!r[4]));render();CG.toast('Orden guardado');});
+  document.getElementById('offWrap').innerHTML=off.length?`<h3 class="text-sm font-semibold flex items-center gap-2">Inactivos <span class="num text-muted font-normal">${off.length}</span></h3>
+    <p class="text-xs text-meta mt-0.5">No se puntúan ni cuentan en medias ni índices. Sus notas se conservan; al reactivarlo vuelve al final del orden.</p>
+    <ul class="card mt-3 divide-y divide-line" aria-label="Criterios inactivos">${off.map(rowHTML).join('')}</ul>`:'';
+  /* dónde cuentan */
+  const uses=act.filter(r=>r[7]);
+  const W=[['user-pen','Nota del autor','Media de los criterios activos que has puntuado en cada ficha.'],
+           ['users','Notas de lectores','Media por criterio activo, con 3 opiniones o más. La nota general de lectores va aparte y no depende de esta lista.']]
+   .concat(uses.map(r=>[r[7].kind==='index'?'sigma':'table-2',r[7].t,`${r[0]}: ${r[7].d.replace(/^./,c=>c.toLowerCase())}`]));
+  if(cat==='gym') W.push(['lock','Bloqueados','Los criterios de un índice no se pueden desactivar ni borrar mientras la fórmula los use.']);
+  document.getElementById('whereList').innerHTML=W.map(([ic,t,d])=>`<li class="flex gap-3"><span class="w-7 h-7 rounded-md bg-subtle text-meta grid place-items-center flex-none"><i data-lucide="${ic}" class="w-4 h-4"></i></span><span><span class="block font-medium">${t}</span><span class="block text-xs text-meta">${d}</span></span></li>`).join('');
+  /* vista previa */
+  const [sn,ss]=C.samples[0]; document.getElementById('prevItem').textContent=sn;
+  const rows=act.filter(r=>ss[r[2]]);
+  document.getElementById('prevAvg').textContent=fmt(avgOf(ss,activeKeys()));
+  document.getElementById('prevRows').innerHTML=rows.map(r=>`<li class="grid grid-cols-[minmax(0,1fr)_88px_2rem] items-center gap-3 min-h-8"><span class="truncate">${r[0]}</span><span class="crit-bar" aria-hidden="true"><span style="width:${ss[r[2]]*20}%"></span></span><span class="mono text-right">${fmt(ss[r[2]])}</span></li>`).join('');
+  CG.icons();
+}
+
+/* drawer */
+let cur=null;
+function cnt(id,cid,max){const v=document.getElementById(id).value.length;document.getElementById(cid).textContent=`${v} / ${max}`;}
+function openEdit(idx){
+  const C=CATS[cat]; const r=idx==null?null:C.rows[idx]; cur=r;
+  const $=id=>document.getElementById(id);
+  $('ed-h').textContent=r?`Editar «${r[0]}»`:`Nuevo criterio · ${C.label}`;
+  $('ed-newinfo').hidden=!!r; $('ed-cat').textContent=C.label; $('ed-err').hidden=true;
+  $('n-es').value=r?r[0]:''; $('n-en').value=r?r[1]:''; $('d-es').value=r&&r[2]==='family_friendly'?'Zona infantil, edad mínima, ambiente y si se puede ir con críos sin agobio.':''; $('d-en').value='';
+  $('keyRO').hidden=!r; $('keyRW').hidden=!!r; $('k').value=''; $('k-e').hidden=true; if(r)$('keyVal').textContent=r[2];
+  $('stateBox').hidden=!r; $('btnDel').hidden=!r;
+  if(r){
+    const n=notes(r), lock=r[7]&&r[7].kind==='index';
+    $('stChip').className='chip '+(r[4]?'st-pub':'st-hidden'); $('stChip').innerHTML=r[4]?'<span class="dot"></span>Activo':'Inactivo';
+    $('stText').textContent=r[4]?'Se puntúa y cuenta en medias e índices.':'No se puntúa ni cuenta. Sus notas se conservan.';
+    $('useA').textContent=r[5]?`${r[5]} ${r[5]===1?'ficha':'fichas'}`:'Ninguna'; $('useR').textContent=r[6]||'Ninguna';
+    $('lockBox').hidden=!lock; if(lock)$('lockText').innerHTML=r[7].lock;
+    $('btnOff').hidden=!r[4]; $('btnOff').disabled=!!lock; lock?$('btnOff').setAttribute('aria-describedby','lockText'):$('btnOff').removeAttribute('aria-describedby');
+    $('btnOn').hidden=!!r[4];
+    $('btnDel').disabled=n>0||lock; $('delWhy').hidden=!(n>0);
+    $('delWhy').textContent=lock?`No se puede eliminar: tiene ${n} notas guardadas y entra en un índice.`:`No se puede eliminar: tiene ${n} notas guardadas. ${r[4]?'Desactivar lo saca de medias e índices y conserva las notas.':'Seguirá inactivo con sus notas.'}`;
+  }
+  ['n-es','n-en','d-es','d-en'].forEach(id=>$(id).dispatchEvent(new Event('input')));
+  CG.open('edit');
+}
+['n-es','n-en','d-es','d-en'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{
+  cnt('n-es','c-nes',80);cnt('n-en','c-nen',80);cnt('d-es','c-des',300);cnt('d-en','c-den',300);
+  document.getElementById('pv-n').textContent=document.getElementById('n-es').value||'Nombre del criterio';
+  const d=document.getElementById('d-es').value;const pd=document.getElementById('pv-d');pd.textContent=d;pd.hidden=!d;
+  if(!cur&&id==='n-es'){document.getElementById('k').value=document.getElementById('n-es').value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);}
+}));
+document.getElementById('btnSave').onclick=()=>{CG.close('edit');CG.toast(cur?'Criterio guardado':'Criterio creado al final de la lista',{action:cur?'Deshacer':null});};
+document.getElementById('btnDel').onclick=()=>{CG.close('edit');CG.open('del');};
+document.getElementById('btnOn').onclick=()=>reactivate(cur);
+document.getElementById('btnOff').onclick=()=>{CG.close('edit');openOff(cur);};
+
+/* desactivar */
+function openOff(r){
+  cur=r; const C=CATS[cat]; const keys=activeKeys(), after=keys.filter(k=>k!==r[2]);
+  document.getElementById('off-h').textContent=`¿Desactivar «${r[0]}»?`;
+  const aff=C.samples.filter(([,s])=>s[r[2]]);
+  const more=Math.max(r[5]-aff.length,0);
+  let h='';
+  if(r[5]) h+=`<div><p class="font-medium flex items-center gap-2"><i data-lucide="user-pen" class="w-4 h-4 text-meta"></i>Cambia tu nota en ${r[5]} ${r[5]===1?'ficha':'fichas'}</p>
+    <table class="w-full mt-2 text-sm num"><caption class="sr-only">Nota del autor antes y después</caption><thead class="sr-only"><tr><th>Ficha</th><th>Ahora</th><th>Después</th></tr></thead><tbody>${aff.map(([n,s])=>`<tr class="border-t border-line"><td class="py-1.5 pr-2">${n}</td><td class="py-1.5 text-right mono text-meta">${fmt(avgOf(s,keys))}</td><td class="py-1.5 w-6 text-center text-muted" aria-hidden="true">→</td><td class="py-1.5 text-right mono font-medium w-10">${fmt(avgOf(s,after))}</td></tr>`).join('')}</tbody></table>
+    ${more?`<p class="text-xs text-meta mt-1">y ${more} más. La media se recalcula con los demás criterios.</p>`:''}</div>`;
+  if(r[6]) h+=`<div><p class="font-medium flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-meta"></i>Sale de las notas de lectores</p><p class="text-meta mt-0.5">«${r[0]}» deja de mostrarse en la media por criterio (${r[6]} notas). La nota general de lectores no cambia.</p></div>`;
+  if(r[7]&&r[7].kind==='table') h+=`<div class="banner banner-warn"><i data-lucide="triangle-alert"></i><span>${r[7].d.replace('Columna','La columna')} se queda vacía mientras esté inactivo.</span></div>`;
+  h+=`<div><p class="font-medium flex items-center gap-2"><i data-lucide="list-x" class="w-4 h-4 text-meta"></i>Deja de pedirse al puntuar</p><p class="text-meta mt-0.5">En tus fichas de ${C.label.toLowerCase()} y en el formulario de opiniones.</p></div>`;
+  document.getElementById('offBody').innerHTML=h; CG.icons(); CG.open('off');
+}
+document.getElementById('offOk').onclick=()=>{const r=cur;r[4]=0;CG.close('off');render();CG.toast(`«${r[0]}» desactivado · deja de contar en ${r[5]} fichas`,{action:'Deshacer'});CG.announce(`${r[0]} desactivado`);};
+function reactivate(r){CG.close('edit');const C=CATS[cat];C.rows=C.rows.filter(x=>x!==r);r[4]=1;const firstOff=C.rows.findIndex(x=>!x[4]);firstOff<0?C.rows.push(r):C.rows.splice(firstOff,0,r);render();CG.toast(`«${r[0]}» activo otra vez · vuelve a contar en ${r[5]} fichas`,{action:'Deshacer'});}
+
+document.addEventListener('click',e=>{
+  const ed=e.target.closest('[data-edit]'); if(ed){e.preventDefault();openEdit(+ed.dataset.edit);return;}
+  const on=e.target.closest('[data-on]'); if(on){reactivate(CATS[cat].rows[+on.dataset.on]);return;}
+  if(e.target.closest('#btnNew,[data-new]')){openEdit(null);}
+});
+document.getElementById('catSeg').addEventListener('seg',e=>{cat=e.target.dataset.cat;render();});
+
+function show(s){['data','loading','empty','error'].forEach(x=>document.getElementById('st-'+x).hidden=x!==s);document.getElementById('demoState').value=s;}
+document.getElementById('demoState').onchange=e=>show(e.target.value);
+function fromHash(){const h=location.hash.slice(1);
+  show({cargando:'loading',vacio:'empty',error:'error'}[h]||'data');
+  const pick=c=>{cat=c;document.querySelectorAll('#catSeg [role=radio]').forEach(b=>b.setAttribute('aria-checked',b.dataset.cat===c));render();};
+  if(h==='editar'){pick('gym');openEdit(5);}
+  if(h==='desactivar'){pick('gym');openOff(CATS.gym.rows[2]);}
+  if(h==='nuevo-criterio'){pick('gym');openEdit(null);}
+  if(h==='eliminar'){pick('shoe');CG.open('del');}
+}
+document.addEventListener('DOMContentLoaded',()=>{render();fromHash();});
+addEventListener('hashchange',fromHash);
+</script>
+</body>
+</html>

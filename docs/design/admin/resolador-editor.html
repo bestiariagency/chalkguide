@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Taller Goma Fina · Resoladores · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>.fsec{padding-top:24px;margin-top:24px;border-top:1px solid var(--line)} .fsec:first-child{border-top:0;margin-top:0;padding-top:0} .fsec>h3{font-size:14px;font-weight:600} .fsec>h3+p{font-size:12px;color:var(--meta);margin-top:2px}
+ .svc{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line-strong);border-radius:8px;cursor:pointer;background:var(--elev)} .svc:has(input:checked){border-color:var(--fg);background:var(--subtle)} .svc:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:2px}</style>
+</head>
+<body data-page="resolador" data-bottomnav="none" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-2 md:px-4 flex items-center gap-2 border-b border-line text-sm sticky top-14 md:top-0 bg-bg z-30">
+    <a href="#" class="icon-btn" aria-label="Volver a resoladores"><i data-lucide="arrow-left"></i></a>
+    <nav aria-label="Migas" class="crumbs hidden lg:flex"><a href="#">Resoladores</a><span aria-hidden="true">/</span><span class="text-fg" aria-current="page">Taller Goma Fina</span></nav>
+    <span class="lg:hidden font-medium truncate">Taller Goma Fina</span>
+    <span class="chip st-pub"><span class="dot"></span>Publicada</span>
+    <span class="text-xs text-muted hidden xl:inline">Sin cambios pendientes</span>
+    <div class="ml-auto flex items-center gap-1.5"><a href="#" class="btn btn-ghost"><i data-lucide="external-link"></i><span class="hidden sm:inline">Ver en el sitio</span></a></div>
+  </header>
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto sticky top-[104px] md:top-12 bg-bg z-20">
+    <div role="tablist" data-tabs aria-label="Secciones de la ficha" class="flex gap-5 min-w-max">
+      <button role="tab" class="tab" aria-controls="r-gen">General</button><button role="tab" class="tab" aria-controls="r-ubi">Ubicación</button>
+      <button role="tab" class="tab" aria-controls="r-svc" aria-selected="true">Servicios y precios</button>
+      <button role="tab" class="tab" aria-controls="r-res">Reseña y notas</button><button role="tab" class="tab" aria-controls="r-gal">Galería</button><button role="tab" class="tab" aria-controls="r-seo">SEO</button>
+    </div>
+  </div>
+  <div class="px-4 md:px-6 py-6 max-w-[800px] pb-16">
+    <section id="r-svc" role="tabpanel" aria-label="Servicios y precios">
+      <div class="fsec"><h3>Servicios</h3><p>Lo que hace el taller. Sirve para filtrar en /resoladores ("hace rand").</p>
+        <div class="mt-3 grid sm:grid-cols-2 gap-2">
+          <label class="svc"><input type="checkbox" class="cb mt-0.5" checked><span><span class="block text-sm font-medium">Media suela</span><span class="block text-xs text-meta">Cambiar la goma de la puntera hacia atrás</span></span></label>
+          <label class="svc"><input type="checkbox" class="cb mt-0.5"><span><span class="block text-sm font-medium">Suela completa</span><span class="block text-xs text-meta">Toda la suela, de puntera a talón</span></span></label>
+          <label class="svc"><input type="checkbox" class="cb mt-0.5" checked><span><span class="block text-sm font-medium">Rand</span><span class="block text-xs text-meta">La goma lateral que rodea la puntera</span></span></label>
+          <label class="svc"><input type="checkbox" class="cb mt-0.5" checked><span><span class="block text-sm font-medium">Parche de puntera</span><span class="block text-xs text-meta">Goma encima de la puntera, para ganchos</span></span></label>
+          <label class="svc"><input type="checkbox" class="cb mt-0.5" checked><span><span class="block text-sm font-medium">Arreglo de cierre</span><span class="block text-xs text-meta">Velcros, cordones y hebillas</span></span></label>
+          <label class="svc"><input type="checkbox" class="cb mt-0.5"><span><span class="block text-sm font-medium">Costuras</span><span class="block text-xs text-meta">Coser descosidos del empeine</span></span></label>
+          <label class="svc"><input type="checkbox" class="cb mt-0.5"><span><span class="block text-sm font-medium">Otros</span><span class="block text-xs text-meta">Explícalo en la reseña</span></span></label>
+        </div></div>
+      <div class="fsec space-y-4"><h3>Precios y plazo</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div><label class="lbl" for="pp">Por par</label><div class="input affix"><input id="pp" class="num" value="38,00"><span class="suf">€</span></div><p class="help">Media suela</p></div>
+          <div><label class="lbl" for="pr">Rand</label><div class="input affix"><input id="pr" class="num" value="12,00"><span class="suf">€</span></div><p class="help">Suplemento</p></div>
+          <div><label class="lbl" for="t1">Plazo mínimo</label><div class="input affix"><input id="t1" class="num" value="10"><span class="suf">días</span></div></div>
+          <div><label class="lbl" for="t2">Plazo máximo</label><div class="input affix" style="border-color:var(--danger)"><input id="t2" class="num" value="7" aria-invalid="true" aria-describedby="t2-e"><span class="suf">días</span></div></div>
+        </div>
+        <p id="t2-e" class="err !mt-0"><i data-lucide="circle-alert"></i>El plazo máximo (7) no puede ser menor que el mínimo (10).</p>
+        <div><label class="lbl" for="rb">Marcas de goma</label><div class="input !h-auto min-h-[32px] flex flex-wrap items-center gap-1.5 py-1"><span class="chip st-neutral !text-fg">Vibram<button aria-label="Quitar Vibram" class="text-muted hover:text-fg">×</button></span><span class="chip st-neutral !text-fg">Stealth<button aria-label="Quitar Stealth" class="text-muted hover:text-fg">×</button></span><input id="rb" class="flex-1 min-w-[120px] bg-transparent outline-none text-sm" placeholder="Añadir y pulsar Intro"></div></div>
+        <div class="flex flex-wrap items-end gap-3"><div><label class="lbl" for="pv">Precios verificados el</label><input id="pv" class="input num !w-44" value="15/07/2026"></div><button class="btn btn-ghost" data-toast="Precios marcados como verificados hoy">Verificados hoy</button></div>
+      </div>
+      <div class="fsec space-y-4"><h3>Envíos por correo</h3>
+        <div><p class="lbl" id="ml">¿Acepta envíos?</p><div class="seg tri" role="radiogroup" aria-labelledby="ml"><button role="radio" data-v="yes" aria-checked="false">Sí</button><button role="radio" data-v="no" aria-checked="true">No</button><button role="radio" data-v="unk" aria-checked="false">No lo sé</button></div></div>
+        <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="mn">Notas de envío <span class="lang-tag">ES</span></label><textarea id="mn" rows="2" class="input" placeholder="Precio de la vuelta, cómo empaquetar…"></textarea></div><div><label class="lbl" for="mne">Notas de envío <span class="lang-tag">EN</span></label><textarea id="mne" rows="2" class="input" placeholder="Opcional"></textarea></div></div>
+      </div>
+      <div class="mt-8 banner banner-info"><i data-lucide="info"></i><span>Ficha publicada: en cuanto cambies un campo se crea un <b>borrador de cambios</b> que se guarda solo, y en la cabecera aparece "Publicar cambios" (como en el <a href="rocodromo-editor.html" class="underline underline-offset-2">rocódromo</a>). Un error como el del plazo no impide guardar el borrador; sí publicarlo.</span></div>
+    </section>
+    <section id="r-gen" role="tabpanel" hidden><p class="text-sm text-meta">Como en rocódromos.</p></section>
+    <section id="r-ubi" role="tabpanel" hidden><p class="text-sm text-meta">Dirección, barrio, mapa, web, Instagram y teléfono, como en rocódromos (sin horario).</p></section>
+    <section id="r-res" role="tabpanel" hidden><p class="text-sm text-meta">Reseña con notas Calidad, Plazo, Trato y Precio.</p></section>
+    <section id="r-gal" role="tabpanel" hidden><p class="text-sm text-meta">Galería ordenable (fotos de antes y después).</p></section>
+    <section id="r-seo" role="tabpanel" hidden><p class="text-sm text-meta">Como en rocódromos.</p></section>
+  </div>
+</main>
+</body>
+</html>

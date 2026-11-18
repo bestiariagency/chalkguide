@@ -1,0 +1,339 @@
+/*
+ * Home hero carousel (docs/design/site/pages/home-hero-carrusel.html, D38-D41).
+ * Layout, colour and type are Tailwind in the components; what lives here is what utilities
+ * cannot express (3D context chain, stacked plies, blend modes, intro/no-JS states).
+ * Scope: .hero-* classes. Imported from main.css, so it can use the @theme tokens.
+ */
+
+/* CSS fallback: magnesium dust over the slate (SVG noise as a background; no utility for it). */
+.hero-ground::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.26;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg, transparent, #000 120px);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* CSS fallback: side bands, brand accent over the wall colour (two stacked gradients); they and the
+   dust fade in over the first 120px so they do not cut off in a hard line under the header. */
+.hero-edge--l,
+.hero-edge--r {
+  mask-image: linear-gradient(180deg, transparent, #000 120px);
+}
+.hero-edge--l {
+  background:
+    linear-gradient(90deg, rgb(232 146 58 / 0.15), rgb(232 146 58 / 0) 62%),
+    linear-gradient(90deg, #0f0f0f 4%, rgb(15 15 15 / 0) 100%);
+}
+.hero-edge--r {
+  background:
+    linear-gradient(270deg, rgb(232 146 58 / 0.15), rgb(232 146 58 / 0) 62%),
+    linear-gradient(270deg, #0f0f0f 4%, rgb(15 15 15 / 0) 100%);
+}
+
+/* ===== Cards: each one a slab with plies behind it ===== */
+
+/* CSS fallback: the card is placed by JS (transform) around its own centre; negative margins
+   centre the box, backface-visibility hides the back of the cylinder. */
+.hero-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  width: var(--w);
+  height: var(--h);
+  margin: calc(var(--h) / -2) 0 0 calc(var(--w) / -2);
+  border-radius: var(--radius-xs);
+  color: var(--color-foreground);
+  text-decoration: none;
+  backface-visibility: hidden;
+  will-change: transform;
+  -webkit-user-drag: none;
+}
+/* The ring goes on the face (the card's own box would be clipped by nothing, but the plies sit
+   behind it in 3D and must not cover the ring). */
+.hero-card:focus-visible {
+  box-shadow: none;
+}
+/* CSS fallback: after a click the ring (tabindex -1) takes the global focus ring as full-width lines;
+   the cards keep their own ring. */
+.hero-ring:focus-visible {
+  box-shadow: none;
+}
+.hero-card:focus-visible .hero-face {
+  box-shadow: var(--ring);
+}
+
+/* CSS fallback: 3D tilt from custom properties set per frame (rotateX/Y composed in one transform). */
+.hero-slab {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, -4deg)) rotateY(var(--ry, 9deg));
+  transition: transform 0.5s var(--ease-out);
+}
+/* CSS fallback: thickness = rounded copies pushed back, darker the deeper (color-mix by --i).
+   --ply-step is negative: the nav preview card sets a thinner one (-0.6px). */
+.hero-ply {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+  transform: translateZ(calc(var(--i) * var(--ply-step, -1.25px)));
+  background: color-mix(in srgb, #1f1f21 calc(100% - var(--i) * 3%), #111112);
+}
+.hero-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: inline-size;
+  border-radius: inherit;
+  background: var(--face-bg, var(--color-board));
+}
+.hero-img {
+  position: absolute;
+  inset: 0 auto auto -9%;
+  width: 118%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  transform: translateX(var(--par, 0%));
+}
+/* CSS fallback: photo grade, reflection that follows the turn (screen blend) and edge light. */
+.hero-grade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0) 66%, rgb(20 20 22 / 0.85) 118%);
+}
+.hero-sheen {
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(
+    112deg,
+    rgb(255 255 255 / 0) 38%,
+    rgb(255 255 255 / 0.11) 49%,
+    rgb(255 255 255 / 0.03) 54%,
+    rgb(255 255 255 / 0) 62%
+  );
+  mix-blend-mode: screen;
+  transform: translateX(var(--sheen, 0%));
+  transition: transform 0.5s var(--ease-out);
+}
+.hero-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.13),
+    inset 0 -1px 0 rgb(0 0 0 / 0.3),
+    inset 1px 0 0 rgb(255 255 255 / 0.045),
+    inset -1px 0 0 rgb(255 255 255 / 0.045);
+}
+
+/* Shoe: product photo melts into the brand orange with multiply. */
+.hero-card--shoe {
+  color: var(--color-on-accent);
+}
+.hero-card--shoe .hero-face {
+  background: var(--color-accent-fill);
+}
+.hero-card--shoe .hero-img {
+  inset: 4% 4% auto;
+  width: 92%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+/* Agenda: typographic poster on paper, events have no photo. */
+.hero-card--event {
+  color: var(--color-ink);
+}
+.hero-card--event .hero-face {
+  background: var(--color-paper);
+}
+.hero-card--event .hero-sheen {
+  mix-blend-mode: multiply;
+  background: linear-gradient(
+    112deg,
+    rgb(0 0 0 / 0) 38%,
+    rgb(0 0 0 / 0.07) 49%,
+    rgb(0 0 0 / 0.02) 54%,
+    rgb(0 0 0 / 0) 62%
+  );
+}
+
+/* ===== Rope ===== */
+
+/* CSS fallback: braided rope (repeating diagonal gradient). */
+.hero-rope-cord {
+  background: repeating-linear-gradient(
+    -58deg,
+    var(--color-accent-fill) 0 3px,
+    var(--color-rope-shade) 3px 5px
+  );
+}
+.hero-rope-end svg {
+  transform-origin: 50% 8%;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+.hero-rope-end:hover svg {
+  transform: translateY(5px) rotate(-6deg);
+}
+.hero-rope-end:active svg {
+  transform: translateY(2px);
+}
+
+/* ===== Intro: four orange pills rise, cover the screen and lift ===== */
+
+/* CSS fallback: states keyed on <html> classes (has-intro is set by the head script before the
+   first paint, is-in when the pills lift), so there is no flash and no-JS never sees them. */
+.hero-intro {
+  display: none;
+}
+.has-intro .hero-intro {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  background: var(--color-background);
+  cursor: pointer;
+}
+.hero-intro.is-open {
+  background: transparent;
+}
+.hero-intro-pills i {
+  display: block;
+  height: 130%;
+  margin-inline: -1px;
+  background: var(--color-accent-fill);
+  border-radius: 12.5vw 12.5vw 0 0;
+  transform: translateY(100%);
+  transition: transform 0.5s var(--ease-out);
+}
+.hero-intro-pills i:nth-child(1) {
+  transition-delay: 0.05s;
+}
+.hero-intro-pills i:nth-child(2) {
+  transition-delay: 0s;
+}
+.hero-intro-pills i:nth-child(3) {
+  transition-delay: 0.08s;
+}
+.hero-intro-pills i:nth-child(4) {
+  transition-delay: 0.13s;
+}
+.hero-intro.is-up .hero-intro-pills i {
+  transform: translateY(-12%);
+}
+.hero-intro.is-up .hero-intro-mark {
+  opacity: 0;
+}
+.hero-intro.is-open .hero-intro-pills i {
+  transform: translateY(-115%);
+  border-radius: 0 0 12.5vw 12.5vw;
+  transition: transform 0.62s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+/* Contents enter as soon as the pills lift; with reduced motion nothing is hidden or animated. */
+@media (prefers-reduced-motion: no-preference) {
+  .has-intro .hero-title {
+    clip-path: inset(0 100% 0 0);
+  }
+  .has-intro .hero-rope {
+    opacity: 0;
+    translate: 0 -48px;
+  }
+  .has-intro.is-in .hero-title {
+    clip-path: inset(-10% -2% -10% -2%);
+    transition: clip-path 0.85s var(--ease-out) 0.05s;
+  }
+  .has-intro.is-in .hero-rope {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 0.4s var(--ease-out) 0.75s,
+      translate 0.9s var(--ease-out) 0.75s;
+  }
+  .hero-rope {
+    animation: hero-sway 3.8s ease-in-out infinite alternate;
+  }
+  @keyframes hero-sway {
+    from {
+      rotate: -0.7deg;
+    }
+    to {
+      rotate: 0.7deg;
+    }
+  }
+}
+
+/* Before hydration the cards are not placed yet: only the first one exists (no stacked pile).
+   display:none (not visibility) so the others' lazy images are not requested until the ring is ready:
+   in the viewport they would load at High priority next to the first one (LCP). */
+.js .hero-ring:not(.is-ready) .hero-card:not(:first-child) {
+  display: none;
+}
+/* CSS fallback: with the intro skipped the side cards appear on `is-ready`; a short fade instead of
+   a pop. Only fires when the class lands (not on drag or re-render) and the intro keeps its own
+   state (cards stay hidden behind its pills). */
+@media (prefers-reduced-motion: no-preference) {
+  .js .hero-ring.is-ready .hero-card:not(:first-child) {
+    animation: hero-card-in 200ms var(--ease-out) both;
+  }
+  @keyframes hero-card-in {
+    from {
+      opacity: 0;
+    }
+  }
+}
+/* The rope's length depends on the measured card: hidden until the ring is measured, then it fades in. */
+.js .hero-ring:not(.is-ready) ~ .hero-rope {
+  opacity: 0;
+}
+.hero-rope {
+  transition: opacity 0.3s var(--ease-out);
+}
+
+/* Without JS: a horizontal scroll row, everything visible and linked, no 3D and no plies. */
+html:not(.js) .hero-ring {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 8px 16px;
+  perspective: none;
+}
+html:not(.js) .hero-scene {
+  position: static;
+  display: flex;
+  gap: 12px;
+}
+html:not(.js) .hero-slab {
+  transform: none;
+}
+html:not(.js) .hero-ply {
+  display: none;
+}
+html:not(.js) .hero-card {
+  position: relative;
+  left: auto;
+  top: auto;
+  margin: 0;
+  flex: none;
+  scroll-snap-align: center;
+  width: min(68vw, 280px);
+  height: min(88vw, 360px);
+}
+html:not(.js) .hero-rope-cord {
+  top: -40px;
+}

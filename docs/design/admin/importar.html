@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Importar fichas · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=10"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* F6.15b · D50 · importar fichas */
+  .steps{display:flex;gap:4px;align-items:center;font-size:12.5px;color:var(--muted)}
+  .steps li{display:flex;align-items:center;gap:6px}
+  .steps li+li::before{content:"";width:20px;height:1px;background:var(--line-strong);margin:0 4px}
+  .steps .n{width:20px;height:20px;border-radius:99px;display:grid;place-items:center;font-size:11px;font-weight:600;border:1px solid var(--line-strong);font-variant-numeric:tabular-nums}
+  .steps [aria-current="step"]{color:var(--fg);font-weight:500}
+  .steps [aria-current="step"] .n{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+  .steps .done .n{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+  .stat{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--elev);text-align:left;min-width:0;cursor:pointer;transition:border-color .15s,background-color .15s}
+  .stat:hover{border-color:var(--control)}
+  .stat b{font-size:20px;line-height:28px;font-weight:600;font-variant-numeric:tabular-nums}
+  .stat span{font-size:12px;color:var(--meta)}
+  .stat small{font-size:11.5px;color:var(--muted)}
+  .stat[aria-pressed="true"]{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+  .stat.is-err b{color:var(--danger)} .stat.is-err[aria-pressed="true"]{border-color:var(--danger);box-shadow:inset 0 0 0 1px var(--danger);background:var(--danger-soft)}
+  .stat.is-warn b{color:var(--warn)}
+  .colref{font-family:'JetBrains Mono',monospace;font-size:11px;min-width:22px;height:18px;padding:0 4px;border-radius:3px;background:var(--subtle);color:var(--meta);display:inline-grid;place-items:center;flex:none}
+  .iss{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;line-height:18px;white-space:normal}
+  .iss svg{width:14px;height:14px;flex:none;margin-top:2px}
+  .iss .v{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:var(--subtle);border-radius:3px;padding:0 4px;color:var(--fg);word-break:break-all}
+  .lv-e svg{color:var(--danger)} .lv-b svg{color:var(--danger)} .lv-w svg{color:var(--warn-icon)} .lv-i svg{color:var(--st-rev)}
+  .rv td{vertical-align:top;padding-top:10px;padding-bottom:10px;height:auto}
+  .rv tr.is-err td:first-child{box-shadow:inset 3px 0 0 var(--danger)}
+  .thumb{width:40px;height:28px;border-radius:4px;flex:none;position:relative}
+  .thumb::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgb(0 0 0/.08)}
+  .thumb.lg{width:72px;height:48px}
+  .missing{width:40px;height:28px;border-radius:4px;border:1px dashed var(--control);display:grid;place-items:center;color:var(--muted);flex:none}
+  .missing svg{width:14px;height:14px}
+  .actbar{position:sticky;bottom:0;z-index:20;background:var(--elev);border-top:1px solid var(--line);box-shadow:0 -6px 16px -12px rgb(0 0 0/.25)}
+  details.chg>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--st-rev);font-weight:500}
+  details.chg>summary::-webkit-details-marker{display:none}
+  details.chg[open] .chev{transform:rotate(180deg)}
+  .next{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--elev)}
+  .next .ico{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none}
+  .next .ico svg{width:16px;height:16px}
+  .pr{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;white-space:nowrap}
+  .pr svg{width:14px;height:14px}
+  .grp{border-radius:8px;padding:10px 12px;font-size:13px}
+  .grp>p{font-weight:500;display:flex;align-items:center;gap:6px}
+  .grp>p svg{width:16px;height:16px}
+  .grp ul{margin-top:6px;display:grid;gap:4px}
+  .fchip{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 4px 0 8px;border-radius:4px;background:var(--subtle);font-size:12px;color:var(--fg)}
+  .fchip button{width:20px;height:20px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;color:var(--meta)}
+  .fchip button:hover{background:var(--line);color:var(--fg)} .fchip button svg{width:12px;height:12px}
+  .bar .ind{display:block;height:100%;width:35%;background:var(--primary);border-radius:inherit;animation:ind 1.1s var(--ease) infinite}
+  @keyframes ind{from{transform:translateX(-100%)}to{transform:translateX(290%)}}
+  .cv-row{display:grid;grid-template-columns:24px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.6fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+  .cv-row:first-child{border-top:0}
+  @media (max-width:767px){
+    .cv-row{grid-template-columns:28px minmax(0,1fr);gap:8px 10px;align-items:start}
+    .cv-row>.cv-file,.cv-row>.cv-act{grid-column:2}
+    .stat{min-height:64px}
+  }
+  @media (prefers-reduced-motion:reduce){.stat{transition:none}}
+</style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased text-base">
+<script>
+/* Tipo de ficha del mockup: ?tipo=pies|rocodromos|resoladores. El menú marca su listado. */
+const TIPOS={pies:{page:'pie',title:'Pies de gato',noun:['pie de gato','pies de gato'],file:'pies-de-gato',place:'Marca',sheet:'Pies de gato',ic:'footprints'},
+  rocodromos:{page:'rocodromo',title:'Rocódromos',noun:['rocódromo','rocódromos'],file:'rocodromos',place:'Barrio',sheet:'Rocódromos',ic:'mountain'},
+  resoladores:{page:'resolador',title:'Resoladores',noun:['resolador','resoladores'],file:'resoladores',place:'Barrio',sheet:'Resoladores',ic:'wrench'}};
+const TIPO=TIPOS[new URLSearchParams(location.search).get('tipo')]?new URLSearchParams(location.search).get('tipo'):'pies';
+const T=TIPOS[TIPO];
+document.body.dataset.page=T.page;
+</script>
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <nav aria-label="Migas de pan" class="crumbs min-w-0" id="crumbs"></nav>
+    <span class="ml-auto hidden xl:inline-flex items-center gap-1 text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · tipo:
+      <select id="demoTipo" class="bg-transparent outline-none text-fg" aria-label="Tipo de ficha del mockup">
+        <option value="pies">Pies de gato</option><option value="rocodromos">Rocódromos</option><option value="resoladores">Resoladores</option>
+      </select></span>
+    <div id="hdrActions" class="ml-auto xl:ml-0 flex items-center gap-2"></div>
+  </header>
+
+  <!-- ========= Flujo de importación (≥ 768) ========= -->
+  <div id="flowWrap"><div id="flow" class="hidden md:block">
+    <div class="px-4 md:px-6 py-3 border-b border-line flex items-center gap-4">
+      <ol class="steps" id="steps" aria-label="Pasos de la importación"></ol>
+    </div>
+    <div id="screen"></div>
+  </div></div>
+
+  <!-- ========= Móvil (< 768): el flujo de importar no se ofrece ========= -->
+  <section id="mobileBlock" class="md:hidden px-4 py-8" aria-labelledby="mb-h">
+    <div class="empty !px-0 !py-6">
+      <div class="ico"><i data-lucide="monitor"></i></div>
+      <h3 id="mb-h">Importar se hace en un ordenador</h3>
+      <p>Revisar decenas de filas y corregir el Excel pide una pantalla grande. Desde el móvil puedes asignar portadas y publicar las fichas que ya están listas.</p>
+    </div>
+    <div class="card p-4 text-sm space-y-1" id="mbLast"></div>
+    <div class="mt-4 grid gap-2">
+      <a href="#listado" class="btn btn-primary" data-go="listado"><i data-lucide="list"></i>Ver las fichas importadas</a>
+      <a href="#portadas" class="btn btn-ghost" data-go="portadas"><i data-lucide="image"></i>Asignar portadas</a>
+    </div>
+  </section>
+
+  <!-- ========= Listado después de importar ========= -->
+  <div id="listing" hidden></div>
+
+  <p class="mx-4 md:mx-6 my-6 text-xs text-meta border border-dashed border-line-strong rounded px-3 py-2" id="mockNote"></p>
+</main>
+
+<!-- ============ Confirmar importación ============ -->
+<div id="confirm" class="overlay" role="dialog" aria-modal="true" aria-labelledby="cf-h" aria-describedby="cf-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h flex items-start gap-3"><div class="flex-1 min-w-0"><h2 id="cf-h"></h2><p id="cf-d" class="text-sm text-meta mt-0.5">Revisa qué va a pasar. Nada se publica ni se borra.</p></div><button class="icon-btn -mr-2 -mt-1" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="dialog-b" id="cfb"></div>
+  <div class="dialog-f" id="cff"></div>
+</div></div>
+
+<!-- ============ Publicar en lote ============ -->
+<div id="lote" class="overlay" role="dialog" aria-modal="true" aria-labelledby="lt-h" aria-describedby="lt-d"><div class="dialog lg"><div class="grab"></div>
+  <div class="dialog-h flex items-start gap-3"><div class="flex-1 min-w-0"><h2 id="lt-h"></h2><p id="lt-d" class="text-sm text-meta mt-0.5">Se verán en el sitio al momento.</p></div><button class="icon-btn -mr-2 -mt-1" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="dialog-b space-y-3" id="ltb"></div>
+  <div class="dialog-f items-center" id="ltf"></div>
+</div></div>
+
+<!-- ============ Asignar portadas ============ -->
+<div id="portadas" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pt-h" aria-describedby="pt-d"><div class="dialog xl"><div class="grab"></div>
+  <div class="dialog-h flex items-start gap-3"><div class="flex-1 min-w-0"><h2 id="pt-h">Asignar portadas</h2><p id="pt-d" class="text-sm text-meta mt-0.5">Sugerimos la foto de Medios cuyo nombre coincide con la URL de la ficha. Revisa y asigna.</p></div><button class="icon-btn -mr-2 -mt-1" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="dialog-b" id="ptb"></div>
+  <div class="dialog-f items-center" id="ptf"></div>
+</div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const pl=(n,one,many)=>`${fmt(n)} ${n===1?one:many}`;
+const slugify=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/&/g,'y').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const COLORS=['#8C6A4F','#3F5F7A','#A3472E','#5E7046','#7A5C8F','#2F6E6A','#9A7B2F','#6B4E3D','#4A5568','#8E3B46'];
+const tint=i=>`background:linear-gradient(135deg,${COLORS[i%10]},${COLORS[(i+3)%10]})`;
+const TODAY='jueves 5 de noviembre de 2026, 10:20';
+const FILE={pies:'pies-de-gato-noviembre.xlsx',rocodromos:'rocodromos-bcn.xlsx',resoladores:'resoladores.csv'}[TIPO];
+
+/* ---------- Datos de ejemplo ----------
+   Fila: r (fila de Excel), st new|upd|hid|live|same, cover ok|miss|noalt|many|none, is: [nivel, columna, campo, valor, texto]
+   Niveles: e = error (la fila no se importa) · b = bloqueará Publicar (se importa) · w = aviso */
+function build(){
+  if(TIPO==='pies'){
+    const N=['La Sportiva Solution','La Sportiva Solution Comp','La Sportiva Skwama','La Sportiva Theory','La Sportiva Katana Laces','La Sportiva Miura VS','La Sportiva Testarossa','La Sportiva Tarantulace','La Sportiva Finale','La Sportiva Python','La Sportiva Otaki','La Sportiva Cobra','Scarpa Instinct VS','Scarpa Instinct VSR','Scarpa Drago','Scarpa Drago LV','Scarpa Veloce','Scarpa Vapor V','Scarpa Chimera','Scarpa Booster','Scarpa Origin','Scarpa Helix','Scarpa Arpia','Five Ten Hiangle','Five Ten NIAD Lace','Five Ten Kirigami','Evolv Shaman','Evolv Phantom','Evolv Defy','Evolv Zenist','Evolv Kronos','Tenaya Oasi','Tenaya Iati','Tenaya Mundaka','Tenaya Indalo','Ocun Ozone','Ocun Striker','Ocun Advance','Boreal Joker','Boreal Satori','Butora Acro','Butora Endeavor','Unparallel Flagship','Unparallel Souped Up','Mad Rock Drone','Mad Rock Shark','Red Chili Voltage','Red Chili Fusion','Black Diamond Momentum','Black Diamond Method','So iLL Street','Wild Climb Pantera','Evolv Shaman LV','Scarpa Generator','La Sportiva Mantra','Tenaya Ra'];
+    const shamanRow=7+N.indexOf('Evolv Shaman');
+    const O={
+      'La Sportiva Solution':{st:'live',cover:'ok',is:[['e','','Borrador pendiente','','Ya tiene 2 cambios sin publicar hechos en el editor y no se mezclan con el archivo. Publícalos o descártalos y vuelve a subirlo.']]},
+      'Scarpa Drago':{st:'live',cover:'ok',ch:[['Precio desde (€)','159,95','149,95'],['Rigidez','Blanda','Muy blanda']]},
+      'Five Ten NIAD Lace':{st:'live',cover:'ok',ch:[['Resumen ES','«…para bloque en desplome.»','«…para bloque y deportiva en desplome.»']]},
+      'La Sportiva Skwama':{st:'upd',cover:'ok',ch:[['Precio hasta (€)','—','179,95']],is:[['w','AN','Reseña ES','','Ya tiene reseña: se queda la del panel y se ignora la del archivo, para no perder formato, enlaces ni imágenes.']]},
+      'Scarpa Veloce':{st:'hid',cover:'ok',ch:[['Nivel','Inicio','Inicio | Intermedio']]},
+      'La Sportiva Theory':{st:'upd',cover:'ok',ch:[['Precio desde (€)','169,95','159,95']]},
+      'Scarpa Chimera':{st:'upd',cover:'miss',ch:[['Goma','Vibram XS Grip','Vibram XS Grip 2']]},
+      'Evolv Phantom':{st:'upd',cover:'ok',ch:[['Uso recomendado','Bloque','Bloque | Deportiva']]},
+      'Tenaya Mundaka':{st:'same',cover:'ok'},'Ocun Advance':{st:'same',cover:'ok'},'Butora Endeavor':{st:'same',cover:'ok'},'Black Diamond Method':{st:'same',cover:'ok'},
+      'Unparallel Flagship':{is:[['e','X','Precio desde (€)','149,95 €/par','Escribe solo el número, sin € ni texto: 149,95.']]},
+      'Tenaya Oasi':{is:[['e','Y','Precio hasta (€)','120','No puede ser menor que el precio desde (165).']]},
+      'Scarpa Instinct VS':{slug:'scarpa instinct vs',is:[['e','C','URL','scarpa instinct vs','Solo minúsculas, números y guiones: scarpa-instinct-vs.'],['e','Z','Precio verificado el','(vacía)','Hay precio pero falta la fecha en que lo verificaste.']]},
+      'Evolv Shaman LV':{slug:'evolv-shaman',is:[['e','C','URL','evolv-shaman',`Repetida: ya está en la fila ${shamanRow}. Cada fila necesita una URL distinta.`]]},
+      'Five Ten Hiangle':{is:[['e','AD','Talla que uso (EU)','42,3','Va de media en media talla: 42 o 42,5.']]},
+      'Boreal Joker':{cover:'ok',is:[['b','AH·AJ','Nota de transparencia ES','(vacía)','Cedidos por la marca: sin nota de transparencia no se podrá publicar.']]},
+      'So iLL Street':{is:[['b','M','Marca','(vacía)','Sin marca no se podrá publicar.']]},
+      'Red Chili Voltage':{cover:'noalt'},'Mad Rock Shark':{cover:'many'},'Wild Climb Pantera':{cover:'none'},
+      'Ocun Ozone':{slug:'',is:[['e','C','URL','(vacía)','Falta la URL. Propuesta: ocun-ozone (cópiala en la columna C).']]},
+      'Ocun Striker':{is:[['e','F','Portada','https://ocun.com/img/striker.jpg','Solo fotos de Medios: el nombre del archivo o su URL de Medios. No se descargan imágenes de otras webs.']]},
+      'Scarpa Booster':{slug:'scarpa-booster-2',is:[['e','C','URL','scarpa-booster-2','Ya existe un pie de gato Scarpa Booster con la URL scarpa-booster. La importación no cambia URLs: usa esa, o cámbiala en el editor.']]},
+      'Tenaya Iati':{cover:'ok',is:[['w','AP–AS','Notas','2 de 4','Reseña escrita · 2 de 3 notas: recomendable al menos 3.']]},
+      'Mad Rock Drone':{is:[['e','AN','Reseña ES','32.767 caracteres','Máximo 20.000 caracteres. Y 32.767 es el tope de una celda de Excel: puede que esté cortada.']]},
+    };
+    return N.map((name,i)=>{const o=O[name]||{};const r={r:7+i,name,slug:o.slug===undefined?slugify(name):o.slug,st:o.st||'new',cover:o.cover||(i%3===0?'ok':'miss'),is:(o.is||[]).slice(),ch:o.ch||[],place:name.split(' ').slice(0,name.startsWith('La Sportiva')||name.startsWith('Five Ten')||name.startsWith('Mad Rock')||name.startsWith('Red Chili')||name.startsWith('Black Diamond')||name.startsWith('So iLL')||name.startsWith('Wild Climb')?2:1).join(' ')};
+      if(!o.st&&!o.is){if(i%5===2)r.is.push(['w','D','Resumen ES','(vacío)','Sin resumen en español.']);if(i%6===4)r.is.push(['w','J','Datos verificados el','03/02/2026','Verificada hace 9 meses.']);if(i%9===5)r.is.push(['w','X·Y','Precio','(vacío)','Sin precio, no sale en el filtro de precio del comparador.']);}
+      return r;});
+  }
+  const G=TIPO==='rocodromos'?[
+    {name:'La Paret de Gràcia',place:'Gràcia',st:'live',cover:'ok',ch:[['Entrada de día (€)','13,00','14,00'],['Precios verificados el','03/03/2026','04/11/2026']]},
+    {name:'Bloc Poblenou',place:'Poblenou',cover:'ok'},
+    {name:'Vèrtic Sants',place:'Sants',is:[['e','W','Horario lunes','10-23','Escribe las horas con el formato 07:00: 10:00-23:00.']]},
+    {name:'Climbat Badalona',place:'Badalona',is:[['w','P','Código postal','8911','Excel quitó el 0 inicial: se guarda 08911.']]},
+    {name:'Sputnik Bloc Gavà',place:'Gavà',is:[['e','BN','Nota: Variedad','6','De 1 a 5.']]},
+    {name:'Bloc Sant Andreu',place:'Sant Andreu',cover:'ok',is:[['b','BE·BG','Nota de transparencia ES','(vacía)','Visita invitada: sin nota de transparencia no se podrá publicar.']]},
+    {name:'Roca Nord',slug:'roca-nord',place:'Horta',is:[['w','C','URL','roca-nord','Ya hay un rocódromo con este nombre y la URL roca-nord-bcn. Si has cambiado la URL, se creará otra ficha.']]},
+    {name:'Escala Montjuïc',place:'Sants-Montjuïc',st:'upd',cover:'ok',ch:[['Horario domingo','Cerrado','10:00-14:00']]},
+    {name:'Boulder Sarrià',place:'Sarrià',st:'same',cover:'ok'},
+    {name:'Climbat La Foixarda',slug:'la-foixarda',place:'Montjuïc',is:[['e','C','URL','la-foixarda','Es una URL antigua de «Climbat Montjuïc» y redirige allí. Usa otra para no romper los enlaces.']]},
+    {name:'Bloc Les Corts',place:'Les Corts',cover:'noalt',is:[['w','N','Ciudad','(vacía)','Ciudad vacía: se pone Barcelona.']]},
+    {name:'Indoor Wall Sabadell',place:'Sabadell',cover:'none'},
+  ]:[
+    {name:'Taller Gràcia',place:'Gràcia',cover:'ok'},
+    {name:'Resolats Sants',place:'Sants',is:[['w','V','Servicios','(vacía)','Sin servicios marcados, el taller no sale en los filtros de /resolar-pies-de-gato.']]},
+    {name:'Sole Repair Poble-sec',place:'Poble-sec',is:[['e','V','Servicios','Media suela, rand','Sepáralos con « | »: Media suela | Rand.']]},
+    {name:'Peu de Gat Clínic',place:'Eixample',st:'upd',cover:'ok',ch:[['Precio por par (€)','38,00','42,00']]},
+    {name:'Rand & Co',place:'Poblenou',is:[['e','Z','Plazo máximo (días)','3','No puede ser menor que el plazo mínimo (5).']]},
+    {name:'Taller del Peu',place:'Sant Martí',st:'same',cover:'ok'},
+    {name:'Resoles Gavà',place:'Gavà',cover:'noalt'},
+  ];
+  return G.map((g,i)=>({r:7+i,slug:g.slug||slugify(g.name),st:'new',cover:'miss',is:[],ch:[],...g}));
+}
+const ROWS=build();
+const FILEOF=r=>r.slug?r.slug+'.jpg':slugify(r.name)+'.jpg';
+/* problemas de una fila, incluidos los de la portada (D27: sin alt ES no se publica) */
+function issues(r,fixed){let out=r.is.filter(x=>!(fixed&&x[0]==='e'));
+  if(r.st==='same')return [];
+  if(!fixed&&r.is.some(x=>x[0]==='e'))return out; /* fila con error: solo sus errores */
+  const c={miss:['b','F','Portada: archivo',FILEOF(r),'No está en Medios todavía. Se importa sin portada.'],noalt:['b','F','Portada: archivo',FILEOF(r),'Está en Medios, pero sin texto alternativo en español: no se podrá publicar.'],many:['b','F','Portada: archivo',FILEOF(r),'Hay 2 fotos con este nombre en Medios: elige cuál al asignar portadas.'],none:['b','F','Portada: archivo','(vacía)','Sin portada: no se podrá publicar.']}[r.cover];
+  if(c)out=[c,...out];return out;}
+const isErr=(r,f)=>!f&&r.is.some(x=>x[0]==='e');
+const isBlock=(r,f)=>issues(r,f).some(x=>x[0]==='b');
+const hasWarn=(r,f)=>issues(r,f).some(x=>x[0]==='b'||x[0]==='w');
+
+/* ---------- Estado del mockup ---------- */
+let S={screen:'subir',variant:'',filter:null,page:0,fixed:false,sep:';',apply:null,lot:null,picked:new Set(),view:'draft',ready:'all'};
+function counts(f=S.fixed){const c={all:ROWS.length,err:0,neu:0,upd:0,live:0,hid:0,same:0,warn:0,block:0,write:0};
+  ROWS.forEach(r=>{if(isErr(r,f)){c.err++;return;}if(r.st==='same'){c.same++;return;}c.write++;
+    if(r.st==='new')c.neu++;else if(r.st==='live')c.live++;else c.upd++;if(r.st==='hid')c.hid++;
+    if(hasWarn(r,f))c.warn++;if(isBlock(r,f))c.block++;});return c;}
+const STATUS={new:['st-acc','Nueva','plus'],upd:['st-neutral','Actualiza borrador','pencil'],hid:['st-hidden','Actualiza · sigue oculta','eye-off'],live:['st-rev','Publicada · a borrador','git-branch'],same:['st-neutral','Sin cambios','minus'],err:['st-danger','No se importa','circle-x']};
+
+/* ---------- Cabecera y pasos ---------- */
+function chrome(){
+  const inFlow=['subir','revision','aplicando','resultado'].includes(S.screen);
+  $('crumbs').innerHTML=`<a href="#listado" data-go="listado">${T.title}</a>${inFlow?`<span aria-hidden="true">/</span><span class="text-fg font-medium" aria-current="page">Importar</span>`:''}`;
+  $('hdrActions').innerHTML=inFlow?`<a href="#" class="btn btn-quiet hidden md:inline-flex" data-tpl><i data-lucide="file-down"></i>Plantilla de ${T.noun[1]}</a>`
+    :`<a href="#subir" class="btn btn-ghost hidden md:inline-flex" data-go="subir"><i data-lucide="upload"></i>Importar</a><button class="btn btn-ghost" aria-label="Exportar"><i data-lucide="download"></i><span class="hidden sm:inline">Exportar</span></button><button class="btn btn-primary"><i data-lucide="plus"></i><span class="hidden sm:inline">Nuevo ${T.noun[0]}</span><span class="sm:hidden">Nuevo</span></button>`;
+  const st=['subir','revision','aplicando','resultado'],L=['Archivo','Revisión','Importar','Resultado'],k=st.indexOf(S.screen);
+  $('steps').innerHTML=L.map((l,i)=>`<li class="${i<k?'done':''}" ${i===k?'aria-current="step"':''}><span class="n">${i<k?'<i data-lucide="check" class="w-3 h-3"></i>':i+1}</span>${l}${i<k?'<span class="sr-only"> (hecho)</span>':''}</li>`).join('');
+  $('flowWrap').hidden=!inFlow;$('mobileBlock').hidden=!inFlow;$('listing').hidden=inFlow;
+  $('mbLast').innerHTML=`<p class="grp-label">Última importación</p><p>Ayer, 19:40 · ${pl(counts(false).write,T.noun[0],T.noun[1])} · <span class="text-meta">desde ${FILE}</span></p><p class="text-meta text-xs">En Actividad tienes el detalle.</p>`;
+}
+
+/* ---------- 1 · Archivo ---------- */
+const FILE_ERR={
+  'error-formato':['err','file-x','fichas.numbers','<b>Este archivo no se puede leer.</b> Sube un .xlsx o un .csv. En Numbers: Archivo › Exportar a › Excel.'],
+  'error-plantilla':['err','file-question',`${T.file}-octubre.xlsx`,'<b>No encontramos la fila de claves</b> (la que empieza por «clave» en la columna A). Parece la plantilla anterior: descarga la nueva y pega tus filas debajo; las columnas siguen en el mismo orden.',true],
+  'error-tipo':['err','shuffle',`rocodromos-bcn.xlsx`,`<b>Este archivo es de rocódromos</b> (trae <code class="mono text-xs">price_day_eur</code>, <code class="mono text-xs">opening_hours_mon</code>…) y estás en ${T.title}.`,false,'<a href="?tipo=rocodromos#subir" class="btn btn-sm btn-ghost">Importar rocódromos</a>'],
+  'falta-columna':['err','columns-3',FILE,'<b>Falta la columna <code class="mono text-xs">slug</code> (URL).</b> Es la que dice qué ficha es cada fila. Sin ella no podemos saber si una fila es nueva o actualiza otra.',true],
+  'vacio':['info','file',FILE,'<b>El archivo no tiene filas de datos.</b> Solo hay cabeceras o la fila de ejemplo (la que dice «ejemplo» en la columna A no se importa).'],
+  'grande':['err','file-warning',FILE,'<b>Tiene 640 filas y el máximo es 500.</b> Divídelo en dos archivos e impórtalos uno detrás de otro.'],
+};
+function screenUpload(){
+  const v=S.variant,fe=FILE_ERR[v];let file='';
+  if(v==='leyendo')file=`<div class="card p-3 flex items-center gap-3" role="status"><i data-lucide="file-spreadsheet" class="w-5 h-5 text-meta"></i><div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">${FILE}</p><p class="text-xs text-meta">Leyendo el archivo y comprobándolo con tus ${T.noun[1]}. Todavía no se escribe nada…</p><div class="bar mt-2"><span style="width:62%"></span></div></div><button class="btn btn-sm btn-quiet" data-go="subir">Cancelar</button></div>`;
+  else if(fe)file=`<div class="banner banner-${fe[0]==='err'?'err':'info'}" role="${fe[0]==='err'?'alert':'status'}"><i data-lucide="${fe[1]}"></i><div class="flex-1 min-w-0 space-y-2"><p class="mono text-xs text-meta truncate">${fe[2]}</p><p>${fe[3]}</p>${fe[4]||fe[5]?`<div class="flex flex-wrap gap-2">${fe[4]?`<a href="#" class="btn btn-sm btn-ghost" data-tpl><i data-lucide="file-down"></i>Descargar la plantilla nueva</a>`:''}${fe[5]||''}</div>`:''}</div></div>`;
+  else if(v==='columnas')file=`<div class="banner banner-warn" role="alert"><i data-lucide="columns-3"></i><div class="flex-1 min-w-0 space-y-2"><p class="mono text-xs text-meta">${FILE} · hoja «${T.sheet}»</p><p><b>3 columnas no las reconocemos.</b> Si sigues, se ignoran y sus datos no se importan:</p>
+     <ul class="space-y-1 text-[13px]"><li class="flex flex-wrap items-center gap-1.5"><span class="colref">X</span><code class="mono text-xs">precio_desde</code><span class="text-meta">· ¿querías decir</span><code class="mono text-xs">price_min_eur</code>?</li><li class="flex items-center gap-1.5"><span class="colref">BA</span><code class="mono text-xs">notas internas</code></li><li class="flex items-center gap-1.5"><span class="colref">BB</span><code class="mono text-xs">Columna1</code><span class="text-meta">· vacía</span></li></ul>
+     <p class="text-xs text-meta">Además, 4 columnas son de solo lectura (vienen de Exportar) y se ignoran siempre: <code class="mono">id</code>, <code class="mono">published</code>, <code class="mono">reviews_count</code>, <code class="mono">updated_at</code>.</p>
+     <div class="flex flex-wrap gap-2 pt-1"><button class="btn btn-sm btn-primary" data-go="revision">Seguir sin esas 3</button><button class="btn btn-sm btn-ghost" data-go="subir">Subir otro archivo</button></div></div></div>`;
+  else if(v==='hojas')file=`<div class="banner banner-info"><i data-lucide="sheet"></i><div class="flex-1 min-w-0 space-y-2"><p class="mono text-xs text-meta">fichas-todo.xlsx</p><p><b>No hay ninguna hoja llamada «${T.sheet}».</b> ¿Cuál quieres importar como ${T.noun[1]}?</p>
+     <fieldset class="grid sm:grid-cols-3 gap-2"><legend class="sr-only">Hoja</legend>${['Hoja1 · 31 filas','Pies gato v2 · 52 filas','Notas · 0 filas'].map((h,i)=>`<label class="opt flex items-center gap-2 p-2 border border-line-strong rounded-md text-sm cursor-pointer ${i===2?'opacity-45':''}"><input type="radio" class="radio" name="sheet" ${i===1?'checked':''} ${i===2?'disabled':''}>${h}</label>`).join('')}</fieldset>
+     <button class="btn btn-sm btn-primary" data-go="revision">Leer «Pies gato v2»</button></div></div>`;
+  return `<div class="max-w-[1440px] px-4 md:px-6 py-6 grid lg:grid-cols-[minmax(0,1fr)_360px] gap-6">
+   <section aria-labelledby="up-h" class="space-y-4 min-w-0">
+     <div><h1 id="up-h" class="text-xl font-semibold">Importar ${T.noun[1]}</h1><p class="text-sm text-meta mt-1">Sube la plantilla rellena (o un CSV que hayas exportado y editado). Antes de escribir nada te enseñamos qué va a pasar fila a fila.</p></div>
+     <label class="dropzone t flex flex-col items-center justify-center text-center gap-2 px-6 py-10 cursor-pointer" id="dz">
+       <span class="w-10 h-10 rounded-lg bg-subtle grid place-items-center text-meta"><i data-lucide="file-up" class="w-5 h-5"></i></span>
+       <span class="text-sm"><span class="font-medium underline underline-offset-2">Elige un archivo</span> o arrástralo aquí</span>
+       <span class="text-xs text-meta">.xlsx o .csv · hasta 500 filas y 5 MB</span>
+       <input type="file" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="sr-only" id="fileIn" aria-describedby="dz-h">
+     </label>
+     <p id="dz-h" class="text-xs text-meta -mt-2">CSV separado por punto y coma, como lo saca Exportar. Si usa comas, lo detectamos y te lo decimos. Del .xlsx se lee la hoja «${T.sheet}».</p>
+     ${file}
+   </section>
+   <aside class="space-y-4" aria-label="Ayuda">
+     <div class="card"><div class="card-h"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-meta"></i><h2>Plantilla de ${T.noun[1]}</h2></div>
+       <div class="p-4 space-y-3 text-sm"><p class="text-meta">Una columna por campo, con su clave técnica en la fila 3 y ayuda de formato. Rellena desde la fila 7.</p>
+       <a href="#" class="btn btn-ghost w-full" data-tpl><i data-lucide="file-down"></i>Descargar plantilla (.xlsx)</a>
+       <p class="text-xs text-meta">¿Quieres cambiar en masa lo que ya tienes? <a href="#listado" data-go="listado" class="underline underline-offset-2 hover:text-fg">Exporta el listado en CSV</a>, edítalo y súbelo aquí.</p></div></div>
+     <div class="card p-4 text-sm"><h2 class="font-semibold text-[13px] mb-2">Cómo funciona</h2><ul class="space-y-2 text-meta">
+       <li class="flex gap-2"><i data-lucide="link" class="w-4 h-4 mt-0.5 flex-none"></i><span>Cada fila es una ficha, reconocida por su <b class="text-fg font-medium">URL</b>. Si ya existe, se actualiza; si no, se crea.</span></li>
+       <li class="flex gap-2"><i data-lucide="eraser" class="w-4 h-4 mt-0.5 flex-none"></i><span>Una celda vacía <b class="text-fg font-medium">no borra</b> nada. Para vaciar un campo, hazlo en el editor.</span></li>
+       <li class="flex gap-2"><i data-lucide="shield-check" class="w-4 h-4 mt-0.5 flex-none"></i><span><b class="text-fg font-medium">Todo o nada:</b> si queda una fila con error, no se escribe ninguna. Corrígela o déjala fuera.</span></li>
+       <li class="flex gap-2"><i data-lucide="eye-off" class="w-4 h-4 mt-0.5 flex-none"></i><span><b class="text-fg font-medium">Nada se publica.</b> Si una ficha ya está publicada, los cambios van a un borrador (si ya tiene uno, esa fila da error).</span></li>
+       <li class="flex gap-2"><i data-lucide="trash-2" class="w-4 h-4 mt-0.5 flex-none"></i><span><b class="text-fg font-medium">Nada se borra:</b> las fichas que no están en el archivo no se tocan.</span></li>
+       <li class="flex gap-2"><i data-lucide="image" class="w-4 h-4 mt-0.5 flex-none"></i><span>Las fotos se suben antes en <a href="medios.html" class="underline underline-offset-2 hover:text-fg">Medios</a>. En el archivo va su nombre (o su URL de Medios) y se enlaza solo.</span></li></ul>
+       <p class="mt-3 pt-3 border-t border-line text-xs text-meta flex gap-1.5"><i data-lucide="history" class="w-3.5 h-3.5 mt-px flex-none"></i><span>Última importación de ${T.noun[1]}: <span class="num">ayer, 19:40 · 12 filas</span>. Queda en <a href="actividad.html" class="underline underline-offset-2 hover:text-fg">Actividad</a>.</span></p></div>
+   </aside></div>`;
+}
+
+/* ---------- 2 · Revisión ---------- */
+function issueHtml(x){const ic={e:'circle-x',b:'octagon-alert',w:'triangle-alert',i:'git-branch'}[x[0]];const lv={e:'Error',b:'Bloqueará publicar',w:'Aviso',i:'Nota'}[x[0]];
+  return `<li class="iss lv-${x[0]}"><i data-lucide="${ic}" aria-hidden="true"></i><span><span class="sr-only">${lv}: </span>${x[1]?`<span class="colref" title="Columna ${x[1]}">${x[1]}</span> `:''}${x[2]?`<b class="font-medium">${x[2]}</b>`:''}${x[3]?` <span class="v">${esc(x[3])}</span>`:''}${x[2]||x[3]?' · ':''}${x[4]}</span></li>`;}
+function coverCell(r,i){const f=S.fixed;
+  if(r.cover==='ok')return `<span class="flex items-center gap-2"><span class="thumb" style="${tint(i)}" aria-hidden="true"></span><span class="sr-only">Encontrada</span></span>`;
+  if(r.cover==='none')return `<span class="text-xs text-muted">Sin archivo</span>`;
+  const t={miss:'No está en Medios',noalt:'Sin texto alt',many:'2 con este nombre'}[r.cover];
+  return `<span class="flex items-center gap-2 min-w-0">${r.cover==='miss'?'<span class="missing" aria-hidden="true"><i data-lucide="image-off"></i></span>':`<span class="thumb" style="${tint(i)}" aria-hidden="true"></span>`}<span class="text-xs text-warn leading-4">${t}</span></span>`;}
+function readyCell(r){if(r.st==='same')return '<span class="text-xs text-muted">—</span>';
+  if(isErr(r,S.fixed))return '<span class="text-xs text-muted">—</span>';
+  if(r.st==='live')return '<span class="pr text-st-rev"><i data-lucide="git-branch"></i>Publicar cambios</span>';
+  const b=issues(r,S.fixed).filter(x=>x[0]==='b');
+  return b.length?`<span class="pr text-danger"><i data-lucide="octagon-alert"></i>${b.length===1&&b[0][1]==='F'?'Falta portada':pl(b.length,'bloqueo','bloqueos')}</span>`:'<span class="pr text-ok"><i data-lucide="circle-check"></i>Lista</span>';}
+function filtered(){const f=S.fixed;return ROWS.filter(r=>{switch(S.filter){case 'err':return isErr(r,f);case 'warn':return !isErr(r,f)&&r.st!=='same'&&hasWarn(r,f);case 'new':return !isErr(r,f)&&r.st==='new';case 'upd':return !isErr(r,f)&&['upd','hid','live'].includes(r.st);case 'same':return !isErr(r,f)&&r.st==='same';default:return true;}});}
+function screenReview(){const c=counts(),f=S.fixed;if(S.filter===null)S.filter=c.err?'err':'all';
+  const tiles=[['all','Filas',c.all,`${T.sheet}, desde la fila 7`],['new','Nuevas',c.neu,'Se crean sin publicar'],['upd','Actualizan',c.upd+c.live,c.live?`${c.live} publicadas, a borrador`:'Borradores u ocultas'],['same','Sin cambios',c.same,'No se tocan'],['warn','Con avisos',c.warn,`${c.block} bloquearán publicar`],['err','Con error',c.err,c.err?'No se importan':'Todo correcto']];
+  const rows=filtered(),per=25,pages=Math.max(1,Math.ceil(rows.length/per));S.page=Math.min(S.page,pages-1);const vis=rows.slice(S.page*per,S.page*per+per);
+  const miss=ROWS.filter(r=>!isErr(r,f)&&r.st!=='same'&&r.cover==='miss').length;
+  const csv=FILE.endsWith('.csv')||S.variant==='comas';
+  let h=`<div class="max-w-[1440px] px-4 md:px-6 py-5 space-y-4 pb-28">
+   <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-meta"></i><span class="font-medium mono text-[13px]">${S.variant==='comas'?FILE.replace('.xlsx','.csv'):FILE}</span>
+     <span class="text-meta">${csv?'CSV':`hoja «${T.sheet}»`} · ${pl(c.all,'fila','filas')} · leído hace un momento</span>
+     ${csv?`<span class="inline-flex items-center gap-1.5 text-meta" id="sep-l">Separador<span class="seg" role="radiogroup" aria-labelledby="sep-l" id="sepSeg"><button type="button" role="radio" aria-checked="${S.sep===';'}" data-v=";">;</button><button type="button" role="radio" aria-checked="${S.sep===','}" data-v=",">,</button></span></span>`:''}
+     <details class="adj"><summary class="text-meta text-[12.5px] cursor-pointer inline-flex items-center gap-1">${TIPO==='pies'?'52':TIPO==='rocodromos'?'76':'48'} columnas reconocidas<i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></summary><p class="text-xs text-meta mt-1 max-w-xl">Columnas que no vienen en el archivo: no se tocan. Ignoradas por ser de solo lectura: <code class="mono">id</code>, <code class="mono">published</code>.</p></details>
+     <button class="btn btn-sm btn-ghost ml-auto" data-go="subir"><i data-lucide="refresh-cw"></i>Cambiar archivo</button></div>
+   ${S.variant==='cambio'?`<div class="banner banner-err" role="alert"><i data-lucide="circle-alert"></i><span><b>No se ha importado nada.</b> Al comprobarlo otra vez, 1 fila ha cambiado desde la revisión: «Scarpa Drago» recibió un borrador en el editor hace un momento. Publica o descarta ese borrador y pulsa Importar otra vez.</span></div>`:''}
+   ${S.variant==='comas'?`<div class="banner banner-info" role="status"><i data-lucide="info"></i><span>Este CSV usa <b>comas</b> como separador (no punto y coma). Lo hemos leído con comas; si ves columnas raras, cambia el separador arriba.</span></div>`:''}
+   <div class="grid grid-cols-3 lg:grid-cols-6 gap-2" role="group" aria-label="Resumen y filtro de filas">${tiles.map(([k,l,n,s])=>`<button type="button" class="stat ${k==='err'&&n?'is-err':''} ${k==='warn'&&n?'is-warn':''}" data-filter="${k}" aria-pressed="${S.filter===k}" aria-controls="rvTable"><b>${fmt(n)}</b><span>${l}</span><small>${s}</small></button>`).join('')}</div>
+   ${miss?`<div class="banner banner-warn"><i data-lucide="image-off"></i><span class="flex-1"><b>${pl(miss,'portada no está','portadas no están')} en Medios todavía.</b> Puedes importar igual y asignarlas después, o subirlas ahora y comprobar de nuevo sin volver a subir el archivo.</span><span class="flex flex-wrap gap-2 -my-1"><a href="medios.html#subir" target="_blank" class="btn btn-sm btn-ghost">Abrir Medios<i data-lucide="external-link"></i><span class="sr-only"> (pestaña nueva)</span></a><button class="btn btn-sm btn-ghost" data-toast="Fotos comprobadas: 3 encontradas más" data-action=""><i data-lucide="rotate-cw"></i>Comprobar fotos</button></span></div>`:''}
+   <div class="card overflow-hidden" id="rvTable">
+     <div class="px-4 h-11 flex items-center gap-2 border-b border-line text-sm"><h2 class="font-semibold text-[13px]" id="rv-cap">${{all:'Todas las filas',new:'Nuevas',upd:'Actualizan',same:'Sin cambios',warn:'Con avisos',err:'Con error'}[S.filter]}</h2><span class="text-meta num">${fmt(rows.length)}</span>
+       ${S.filter==='err'&&rows.length?`<span class="text-xs text-meta hidden lg:inline">· Corrígelas en el Excel y vuelve a subirlo.</span>`:''}
+       ${c.err?`<button class="btn btn-sm btn-quiet ml-auto" data-toast="Descargado · ${pl(c.err,'fila','filas')} con error (CSV: fila, columna, valor, problema)" data-action=""><i data-lucide="file-down"></i>Descargar errores</button>`:''}</div>
+     <div class="overflow-x-auto"><table class="tbl rv" aria-labelledby="rv-cap"><thead><tr><th scope="col" class="w-14">Fila</th><th scope="col">Qué pasará</th><th scope="col">Ficha</th><th scope="col">Portada</th><th scope="col" class="w-[44%]">Errores, avisos y cambios</th><th scope="col">Al publicar</th></tr></thead><tbody>`;
+  if(!vis.length)h+=`<tr><td colspan="6" class="!h-auto"><div class="empty !py-8"><div class="ico"><i data-lucide="check"></i></div><h3>${S.filter==='err'?'Ninguna fila con error':'Ninguna fila aquí'}</h3><p>${S.filter==='err'?'Puedes importar el archivo entero.':'Prueba con otro filtro.'}</p></div></td></tr>`;
+  vis.forEach(r=>{const i=ROWS.indexOf(r),e=isErr(r,f),st=STATUS[e?'err':r.st],is=issues(r,f);
+    h+=`<tr class="${e?'is-err':''}"><td class="num text-meta mono text-xs">${r.r}</td>
+     <td><span class="chip ${st[0]}"><i data-lucide="${st[2]}"></i>${st[1]}</span></td>
+     <td class="!whitespace-normal min-w-[180px]"><span class="block font-medium leading-5">${esc(r.name)}</span><span class="block mono text-[11.5px] text-meta break-all">${r.slug?esc(r.slug):'<i>se genera</i>'}</span></td>
+     <td>${r.st==='same'||e?'<span class="text-xs text-muted">—</span>':coverCell(r,i)}</td>
+     <td class="!whitespace-normal">${r.st==='same'?'<span class="text-xs text-meta">Igual que en el panel.</span>':''}${is.length?`<ul class="space-y-1">${is.map(issueHtml).join('')}</ul>`:''}
+       ${r.ch.length&&!e?`<details class="chg mt-1"${S.filter==='upd'?' open':''}><summary>${pl(r.ch.length,'cambio','cambios')}<i data-lucide="chevron-down" class="chev w-3.5 h-3.5"></i></summary><ul class="mt-1 space-y-0.5 text-xs">${r.ch.map(([l,a,b])=>`<li><span class="text-meta">${l}:</span> <span class="diff-del">${esc(a)}</span> → <span class="diff-add">${esc(b)}</span></li>`).join('')}</ul></details>`:''}
+       ${!is.length&&!r.ch.length&&r.st!=='same'?'<span class="text-xs text-meta">Sin problemas.</span>':''}</td>
+     <td>${readyCell(r)}</td></tr>`;});
+  h+=`</tbody></table></div>
+     <div class="px-4 h-11 flex items-center gap-2 border-t border-line text-xs text-meta"><span class="num">${rows.length?`${S.page*per+1}–${Math.min(rows.length,S.page*per+per)} de ${fmt(rows.length)}`:'0'}</span>
+       <span class="ml-auto flex gap-1"><button class="icon-btn" data-pg="-1" ${S.page===0?'disabled aria-disabled="true"':''} aria-label="Página anterior"><i data-lucide="chevron-left"></i></button><button class="icon-btn" data-pg="1" ${S.page>=pages-1?'disabled aria-disabled="true"':''} aria-label="Página siguiente"><i data-lucide="chevron-right"></i></button></span></div>
+   </div>
+   <p class="text-xs text-meta flex flex-wrap gap-x-4 gap-y-1"><span class="iss lv-e"><i data-lucide="circle-x"></i>Error: la fila no se importa</span><span class="iss lv-b"><i data-lucide="octagon-alert"></i>Se importa, pero bloqueará Publicar</span><span class="iss lv-w"><i data-lucide="triangle-alert"></i>Aviso: no bloquea</span><span class="iss lv-i"><i data-lucide="git-branch"></i>Publicada: el cambio va a su borrador</span></p>
+  </div>
+  <div class="actbar"><div class="max-w-[1440px] px-4 md:px-6 py-3 flex flex-wrap items-center gap-3">
+    <p class="text-sm flex-1 min-w-[260px]" aria-live="polite"><b class="num">${fmt(c.write)}</b> ${c.write===1?'fila se escribirá':'filas se escribirán'}${c.err?` · <span class="text-danger font-medium">${pl(c.err,'con error queda fuera','con error quedan fuera')}</span>`:''} · <span class="text-meta">nada se publica</span></p>
+    ${c.err?`<button class="btn btn-ghost" data-open-confirm><i data-lucide="skip-forward"></i>Importar sin las ${fmt(c.err)} con error…</button><button class="btn btn-primary" data-go="subir"><i data-lucide="upload"></i>Subir el archivo corregido</button>`
+      :`<button class="btn btn-ghost" data-go="subir">Subir otro archivo</button><button class="btn btn-primary" data-open-confirm ${c.write?'':'disabled'}><i data-lucide="file-input"></i>Importar ${pl(c.write,T.noun[0],T.noun[1])}…</button>`}
+  </div></div>`;
+  return h;}
+
+function openConfirm(){const c=counts();
+  $('cf-h').textContent=`Importar ${pl(c.write,T.noun[0],T.noun[1])}`;
+  const li=(ic,cls,t)=>`<li class="flex gap-2"><i data-lucide="${ic}" class="w-4 h-4 mt-0.5 flex-none ${cls}"></i><span>${t}</span></li>`;
+  $('cfb').innerHTML=`<ul class="space-y-2 text-sm">${c.neu?li('plus','text-acc',`Se crean <b>${pl(c.neu,'ficha nueva','fichas nuevas')}</b>, sin publicar.`):''}
+    ${c.upd?li('pencil','text-meta',`Se actualizan <b>${pl(c.upd,'sin publicar','sin publicar')}</b> (borradores${c.hid?' u ocultas':''}): cambian los campos con dato en el archivo. <span class="text-meta">Esto no se puede deshacer.</span>`):''}
+    ${c.live?li('git-branch','text-st-rev',`<b>${pl(c.live,'publicada recibe','publicadas reciben')}</b> un borrador de cambios. El sitio no cambia hasta que pulses Publicar cambios.`):''}
+    ${c.err?li('circle-x','text-danger',`<b>${pl(c.err,'fila con error queda fuera','filas con error quedan fuera')}.</b> No se envían. Corrígelas y vuelve a subir el archivo: lo ya importado saldrá como «Sin cambios».`):''}
+    ${c.neu?li('undo-2','text-meta','Las fichas creadas se pueden deshacer desde el resultado o Actividad mientras no las toques.'):''}
+    ${li('eye-off','text-meta','Nada se publica ni se borra. Queda en Actividad.')}${li('shield-check','text-meta','Antes de escribir se comprueba todo otra vez. Si algo ha cambiado desde la revisión, no se escribe nada y vuelves aquí.')}</ul>`;
+  $('cff').innerHTML=`<button class="btn btn-ghost" data-close>Volver a la revisión</button><button class="btn btn-primary" id="doImport"><i data-lucide="file-input"></i>Importar ${pl(c.write,T.noun[0],T.noun[1])}</button>`;
+  CG.icons();CG.open('confirm');}
+
+/* ---------- 3 · Importar · 4 · Resultado ---------- */
+function screenApply(){const c=counts();
+  return `<div class="max-w-[720px] mx-auto px-6 py-10 space-y-5"><div><h1 class="text-xl font-semibold">Importando ${pl(c.write,T.noun[0],T.noun[1])}</h1><p class="text-sm text-meta mt-1">Se escribe todo de una vez: o entran todas o ninguna. Tarda unos segundos; no cierres esta pestaña.</p></div>
+   <div class="bar !h-1.5" role="progressbar" aria-label="Importando" aria-busy="true"><span class="ind"></span></div>
+   <p class="text-sm" aria-live="polite">Comprobando otra vez y escribiendo…</p>
+   <p class="text-xs text-meta border-t border-line pt-3">Con más de 100 filas se escribe en trozos de 100: aquí sale «Trozo 2 de 3» con una barra por trozos y el botón <b>Detener</b>, que para al acabar el trozo en curso.</p></div>`;}
+function screenResult(){const c=counts(),v=S.variant;
+  const unp=listRows().filter(r=>r.st!=='live');const ready=unp.filter(r=>readyOf(r)==='ready').length,noCover=unp.filter(r=>r.cover!=='ok').length;
+  if(v==='parcial'||v==='detenido'){const stop=v==='detenido';
+    return `<div class="max-w-[1100px] px-4 md:px-6 py-6 space-y-5"><div class="flex items-start gap-3" role="status"><i data-lucide="${stop?'octagon-pause':'triangle-alert'}" class="w-6 h-6 text-warn flex-none mt-0.5"></i><div><h1 class="text-xl font-semibold">${stop?'Importación detenida':'Importación a medias'}</h1>
+      <p class="text-sm text-meta mt-0.5">Archivo de 240 filas, en 3 trozos de 100. ${stop?'La detuviste al acabar el trozo 1.':'El trozo 2 no se escribió: al comprobarlo otra vez, «Scarpa Drago» había recibido un borrador en el editor después de la revisión.'}</p></div></div>
+     <dl class="grid grid-cols-3 gap-2 max-w-xl">${[['Escritas','100','Trozo 1'],['Sin escribir','140',stop?'Trozos 2 y 3':'Trozos 2 y 3: nada'],['Lote','Parcial','En Actividad']].map(([l,n,x])=>`<div class="card px-3 py-2.5"><dt class="text-xs text-meta">${l}</dt><dd class="num text-xl font-semibold">${n}</dd><dd class="text-xs text-muted">${x}</dd></div>`).join('')}</dl>
+     <div class="grid md:grid-cols-2 gap-3"><div class="next"><span class="ico bg-subtle text-meta"><i data-lucide="upload"></i></span><div><p class="font-medium text-sm">Terminar la importación</p><p class="text-xs text-meta mt-0.5">${stop?'':'Corrige o vuelve a revisar esa fila y '}Vuelve a subir el mismo archivo: las 100 ya escritas salen como «Sin cambios» y solo se escribe el resto.</p><button class="btn btn-sm btn-primary mt-2" data-go="subir">Subir de nuevo</button></div></div>
+     <div class="next"><span class="ico bg-danger-soft text-danger"><i data-lucide="undo-2"></i></span><div><p class="font-medium text-sm">O deshacer lo escrito</p><p class="text-xs text-meta mt-0.5">Borra las 82 creadas y descarta los 3 borradores nuevos. Las 15 sin publicar que se actualizaron no vuelven atrás.</p><button class="btn btn-sm btn-danger-ghost mt-2" data-toast="Deshecho · 82 fichas borradas, 3 borradores descartados" data-action="">Deshacer…</button></div></div></div></div>`;}
+  let h=`<div class="max-w-[1100px] px-4 md:px-6 py-6 space-y-6"><div class="flex items-start gap-3" role="status"><i data-lucide="circle-check" class="w-6 h-6 text-ok flex-none mt-0.5"></i><div class="flex-1"><h1 class="text-xl font-semibold">Importación terminada</h1><p class="text-sm text-meta mt-0.5">${pl(c.write,T.noun[0],T.noun[1])} guardadas, ninguna publicada. Queda en <a href="actividad.html" class="underline underline-offset-2 hover:text-fg">Actividad</a>.</p></div>
+     <button class="btn btn-ghost" data-toast="Deshecho · ${c.neu} fichas borradas${c.live?`, ${c.live} borradores descartados`:''}. Las ${c.upd} actualizadas no cambian." data-action=""><i data-lucide="undo-2"></i>Deshacer importación…</button></div>
+   <dl class="grid grid-cols-2 lg:grid-cols-4 gap-2">${[['Creadas',c.neu,'Sin publicar'],['Actualizadas',c.upd+c.live,c.live?`${c.live} publicadas, con borrador`:'Sin publicar'],['Sin tocar',c.same,'Ya estaban igual'],['Fuera',c.err,c.err?'Con error, no se enviaron':'—']].map(([l,n,x])=>`<div class="card px-3 py-2.5"><dt class="text-xs text-meta">${l}</dt><dd class="num text-xl font-semibold">${fmt(n)}</dd><dd class="text-xs text-muted">${x}</dd></div>`).join('')}</dl>
+   <section aria-labelledby="nx-h"><h2 id="nx-h" class="text-[13px] font-semibold mb-2">Y ahora</h2><div class="grid md:grid-cols-2 gap-3">
+    <div class="next"><span class="ico bg-warn-soft text-warn-icon"><i data-lucide="image"></i></span><div class="flex-1 min-w-0"><p class="font-medium text-sm">${pl(noCover,'ficha sin portada','fichas sin portada')}</p><p class="text-xs text-meta mt-0.5">Sube las fotos en Medios con el nombre que pusiste en el archivo y <b class="font-medium text-fg">vuelve a subir este mismo archivo</b>: se enlazan solas. O asígnalas aquí a mano.</p><div class="flex flex-wrap gap-2 mt-2"><button class="btn btn-sm btn-primary" data-go="subir">Subir el archivo otra vez</button><button class="btn btn-sm btn-ghost" data-go="portadas">Asignar a mano</button></div></div></div>
+    <div class="next"><span class="ico bg-ok-soft text-ok"><i data-lucide="upload"></i></span><div class="flex-1 min-w-0"><p class="font-medium text-sm">${pl(ready,'lista para publicar','listas para publicar')}</p><p class="text-xs text-meta mt-0.5">Nada bloquea. Revisa los avisos y publícalas en lote.</p><button class="btn btn-sm btn-ghost mt-2" data-go="lote">Publicar las listas…</button></div></div>
+    ${c.live?`<div class="next"><span class="ico bg-st-rev-bg text-st-rev"><i data-lucide="git-branch"></i></span><div class="flex-1 min-w-0"><p class="font-medium text-sm">${pl(c.live,'publicada con cambios','publicadas con cambios')}</p><p class="text-xs text-meta mt-0.5">El sitio no ha cambiado. Revisa el cambio y publícalo en cada ficha.</p><a class="btn btn-sm btn-ghost mt-2" href="#listado" data-go="listado" data-view="changes">Ver «Con cambios»</a></div></div>`:''}
+    ${c.err?`<div class="next"><span class="ico bg-danger-soft text-danger"><i data-lucide="file-x"></i></span><div class="flex-1 min-w-0"><p class="font-medium text-sm">${pl(c.err,'fila quedó fuera','filas quedaron fuera')}</p><p class="text-xs text-meta mt-0.5">Corrígelas en el Excel y vuelve a subirlo entero: lo importado sale como «Sin cambios».</p><div class="flex flex-wrap gap-2 mt-2"><button class="btn btn-sm btn-ghost" data-toast="Descargado · ${c.err} filas con error" data-action="">Descargar errores</button><button class="btn btn-sm btn-ghost" data-go="subir">Subir corregido</button></div></div></div>`:''}
+   </div></section>
+   <p><a href="#listado" data-go="listado" class="btn btn-ghost"><i data-lucide="list"></i>Ver las importadas en ${T.title}</a></p></div>`;
+  return h;}
+
+/* ---------- Listado después de importar ---------- */
+/* lo importado: sin las filas con error (no entraron) ni las que no cambiaban */
+function listRows(){return ROWS.filter(r=>r.st!=='same'&&!isErr(r,false));}
+function readyOf(r){if(r.st==='live')return 'live';if(isBlock(r,true))return 'block';return r.st==='hid'?'hidden':'ready';}
+function screenListing(){const all=listRows(),unp=all.filter(r=>r.st!=='live');const ready=unp.filter(r=>readyOf(r)==='ready'),block=unp.filter(r=>readyOf(r)==='block');
+  let rows=S.view==='changes'?all.filter(r=>r.st==='live'):unp;if(S.view!=='changes'){if(S.ready==='ready')rows=ready;if(S.ready==='block')rows=block;}
+  const tabs=[['all','Todos',all.length+64],['published','Publicadas',61+all.filter(r=>r.st==='live').length],['changes','Con cambios',all.filter(r=>r.st==='live').length+2],['draft','Borradores y ocultos',unp.length+1],['stale','Por verificar',9]];
+  const prCell=r=>{const b=issues(r,true).filter(x=>x[0]==='b'),w=issues(r,true).filter(x=>x[0]==='w');
+    if(r.st==='live')return '<span class="pr text-st-rev"><i data-lucide="git-branch"></i>Ver cambios</span>';
+    if(!b.length&&r.st==='hid')return '<span class="pr text-meta"><i data-lucide="eye-off"></i>Oculta: publícala desde su ficha</span>';
+    if(!b.length)return `<span class="pr text-ok"><i data-lucide="circle-check"></i>Lista</span>${w.length?`<span class="text-xs text-meta"> · ${pl(w.length,'aviso','avisos')}</span>`:''}`;
+    const first=b[0][1]==='F'?'Falta portada':b[0][2];return `<span class="pr text-danger"><i data-lucide="octagon-alert"></i>${first}</span>${b.length>1?`<span class="text-xs text-meta"> +${b.length-1}</span>`:''}`;};
+  const chip=r=>r.st==='live'?'<span class="chip-pair"><span class="chip st-pub">Publicada</span><span class="chip st-rev">+'+r.ch.length+'</span></span>':r.st==='hid'?'<span class="chip st-hidden">Oculta</span>':'<span class="chip st-draft"><span class="dot"></span>Borrador</span>';
+  const sel=S.picked;const nSel=rows.filter(r=>sel.has(r.slug)).length;
+  let h=`<header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm md:hidden"><h1 class="font-medium">${T.title}</h1></header>
+   <div class="overflow-x-auto border-b border-line px-4 md:px-6"><div role="tablist" aria-label="Vistas" class="flex min-w-max gap-5">${tabs.map(([k,l,n])=>`<button role="tab" class="tab" data-view="${k}" aria-selected="${S.view===k}">${k==='changes'?'<span class="tdot" aria-hidden="true"></span>':''}${l} <span class="num text-muted">${n}</span></button>`).join('')}</div></div>
+   <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+     <span class="fchip !h-7">Importación de hoy, 10:24 · ${all.length}<button type="button" aria-label="Quitar filtro de importación"><i data-lucide="x"></i></button></span>
+     ${S.view!=='changes'?`<span class="text-xs text-meta ml-1" id="rd-l">Para publicar</span><span class="seg" role="radiogroup" aria-labelledby="rd-l" id="readySeg">${[['all','Todas',unp.length],['ready','Listas',ready.length],['block','Les falta algo',block.length]].map(([k,l,n])=>`<button type="button" role="radio" data-v="${k}" aria-checked="${S.ready===k}">${l} <span class="num opacity-70">${n}</span></button>`).join('')}</span>`:''}
+     ${S.view!=='changes'&&ready.length?`<button class="btn btn-sm btn-ghost ml-auto" data-pick-ready><i data-lucide="list-checks"></i>Seleccionar las ${ready.length} listas</button>`:''}
+   </div>
+   ${nSel?`<div class="px-4 md:px-6 h-12 flex items-center gap-2 bg-acc-soft border-b border-line text-sm sticky top-0 z-10"><b class="num">${nSel}</b> seleccionadas<button class="btn btn-sm btn-quiet" data-clear>Quitar selección</button><span class="ml-auto flex gap-2"><button class="btn btn-sm btn-ghost" data-go="portadas"><i data-lucide="image"></i><span class="hidden sm:inline">Asignar portadas…</span><span class="sm:hidden">Portadas</span></button><button class="btn btn-sm btn-primary" data-go="lote"><i data-lucide="upload"></i>Publicar…</button><button class="btn btn-sm btn-danger-ghost hidden md:inline-flex"><i data-lucide="trash-2"></i>Eliminar…</button></span></div>`:''}
+   <div class="hidden md:block overflow-x-auto"><table class="tbl"><caption class="sr-only">${T.title} de la importación de hoy</caption><thead><tr><th class="w-10"><span class="sr-only">Seleccionar</span></th><th>Nombre</th><th>Estado</th><th>${T.place}</th><th>Para publicar</th><th>Foto</th><th>Actualizada</th></tr></thead><tbody>
+   ${rows.map(r=>{const i=ROWS.indexOf(r);return `<tr aria-selected="${sel.has(r.slug)}"><td><input type="checkbox" class="cb" data-pick="${r.slug}" ${sel.has(r.slug)?'checked':''} aria-label="Seleccionar «${esc(r.name)}»"></td><td><a href="#" class="row-link font-medium">${esc(r.name)}</a></td><td>${chip(r)}</td><td class="text-meta">${esc(r.place||'')}</td><td>${prCell(r)}</td><td>${r.cover==='ok'||r.cover==='noalt'?`<span class="thumb !w-8 !h-6 inline-block align-middle" style="${tint(i)}" role="img" aria-label="Con foto${r.cover==='noalt'?', sin texto alternativo':''}"></span>`:'<i data-lucide="x" class="w-4 h-4 text-warn" role="img" aria-label="Sin foto"></i>'}</td><td class="text-meta">Hoy, 10:24</td></tr>`;}).join('')}
+   </tbody></table></div>
+   <ul class="md:hidden divide-y divide-line">${rows.map(r=>`<li class="px-4 py-3 flex gap-3 items-start"><input type="checkbox" class="cb mt-1 !w-5 !h-5" data-pick="${r.slug}" ${sel.has(r.slug)?'checked':''} aria-label="Seleccionar «${esc(r.name)}»"><div class="min-w-0 flex-1"><p class="font-medium text-sm">${esc(r.name)}</p><p class="mt-1 flex flex-wrap items-center gap-2">${chip(r)}${prCell(r)}</p></div></li>`).join('')}</ul>`;
+  return h;}
+
+/* ---------- Publicar en lote (PublishDialog en lote: bloquea y avisa) ---------- */
+function openLot(){const all=listRows().filter(r=>r.st!=='live');let target=all.filter(r=>S.picked.has(r.slug));
+  if(!target.length){target=all.filter(r=>readyOf(r)==='ready');const b=all.filter(r=>readyOf(r)==='block').slice(0,2);const h=all.filter(r=>r.st==='hid');target=[...new Set([...target,...b,...h])];target.forEach(r=>S.picked.add(r.slug));}
+  const hid=target.filter(r=>r.st==='hid'),blk=target.filter(r=>r.st!=='hid'&&readyOf(r)==='block'),ok=target.filter(r=>r.st!=='hid'&&readyOf(r)==='ready');
+  const warn=ok.filter(r=>issues(r,true).some(x=>x[0]==='w'));S.lot={ok,blk,hid,done:0,busy:false};
+  $('lt-h').textContent=`Publicar ${pl(ok.length,T.noun[0],T.noun[1])}`;
+  $('lt-d').textContent=target.length>ok.length?`Has elegido ${target.length}: se publican las ${ok.length} que nada bloquea. Se verán en el sitio al momento.`:'Se verán en el sitio al momento.';
+  $('ltb').innerHTML=`${blk.length?`<div class="grp bg-danger-soft" role="alert"><p><i data-lucide="circle-x" class="text-danger"></i>${pl(blk.length,'no se publica','no se publican')}: algo lo bloquea</p><ul>${blk.map(r=>{const b=issues(r,true).filter(x=>x[0]==='b');return `<li class="text-[13px]"><b class="font-medium">${esc(r.name)}</b> · ${b.map(x=>x[1]==='F'?(x[4].startsWith('Sin portada')||x[4].startsWith('No está')?'Elige la portada':'Escribe el texto alternativo de la portada'):x[4]).join(' · ')} <a href="#" class="underline underline-offset-2">Abrir</a></li>`;}).join('')}</ul></div>`:''}
+    ${hid.length?`<div class="grp bg-subtle"><p><i data-lucide="eye-off" class="text-meta"></i>${pl(hid.length,'oculta no se publica','ocultas no se publican')} en lote</p><ul>${hid.map(r=>`<li class="text-[13px]"><b class="font-medium">${esc(r.name)}</b> · la ocultaste tú: si quieres que vuelva, publícala desde su ficha.</li>`).join('')}</ul></div>`:''}
+    ${ok.length?`<p class="flex items-center gap-2 text-sm"><i data-lucide="circle-check" class="w-4 h-4 text-ok"></i>${pl(ok.length,'lista','listas')}: nada bloquea su publicación.</p>`:''}
+    ${warn.length?`<div class="grp bg-warn-soft"><p class="text-warn"><i data-lucide="triangle-alert" class="text-warn-icon"></i>Avisos (no bloquean) en ${pl(warn.length,'ficha','fichas')}</p><ul>${warn.map(r=>`<li class="text-[13px]"><b class="font-medium">${esc(r.name)}</b> · ${issues(r,true).filter(x=>x[0]==='w').map(x=>x[4]).join(' · ')}</li>`).join('')}</ul></div>`:''}
+    <p class="text-xs text-meta flex gap-1.5"><i data-lucide="badge-info" class="w-3.5 h-3.5 mt-px flex-none"></i><span>${TIPO==='pies'?'Las cedidas por la marca y las que tienen enlace de afiliado':'Las visitas invitadas'} se marcan siempre en la ficha. Cada publicación queda en Actividad.</span></p>
+    <div id="ltProg"></div>`;
+  lotFoot();CG.icons();CG.open('lote');}
+function lotFoot(){const L=S.lot;$('ltf').innerHTML=L.busy?`<p class="text-sm text-meta flex-1" aria-live="polite">Publicando ${pl(L.ok.length,T.noun[0],T.noun[1])}…</p><button class="btn btn-primary" disabled aria-busy="true"><i data-lucide="loader-2" class="spin"></i>Publicando…</button>`
+  :`<button class="btn btn-ghost" data-close>Seguir revisando</button><button class="btn btn-primary" id="ltGo" ${L.ok.length?'':'disabled'}><i data-lucide="upload"></i>Publicar ${pl(L.ok.length,T.noun[0],T.noun[1])}</button>`;CG.icons();}
+
+/* ---------- Asignar portadas ---------- */
+function openCovers(){const rows=listRows().filter(r=>r.st!=='live'&&r.cover!=='ok');
+  const kind=(r,_)=>{const i=ROWS.indexOf(r);return r.cover==='noalt'?'noalt':r.cover==='many'?'many':r.cover==='none'?'none':(i%5===3?'miss':i%11===5?'similar':'match');};
+  const T2={match:['circle-check','text-ok','Coincide'],similar:['circle-help','text-warn','Parecida: confírmala'],noalt:['triangle-alert','text-warn','Sin texto alternativo'],many:['copy','text-warn','2 con este nombre'],miss:['image-off','text-danger','No está en Medios'],none:['image-off','text-meta','Sin archivo en la plantilla']};
+  const ORD={similar:0,noalt:1,many:2,miss:3,none:4,match:5};rows.sort((a,b)=>ORD[kind(a,ROWS.indexOf(a))]-ORD[kind(b,ROWS.indexOf(b))]);
+  const cnt={};rows.forEach((r,i)=>{const k=kind(r,i);cnt[k]=(cnt[k]||0)+1;});
+  $('pt-d').textContent=`${pl(rows.length,'ficha sin portada','fichas sin portada')} de la importación. Sugerimos la foto de Medios cuyo nombre coincide con su URL.`;
+  $('ptb').innerHTML=`<div class="flex flex-wrap items-center gap-2 mb-3 text-xs text-meta"><span>${cnt.match||0} coinciden</span>·<span>${(cnt.similar||0)+(cnt.noalt||0)+(cnt.many||0)} por revisar</span>·<span>${(cnt.miss||0)+(cnt.none||0)} sin foto</span>
+     <a href="medios.html#subir" target="_blank" class="btn btn-sm btn-ghost ml-auto">Subir en Medios<i data-lucide="external-link"></i><span class="sr-only"> (pestaña nueva)</span></a><button class="btn btn-sm btn-ghost" data-toast="Medios comprobado · sin novedades" data-action=""><i data-lucide="rotate-cw"></i>Buscar de nuevo</button></div>
+   <div role="list" aria-label="Fichas sin portada">${rows.map((r,i)=>{const k=kind(r,i),t=T2[k],idx=ROWS.indexOf(r),can=['match','similar','noalt','many'].includes(k);const pre=k==='match'||k==='noalt';
+     return `<div class="cv-row" role="listitem"><input type="checkbox" class="cb" data-cv="${k}" ${pre?'checked':''} ${can&&k!=='noalt'?'':'disabled'} aria-label="Asignar portada a «${esc(r.name)}»" id="cv${i}">
+      <label for="cv${i}" class="min-w-0"><span class="block text-sm font-medium truncate">${esc(r.name)}</span><span class="block mono text-[11.5px] text-meta truncate">${k==='none'?'—':FILEOF(r)}</span></label>
+      <div class="cv-file flex items-center gap-2 min-w-0">${k==='miss'||k==='none'?'<span class="missing" aria-hidden="true"><i data-lucide="image-off"></i></span>':k==='many'?`<span class="thumb" style="${tint(idx)}" aria-hidden="true"></span><span class="thumb opacity-60" style="${tint(idx+4)}" aria-hidden="true"></span>`:`<span class="thumb lg" style="${tint(idx)}" aria-hidden="true"></span>`}<span class="pr ${t[1]} !whitespace-normal"><i data-lucide="${t[0]}"></i>${t[2]}</span></div>
+      <div class="cv-act min-w-0">${k==='noalt'?`<label class="lbl !mb-1" for="alt${i}">Texto alternativo (ES) <span class="text-muted font-normal">· del archivo</span></label><input id="alt${i}" class="input" data-alt="cv${i}" value="${esc(TIPO==='pies'?'Pie de gato '+r.name+' visto de lado':'Sala de bloque de '+r.name)}"><p class="help">Se guarda en Medios: vale para todas las fichas que usen la foto.</p>`
+        :k==='similar'?`<p class="text-xs text-meta">En Medios: <span class="mono">${esc(r.name.replace(/ /g,'_'))}.JPG</span>. Márcala si es la misma.</p>`
+        :k==='many'?`<div class="seg" role="radiogroup" aria-label="Cuál de las dos"><button type="button" role="radio" aria-checked="true">Subida 2 nov</button><button type="button" role="radio" aria-checked="false">Subida 28 oct</button></div>`
+        :k==='match'?`<span class="text-xs text-meta">Con texto alternativo</span>`
+        :`<button class="btn btn-sm btn-ghost" data-toast="Abre el selector de Medios" data-action=""><i data-lucide="images"></i>Elegir de Medios…</button>`}</div></div>`;}).join('')}</div>`;
+  covFoot();CG.icons();CG.open('portadas');}
+function covFoot(){const n=document.querySelectorAll('#ptb [data-cv]:checked').length;
+  $('ptf').innerHTML=`<p class="text-xs text-meta flex-1 min-w-[200px]">Las publicadas reciben la portada en su borrador. Las demás, al momento.</p><button class="btn btn-ghost" data-close>Cerrar</button><button class="btn btn-primary" id="cvGo" ${n?'':'disabled'}><i data-lucide="image"></i>Asignar ${pl(n,'portada','portadas')}</button>`;CG.icons();}
+
+/* ---------- Pintar ---------- */
+function render(){chrome();
+  const s=S.screen;
+  if(s==='subir')$('screen').innerHTML=screenUpload();
+  else if(s==='revision')$('screen').innerHTML=screenReview();
+  else if(s==='aplicando')$('screen').innerHTML=screenApply();
+  else if(s==='resultado')$('screen').innerHTML=screenResult();
+  else $('listing').innerHTML=screenListing();
+  $('mockNote').innerHTML=`Mockup F6.15b (D50) · ${T.title} · hoy: ${TODAY}. Tipos: <a class="underline" href="?tipo=pies${location.hash}">pies</a> · <a class="underline" href="?tipo=rocodromos${location.hash}">rocódromos</a> · <a class="underline" href="?tipo=resoladores${location.hash}">resoladores</a>.<br>
+   Archivo: <a class="underline" href="#subir">#subir</a> · <a class="underline" href="#leyendo">#leyendo</a> · <a class="underline" href="#error-formato">#error-formato</a> · <a class="underline" href="#error-plantilla">#error-plantilla</a> · <a class="underline" href="#error-tipo">#error-tipo</a> · <a class="underline" href="#falta-columna">#falta-columna</a> · <a class="underline" href="#columnas">#columnas</a> · <a class="underline" href="#hojas">#hojas</a> · <a class="underline" href="#vacio">#vacio</a> · <a class="underline" href="#grande">#grande</a>.
+   Revisión: <a class="underline" href="#revision">#revision</a> (con errores) · <a class="underline" href="#revision-ok">#revision-ok</a> · <a class="underline" href="#comas">#comas</a> · <a class="underline" href="#confirmar">#confirmar</a> · <a class="underline" href="#cambio">#cambio</a> (algo cambió al aplicar).
+   Importar: <a class="underline" href="#aplicando">#aplicando</a> · <a class="underline" href="#resultado">#resultado</a> · <a class="underline" href="#parcial">#parcial</a> · <a class="underline" href="#detenido">#detenido</a> (archivos de más de 100 filas, por trozos).
+   Después: <a class="underline" href="#listado">#listado</a> · <a class="underline" href="#lote">#lote</a> · <a class="underline" href="#lote-fallo">#lote-fallo</a> · <a class="underline" href="#portadas">#portadas</a>. A 390 el flujo de importar muestra el aviso de móvil; listado, lote y portadas sí funcionan.`;
+  CG.icons();}
+function go(h){if(location.hash==='#'+h)fromHash();else location.hash=h;}
+function fromHash(){const h=location.hash.slice(1)||'subir';S.apply&&clearTimeout(S.apply.iv);S.apply=null;document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));document.body.style.overflow='';
+  S.variant='';S.fixed=false;S.filter=null;S.page=0;
+  if(['subir','leyendo','columnas','hojas',...Object.keys(FILE_ERR)].includes(h)){S.screen='subir';S.variant=h==='subir'?'':h;}
+  else if(['revision','revision-ok','comas','confirmar','cambio'].includes(h)){S.screen='revision';S.fixed=h==='revision-ok';S.variant=h==='comas'||h==='cambio'?h:'';if(h==='comas')S.sep=',';}
+  else if(h==='aplicando'){S.screen='aplicando';S.apply={done:0};}
+  else if(['resultado','parcial','detenido'].includes(h)){S.screen='resultado';S.variant=h;} /* el ejemplo: se importó sin las filas con error */
+  else {S.screen='listado';}
+  render();
+  if(h==='confirmar')openConfirm();
+  if(h==='aplicando')startApply();
+  if(h==='lote'||h==='lote-fallo')openLot();
+  if(h==='portadas')openCovers();}
+function startApply(){S.apply={};render();S.apply.iv=setTimeout(()=>{S.apply=null;history.replaceState(null,'','#resultado');S.screen='resultado';S.variant='resultado';render();CG.announce('Importación terminada');},1600);}
+
+/* ---------- Interacción ---------- */
+document.addEventListener('click',e=>{let b;
+  if(b=e.target.closest('[data-go]')){e.preventDefault();if(b.dataset.view)S.view=b.dataset.view;const t=b.dataset.go;if(t==='lote'&&S.screen==='listado'){openLot();return;}if(t==='portadas'&&S.screen==='listado'){openCovers();return;}go(t);return;}
+  if(e.target.closest('[data-tpl]')){e.preventDefault();CG.toast(`Descargando chalkguide-plantilla-${T.file}.xlsx`,{action:null});return;}
+  if(b=e.target.closest('[data-filter]')){S.filter=b.dataset.filter;S.page=0;$('screen').innerHTML=screenReview();CG.icons();document.querySelector(`[data-filter="${S.filter}"]`).focus();return;}
+  if(b=e.target.closest('[data-pg]')){S.page+=+b.dataset.pg;$('screen').innerHTML=screenReview();CG.icons();return;}
+  if(b=e.target.closest('#sepSeg [role=radio]')){S.sep=b.dataset.v;return;}
+  if(e.target.closest('[data-open-confirm]')){openConfirm();return;}
+  if(e.target.closest('#doImport')){CG.close('confirm');history.replaceState(null,'','#aplicando');S.screen='aplicando';S.fixed=false;startApply();return;}
+  if(b=e.target.closest('[data-view]')){S.view=b.dataset.view==='changes'?'changes':'draft';if(S.screen==='listado')render();return;}
+  if(b=e.target.closest('#readySeg [role=radio]')){S.ready=b.dataset.v;render();document.querySelector(`#readySeg [data-v="${S.ready}"]`).focus();return;}
+  if(e.target.closest('[data-pick-ready]')){listRows().filter(r=>r.st!=='live'&&readyOf(r)==='ready').forEach(r=>S.picked.add(r.slug));render();return;}
+  if(e.target.closest('[data-clear]')){S.picked.clear();render();return;}
+  if(e.target.closest('#ltGo')){const L=S.lot;L.busy=true;lotFoot();setTimeout(()=>{L.busy=false;CG.close('lote');S.picked.clear();render();
+    if(location.hash==='#lote-fallo')CG.toast(`${pl(L.ok.length-1,'ficha publicada','fichas publicadas')}. «${esc(L.ok[0].name)}» no: su portada ya no tiene texto alternativo. <a href="#" class="underline">Abrir</a>`,{type:'err',action:null});
+    else CG.toast(`${pl(L.ok.length,'ficha publicada','fichas publicadas')} · ya se ven en el sitio`,{action:'Ver'});},900);return;}
+  if(e.target.closest('#cvGo')){const n=document.querySelectorAll('#ptb [data-cv]:checked').length;CG.close('portadas');CG.toast(`${pl(n,'portada asignada','portadas asignadas')}`,{action:'Deshacer'});return;}
+});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.dataset.pick){t.checked?S.picked.add(t.dataset.pick):S.picked.delete(t.dataset.pick);render();const el=document.querySelector(`[data-pick="${t.dataset.pick}"]:not(.md\\:hidden *)`);el&&el.focus();return;}
+  if(t.dataset.cv!==undefined){covFoot();return;}
+  if(t.id==='fileIn'){go('leyendo');setTimeout(()=>go('revision'),900);return;}
+});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.alt){const cb=$(t.dataset.alt);cb.disabled=!t.value.trim();if(!t.value.trim())cb.checked=false;covFoot();}});
+document.addEventListener('dragover',e=>{const d=e.target.closest&&e.target.closest('#dz');if(d){e.preventDefault();d.classList.add('over');}});
+document.addEventListener('dragleave',e=>{const d=e.target.closest&&e.target.closest('#dz');d&&d.classList.remove('over');});
+document.addEventListener('drop',e=>{const d=e.target.closest&&e.target.closest('#dz');if(d){e.preventDefault();go('leyendo');setTimeout(()=>go('revision'),900);}});
+document.addEventListener('DOMContentLoaded',()=>{$('demoTipo').value=TIPO;$('demoTipo').onchange=ev=>{location.search='?tipo='+ev.target.value;};
+  /* la casilla de alt arranca activable si el texto viene del archivo */
+  setTimeout(()=>{fromHash();},0);});
+addEventListener('hashchange',fromHash);
+/* tras pintar portadas, las casillas con alt rellenado se pueden marcar */
+const _oc=openCovers;openCovers=function(){_oc();document.querySelectorAll('#ptb [data-alt]').forEach(i=>{const cb=$(i.dataset.alt);cb.disabled=!i.value.trim();});covFoot();};
+</script>
+</body>
+</html>

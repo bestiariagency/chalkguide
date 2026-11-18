@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# ingest-call <rpc>  (JSON de parametros por stdin, sin token)
+# Cliente fijo de la rutina F8 (O2/O3 de docs/security/F8.1-ingest-spec.md).
+# Env: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, CHALKGUIDE_INGEST_TOKEN.
+# Sin set -x, sin echo del token, sin curl -v. Errores: solo codigo y mensaje del servidor.
+set -euo pipefail
+set +x
+
+rpc="${1:-}"
+case "$rpc" in
+  ingest_start_run|ingest_context|ingest_submit_event|ingest_submit_news|ingest_submit_newsletter_intro|ingest_finish_run) ;;
+  *) echo "ingest-call: rpc no permitida" >&2; exit 2 ;;
+esac
+[ "$#" -eq 1 ] || { echo "ingest-call: uso: ingest-call <rpc> < json" >&2; exit 2; }
+
+: "${SUPABASE_URL:?ingest-call: falta SUPABASE_URL}"
+: "${SUPABASE_PUBLISHABLE_KEY:?ingest-call: falta SUPABASE_PUBLISHABLE_KEY}"
+: "${CHALKGUIDE_INGEST_TOKEN:?ingest-call: falta CHALKGUIDE_INGEST_TOKEN}"
+
+case "$SUPABASE_URL" in
+  https://*.supabase.co|https://*.supabase.co/) ;;
+  *) echo "ingest-call: SUPABASE_URL no valida" >&2; exit 2 ;;
+esac
+base="${SUPABASE_URL%/}"
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+# Cuerpo: stdin (objeto JSON) + p_token via jq --arg; el modelo nunca ve el token.
+if ! jq -c --arg t "$CHALKGUIDE_INGEST_TOKEN" 'if type=="object" then . + {p_token:$t} else error("no object") end' 2>/dev/null \
+  | curl -sS --max-time 60 -o "$tmp" -w '%{http_code}' -X POST \
+      -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
+      -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" \
+      -H "Content-Type: application/json" \
+      -H "Content-Profile: guide" \
+      -H "Accept: application/json" \
+      --data @- "${base}/rest/v1/rpc/${rpc}" > "${tmp}.code" 2>/dev/null; then
+  rm -f "${tmp}.code"
+  echo "ingest-call: fallo de red o JSON de entrada invalido" >&2
+  exit 3
+fi
+code="$(cat "${tmp}.code")"; rm -f "${tmp}.code"
+
+if [ "$code" -ge 200 ] && [ "$code" -lt 300 ]; then
+  cat "$tmp"; echo
+  exit 0
+fi
+# Error: solo code/message del servidor (nunca el cuerpo enviado), sin el token por si acaso.
+msg="$(jq -r '[.code // "", .message // ""] | join(" ")' "$tmp" 2>/dev/null | head -c 300 || true)"
+msg="${msg//"$CHALKGUIDE_INGEST_TOKEN"/[redacted]}"
+echo "ingest-call: HTTP ${code} ${msg}" >&2
+exit 1

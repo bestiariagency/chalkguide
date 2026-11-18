@@ -1,0 +1,197 @@
+[
+  {
+    "name": "La Sportiva Tarantula",
+    "slug": "la-sportiva-tarantula",
+    "brand": "La Sportiva",
+    "model": "Tarantula",
+    "summary_es": "Pie de gato de velcro con forma neutra y goma FriXion Black de 4 mm. Barrabes lo recomienda para quienes empiezan a escalar y para usarlo en rocódromo.",
+    "summary_en": "Velcro climbing shoe with a neutral shape and 4 mm FriXion Black rubber. Barrabes recommends it for people starting out and for use in climbing gyms.",
+    "closure": "Velcro",
+    "rubber": "FriXion Black",
+    "rubber_thickness_mm": 4,
+    "recommended_use": [
+      "Rocódromo"
+    ],
+    "levels": [
+      "Inicio"
+    ],
+    "price_min_eur": 85.5,
+    "price_max_eur": 95,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-tarantula/product-225530",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Tarantulace",
+    "slug": "la-sportiva-tarantulace",
+    "brand": "La Sportiva",
+    "model": "Tarantulace",
+    "summary_es": "Pie de gato polivalente de hombre con cordones y goma FriXion Black de 4 mm. El empeine combina piel y piel sintética.",
+    "summary_en": "Versatile men's climbing shoe with laces and 4 mm FriXion Black rubber. The upper combines leather and synthetic leather.",
+    "fit": "Hombre",
+    "closure": "Cordones",
+    "rubber": "FriXion Black",
+    "rubber_thickness_mm": 4,
+    "source": "Barrabes",
+    "source_url": "https://m.barrabes.com/la-sportiva-tarantulace/p-141169",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Solution",
+    "slug": "la-sportiva-solution",
+    "brand": "La Sportiva",
+    "model": "Solution",
+    "summary_es": "Pie de gato pensado para bloque, con un solo velcro de ajuste rápido y goma Vibram XS Grip2 de 3,5 mm. Para quien prioriza la precisión.",
+    "summary_en": "Climbing shoe designed for bouldering, with a single quick-fit velcro strap and 3.5 mm Vibram XS Grip2 rubber. Aimed at climbers who put precision first.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Grip2",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Bloque"
+    ],
+    "price_min_eur": 128.99,
+    "price_max_eur": 164.99,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-solution/product-19643",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Solution Comp",
+    "slug": "la-sportiva-solution-comp",
+    "brand": "La Sportiva",
+    "model": "Solution Comp",
+    "summary_es": "Pie de gato de alto rendimiento para escalada en interior y competición, con velcro y refuerzos en puntera y talón para el hook. Microfibra y piel.",
+    "summary_en": "High-performance climbing shoe for indoor climbing and competition, with velcro and reinforced toe and heel for hooking. Microfibre and leather upper.",
+    "closure": "Velcro",
+    "recommended_use": [
+      "Rocódromo"
+    ],
+    "price_min_eur": 133.95,
+    "price_max_eur": 170,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-solution-comp-black-yellow-25/product-518554",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Skwama",
+    "slug": "la-sportiva-skwama",
+    "brand": "La Sportiva",
+    "model": "Skwama",
+    "summary_es": "Pie de gato de alto rendimiento para bloque y deportiva, con downturn elevado y ajuste ceñido tipo slipper. Barrabes lo orienta a escaladores avanzados y pies de anchura media.",
+    "summary_en": "High-performance shoe for bouldering and sport climbing, with a pronounced downturn and a snug slipper-style fit. Barrabes aims it at advanced climbers with medium-width feet.",
+    "profile": "Agresivo",
+    "recommended_use": [
+      "Rocódromo",
+      "Bloque",
+      "Deportiva"
+    ],
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 130.95,
+    "price_max_eur": 160,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-skwama/product-545459",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Miura",
+    "slug": "la-sportiva-miura",
+    "brand": "La Sportiva",
+    "model": "Miura",
+    "summary_es": "Pie de gato técnico de hombre para escalada deportiva, con cordones, horma estrecha y goma Vibram XS Edge de 4 mm. Barrabes lo cita también para competición.",
+    "summary_en": "Technical men's shoe for sport climbing, with laces, a narrow last and 4 mm Vibram XS Edge rubber. Barrabes also lists it as suited to competition.",
+    "fit": "Hombre",
+    "closure": "Cordones",
+    "rubber": "Vibram XS Edge",
+    "rubber_thickness_mm": 4,
+    "recommended_use": [
+      "Deportiva"
+    ],
+    "price_min_eur": 126.99,
+    "price_max_eur": 149.99,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-miura/product-19727",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Miura VS",
+    "slug": "la-sportiva-miura-vs",
+    "brand": "La Sportiva",
+    "model": "Miura VS",
+    "summary_es": "Pie de gato agresivo para bloque y deportiva, con tres velcros, fuerte tensión y suela Vibram XS Edge rígida. Se puede resolar.",
+    "summary_en": "Aggressive shoe for bouldering and sport climbing, with three velcro straps, strong tension and a stiff Vibram XS Edge sole. It can be resoled.",
+    "profile": "Agresivo",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Edge",
+    "stiffness": "Rígida",
+    "recommended_use": [
+      "Bloque",
+      "Deportiva"
+    ],
+    "price_min_eur": 130.95,
+    "price_max_eur": 160,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-miura-vs-black-yellow-25/product-518568",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Katana",
+    "slug": "la-sportiva-katana",
+    "brand": "La Sportiva",
+    "model": "Katana",
+    "summary_es": "Pie de gato polivalente para todo tipo de escalada, con doble correa opuesta, sistema P3 y suela Vibram XS Edge. Equilibra sensibilidad, precisión y apoyo.",
+    "summary_en": "All-round climbing shoe with two opposing straps, the P3 system and a Vibram XS Edge sole. It balances sensitivity, precision and support.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Edge",
+    "price_min_eur": 123.99,
+    "price_max_eur": 155,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-katana/product-225534",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Katana Lace",
+    "slug": "la-sportiva-katana-lace",
+    "brand": "La Sportiva",
+    "model": "Katana Lace",
+    "summary_es": "Pie de gato versátil con cordones para roca y rocódromo, con downturn medio, talón para heel hooks y lengüeta transpirable. Se puede resolar.",
+    "summary_en": "Versatile lace-up shoe for rock and the gym, with a medium downturn, a heel built for heel hooks and a breathable tongue. It can be resoled.",
+    "profile": "Moderado",
+    "closure": "Cordones",
+    "recommended_use": [
+      "Rocódromo"
+    ],
+    "price_min_eur": 140.9,
+    "price_max_eur": 170,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato-sportiva-katana-laces-yellow-black-25/product-518563",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Finale",
+    "slug": "la-sportiva-finale",
+    "brand": "La Sportiva",
+    "model": "Finale",
+    "summary_es": "Pie de gato polivalente y cómodo para uso en interior y exterior. Barrabes lo recomienda para vías largas.",
+    "summary_en": "Comfortable all-round climbing shoe for indoor and outdoor use. Barrabes recommends it for long routes.",
+    "recommended_use": [
+      "Rocódromo",
+      "Vías largas"
+    ],
+    "price_min_eur": 113.99,
+    "price_max_eur": 135,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/sportiva-finale-space-blue-maple/product-129066",
+    "verified_at": "2026-11-06"
+  }
+]

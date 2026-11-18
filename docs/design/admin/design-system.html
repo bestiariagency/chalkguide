@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel · Design system (5.4) · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .ds-sec{scroll-margin-top:16px;padding-top:40px;margin-top:40px;border-top:1px solid var(--line)}
+  .ds-sec:first-of-type{border-top:0;margin-top:0}
+  .ds-h{font-size:20px;line-height:28px;font-weight:600;letter-spacing:-.01em}
+  .ds-h3{font-size:13px;font-weight:600;margin:28px 0 10px;display:flex;align-items:center;gap:8px}
+  .ds-note{font-size:13px;color:var(--meta);max-width:72ch}
+  .spec{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--meta)}
+  .stage{border:1px solid var(--line);border-radius:10px;padding:20px;background:var(--bg)}
+  .stage.side{background:var(--side)}
+  .toc a{display:block;padding:4px 10px;border-radius:6px;font-size:13px;color:var(--meta)}
+  .toc a:hover{background:var(--subtle);color:var(--fg)}
+  .sw{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--elev)}
+  .sw>div:first-child{height:44px}
+  .force-focus{outline:2px solid var(--acc)!important;outline-offset:2px}
+  .force-hover.btn-primary{background:#3F3F46!important}
+  .force-hover.btn-ghost{background:var(--subtle)!important;border-color:var(--control)!important}
+  .force-focus-in{border-color:var(--acc)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 22%,transparent)!important}
+</style>
+</head>
+<body data-page="ds" data-shell="none" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+
+<main id="contenido" class="max-w-[1320px] mx-auto px-4 md:px-8 py-8 md:py-12 lg:grid lg:grid-cols-[200px_1fr] lg:gap-12">
+  <nav class="toc hidden lg:block sticky top-6 self-start" aria-label="Secciones del design system">
+    <p class="grp-label px-2.5 mb-2">5.4 · Design system</p>
+    <a href="#tokens">Tokens</a><a href="#tipo">Tipografía y medidas</a><a href="#botones">Botones</a><a href="#estados">Insignias de estado</a>
+    <a href="#cambios">Cambios sin publicar</a><a href="#forms">Formularios</a><a href="#idiomas">ES / EN</a><a href="#tablas">Tablas de datos</a>
+    <a href="#medios">Selector de medios</a><a href="#overlays">Modales y hojas</a><a href="#toasts">Toasts</a><a href="#borrar">Confirmar borrado</a>
+    <a href="#vacios">Vacío, carga, error</a><a href="#dnd">Arrastrar y ordenar</a><a href="#a11y">Accesibilidad</a>
+  </nav>
+
+  <div class="min-w-0">
+    <header>
+      <p class="grp-label">ChalkGuide · Panel /administrador · F5.4 · 9 oct 2026 · Búho-Pixel</p>
+      <h1 class="text-3xl font-semibold tracking-tight mt-2">Design system del panel</h1>
+      <p class="mt-3 ds-note">Dirección <b class="text-fg">A · Consola</b> aprobada en D23. Herramienta clara y densa: neutros zinc, una sola tinta de acción y el naranja de ChalkGuide como hilo (foco, selección, contadores). <b class="text-fg">Solo tema claro en v1</b>; los tokens del oscuro están definidos con los mismos nombres (clase <code class="spec">.theme-dark</code>) y sin conmutador. CSS de referencia: <code class="spec">assets/admin.css</code>. Spec para coneja-lucky en <code class="spec">README.md</code> §5.</p>
+    </header>
+
+    <!-- ============ TOKENS ============ -->
+    <section id="tokens" class="ds-sec" aria-labelledby="h-tokens">
+      <h2 id="h-tokens" class="ds-h">Tokens de color</h2>
+      <p class="mt-2 ds-note">Ratios medidos (WCAG 2.x) sobre el fondo indicado. Texto ≥ 4.5, UI ≥ 3. <span class="text-fg">Cambios frente a 5.2:</span> <code class="spec">warn</code> pasa de #A16207 (4.4 sobre su fondo, no llegaba) a #92400E; <code class="spec">st-pub</code> de #15803D (4.6, justo) a #166534; nuevos <code class="spec">st-rev</code> (cambios sin publicar) y <code class="spec">st-hidden</code> (oculto).</p>
+
+      <h3 class="ds-h3">Superficies y texto</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 text-xs">
+        <div class="sw"><div style="background:#FFFFFF;border-bottom:1px solid var(--line)"></div><div class="p-2"><b>bg / elev</b><p class="spec">#FFFFFF</p></div></div>
+        <div class="sw"><div style="background:#FAFAFA"></div><div class="p-2"><b>side</b><p class="spec">#FAFAFA · menú, thead</p></div></div>
+        <div class="sw"><div style="background:#F4F4F5"></div><div class="p-2"><b>subtle</b><p class="spec">#F4F4F5 · hover</p></div></div>
+        <div class="sw"><div style="background:#E4E4E7"></div><div class="p-2"><b>line</b><p class="spec">#E4E4E7 · decorativo</p></div></div>
+        <div class="sw"><div style="background:#D4D4D8"></div><div class="p-2"><b>line-strong</b><p class="spec">#D4D4D8 · decorativo</p></div></div>
+        <div class="sw"><div style="background:#8B8B94"></div><div class="p-2"><b>control</b><p class="spec">#8B8B94 · 3.4 UI</p></div></div>
+        <div class="sw"><div style="background:#18181B"></div><div class="p-2"><b>fg / primary</b><p class="spec">#18181B · 17.7</p></div></div>
+        <div class="sw"><div style="background:#52525B"></div><div class="p-2"><b>meta</b><p class="spec">#52525B · 7.7</p></div></div>
+        <div class="sw"><div style="background:#71717A"></div><div class="p-2"><b>muted</b><p class="spec">#71717A · 4.8 (no sobre subtle)</p></div></div>
+        <div class="sw"><div style="background:#C2410C"></div><div class="p-2"><b>acc</b><p class="spec">#C2410C · 5.2 · foco</p></div></div>
+        <div class="sw"><div style="background:#FFF1E8"></div><div class="p-2"><b>acc-soft</b><p class="spec">#FFF1E8 · acc 4.7</p></div></div>
+        <div class="sw"><div style="background:#B91C1C"></div><div class="p-2"><b>danger</b><p class="spec">#B91C1C · 6.5 · blanco 6.5</p></div></div>
+      </div>
+
+      <h3 class="ds-h3">Estados y feedback <span class="font-normal text-meta">(texto sobre su fondo)</span></h3>
+      <div class="overflow-x-auto"><table class="tbl min-w-[640px]"><thead><tr><th>Token</th><th>Claro</th><th>Ratio</th><th>Oscuro (preparado)</th><th>Uso</th></tr></thead><tbody>
+        <tr><td><span class="chip st-draft"><span class="dot"></span>Borrador</span></td><td class="spec">#3F3F46 / #F4F4F5</td><td class="num">9.5</td><td class="spec">#D4D4D8 / #232327</td><td class="text-meta">Borrador, sin publicar nunca</td></tr>
+        <tr><td><span class="chip st-sched"><span class="dot"></span>Programado</span></td><td class="spec">#1D4ED8 / #DBEAFE</td><td class="num">5.5</td><td class="spec">#93C5FD / #172554</td><td class="text-meta">Programado, info</td></tr>
+        <tr><td><span class="chip st-pub"><span class="dot"></span>Publicado</span></td><td class="spec">#166534 / #DCFCE7</td><td class="num">6.5</td><td class="spec">#86EFAC / #052E16</td><td class="text-meta">Publicado, visible, activo, éxito</td></tr>
+        <tr><td><span class="chip st-rev"><span class="dot"></span>Cambios sin publicar</span></td><td class="spec">#6D28D9 / #EDE9FE</td><td class="num">6.0</td><td class="spec">#C4B5FD / #2E1065</td><td class="text-meta">Borrador de cambios sobre algo publicado. Color exclusivo de este estado</td></tr>
+        <tr><td><span class="chip st-hidden"><i data-lucide="eye-off"></i>Oculto</span></td><td class="spec">#52525B, borde ‑‑ #8B8B94</td><td class="num">7.7 / 3.4</td><td class="spec">#A1A1AA, ‑‑ #6E6E78</td><td class="text-meta">Ficha despublicada, opinión oculta. Contorno discontinuo + icono</td></tr>
+        <tr><td><span class="chip st-warn"><i data-lucide="triangle-alert"></i>Aviso</span></td><td class="spec">#92400E / #FEF3C7</td><td class="num">6.4</td><td class="spec">#FCD34D / #2A1F05</td><td class="text-meta">Avisos no bloqueantes (icono #B45309, 4.5)</td></tr>
+        <tr><td><span class="chip st-danger"><i data-lucide="circle-alert"></i>Error</span></td><td class="spec">#B91C1C / #FEE2E2</td><td class="num">5.3</td><td class="spec">#F87171 / #2A0E0E</td><td class="text-meta">Errores, baja, rebotado, eliminar</td></tr>
+      </tbody></table></div>
+
+      <h3 class="ds-h3">Tema oscuro (preparado, no se activa en v1)</h3>
+      <p class="ds-note">Mismos nombres de token bajo <code class="spec">.theme-dark</code> (en Nuxt: <code class="spec">.admin.dark</code>). Muestra para comprobar que el set aguanta; no hay conmutador en el panel.</p>
+      <div class="theme-dark mt-3 rounded-xl p-5 border" style="background:var(--bg);color:var(--fg);border-color:var(--line)">
+        <div class="flex flex-wrap items-center gap-2">
+          <button class="btn btn-primary">Publicar cambios</button><button class="btn btn-ghost">Vista previa</button>
+          <span class="chip st-draft"><span class="dot"></span>Borrador</span><span class="chip st-sched"><span class="dot"></span>Programado</span><span class="chip st-pub"><span class="dot"></span>Publicado</span><span class="chip st-rev"><span class="dot"></span>Cambios sin publicar</span><span class="chip st-hidden"><i data-lucide="eye-off"></i>Oculto</span>
+          <input class="input !w-56" placeholder="Buscar por título o slug" aria-label="Ejemplo de campo en oscuro"><span class="count">7</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TIPOGRAFÍA ============ -->
+    <section id="tipo" class="ds-sec" aria-labelledby="h-tipo">
+      <h2 id="h-tipo" class="ds-h">Tipografía y medidas</h2>
+      <div class="mt-4 grid lg:grid-cols-2 gap-6">
+        <div class="stage space-y-3">
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">34/40 · 600</span><span class="text-[34px] leading-[40px] font-semibold tracking-tight">Título del editor</span></div>
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">20/28 · 600</span><span class="text-xl font-semibold tracking-tight">Título de página</span></div>
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">16/24 · 600</span><span class="text-lg font-semibold">Título de modal</span></div>
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">16/28 · 400</span><span class="text-lg leading-7">Lienzo de lectura</span></div>
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">14/22 · 400</span><span class="text-base">Cuerpo y formularios largos</span></div>
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">13/20 · 400–600</span><span class="text-sm">Tabla, controles, menú <b class="font-semibold">· cabecera de tarjeta</b></span></div>
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">12/16 · 500</span><span class="text-xs font-medium">Etiqueta de campo, insignia, meta</span></div>
+          <div class="flex items-baseline gap-4"><span class="spec w-24 flex-none">10.5 mono</span><span class="grp-label">Grupo de menú · slug · hora</span></div>
+        </div>
+        <div class="stage space-y-4 text-sm">
+          <p><b>Fuentes.</b> Inter 400/500/600 (cv11, ss01) y JetBrains Mono 400/500 para slugs, horas, atajos, hex y cifras de etiqueta. Números con <code class="spec">tabular-nums</code>.</p>
+          <p><b>Espaciado.</b> Escala de 4: 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48. Página: 24 px laterales (16 en móvil). Entre secciones de formulario 32, entre campos 16, etiqueta→campo 6.</p>
+          <p><b>Radios.</b> 3 (idioma) · 4 (insignia, checkbox) · 6 (botón, campo) · 8 (tarjeta, menú, toast) · 12 (modal) · 16 (hoja inferior, arriba).</p>
+          <p><b>Alturas.</b> Control 32 (28 compacto) · fila de tabla 40 · cabecera 36 · barra superior 48 · <b>44 en táctil o &lt; 768</b> (botón, campo, icono, pestaña, menú, asa de arrastre).</p>
+          <p><b>Sombras.</b> Solo en lo que flota: <code class="spec">shadow-pop</code> (menús, modal, toast, barra de lote) y <code class="spec">shadow-drag</code> (elemento levantado).</p>
+          <p><b>Movimiento.</b> 150 ms <code class="spec">cubic-bezier(.4,0,.2,1)</code> en color, fondo y borde; 200 ms en modal, hoja y drawer; 0 con <code class="spec">prefers-reduced-motion</code>.</p>
+          <p><b>Rejilla.</b> Menú 240 (≥ 1280) · raíl 56 (768–1279) · drawer (&lt; 768). Contenido de listados a todo el ancho (máx. 1440). Formularios en columna de 720 con etiquetas encima; pares ES/EN en 2 columnas ≥ 1024. Inspector del editor 340.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BOTONES ============ -->
+    <section id="botones" class="ds-sec" aria-labelledby="h-btn">
+      <h2 id="h-btn" class="ds-h">Botones</h2>
+      <p class="mt-2 ds-note">Una sola acción primaria por vista (tinta). El naranja no se usa en botones: es foco y selección. Destructivo en rojo solo dentro de la confirmación; fuera, como texto rojo en botón fantasma o en menú.</p>
+      <div class="stage mt-4 overflow-x-auto">
+        <table class="text-sm min-w-[720px] w-full"><thead><tr class="text-left text-xs text-meta"><th class="pb-3 font-medium w-40">Variante</th><th class="pb-3 font-medium">Normal</th><th class="pb-3 font-medium">Hover</th><th class="pb-3 font-medium">Foco</th><th class="pb-3 font-medium">Cargando</th><th class="pb-3 font-medium">Desactivado</th></tr></thead>
+        <tbody class="[&_td]:py-2">
+          <tr><td class="text-meta">Primario</td><td><button class="btn btn-primary">Guardar</button></td><td><button class="btn btn-primary force-hover">Guardar</button></td><td><button class="btn btn-primary force-focus">Guardar</button></td><td><button class="btn btn-primary" aria-busy="true"><i data-lucide="loader-2" class="spin"></i>Guardando…</button></td><td><button class="btn btn-primary" disabled>Guardar</button></td></tr>
+          <tr><td class="text-meta">Fantasma</td><td><button class="btn btn-ghost"><i data-lucide="eye"></i>Vista previa</button></td><td><button class="btn btn-ghost force-hover"><i data-lucide="eye"></i>Vista previa</button></td><td><button class="btn btn-ghost force-focus"><i data-lucide="eye"></i>Vista previa</button></td><td><button class="btn btn-ghost" aria-busy="true"><i data-lucide="loader-2" class="spin"></i>Exportando…</button></td><td><button class="btn btn-ghost" disabled>Vista previa</button></td></tr>
+          <tr><td class="text-meta">Silencioso</td><td><button class="btn btn-quiet"><i data-lucide="copy"></i>Duplicar</button></td><td><button class="btn btn-quiet !bg-subtle !text-fg"><i data-lucide="copy"></i>Duplicar</button></td><td><button class="btn btn-quiet force-focus"><i data-lucide="copy"></i>Duplicar</button></td><td>—</td><td><button class="btn btn-quiet" disabled><i data-lucide="copy"></i>Duplicar</button></td></tr>
+          <tr><td class="text-meta">Peligro</td><td><button class="btn btn-danger">Eliminar artículo</button></td><td><button class="btn btn-danger !bg-[#991B1B]">Eliminar artículo</button></td><td><button class="btn btn-danger force-focus">Eliminar artículo</button></td><td><button class="btn btn-danger"><i data-lucide="loader-2" class="spin"></i>Eliminando…</button></td><td><button class="btn btn-danger" disabled>Eliminar artículo</button></td></tr>
+          <tr><td class="text-meta">Peligro suave</td><td><button class="btn btn-danger-ghost"><i data-lucide="trash-2"></i>Eliminar…</button></td><td colspan="4" class="text-xs text-meta">Abre la confirmación; nunca borra directamente.</td></tr>
+          <tr><td class="text-meta">Cambios</td><td><button class="btn btn-rev"><i data-lucide="upload"></i>Publicar cambios</button></td><td colspan="4" class="text-xs text-meta">Solo en la barra del editor cuando hay borrador de cambios. Violeta = "esto aún no está en el sitio".</td></tr>
+        </tbody></table>
+        <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-4">
+          <span class="text-xs text-meta w-40">Icono · dividido · tamaño</span>
+          <button class="icon-btn" aria-label="Más acciones"><i data-lucide="more-horizontal"></i></button>
+          <button class="icon-btn" aria-pressed="true" aria-label="Ajustes del artículo"><i data-lucide="panel-right"></i></button>
+          <div class="split"><button class="btn btn-primary">Publicar</button><button class="btn btn-primary" aria-label="Más opciones de publicación" aria-haspopup="menu"><i data-lucide="chevron-down"></i></button></div>
+          <button class="btn btn-ghost btn-sm">Compacto 28</button><button class="btn btn-ghost">Normal 32</button><button class="btn btn-ghost !h-11">Táctil 44</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ESTADOS ============ -->
+    <section id="estados" class="ds-sec" aria-labelledby="h-est">
+      <h2 id="h-est" class="ds-h">Insignias de estado</h2>
+      <p class="mt-2 ds-note">Siempre texto + punto o icono (nunca solo color). 20 px de alto, 12/500. En tablas van en su propia columna; en el editor, junto a las migas.</p>
+      <div class="stage mt-4 grid md:grid-cols-2 gap-6 text-sm">
+        <div>
+          <p class="grp-label mb-2">Contenido (artículos, fichas, páginas)</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="chip st-draft"><span class="dot"></span>Borrador</span>
+            <span class="chip st-sched"><span class="dot"></span>Programado</span>
+            <span class="chip st-pub"><span class="dot"></span>Publicado</span>
+            <span class="chip-pair"><span class="chip st-pub"><span class="dot"></span>Publicado</span><span class="chip st-rev">3 cambios sin publicar</span></span>
+            <span class="chip st-hidden"><i data-lucide="eye-off"></i>Oculto</span>
+          </div>
+          <p class="text-xs text-meta mt-2">"Oculto" = ficha que estuvo publicada y se retiró (<code class="spec">items.published = false</code> con <code class="spec">published_at</code>). Si nunca se publicó, es Borrador.</p>
+          <p class="grp-label mt-5 mb-2">Opiniones</p>
+          <div class="flex flex-wrap gap-2"><span class="chip st-acc"><span class="dot"></span>Nueva</span><span class="chip st-pub"><span class="dot"></span>Visible</span><span class="chip st-hidden"><i data-lucide="eye-off"></i>Oculta</span><span class="chip st-sched"><span class="dot"></span>Pendiente</span></div>
+          <p class="text-xs text-meta mt-2">"Pendiente" solo existe si se activa la premoderación en Ajustes (P2: apagada).</p>
+        </div>
+        <div>
+          <p class="grp-label mb-2">Suscriptores</p>
+          <div class="flex flex-wrap gap-2"><span class="chip st-pub"><span class="dot"></span>Activo</span><span class="chip st-sched"><span class="dot"></span>Sin confirmar</span><span class="chip st-neutral"><span class="dot"></span>Baja</span><span class="chip st-danger"><span class="dot"></span>Rebotado</span></div>
+          <p class="grp-label mt-5 mb-2">Agenda</p>
+          <div class="flex flex-wrap gap-2"><span class="chip st-warn"><i data-lucide="sparkles"></i>Por aprobar · agente</span><span class="chip st-pub"><span class="dot"></span>Aprobado</span><span class="chip st-neutral"><span class="dot"></span>Rechazado</span></div>
+          <p class="grp-label mt-5 mb-2">Transparencia e idioma</p>
+          <div class="flex flex-wrap gap-2 items-center"><span class="chip st-acc"><i data-lucide="gift"></i>Visita invitada</span><span class="chip st-acc"><i data-lucide="link"></i>Afiliado</span><span class="lang lang-ok">ES</span><span class="lang lang-ok">EN</span><span class="lang lang-part" title="EN a medias">EN</span><span class="lang lang-miss" title="Sin versión en inglés">EN</span><span class="chip st-warn"><i data-lucide="clock"></i>Verificado hace 8 meses</span></div>
+        </div>
+      </div>
+      <h3 class="ds-h3">Ciclo de vida</h3>
+      <div class="stage side text-sm">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="chip st-draft"><span class="dot"></span>Borrador</span><i data-lucide="arrow-right" class="w-4 h-4 text-muted"></i>
+          <span class="chip st-sched"><span class="dot"></span>Programado</span><i data-lucide="arrow-right" class="w-4 h-4 text-muted"></i>
+          <span class="chip st-pub"><span class="dot"></span>Publicado</span><i data-lucide="arrow-left-right" class="w-4 h-4 text-muted"></i>
+          <span class="chip-pair"><span class="chip st-pub"><span class="dot"></span>Publicado</span><span class="chip st-rev">Cambios sin publicar</span></span>
+        </div>
+        <ul class="mt-3 text-meta space-y-1 list-disc pl-5">
+          <li>Editar algo publicado (o programado) <b class="text-fg">crea un borrador de cambios</b> al primer cambio. El sitio sigue mostrando lo publicado.</li>
+          <li><b class="text-fg">Publicar cambios</b> lo aplica (pasa el checklist) · <b class="text-fg">Descartar cambios</b> lo borra y vuelve a lo publicado.</li>
+          <li>Con borrador de cambios <b class="text-fg">el autoguardado funciona siempre</b> (también en publicado): lo que se guarda solo es el borrador. Sustituye a la regla de 5.1 "guardado explícito en publicado".</li>
+          <li>Despublicar (artículo → Borrador; ficha → Oculto) con confirmación. Si hay cambios pendientes, se conservan.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ CAMBIOS SIN PUBLICAR ============ -->
+    <section id="cambios" class="ds-sec" aria-labelledby="h-cam">
+      <h2 id="h-cam" class="ds-h">Cambios sin publicar</h2>
+      <p class="mt-2 ds-note">Tres piezas: banda bajo la cabecera del editor, marca en cada campo cambiado (barra violeta de 3 px a la izquierda + "Cambiado" en la etiqueta) y resumen de cambios. En listados, la insignia compuesta y la vista "Con cambios".</p>
+      <div class="mt-4 grid lg:grid-cols-2 gap-6">
+        <div class="stage !p-0 overflow-hidden">
+          <div class="h-12 px-4 flex items-center gap-2 border-b border-line text-sm"><span class="chip-pair"><span class="chip st-pub"><span class="dot"></span>Publicado</span><span class="chip st-rev">Cambios sin publicar</span></span><span class="text-xs text-muted ml-1 hidden sm:inline">Borrador guardado · hace 4 s</span><div class="ml-auto split"><button class="btn btn-rev btn-sm">Publicar cambios</button><button class="btn btn-rev btn-sm" aria-label="Más opciones"><i data-lucide="chevron-down"></i></button></div></div>
+          <div class="rev-band px-4 py-2.5 text-sm flex flex-wrap items-center gap-x-3 gap-y-1"><i data-lucide="git-compare-arrows" class="w-4 h-4 text-st-rev"></i><span>El sitio muestra la versión del <b>3 oct</b>. Tus cambios no se ven hasta que los publiques.</span><span class="flex gap-3 ml-auto"><button class="underline underline-offset-2 font-medium">Ver 3 cambios</button><button class="underline underline-offset-2 text-meta">Descartar</button></span></div>
+          <div class="p-5 pl-7 space-y-5">
+            <div class="changed"><label class="lbl" for="ds-t">Título <span class="chg-mark">Cambiado</span></label><input id="ds-t" class="input" value="Rocódromos para ir solo y encontrar compañero en Barcelona"><p class="help">Publicado: <span class="diff-del">Rocódromos para ir solo y encontrar compañero</span></p></div>
+            <div><label class="lbl" for="ds-x">Extracto</label><textarea id="ds-x" rows="2" class="input">Dónde es fácil engancharse a un grupo y qué preguntar en recepción.</textarea></div>
+          </div>
+        </div>
+        <div class="stage">
+          <p class="text-sm font-semibold">Resumen de cambios <span class="font-normal text-meta">(modal "Ver cambios")</span></p>
+          <ul class="mt-3 divide-y divide-line text-sm border border-line rounded-lg">
+            <li class="p-3"><div class="flex items-center gap-2"><span class="font-medium">Título</span><span class="lang-tag">ES</span><button class="ml-auto text-xs text-meta underline underline-offset-2">Revertir</button></div><p class="mt-1"><span class="diff-del">…encontrar compañero</span> → <span class="diff-add">…encontrar compañero en Barcelona</span></p></li>
+            <li class="p-3"><div class="flex items-center gap-2"><span class="font-medium">Cuerpo</span><span class="lang-tag">ES</span><span class="text-xs text-meta">+2 párrafos · −1 · 1 imagen nueva</span><button class="ml-auto text-xs text-meta underline underline-offset-2">Revertir</button></div></li>
+            <li class="p-3"><div class="flex items-center gap-2"><span class="font-medium">Portada</span><button class="ml-auto text-xs text-meta underline underline-offset-2">Revertir</button></div><div class="mt-2 flex items-center gap-2"><span class="photo w-16 h-10 rounded opacity-60" style="background-image:linear-gradient(150deg,#a0603e,#3a2418)"></span><i data-lucide="arrow-right" class="w-4 h-4 text-muted"></i><span class="photo w-16 h-10 rounded" style="background-image:linear-gradient(150deg,#5d6a7a,#232a33)"></span></div></li>
+          </ul>
+          <p class="mt-3 text-xs text-meta">Por campo, en lenguaje llano: texto corto con diff de palabras, cuerpo como recuento por bloques (con "Ver texto" que abre el diff de párrafos), imágenes antes → después, interruptores "No → Sí". Cada fila puede revertirse sola.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FORMULARIOS ============ -->
+    <section id="forms" class="ds-sec" aria-labelledby="h-forms">
+      <h2 id="h-forms" class="ds-h">Formularios</h2>
+      <p class="mt-2 ds-note">Etiqueta siempre visible encima (12/500). Obligatorio con <span class="text-danger">*</span> y "obligatorio" para lectores; opcional se marca solo si es la excepción. Validación al salir del campo y al guardar; el error se escribe debajo con icono, el campo lleva <code class="spec">aria-invalid</code> + <code class="spec">aria-describedby</code>, y al guardar se enfoca el primer error y se resume arriba.</p>
+      <div class="mt-4 grid lg:grid-cols-2 gap-6">
+        <div class="stage space-y-5">
+          <div><label class="lbl" for="f1">Nombre <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label><input id="f1" class="input" value="La Paret de Gràcia"></div>
+          <div><label class="lbl" for="f2">Web oficial</label><input id="f2" class="input force-focus-in" value="https://laparet" aria-describedby="f2-h"><p id="f2-h" class="help">Con https://. Se muestra como enlace en la ficha.</p></div>
+          <div><label class="lbl" for="f3">Precio de entrada de día</label><div class="input affix" style="border-color:var(--danger)"><input id="f3" value="15,5O" aria-invalid="true" aria-describedby="f3-e" class="num"><span class="suf">€</span></div><p id="f3-e" class="err"><i data-lucide="circle-alert"></i>Escribe solo cifras, con coma para los decimales (p. ej. 15,50).</p></div>
+          <div><label class="lbl" for="f4">Teléfono</label><input id="f4" class="input" disabled value="Se rellena desde Google Places (próximamente)"></div>
+          <div class="banner banner-err" role="alert"><i data-lucide="circle-alert"></i><div><b>No se ha guardado: 2 campos por revisar.</b> <a href="#f3" class="underline underline-offset-2">Precio de entrada</a> · <a href="#" class="underline underline-offset-2">Horario del sábado</a></div></div>
+        </div>
+        <div class="stage space-y-5">
+          <!-- slug -->
+          <div><label class="lbl" for="slug1">URL</label>
+            <div class="input affix"><span class="pre">/blog/</span><input id="slug1" class="mono !text-[12.5px]" value="donde-escalar-en-barcelona-cuando-llueve" aria-describedby="slug1-h"><button class="icon-btn !w-8 !h-8 mr-0.5" aria-label="Bloquear la URL (deja de seguir al título)" aria-pressed="false"><i data-lucide="link-2"></i></button></div>
+            <p id="slug1-h" class="help flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-ok"></i>Disponible · se genera del título hasta que la edites</p></div>
+          <div><label class="lbl" for="slug2">URL</label>
+            <div class="input affix" style="border-color:var(--danger)"><span class="pre">/rocodromos/</span><input id="slug2" class="mono !text-[12.5px]" value="magnesi-poblenou" aria-invalid="true" aria-describedby="slug2-e"></div>
+            <p id="slug2-e" class="err"><i data-lucide="circle-alert"></i><span>Ya existe una ficha con esta URL. <button class="underline underline-offset-2">Usar magnesi-poblenou-2</button></span></p></div>
+          <div class="changed ml-3"><label class="lbl" for="slug3">URL <span class="chg-mark">Cambiado</span></label>
+            <div class="input affix"><span class="pre">/blog/</span><input id="slug3" class="mono !text-[12.5px]" value="rocodromos-para-ir-solo-barcelona"></div>
+            <p class="banner banner-warn mt-2 !py-2"><i data-lucide="triangle-alert"></i><span>Está publicado: al publicar el cambio, la URL antigua <span class="mono text-xs">/blog/rocodromos-para-ir-solo</span> dejará de funcionar. <span class="text-meta">(Ver duda 3 del README: redirecciones.)</span></span></p></div>
+          <!-- SEO -->
+          <div><div class="lbl"><label for="seo1">Título SEO</label><span class="counter" id="seo1-c">58 / 70</span></div>
+            <input id="seo1" class="input" value="Dónde escalar en Barcelona cuando llueve: 9 rocódromos" aria-describedby="seo1-c seo1-h"><div class="meter"><span style="width:83%"></span></div><p id="seo1-h" class="help">Ideal 50–60. Vacío: se usa el título del artículo.</p></div>
+          <div><div class="lbl"><label for="seo2">Descripción</label><span class="counter warn">171 / 160</span></div>
+            <textarea id="seo2" rows="2" class="input" aria-invalid="true" aria-describedby="seo2-e">Nueve rocódromos a 30 minutos en metro y para qué sirve cada uno cuando la roca está mojada: bloque, cuerda, precios y horas tranquilas para ir.</textarea><div class="meter over"><span style="width:100%"></span></div><p id="seo2-e" class="err"><i data-lucide="circle-alert"></i>Sobran 11 caracteres. Google la cortaría y no se puede guardar por encima de 160.</p></div>
+        </div>
+      </div>
+
+      <h3 class="ds-h3">Controles de ficha</h3>
+      <div class="stage grid md:grid-cols-2 gap-6 text-sm">
+        <div class="space-y-5">
+          <div><p class="lbl" id="tri1">¿Tiene cafetería?</p><div class="seg tri" role="radiogroup" aria-labelledby="tri1"><button role="radio" aria-checked="true" data-v="yes">Sí</button><button role="radio" aria-checked="false" data-v="no">No</button><button role="radio" aria-checked="false" data-v="unk">No lo sé</button></div><p class="help">Tres estados: "No lo sé" (null) ≠ "No". La ficha pública no muestra lo desconocido.</p></div>
+          <div><p class="lbl" id="sc1">Grados <span class="text-meta font-normal">· frente a la media de Barcelona</span></p><div class="seg scale" role="radiogroup" aria-labelledby="sc1"><button role="radio" aria-checked="false"><b>1</b><span>Generosos</span></button><button role="radio" aria-checked="false"><b>2</b><span>Algo gen.</span></button><button role="radio" aria-checked="false"><b>3</b><span>En la media</span></button><button role="radio" aria-checked="true"><b>4</b><span>Algo duros</span></button><button role="radio" aria-checked="false"><b>5</b><span>Duros</span></button></div><p class="help">Escala descriptiva (no es nota): segmentado neutro, sin verde ni rojo. "Sin dato" con el botón "Borrar".</p></div>
+        </div>
+        <div class="space-y-5">
+          <div><p class="lbl" id="score1">Ambiente y apertura <span class="text-meta font-normal">· criterio</span></p><div class="seg score" role="radiogroup" aria-labelledby="score1"><button role="radio" aria-checked="false">1</button><button role="radio" aria-checked="false">2</button><button role="radio" aria-checked="false">3</button><button role="radio" aria-checked="true">4</button><button role="radio" aria-checked="false">5</button><button role="radio" aria-checked="false" class="none">Sin nota</button></div><p class="help">Notas 1–5 con flechas ← →. "Sin nota" ≠ 0: no cuenta en la media.</p></div>
+          <div><label class="lbl" for="chips1">Paradas de metro</label><div class="input !h-auto min-h-[32px] flex flex-wrap items-center gap-1.5 py-1"><span class="chip st-neutral !text-fg">Fontana (L3)<button aria-label="Quitar Fontana (L3)" class="text-muted hover:text-fg">×</button></span><span class="chip st-neutral !text-fg">Joanic (L4)<button aria-label="Quitar Joanic (L4)" class="text-muted hover:text-fg">×</button></span><input id="chips1" class="flex-1 min-w-[100px] bg-transparent outline-none text-sm" placeholder="Añadir y pulsar Intro"></div></div>
+          <div class="flex items-center gap-3"><button role="switch" aria-checked="true" aria-labelledby="sw1" class="switch"></button><span id="sw1">Destacado en el blog</span></div>
+          <div class="flex items-center gap-3"><input type="checkbox" class="cb" id="cbx" checked><label for="cbx">Incluir opiniones ocultas</label></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ES / EN ============ -->
+    <section id="idiomas" class="ds-sec" aria-labelledby="h-idi">
+      <h2 id="h-idi" class="ds-h">Campos ES / EN · decisión</h2>
+      <p class="mt-2 ds-note"><b class="text-fg">Documentos → pestañas. Formularios → lado a lado.</b> Un artículo, una página o una reseña se escriben en un idioma cada vez: conmutador ES/EN en la cabecera del editor y todo el documento (título, cuerpo, extracto, SEO, alt de portada) sigue al idioma activo. Los campos cortos de formularios (resumen de ficha, descuentos, notas de horario, alt de medios, categorías, ajustes) van en pares: ES a la izquierda, EN a la derecha desde 1024 px, apilados por debajo con su etiqueta de idioma. Así se traduce mirando el original y nunca se olvida un EN oculto tras una pestaña. Los textos largos dentro de una ficha (cuerpo de la reseña) usan pestañas locales.</p>
+      <div class="mt-4 grid lg:grid-cols-2 gap-6">
+        <div class="stage">
+          <p class="grp-label mb-3">Documento · conmutador</p>
+          <div class="flex items-center gap-2"><span class="text-sm font-medium">Editor de artículo</span><div class="seg ml-auto" role="tablist" aria-label="Idioma del contenido"><button role="tab" aria-selected="true">ES</button><button role="tab" aria-selected="false">EN <span class="w-1.5 h-1.5 rounded-full bg-warn-icon" aria-hidden="true"></span><span class="sr-only">(incompleto)</span></button></div></div>
+          <div class="mt-3 banner banner-info"><i data-lucide="languages"></i><span>EN incompleto: falta el cuerpo y la descripción SEO. El artículo se publica solo en español hasta que el EN esté completo (<code class="spec">has_en</code>).</span></div>
+        </div>
+        <div class="stage">
+          <p class="grp-label mb-3">Formulario · pares</p>
+          <div class="grid lg:grid-cols-2 gap-x-4 gap-y-3">
+            <div><label class="lbl" for="sum-es">Resumen <span class="lang-tag">ES</span><span class="counter">108 / 400</span></label><textarea id="sum-es" rows="3" class="input">Rocódromo de cuerda con vías de hasta 15 metros y autobelays, ideal para hacer kilómetros entre semana.</textarea></div>
+            <div><label class="lbl" for="sum-en">Resumen <span class="lang-tag">EN</span><span class="counter">88 / 400</span></label><textarea id="sum-en" rows="3" class="input">Rope gym with routes up to 15 metres and auto-belays, great for mileage on weekdays.</textarea></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TABLAS ============ -->
+    <section id="tablas" class="ds-sec" aria-labelledby="h-tbl">
+      <h2 id="h-tbl" class="ds-h">Tablas de datos</h2>
+      <p class="mt-2 ds-note">TanStack Table (headless) con el marcado de abajo. Orden por cabecera (<code class="spec">aria-sort</code>, un solo criterio; Mayús+clic añade un segundo). Búsqueda con <span class="kbd">/</span>. Filtros como botones con menú de casillas; los activos se ven como fichas quitables y viven en la URL. Selección por fila, por página o "todos los N" (aviso). Columnas fijas: casilla + primera columna a la izquierda y acciones a la derecha cuando hay scroll horizontal (con sombra de borde). Paginación con tamaño 25/50/100. &lt; 768: tarjetas.</p>
+      <div class="mt-4 card overflow-hidden" id="dt">
+        <div class="px-4 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+          <div class="relative w-full sm:w-64"><label for="dt-q" class="sr-only">Buscar suscriptores</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="dt-q" class="input !pl-8" placeholder="Buscar por email"></div>
+          <div class="relative">
+            <button class="btn btn-ghost" aria-haspopup="true" aria-expanded="true"><i data-lucide="list-filter"></i>Estado<span class="count !bg-subtle !text-fg">2</span></button>
+            <div class="menu absolute left-0 top-10 z-20 w-56" role="group" aria-label="Filtrar por estado">
+              <label class="menu-i"><input type="checkbox" class="cb" checked>Activo<span class="ml-auto text-xs text-meta num">1.284</span></label>
+              <label class="menu-i"><input type="checkbox" class="cb" checked>Sin confirmar<span class="ml-auto text-xs text-meta num">37</span></label>
+              <label class="menu-i"><input type="checkbox" class="cb">Baja<span class="ml-auto text-xs text-meta num">96</span></label>
+              <label class="menu-i"><input type="checkbox" class="cb">Rebotado<span class="ml-auto text-xs text-meta num">4</span></label>
+              <div class="menu-sep"></div><button class="menu-i text-meta">Limpiar</button>
+            </div>
+          </div>
+          <button class="btn btn-ghost"><i data-lucide="map-pin"></i>Origen<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+          <button class="btn btn-quiet ml-auto hidden sm:inline-flex"><i data-lucide="columns-3"></i>Columnas</button>
+        </div>
+        <div class="px-4 py-2 flex flex-wrap items-center gap-2 border-b border-line bg-side text-xs">
+          <span class="text-meta">Filtros:</span><span class="chip st-neutral !text-fg">Estado: Activo, Sin confirmar<button aria-label="Quitar filtro de estado" class="text-muted hover:text-fg">×</button></span><span class="chip st-neutral !text-fg">Alta: desde 1 sep<button aria-label="Quitar filtro de fecha" class="text-muted hover:text-fg">×</button></span><button class="text-meta underline underline-offset-2 ml-1">Limpiar todo</button>
+        </div>
+        <div class="px-4 h-10 flex items-center gap-2 text-sm bg-acc-soft border-b border-line" role="status"><span>Están seleccionados los <b class="num">25</b> de esta página.</span><button class="underline underline-offset-2 font-medium">Seleccionar los 1.321</button></div>
+        <div class="scroller shadow-r overflow-x-auto max-w-full" style="max-height:340px">
+          <table class="tbl min-w-[980px]">
+            <caption class="sr-only">Suscriptores filtrados, ordenados por fecha de alta descendente</caption>
+            <thead><tr>
+              <th class="sticky-l w-10 !pl-4"><input type="checkbox" class="cb" checked aria-label="Seleccionar los 25 de esta página"></th>
+              <th class="sticky-l2 edge-l" style="left:40px" aria-sort="none"><button class="sort">Email<i data-lucide="chevrons-up-down"></i></button></th>
+              <th>Estado</th><th>Idioma</th><th aria-sort="none"><button class="sort">Origen<i data-lucide="chevrons-up-down"></i></button></th>
+              <th aria-sort="descending"><button class="sort">Alta<i data-lucide="arrow-down"></i></button></th><th>Confirmado</th><th>Consentimiento</th>
+              <th class="sticky-r edge-r w-12"><span class="sr-only">Acciones</span></th></tr></thead>
+            <tbody id="dt-body"></tbody>
+          </table>
+        </div>
+        <div class="px-4 min-h-12 py-2 flex flex-wrap items-center gap-3 border-t border-line text-sm text-meta">
+          <span class="num">1–25 de 1.321</span>
+          <label class="hidden sm:flex items-center gap-2">Por página <select class="select !w-20 !h-7"><option>25</option><option>50</option><option>100</option></select></label>
+          <nav class="ml-auto flex items-center gap-1" aria-label="Paginación"><button class="icon-btn" aria-label="Página anterior" disabled style="opacity:.4"><i data-lucide="chevron-left"></i></button><button class="btn btn-quiet !px-2.5 !bg-subtle !text-fg" aria-current="page">1</button><button class="btn btn-quiet !px-2.5">2</button><button class="btn btn-quiet !px-2.5">3</button><span class="px-1">…</span><button class="btn btn-quiet !px-2.5">53</button><button class="icon-btn" aria-label="Página siguiente"><i data-lucide="chevron-right"></i></button></nav>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-center">
+        <div role="region" aria-label="Acciones en lote (ejemplo)" class="pop bg-elev border border-line-strong rounded-lg px-2 py-1.5 flex items-center gap-1 text-sm max-w-full overflow-x-auto">
+          <span class="px-2 font-medium num whitespace-nowrap">25 seleccionados</span><span class="w-px h-5 bg-line mx-1"></span>
+          <button class="btn btn-quiet"><i data-lucide="download"></i>Exportar</button><button class="btn btn-quiet"><i data-lucide="user-x"></i>Dar de baja…</button><button class="icon-btn" aria-label="Quitar selección"><i data-lucide="x"></i></button>
+        </div>
+      </div>
+      <p class="mt-2 text-xs text-meta text-center">Barra de lote flotante: abajo al centro (sobre la barra inferior en móvil), con recuento en <code class="spec">aria-live</code>. Acciones destructivas con "…" porque piden confirmación.</p>
+    </section>
+
+    <!-- ============ SELECTOR DE MEDIOS ============ -->
+    <section id="medios" class="ds-sec" aria-labelledby="h-med">
+      <h2 id="h-med" class="ds-h">Selector de medios</h2>
+      <p class="mt-2 ds-note">El mismo componente que la biblioteca, en modo "elegir" (uno o varios). Se abre desde portada, galería, OG, cuerpo y ajustes. Si la foto elegida no tiene alt ES, lo pide antes de insertarla (no bloquea el borrador, sí el publicar). En móvil es hoja inferior a pantalla casi completa.</p>
+      <div class="mt-4 flex gap-2"><button class="btn btn-ghost" data-open="picker"><i data-lucide="image"></i>Abrir selector</button></div>
+      <div class="mt-4 stage !p-0 overflow-hidden" aria-hidden="true">
+        <div id="picker-static"></div>
+      </div>
+    </section>
+
+    <!-- ============ OVERLAYS ============ -->
+    <section id="overlays" class="ds-sec" aria-labelledby="h-ov">
+      <h2 id="h-ov" class="ds-h">Modales, drawers y hojas</h2>
+      <p class="mt-2 ds-note"><b class="text-fg">Modal</b> (480 / 720 / 960) solo para confirmar o elegir. <b class="text-fg">Drawer</b> lateral (440) para editar entidades pequeñas sin perder la lista (medio, categoría, suscriptor, evento). <b class="text-fg">Hoja inferior</b>: lo que sea modal o drawer pasa a hoja en &lt; 768, con asa, título fijo y botones al pie a ancho completo; los ajustes del editor también. Todos: <code class="spec">role="dialog"</code>, <code class="spec">aria-modal</code>, foco atrapado, Esc cierra, el foco vuelve al botón que lo abrió, fondo con scroll bloqueado. Reka UI <code class="spec">Dialog</code> / <code class="spec">DialogContent</code>.</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button class="btn btn-ghost" data-open="m-sched">Modal · programar</button>
+        <button class="btn btn-ghost" data-open="m-drawer">Drawer · categoría</button>
+        <button class="btn btn-ghost" data-open="m-del-simple">Confirmar borrado</button>
+        <button class="btn btn-ghost" data-open="m-diff">Modal · ver cambios</button>
+      </div>
+      <p class="mt-2 text-xs text-meta">Prueba en 390 (o en <a href="anchos.html" class="underline underline-offset-2">vista por anchos</a>): los mismos botones abren hojas inferiores.</p>
+    </section>
+
+    <!-- ============ TOASTS ============ -->
+    <section id="toasts-s" class="ds-sec" aria-labelledby="h-toast"><span id="toasts-anchor"></span>
+      <h2 id="h-toast" class="ds-h">Toasts</h2>
+      <p class="mt-2 ds-note">Abajo a la derecha (en móvil, abajo a ancho completo sobre la barra inferior). Máximo 3 apilados. <b class="text-fg">Éxito</b>: tinta, 5 s, con "Deshacer" si la acción es reversible, <code class="spec">role="status"</code>. <b class="text-fg">Error</b>: persistente hasta cerrar, borde rojo, "Reintentar", <code class="spec">role="alert"</code>. <b class="text-fg">Info</b>: neutro, 5 s. Se pausan con el puntero encima o el foco dentro. Nunca para errores de campo (van en el campo).</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button class="btn btn-ghost" data-toast="Artículo programado para el mié 14 oct, 08:00">Éxito con deshacer</button>
+        <button class="btn btn-ghost" data-toast="No se ha podido subir «sala-cuerda-02.jpg»: pesa 14 MB (máximo 10)." data-type="err" data-action="Reintentar">Error persistente</button>
+        <button class="btn btn-ghost" data-toast="Se ha copiado el enlace de vista previa." data-type="info" data-action="">Info</button>
+      </div>
+      <div class="mt-4 flex flex-col gap-2 items-start" aria-hidden="true">
+        <div class="toast toast-ok"><i data-lucide="check"></i><span>Cambios publicados en «Rocódromos para ir solo…»</span><span class="ta font-medium">Deshacer</span></div>
+        <div class="toast toast-err"><i data-lucide="circle-alert" class="ic"></i><span class="flex-1">Sin conexión. Tus cambios están a salvo en este navegador.</span><span class="underline underline-offset-2 font-medium">Reintentar</span><i data-lucide="x" class="text-meta"></i></div>
+      </div>
+    </section>
+
+    <!-- ============ BORRAR ============ -->
+    <section id="borrar" class="ds-sec" aria-labelledby="h-del">
+      <h2 id="h-del" class="ds-h">Confirmación de borrado</h2>
+      <p class="mt-2 ds-note">Título con el objeto ("¿Eliminar «…»?"), consecuencia concreta, alternativa reversible si existe, botón rojo con el verbo y el objeto. El foco inicial va a "Cancelar". Cuatro variantes según el riesgo:</p>
+      <div class="mt-4 grid md:grid-cols-2 gap-4">
+        <!-- simple -->
+        <div class="dialog !max-w-none !animate-none" role="group" aria-label="Ejemplo: borrado simple">
+          <div class="dialog-h"><h3 class="text-lg font-semibold">¿Eliminar «Magnesio líquido o en polvo»?</h3><p class="text-sm text-meta mt-1">Es un borrador y nunca se ha publicado. Queda en el registro de actividad durante 24 meses por si hay que recuperarlo.</p></div>
+          <div class="dialog-f"><button class="btn btn-ghost">Cancelar</button><button class="btn btn-danger">Eliminar borrador</button></div>
+        </div>
+        <!-- en uso -->
+        <div class="dialog !max-w-none !animate-none" role="group" aria-label="Ejemplo: medio en uso">
+          <div class="dialog-h"><h3 class="text-lg font-semibold">No se puede borrar «sala-bloque-poblenou.jpg»</h3><p class="text-sm text-meta mt-1">Está en uso en 3 sitios. Quítala o cámbiala por otra en cada uno y vuelve a intentarlo.</p></div>
+          <div class="dialog-b"><ul class="text-sm border border-line rounded-lg divide-y divide-line">
+            <li class="flex items-center gap-2 px-3 h-10"><i data-lucide="mountain" class="w-4 h-4 text-meta"></i><span class="flex-1 truncate">Magnesi Poblenou</span><span class="text-xs text-meta">Portada</span><a href="#" class="text-xs underline underline-offset-2">Abrir</a></li>
+            <li class="flex items-center gap-2 px-3 h-10"><i data-lucide="file-text" class="w-4 h-4 text-meta"></i><span class="flex-1 truncate">Dónde escalar en Barcelona cuando llueve</span><span class="text-xs text-meta">Cuerpo ES</span><a href="#" class="text-xs underline underline-offset-2">Abrir</a></li>
+            <li class="flex items-center gap-2 px-3 h-10"><i data-lucide="settings" class="w-4 h-4 text-meta"></i><span class="flex-1 truncate">Ajustes · imagen para redes</span><span class="text-xs text-meta">OG</span><a href="#" class="text-xs underline underline-offset-2">Abrir</a></li></ul></div>
+          <div class="dialog-f"><button class="btn btn-ghost">Reemplazar archivo en su lugar</button><button class="btn btn-primary">Entendido</button></div>
+        </div>
+        <!-- reasignar -->
+        <div class="dialog !max-w-none !animate-none" role="group" aria-label="Ejemplo: con reasignación">
+          <div class="dialog-h"><h3 class="text-lg font-semibold">¿Eliminar la categoría «Costes»?</h3><p class="text-sm text-meta mt-1">Tiene 4 artículos (3 publicados). Antes hay que moverlos a otra categoría; sus URL no cambian.</p></div>
+          <div class="dialog-b"><label class="lbl" for="re">Mover los 4 artículos a <span class="req">*</span></label><select id="re" class="select"><option>Empezar a escalar</option><option selected>Progresión y cuidado</option></select><p class="help">Se añaden al final del orden de esa categoría.</p></div>
+          <div class="dialog-f"><button class="btn btn-ghost">Cancelar</button><button class="btn btn-danger">Mover y eliminar</button></div>
+        </div>
+        <!-- irreversible -->
+        <div class="dialog !max-w-none !animate-none" role="group" aria-label="Ejemplo: borrado irreversible">
+          <div class="dialog-h"><h3 class="text-lg font-semibold">¿Borrar los datos de marta.g@example.com?</h3><p class="text-sm text-meta mt-1">Solicitud de supresión (RGPD). Se borra el registro y su consentimiento, y se avisa a Brevo. <b class="text-fg">No se puede deshacer.</b> Si solo quiere dejar de recibir emails, usa "Dar de baja".</p></div>
+          <div class="dialog-b"><label class="lbl" for="typed">Escribe el email para confirmar</label><input id="typed" class="input mono" placeholder="marta.g@example.com" autocomplete="off"></div>
+          <div class="dialog-f"><button class="btn btn-ghost">Cancelar</button><button class="btn btn-danger" disabled>Borrar para siempre</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VACÍO / CARGA / ERROR ============ -->
+    <section id="vacios" class="ds-sec" aria-labelledby="h-vac">
+      <h2 id="h-vac" class="ds-h">Vacío, carga y error</h2>
+      <div class="mt-4 grid md:grid-cols-3 gap-4">
+        <div class="card"><div class="empty"><span class="ico"><i data-lucide="file-plus"></i></span><h3>Aún no hay artículos</h3><p>Empieza por el que más te pregunten. Se guarda solo mientras escribes.</p><button class="btn btn-primary mt-2"><i data-lucide="plus"></i>Nuevo artículo</button></div><p class="spec px-4 pb-3">Primera vez · acción principal</p></div>
+        <div class="card"><div class="empty"><span class="ico"><i data-lucide="search-x"></i></span><h3>Nada con «resolado» en Borradores</h3><p>Prueba en todos los estados o quita algún filtro.</p><div class="flex gap-2 mt-2"><button class="btn btn-ghost">Buscar en todos</button><button class="btn btn-quiet">Limpiar filtros</button></div></div><p class="spec px-4 pb-3">Sin resultados · salida concreta</p></div>
+        <div class="card"><div class="empty"><span class="ico !bg-ok-soft !text-ok"><i data-lucide="check-check"></i></span><h3>Todo revisado</h3><p>No hay opiniones nuevas desde tu última visita. La última llegó hace 2 h.</p></div><p class="spec px-4 pb-3">Bandeja al día · sin acción</p></div>
+      </div>
+      <div class="mt-4 grid md:grid-cols-2 gap-4">
+        <div class="card overflow-hidden" aria-busy="true" aria-label="Cargando artículos">
+          <div class="h-9 bg-side border-b border-line"></div>
+          <div class="divide-y divide-line">
+            <div class="h-10 px-4 flex items-center gap-3"><span class="sk w-4 h-4"></span><span class="sk w-8 h-6"></span><span class="sk h-3 w-2/5"></span><span class="sk h-4 w-16 ml-auto"></span><span class="sk h-3 w-12"></span></div>
+            <div class="h-10 px-4 flex items-center gap-3"><span class="sk w-4 h-4"></span><span class="sk w-8 h-6"></span><span class="sk h-3 w-1/2"></span><span class="sk h-4 w-16 ml-auto"></span><span class="sk h-3 w-12"></span></div>
+            <div class="h-10 px-4 flex items-center gap-3"><span class="sk w-4 h-4"></span><span class="sk w-8 h-6"></span><span class="sk h-3 w-1/3"></span><span class="sk h-4 w-16 ml-auto"></span><span class="sk h-3 w-12"></span></div>
+          </div>
+          <p class="spec px-4 py-3 border-t border-line">Carga: esqueleto con la forma real de la fila (no spinner a pantalla completa). Aparece si tarda &gt; 300 ms. <code>aria-busy</code>.</p>
+        </div>
+        <div class="space-y-3">
+          <div class="card"><div class="empty !py-8"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se han podido cargar las opiniones</h3><p>Puede ser la conexión o Supabase. Lo que ya tenías abierto no se ha perdido.</p><button class="btn btn-ghost mt-2"><i data-lucide="rotate-cw"></i>Reintentar</button><p class="spec">Error 503 · 10:42</p></div></div>
+          <div class="banner banner-warn" role="status"><i data-lucide="wifi-off"></i><span><b>Sin conexión.</b> Sigues pudiendo escribir; se guardará al volver. <span class="text-meta">Última copia en este navegador: 10:41.</span></span></div>
+          <div class="banner banner-info"><i data-lucide="lock"></i><span>Otra pestaña está editando esta ficha. <button class="underline underline-offset-2">Tomar el control</button></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DND ============ -->
+    <section id="dnd" class="ds-sec" aria-labelledby="h-dnd">
+      <h2 id="h-dnd" class="ds-h">Arrastrar para ordenar</h2>
+      <p class="mt-2 ds-note">Asa <i data-lucide="grip-vertical" class="inline w-4 h-4"></i> a la izquierda (solo se arrastra desde ella; 24×32, 44×44 táctil). Línea naranja de 2 px donde caerá; el elemento levantado flota con sombra. <b class="text-fg">Teclado</b>: Tab al asa, Espacio levanta, ↑ ↓ mueve, Espacio suelta, Esc cancela; cada paso se anuncia por <code class="spec">aria-live</code>. Alternativa sin arrastrar: menú ⋯ → "Mover arriba / abajo / al principio". Se guarda al soltar (toast "Orden guardado · Deshacer"). Implementación: <code class="spec">vue-draggable-plus</code> (SortableJS) + teclado propio.</p>
+      <div class="mt-4 grid md:grid-cols-2 gap-6 items-start">
+        <ul class="sortable card divide-y divide-line" aria-label="Ejemplo: galería de La Paret de Gràcia" id="ds-sort">
+          <li class="flex items-center gap-3 px-2 py-2" data-label="Pared principal de 15 metros"><button class="handle" aria-label="Reordenar: Pared principal de 15 metros" aria-roledescription="elemento ordenable"><i data-lucide="grip-vertical"></i></button><span class="photo w-12 h-8 rounded" style="background-image:linear-gradient(150deg,#9b5a3a,#3d2a22)"></span><span class="text-sm flex-1 truncate">Pared principal de 15 metros</span><span class="chip st-neutral">Portada</span></li>
+          <li class="flex items-center gap-3 px-2 py-2 is-lifted" data-label="Zona de autobelays"><button class="handle" aria-label="Reordenar: Zona de autobelays" aria-pressed="true"><i data-lucide="grip-vertical"></i></button><span class="photo w-12 h-8 rounded" style="background-image:linear-gradient(150deg,#5b6b78,#1c232a)"></span><span class="text-sm flex-1 truncate">Zona de autobelays</span></li>
+          <li class="flex items-center gap-3 px-2 py-2 drop-before" data-label="Sala de entrenamiento"><button class="handle" aria-label="Reordenar: Sala de entrenamiento"><i data-lucide="grip-vertical"></i></button><span class="photo w-12 h-8 rounded" style="background-image:linear-gradient(150deg,#6d7a62,#2b3227)"></span><span class="text-sm flex-1 truncate">Sala de entrenamiento</span></li>
+          <li class="flex items-center gap-3 px-2 py-2" data-label="Recepción y tienda"><button class="handle" aria-label="Reordenar: Recepción y tienda"><i data-lucide="grip-vertical"></i></button><span class="photo w-12 h-8 rounded" style="background-image:linear-gradient(150deg,#c9a24a,#5a4417)"></span><span class="text-sm flex-1 truncate">Recepción y tienda</span></li>
+        </ul>
+        <div class="stage side text-sm space-y-2"><p class="font-medium">Estados</p><p class="text-meta"><b class="text-fg">Reposo</b> asa en <code class="spec">muted</code> · <b class="text-fg">Hover</b> asa en tinta sobre <code class="spec">subtle</code> · <b class="text-fg">Levantado</b> sombra <code class="spec">shadow-drag</code> + contorno naranja · <b class="text-fg">Destino</b> línea de 2 px · <b class="text-fg">Origen</b> opacidad .35 · <b class="text-fg">Guardando</b> sin bloqueo; si falla, vuelve al orden anterior y toast de error.</p><p class="text-meta">Prueba: arrastra con el ratón o pulsa Tab hasta un asa y usa Espacio y flechas.</p></div>
+      </div>
+    </section>
+
+    <!-- ============ A11Y ============ -->
+    <section id="a11y" class="ds-sec" aria-labelledby="h-a11y">
+      <h2 id="h-a11y" class="ds-h">Accesibilidad y responsive · reglas que se revisan</h2>
+      <div class="mt-4 grid md:grid-cols-2 gap-4 text-sm">
+        <ul class="stage space-y-2 list-disc pl-8 text-meta">
+          <li><b class="text-fg">Foco</b> visible siempre: anillo 2 px <code class="spec">acc</code> con separación 2 (campos: borde + halo). Nunca <code class="spec">outline:none</code> sin sustituto.</li>
+          <li><b class="text-fg">Teclado</b>: ⌘K paleta, C nuevo, / buscar, ← → en segmentados y pestañas, V/H en opiniones, Esc cierra.</li>
+          <li><b class="text-fg">Errores</b>: icono + texto + <code class="spec">aria-invalid</code> + <code class="spec">aria-describedby</code>; resumen con enlaces al guardar.</li>
+          <li><b class="text-fg">Estado</b> nunca solo con color: punto + texto, icono, contorno discontinuo.</li>
+          <li><b class="text-fg">Contadores</b> del menú con texto oculto ("7 nuevas").</li>
+        </ul>
+        <ul class="stage space-y-2 list-disc pl-8 text-meta">
+          <li><b class="text-fg">≥ 1280</b>: menú 240 + inspector 340. <b class="text-fg">768–1279</b>: raíl 56, inspector deslizante. <b class="text-fg">&lt; 768</b>: drawer, barra inferior (Inicio, Opiniones, Medios, Nuevo), tablas → tarjetas, modales → hojas.</li>
+          <li>Táctiles ≥ 44 con <code class="spec">pointer:coarse</code> o &lt; 768. Campos a 16 px en móvil (sin zoom de iOS).</li>
+          <li>Sin scroll horizontal de página: solo las tablas anchas se desplazan dentro de su contenedor, con columnas fijas.</li>
+          <li><code class="spec">prefers-reduced-motion</code>: sin transiciones ni animaciones (el esqueleto queda estático).</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- ===== Overlays de demostración ===== -->
+<div id="picker" class="overlay" role="dialog" aria-modal="true" aria-labelledby="picker-h"><div class="dialog xl"><div class="grab"></div><div id="picker-live"></div></div></div>
+
+<div id="m-sched" class="overlay" role="dialog" aria-modal="true" aria-labelledby="ms-h"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="ms-h">Programar publicación</h2><p class="text-sm text-meta mt-1">Se publicará solo a la hora indicada (hora de Barcelona).</p></div>
+  <div class="dialog-b grid grid-cols-2 gap-3"><div><label class="lbl" for="ms-d">Fecha</label><input id="ms-d" class="input num" value="mié, 14 oct 2026"></div><div><label class="lbl" for="ms-t">Hora</label><input id="ms-t" class="input num" value="08:00"></div>
+  <div class="col-span-2 banner banner-warn"><i data-lucide="triangle-alert"></i><span><b>1 aviso, no bloquea:</b> una imagen del cuerpo no tiene texto alternativo.</span></div></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-primary" data-close data-toast="Programado para el mié 14 oct, 08:00">Programar</button></div></div></div>
+
+<div id="m-drawer" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="md-h"><div class="drawer"><div class="grab"></div>
+  <div class="drawer-h"><h2 id="md-h" class="text-base font-semibold">Editar categoría</h2><button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="drawer-b space-y-4"><div class="grid gap-3"><div><label class="lbl" for="mc-es">Nombre <span class="lang-tag">ES</span></label><input id="mc-es" class="input" value="Material"></div><div><label class="lbl" for="mc-en">Nombre <span class="lang-tag">EN</span></label><input id="mc-en" class="input" value="Gear"></div></div><p class="text-sm text-meta">Más campos en <a href="categorias.html" class="underline underline-offset-2">Categorías</a>.</p></div>
+  <div class="drawer-f"><button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-primary ml-auto" data-close data-toast="Categoría guardada">Guardar</button></div></div></div>
+
+<div id="m-del-simple" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="mds-h" aria-describedby="mds-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="mds-h">¿Eliminar «Magnesio líquido o en polvo»?</h2><p id="mds-d" class="text-sm text-meta mt-1">Es un borrador y nunca se ha publicado. Queda en el registro de actividad por si hay que recuperarlo.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Borrador eliminado">Eliminar borrador</button></div></div></div>
+
+<div id="m-diff" class="overlay" role="dialog" aria-modal="true" aria-labelledby="mdf-h"><div class="dialog lg"><div class="grab"></div>
+  <div class="dialog-h flex items-start gap-3"><div><h2 id="mdf-h">3 cambios sin publicar</h2><p class="text-sm text-meta mt-1">Frente a lo publicado el 3 oct a las 08:00.</p></div><button class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="dialog-b"><p class="text-sm">Ejemplo completo en el <a href="articulo-editor.html#cambios" class="underline underline-offset-2">editor de artículo</a>.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close>Cerrar</button><button class="btn btn-rev" data-close data-toast="Cambios publicados">Publicar cambios</button></div></div></div>
+
+<script>
+/* datos de la tabla demo */
+const SUBS=[['marta.g@example.com','Activo','st-pub','ES','Artículo · final','9 oct 2026','9 oct','v3'],['jordi.p@example.com','Sin confirmar','st-sched','ES','Pie de página','9 oct 2026','—','v3'],['anna.r@example.com','Activo','st-pub','EN','Home','8 oct 2026','8 oct','v3'],['pau.m@example.com','Activo','st-pub','ES','Ficha','8 oct 2026','8 oct','v3'],['laura.v@example.com','Activo','st-pub','ES','Artículo · mitad','7 oct 2026','7 oct','v3'],['tom.h@example.com','Activo','st-pub','EN','Pie de página','6 oct 2026','6 oct','v3'],['carla.s@example.com','Sin confirmar','st-sched','ES','Home','6 oct 2026','—','v3']];
+document.getElementById('dt-body').innerHTML=SUBS.map(s=>`<tr aria-selected="true"><td class="sticky-l !pl-4"><input type="checkbox" class="cb" checked aria-label="Seleccionar ${s[0]}"></td><td class="sticky-l2 edge-l font-medium mono !text-[12.5px]" style="left:40px">${s[0]}</td><td><span class="chip ${s[2]}"><span class="dot"></span>${s[1]}</span></td><td><span class="lang">${s[3]}</span></td><td class="text-meta">${s[4]}</td><td class="text-meta num">${s[5]}</td><td class="text-meta num">${s[6]}</td><td class="text-meta mono text-xs">${s[7]}</td><td class="sticky-r edge-r text-right"><button class="icon-btn" aria-label="Acciones de ${s[0]}"><i data-lucide="more-horizontal"></i></button></td></tr>`).join('');
+
+/* selector de medios: mismo marcado para la vista estática y el modal */
+const PH=[['sala-bloque-poblenou.jpg','#4a3b2a','linear-gradient(135deg,#7f6a4d,#2a221a)',1],['pared-15m-gracia.jpg','#3d2a22','linear-gradient(160deg,#9b5a3a,#3d2a22)',1],['autobelays-gracia.jpg','#2f3a44','linear-gradient(150deg,#5b6b78,#1c232a)',0],['entreno-badalona.jpg','#2b3227','linear-gradient(150deg,#6d7a62,#2b3227)',1],['tarantulace-perfil.jpg','#5a4417','linear-gradient(150deg,#c9a24a,#5a4417)',1],['resolado-antes.jpg','#2e211a','linear-gradient(150deg,#7a5a48,#2e211a)',0],['via-sants-pared.jpg','#232a33','linear-gradient(150deg,#5d6a7a,#232a33)',1],['solution-suela.jpg','#251e33','linear-gradient(150deg,#6a5a8a,#251e33)',1]];
+function picker(live){return `
+  <div class="flex items-center gap-3 px-5 h-14 border-b border-line"><h2 ${live?'id="picker-h"':''} class="text-base font-semibold">Elegir portada</h2><div class="seg ml-3 hidden sm:inline-flex" role="tablist" aria-label="Origen"><button role="tab" aria-selected="true">Biblioteca</button><button role="tab" aria-selected="false">Subir</button></div>${live?'<button class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button>':''}</div>
+  <div class="px-5 py-3 flex flex-wrap gap-2 border-b border-line"><div class="relative flex-1 min-w-[180px]"><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted"></i><input class="input !pl-8" placeholder="Buscar por nombre o alt" aria-label="Buscar medios"></div><div class="seg"><button aria-pressed="true">Todas</button><button aria-pressed="false">Sin alt</button><button aria-pressed="false">Sin usar</button></div></div>
+  <div class="grid lg:grid-cols-[1fr_280px]">
+    <div class="p-5 grid grid-cols-3 sm:grid-cols-4 gap-3 content-start" role="listbox" aria-label="Fotos" ${live?'':'tabindex="-1"'}>${PH.map((p,i)=>`<div role="option" class="tile aspect-[4/3]" aria-selected="${i===2}" tabindex="${live&&i===2?0:-1}"><div class="photo absolute inset-0" style="background-image:${p[2]}"></div><div class="tile-ov"></div>${i===2?'<span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-acc text-white grid place-items-center"><i data-lucide="check" class="w-3 h-3"></i></span>':''}${!p[3]?'<span class="absolute left-1.5 bottom-1.5 chip st-warn !h-[18px] !text-[11px]">Sin alt</span>':''}</div>`).join('')}</div>
+    <aside class="border-t lg:border-t-0 lg:border-l border-line p-5 space-y-3 text-sm bg-side">
+      <div class="photo aspect-[16/10] rounded-md" style="background-image:${PH[2][2]}"></div>
+      <p class="mono text-xs truncate">autobelays-gracia.jpg</p>
+      <p class="text-xs text-meta flex items-center gap-2"><span class="swatch" style="background:#2f3a44"></span><span class="mono">#2f3a44</span> · 2400×1600 · 412 KB</p>
+      <div><label class="lbl" for="pk-alt${live?'':'s'}">Texto alternativo <span class="lang-tag">ES</span> <span class="req">*</span></label><input id="pk-alt${live?'':'s'}" class="input" aria-invalid="true" placeholder="Describe lo que se ve" aria-describedby="pk-e${live?'':'s'}"><p id="pk-e${live?'':'s'}" class="err"><i data-lucide="circle-alert"></i>Esta foto no tiene alt. Escríbelo para usarla como portada.</p></div>
+    </aside>
+  </div>
+  <div class="dialog-f border-t border-line !pt-3"><span class="text-xs text-meta mr-auto self-center hidden sm:inline">1 seleccionada</span><button class="btn btn-ghost" ${live?'data-close':''}>Cancelar</button><button class="btn btn-primary" ${live?'data-close data-toast="Portada cambiada"':''}>Usar como portada</button></div>`;}
+document.getElementById('picker-static').innerHTML=picker(false);
+document.getElementById('picker-live').innerHTML=picker(true);
+</script>
+</body>
+</html>

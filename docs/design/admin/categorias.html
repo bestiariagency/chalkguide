@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Categorías · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+</head>
+<body data-page="categorias" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Categorías del blog <span class="text-muted font-normal num ml-1">6</span></h1>
+    <div class="ml-auto"><button class="btn btn-primary" data-open="edit"><i data-lucide="plus"></i><span class="hidden sm:inline">Nueva categoría</span><span class="sm:hidden">Nueva</span></button></div>
+  </header>
+
+  <div class="px-4 md:px-6 py-6 grid xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 max-w-[1440px]">
+    <!-- categorías -->
+    <section aria-labelledby="h-cats">
+      <div class="flex items-end gap-3"><div><h2 id="h-cats" class="text-sm font-semibold">Orden en el sitio</h2><p class="text-xs text-meta mt-0.5">Es el orden del menú del blog y de la home. Arrastra desde <i data-lucide="grip-vertical" class="inline w-3.5 h-3.5"></i> o usa Espacio y flechas.</p></div></div>
+      <ul class="sortable card mt-3 divide-y divide-line" id="cats" aria-label="Categorías, ordenables">
+      </ul>
+      <p class="mt-2 text-xs text-meta flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-ok"></i><span id="saved">Orden guardado</span></p>
+    </section>
+
+    <!-- artículos de la categoría -->
+    <section aria-labelledby="h-arts">
+      <div class="flex items-end gap-3 flex-wrap"><div><h2 id="h-arts" class="text-sm font-semibold">Artículos en <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:#81B29A"></span>Material</span></h2><p class="text-xs text-meta mt-0.5">Orden dentro de la página de la categoría. Los destacados van primero en el sitio sea cual sea su posición.</p></div>
+        <label class="ml-auto sm:hidden w-full"><span class="sr-only">Categoría</span><select class="select"><option>Material</option></select></label></div>
+      <ul class="sortable card mt-3 divide-y divide-line" id="arts" aria-label="Artículos de Material, ordenables">
+        <li class="flex items-center gap-2 pl-1 pr-2 py-1.5" data-label="Cómo elegir pies de gato según tu nivel y estilo"><button class="handle" aria-label="Reordenar: Cómo elegir pies de gato según tu nivel y estilo"><i data-lucide="grip-vertical"></i></button><span class="num text-xs text-muted w-5 text-right">1</span><span class="photo w-8 h-6 rounded flex-none" style="background-image:linear-gradient(150deg,#6a5a8a,#251e33)"></span><span class="text-sm truncate flex-1">Cómo elegir pies de gato según tu nivel y estilo</span><span class="chip st-pub hidden sm:inline-flex"><span class="dot"></span>Publicado</span></li>
+        <li class="flex items-center gap-2 pl-1 pr-2 py-1.5" data-label="Cuándo resolar"><button class="handle" aria-label="Reordenar: Cuándo resolar"><i data-lucide="grip-vertical"></i></button><span class="num text-xs text-muted w-5 text-right">2</span><span class="photo w-8 h-6 rounded flex-none" style="background-image:linear-gradient(150deg,#8a7a5a,#3b3222)"></span><span class="text-sm truncate flex-1">Cuándo resolar: señales de que tus pies de gato lo necesitan</span><span class="chip st-sched hidden sm:inline-flex"><span class="dot"></span>14 oct</span></li>
+        <li class="flex items-center gap-2 pl-1 pr-2 py-1.5" data-label="Magnesio líquido o en polvo"><button class="handle" aria-label="Reordenar: Magnesio líquido o en polvo"><i data-lucide="grip-vertical"></i></button><span class="num text-xs text-muted w-5 text-right">3</span><span class="w-8 h-6 rounded flex-none border border-dashed border-line-strong grid place-items-center text-muted"><i data-lucide="image-off" class="w-3 h-3"></i></span><span class="text-sm truncate flex-1">Magnesio líquido o en polvo: lo que uso y por qué</span><span class="chip st-draft hidden sm:inline-flex"><span class="dot"></span>Borrador</span></li>
+        <li class="flex items-center gap-2 pl-1 pr-2 py-1.5" data-label="Cinta de dedos"><button class="handle" aria-label="Reordenar: Cinta de dedos"><i data-lucide="grip-vertical"></i></button><span class="num text-xs text-muted w-5 text-right">4</span><span class="photo w-8 h-6 rounded flex-none" style="background-image:linear-gradient(150deg,#7a5a48,#2e211a)"></span><span class="text-sm truncate flex-1">Cinta de dedos: cuándo sí y cuándo es una muleta</span><span class="chip st-pub hidden sm:inline-flex"><span class="dot"></span>Publicado</span></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<!-- drawer de edición -->
+<div id="edit" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="ed-h"><div class="drawer"><div class="grab"></div>
+  <div class="drawer-h"><h2 id="ed-h" class="text-base font-semibold">Editar «Material»</h2><button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="drawer-b space-y-5">
+    <div class="grid gap-3"><div><label class="lbl" for="n-es">Nombre <span class="lang-tag">ES</span> <span class="req">*</span></label><input id="n-es" class="input" value="Material"></div>
+      <div><label class="lbl" for="n-en">Nombre <span class="lang-tag">EN</span></label><input id="n-en" class="input" value="Gear"></div></div>
+    <div class="grid gap-3"><div><label class="lbl" for="s-es">URL <span class="lang-tag">ES</span></label><div class="input affix"><span class="pre">/blog/</span><input id="s-es" class="mono !text-[12.5px]" value="material"></div></div>
+      <div><label class="lbl" for="s-en">URL <span class="lang-tag">EN</span></label><div class="input affix"><span class="pre">/en/blog/</span><input id="s-en" class="mono !text-[12.5px]" value="gear"></div><p class="help">Nombre y URL en inglés van juntos: si uno está vacío, la categoría no sale en /en.</p></div></div>
+    <div class="grid gap-3"><div><label class="lbl" for="d-es">Descripción <span class="lang-tag">ES</span><span class="counter">96 / 160</span></label><textarea id="d-es" rows="3" class="input">Pies de gato, cuerdas, arneses y todo lo que compras para escalar, con lo que uso y lo que no.</textarea><p class="help">También es la descripción para buscadores.</p></div>
+      <div><label class="lbl" for="d-en">Descripción <span class="lang-tag">EN</span><span class="counter">0 / 160</span></label><textarea id="d-en" rows="3" class="input" placeholder="Opcional"></textarea></div></div>
+    <fieldset><legend class="lbl">Color</legend><div class="flex flex-wrap gap-2" role="radiogroup" aria-label="Color de la categoría">
+      <script>document.write(['#E07A5F','#3D5A80','#81B29A','#F2CC8F','#6D597A','#B56576'].map((c,i)=>`<button role="radio" aria-checked="${i===2}" aria-label="${c}" class="w-8 h-8 rounded-md ${i===2?'ring-2 ring-offset-2 ring-[var(--acc)]':''}" style="background:${c}"></button>`).join(''))</script>
+      <input class="input mono !w-28" value="#81B29A" aria-label="Color en hexadecimal"></div><p class="help">Se usa en el punto de la categoría (panel y sitio). No como fondo de texto.</p></fieldset>
+  </div>
+  <div class="drawer-f"><button class="btn btn-danger-ghost" data-open="del"><i data-lucide="trash-2"></i>Eliminar…</button><button class="btn btn-ghost ml-auto" data-close>Cancelar</button><button class="btn btn-primary" data-close data-toast="Categoría guardada">Guardar</button></div>
+</div></div>
+
+<div id="del" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="del-h" aria-describedby="del-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="del-h">¿Eliminar la categoría «Material»?</h2><p id="del-d" class="text-sm text-meta mt-1">Tiene 4 artículos (2 publicados). Antes hay que moverlos a otra categoría; su URL no cambia. Las URL de la categoría (<span class="mono text-xs">/blog/material</span>) dejarán de existir.</p></div>
+  <div class="dialog-b"><label class="lbl" for="re">Mover los 4 artículos a <span class="req">*</span></label><select id="re" class="select"><option value="">Elige una categoría</option><option>Empezar a escalar</option><option>Progresión y cuidado</option><option>Costes</option></select><p class="help">Se añaden al final del orden de esa categoría.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Categoría eliminada · 4 artículos movidos">Mover y eliminar</button></div></div></div>
+
+<script>
+const CATS=[['Empezar a escalar','#E07A5F','empezar-a-escalar',5,1],['Dónde escalar','#3D5A80','donde-escalar',6,1],['Material','#81B29A','material',4,1],['Progresión y cuidado','#F2CC8F','progresion-y-cuidado',4,1],['Costes','#6D597A','costes',3,0],['Comunidad','#B56576','comunidad',2,1]];
+document.getElementById('cats').innerHTML=CATS.map(([n,c,s,k,en],i)=>`<li class="flex items-center gap-2 pl-1 pr-2 py-1.5 ${i===2?'bg-acc-soft':''}" data-label="${n}">
+  <button class="handle" aria-label="Reordenar: ${n}" aria-roledescription="elemento ordenable"><i data-lucide="grip-vertical"></i></button>
+  <span class="w-2.5 h-2.5 rounded-full flex-none" style="background:${c}"></span>
+  <button class="flex-1 min-w-0 text-left py-1" ${i===2?'aria-current="true"':''}><span class="block text-sm font-medium truncate">${n}</span><span class="block mono text-[11px] text-muted truncate">/blog/${s}</span></button>
+  <span class="text-xs text-meta num hidden sm:inline">${k} artículos</span>
+  <span class="lang ${en?'lang-ok':'lang-miss'}" ${en?'':'title="Sin versión en inglés"'}>EN</span>
+  <button class="icon-btn" data-open="edit" aria-label="Editar ${n}"><i data-lucide="pencil"></i></button></li>`).join('');
+['cats','arts'].forEach(id=>document.getElementById(id).addEventListener('sorted',()=>{if(id==='arts')document.querySelectorAll('#arts li').forEach((li,i)=>li.querySelector('.num').textContent=i+1);CG.toast('Orden guardado');}));
+</script>
+</body>
+</html>

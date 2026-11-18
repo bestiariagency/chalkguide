@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>La Paret de Gràcia · Rocódromos · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .fsec{padding-top:24px;margin-top:24px;border-top:1px solid var(--line)} .fsec:first-child{border-top:0;margin-top:0;padding-top:0}
+  .fsec>h3{font-size:14px;font-weight:600} .fsec>h3+p{font-size:12px;color:var(--meta);margin-top:2px}
+  .rule{position:relative;height:14px;margin:6px 4px 0} .rule::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:var(--line-strong);border-radius:2px}
+  .rule i{position:absolute;top:3px;width:2px;height:8px;background:var(--control)} .rule b{position:absolute;top:2px;width:10px;height:10px;margin-left:-5px;border-radius:99px;background:var(--fg);box-shadow:0 0 0 2px var(--elev)}
+  .tri-row{display:flex;align-items:center;gap:12px;min-height:44px;border-bottom:1px solid var(--line)} .tri-row:last-child{border-bottom:0}
+</style>
+</head>
+<body data-page="rocodromo" data-bottomnav="none" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-2 md:px-4 flex items-center gap-2 border-b border-line text-sm sticky top-14 md:top-0 bg-bg z-30">
+    <a href="#" class="icon-btn" aria-label="Volver a rocódromos"><i data-lucide="arrow-left"></i></a>
+    <nav aria-label="Migas" class="crumbs hidden lg:flex"><a href="#">Rocódromos</a><span aria-hidden="true">/</span><span class="text-fg" aria-current="page">La Paret de Gràcia</span></nav>
+    <span class="lg:hidden font-medium truncate">La Paret de Gràcia</span>
+    <span class="chip-pair flex-none"><span class="chip st-pub"><span class="dot"></span><span class="hidden sm:inline">Publicada</span><span class="sr-only sm:hidden">Publicada</span></span><span class="chip st-rev">2<span class="hidden sm:inline">&nbsp;cambios</span><span class="sr-only sm:hidden"> cambios sin publicar</span></span></span>
+    <span class="text-xs text-muted hidden xl:inline-flex items-center gap-1 whitespace-nowrap" aria-live="polite"><i data-lucide="check" class="w-3.5 h-3.5"></i>Guardado · hace 12 s</span>
+    <div class="ml-auto flex items-center gap-1.5">
+      <a href="#" class="btn btn-ghost hidden lg:inline-flex"><i data-lucide="external-link"></i>Ver en el sitio</a>
+      <button class="btn btn-rev hidden md:inline-flex" data-open="pub"><i data-lucide="upload"></i>Publicar cambios</button>
+      <button class="icon-btn" aria-label="Más acciones" aria-haspopup="menu"><i data-lucide="more-horizontal"></i></button>
+    </div>
+  </header>
+  <div class="rev-band px-4 py-2 text-sm flex flex-wrap items-center gap-x-3 gap-y-1" role="status"><i data-lucide="git-compare-arrows" class="w-4 h-4 text-st-rev"></i><span class="flex-1 min-w-[220px]">2 cambios sin publicar en <b>Precios</b>. La ficha pública sigue con los datos del 30 ago.</span><span class="flex gap-4"><button class="underline underline-offset-2 font-medium" data-open="pub">Ver cambios</button><button class="underline underline-offset-2 text-meta hover:text-fg" data-toast="Cambios descartados">Descartar</button></span></div>
+
+  <!-- pestañas -->
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto sticky top-[104px] md:top-12 bg-bg z-20">
+    <div role="tablist" data-tabs aria-label="Secciones de la ficha" class="flex gap-5 min-w-max">
+      <button role="tab" class="tab" aria-controls="p-gen" aria-selected="false">General</button>
+      <button role="tab" class="tab" aria-controls="p-ubi">Ubicación y horarios<span class="terr" aria-label="1 error">1</span></button>
+      <button role="tab" class="tab" aria-controls="p-pre"><span class="tdot" aria-hidden="true"></span>Precios<span class="sr-only"> (con cambios)</span></button>
+      <button role="tab" class="tab" aria-controls="p-ins">Instalaciones</button>
+      <button role="tab" class="tab" aria-controls="p-gye">Grados y estilo</button>
+      <button role="tab" class="tab" aria-controls="p-res" aria-selected="true">Reseña y notas</button>
+      <button role="tab" class="tab" aria-controls="p-gal">Galería <span class="num text-muted">6</span></button>
+      <button role="tab" class="tab" aria-controls="p-rel">Relacionados</button>
+      <button role="tab" class="tab" aria-controls="p-seo">SEO</button>
+    </div>
+  </div>
+
+  <div class="px-4 md:px-6 py-6 grid xl:grid-cols-[minmax(0,760px)_320px] gap-8 justify-between max-w-[1200px] pb-28 md:pb-10">
+    <div class="min-w-0">
+      <!-- GENERAL -->
+      <section id="p-gen" role="tabpanel" aria-label="General" hidden>
+        <div class="fsec space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4"><div><label class="lbl" for="g-n">Nombre <span class="req">*</span></label><input id="g-n" class="input" value="La Paret de Gràcia"></div>
+            <div><label class="lbl" for="g-s">URL</label><div class="input affix"><span class="pre">/rocodromos/</span><input id="g-s" class="mono !text-[12.5px]" value="la-paret-de-gracia"></div></div></div>
+          <div class="grid lg:grid-cols-2 gap-4">
+            <div><label class="lbl" for="g-es">Resumen <span class="lang-tag">ES</span><span class="counter">104 / 400</span></label><textarea id="g-es" rows="3" class="input">Rocódromo de cuerda con vías de hasta 15 metros y autobelays, ideal para hacer kilómetros entre semana.</textarea></div>
+            <div><label class="lbl" for="g-en">Resumen <span class="lang-tag">EN</span><span class="counter">88 / 400</span></label><textarea id="g-en" rows="3" class="input">Rope gym with routes up to 15 metres and auto-belays, great for mileage on weekdays.</textarea></div>
+          </div>
+          <div><p class="lbl">Portada <span class="req">*</span></p><div class="flex items-center gap-3"><span class="photo w-28 h-[72px] rounded-md flex-none" style="background-image:linear-gradient(160deg,#9b5a3a,#3d2a22)"></span><div class="text-xs text-meta"><p class="mono text-fg">pared-15m-gracia.jpg</p><p class="flex items-center gap-1.5 mt-1"><span class="swatch !w-3 !h-3" style="background:#3d2a22"></span><span class="mono">#3d2a22</span> · alt ES ✓ · alt EN ✓</p><div class="mt-2 flex gap-2"><button class="btn btn-ghost btn-sm">Cambiar</button><button class="btn btn-quiet btn-sm">Quitar</button></div></div></div></div>
+          <div class="flex items-center gap-3"><button role="switch" aria-checked="false" aria-labelledby="g-f" class="switch"></button><span id="g-f" class="text-sm">Destacada <span class="text-meta">· sale arriba en /rocodromos</span></span></div>
+        </div>
+        <div class="fsec space-y-4"><h3>Fuente y verificación</h3><p>Se muestra en la ficha como "verificado el …". Pasados 6 meses sale el aviso "puede haber cambiado".</p>
+          <div class="grid sm:grid-cols-2 gap-4"><div><label class="lbl" for="g-src">Fuente</label><input id="g-src" class="input" value="Visita y web oficial"></div><div><label class="lbl" for="g-url">URL de la fuente</label><input id="g-url" class="input" value="https://www.example.com/la-paret-de-gracia"></div></div>
+          <div class="flex flex-wrap items-end gap-3"><div><label class="lbl" for="g-v">Datos verificados el</label><input id="g-v" class="input num !w-44" value="30/08/2026"></div><button class="btn btn-ghost" data-toast="Marcada como verificada hoy, 9 oct"><i data-lucide="badge-check"></i>Marcar verificado hoy</button></div>
+        </div>
+      </section>
+
+      <!-- UBICACIÓN -->
+      <section id="p-ubi" role="tabpanel" aria-label="Ubicación y horarios" hidden>
+        <div class="fsec space-y-4"><h3>Dirección</h3>
+          <div class="grid sm:grid-cols-[1fr_120px] gap-4"><div><label class="lbl" for="u-a">Dirección</label><input id="u-a" class="input" value="Carrer de Verdi 999"></div><div><label class="lbl" for="u-cp">Código postal</label><input id="u-cp" class="input num" value="08012" inputmode="numeric"></div></div>
+          <div class="grid sm:grid-cols-2 gap-4"><div><label class="lbl" for="u-c">Ciudad <span class="req">*</span></label><input id="u-c" class="input" value="Barcelona"></div><div><label class="lbl" for="u-d">Barrio o municipio</label><input id="u-d" class="input" value="Gràcia"><p class="help">Sale en la tarjeta: "Cuerda · Gràcia".</p></div></div>
+          <div class="grid md:grid-cols-[1fr_200px] gap-4">
+            <div class="rounded-lg border border-line h-44 relative overflow-hidden" style="background:repeating-linear-gradient(0deg,#f4f4f5 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,#f4f4f5 0 1px,transparent 1px 28px),#fafafa" role="img" aria-label="Mapa con el punto en Carrer de Verdi"><span class="absolute left-[48%] top-[38%] text-acc"><i data-lucide="map-pin" class="w-7 h-7 fill-[var(--acc-soft)]"></i></span><span class="absolute left-2 bottom-2 text-2xs text-meta bg-white/90 rounded px-1.5">Arrastra el punto para ajustarlo</span></div>
+            <div class="space-y-3"><div><label class="lbl" for="u-lat">Latitud</label><input id="u-lat" class="input num mono" value="41.404000"></div><div><label class="lbl" for="u-lng">Longitud</label><input id="u-lng" class="input num mono" value="2.157000"></div><button class="btn btn-quiet btn-sm">Buscar desde la dirección</button></div>
+          </div>
+          <div><label class="lbl" for="u-m">Paradas de metro</label><div class="input !h-auto min-h-[32px] flex flex-wrap items-center gap-1.5 py-1"><span class="chip st-neutral !text-fg">Fontana (L3)<button aria-label="Quitar Fontana (L3)" class="text-muted hover:text-fg">×</button></span><span class="chip st-neutral !text-fg">Joanic (L4)<button aria-label="Quitar Joanic (L4)" class="text-muted hover:text-fg">×</button></span><input id="u-m" class="flex-1 min-w-[120px] bg-transparent outline-none text-sm" placeholder="Añadir y pulsar Intro"></div><p class="help">Formato "Estación (línea)". La primera sale en la tarjeta.</p></div>
+        </div>
+        <div class="fsec space-y-4"><h3>Contacto</h3>
+          <div class="grid sm:grid-cols-3 gap-4"><div><label class="lbl" for="u-w">Web</label><input id="u-w" class="input" value="https://www.example.com/la-paret-de-gracia"></div><div><label class="lbl" for="u-i">Instagram</label><input id="u-i" class="input" placeholder="https://instagram.com/…"></div><div><label class="lbl" for="u-t">Teléfono</label><input id="u-t" class="input num" placeholder="+34 …" inputmode="tel"></div></div>
+        </div>
+        <div class="fsec"><div class="flex items-end gap-3"><div><h3 class="text-sm font-semibold">Horario</h3><p class="text-xs text-meta mt-0.5">Hora de Barcelona. Varios tramos por día si cierra a mediodía.</p></div><button class="btn btn-quiet btn-sm ml-auto"><i data-lucide="copy"></i>Copiar lunes a laborables</button></div>
+          <div class="banner banner-err mt-3" role="alert"><i data-lucide="circle-alert"></i><span>1 error: <a href="#h-sat" class="underline underline-offset-2">sábado</a>, la hora de cierre es anterior a la de apertura.</span></div>
+          <div class="mt-3 card divide-y divide-line" id="hours"></div>
+          <div class="grid lg:grid-cols-2 gap-4 mt-4"><div><label class="lbl" for="u-hn">Nota de horario <span class="lang-tag">ES</span></label><input id="u-hn" class="input" value="En agosto cierra a las 21:00. Festivos, horario de domingo."></div><div><label class="lbl" for="u-hne">Nota de horario <span class="lang-tag">EN</span></label><input id="u-hne" class="input" placeholder="Opcional"></div></div>
+        </div>
+      </section>
+
+      <!-- PRECIOS -->
+      <section id="p-pre" role="tabpanel" aria-label="Precios" hidden>
+        <div class="fsec space-y-4"><h3>Precios</h3><p>En euros con IVA. Vacío = no lo sabemos (no se muestra). 0 = gratis.</p>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pl-3">
+            <div><label class="lbl" for="p1">Matrícula</label><div class="input affix"><input id="p1" class="num" value="30,00" inputmode="decimal"><span class="suf">€</span></div></div>
+            <div><label class="lbl" for="p2">Entrada de día</label><div class="input affix"><input id="p2" class="num" value="15,00" inputmode="decimal"><span class="suf">€</span></div></div>
+            <div><label class="lbl" for="p3">Bono 10</label><div class="input affix"><input id="p3" class="num" value="130,00" inputmode="decimal"><span class="suf">€</span></div><p class="help num">13,00 € por sesión</p></div>
+            <div class="changed"><label class="lbl" for="p4">Cuota mensual <span class="chg-mark">Cambiado</span></label><div class="input affix"><input id="p4" class="num" value="72,00" inputmode="decimal"><span class="suf">€</span></div><p class="help num">Publicado: 69,00 €</p></div>
+          </div>
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="p-de">Descuentos <span class="lang-tag">ES</span></label><textarea id="p-de" rows="2" class="input">Cuota de mañanas (7–15 h) 49 €.</textarea></div><div><label class="lbl" for="p-den">Descuentos <span class="lang-tag">EN</span></label><textarea id="p-den" rows="2" class="input" placeholder="Opcional"></textarea></div></div>
+          <div class="changed ml-3 flex flex-wrap items-end gap-3"><div><label class="lbl" for="p-v">Precios verificados el <span class="chg-mark">Cambiado</span></label><input id="p-v" class="input num !w-44" value="09/10/2026"></div><p class="help">Publicado: 30/08/2026</p></div>
+        </div>
+      </section>
+
+      <!-- INSTALACIONES -->
+      <section id="p-ins" role="tabpanel" aria-label="Instalaciones" hidden>
+        <div class="fsec space-y-4"><h3>Cifras</h3>
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <div><label class="lbl" for="i1">Superficie</label><div class="input affix"><input id="i1" class="num" value="1800"><span class="suf">m²</span></div></div>
+            <div><label class="lbl" for="i2">Altura máx.</label><div class="input affix"><input id="i2" class="num" value="15,0"><span class="suf">m</span></div></div>
+            <div><label class="lbl" for="i3">Vías</label><input id="i3" class="input num" value="140"></div>
+            <div><label class="lbl" for="i4">Autobelays</label><input id="i4" class="input num" value="8"></div>
+            <div><label class="lbl" for="i5">Edad mín. niños</label><div class="input affix"><input id="i5" class="num" value="8"><span class="suf">años</span></div></div>
+          </div></div>
+        <div class="fsec"><h3>Qué tiene</h3><p>Sí, No o No lo sé. Lo que no sabes no sale en la ficha (no es lo mismo que "No").</p>
+          <div class="mt-3 card px-4" id="tris"></div></div>
+      </section>
+
+      <!-- GRADOS Y ESTILO -->
+      <section id="p-gye" role="tabpanel" aria-label="Grados y estilo" hidden>
+        <div class="banner banner-info"><i data-lucide="info"></i><span><b>No son notas: sirven para elegir.</b> No entran en medias ni en índices. En el sitio salen en "Cómo se escala aquí" y en la tarjeta.</span></div>
+        <div class="fsec !border-0 !mt-4 !pt-0 space-y-6">
+          <div><div class="flex items-baseline gap-2"><p class="lbl !mb-0" id="gr-l">Grados</p><span class="text-xs text-meta">frente a la media de Barcelona</span><button class="ml-auto text-xs text-meta underline underline-offset-2">Sin dato</button></div>
+            <div class="seg scale mt-2" role="radiogroup" aria-labelledby="gr-l"><button role="radio" aria-checked="false"><b>1</b><span>Generosos</span></button><button role="radio" aria-checked="false"><b>2</b><span>Algo generosos</span></button><button role="radio" aria-checked="false"><b>3</b><span>En la media</span></button><button role="radio" aria-checked="true"><b>4</b><span>Algo duros</span></button><button role="radio" aria-checked="false"><b>5</b><span>Duros</span></button></div></div>
+          <div><div class="flex items-baseline gap-2"><p class="lbl !mb-0" id="es-l">Estilo</p><span class="text-xs text-meta">de técnico a dinámico</span><button class="ml-auto text-xs text-meta underline underline-offset-2">Sin dato</button></div>
+            <div class="seg scale mt-2" role="radiogroup" aria-labelledby="es-l"><button role="radio" aria-checked="false"><b>1</b><span>Muy técnico</span></button><button role="radio" aria-checked="true"><b>2</b><span>Técnico</span></button><button role="radio" aria-checked="false"><b>3</b><span>Mixto</span></button><button role="radio" aria-checked="false"><b>4</b><span>Dinámico</span></button><button role="radio" aria-checked="false"><b>5</b><span>Muy dinámico</span></button></div>
+            <p class="help">Técnico: predomina lo técnico, algún movimiento amplio.</p></div>
+          <div><p class="lbl">Así se ve en la tarjeta</p><dl class="inline-grid grid-cols-[48px_72px_auto] items-center gap-x-2 gap-y-1 text-xs border border-line rounded-lg px-3 py-2 bg-side"><dt class="text-meta">Grados</dt><dd class="rule"><i style="left:0"></i><i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i><i style="left:calc(100% - 2px)"></i><b style="left:75%"></b></dd><dd>Algo duros</dd><dt class="text-meta">Estilo</dt><dd class="rule"><i style="left:0"></i><i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i><i style="left:calc(100% - 2px)"></i><b style="left:25%"></b></dd><dd>Técnico</dd></dl></div>
+        </div>
+      </section>
+
+      <!-- RESEÑA -->
+      <section id="p-res" role="tabpanel" aria-label="Reseña y notas">
+        <div class="fsec space-y-4"><h3>Visita</h3><p>La reseña del autor domina la ficha. Si la visita fue invitada se marca siempre.</p>
+          <div class="grid sm:grid-cols-[auto_1fr] gap-4 items-end">
+            <div><p class="lbl" id="vt">Tipo de visita</p><div class="seg" role="radiogroup" aria-labelledby="vt" id="vtype"><button role="radio" aria-checked="false" data-v="paid">Pagada</button><button role="radio" aria-checked="true" data-v="invited">Invitada</button></div></div>
+            <div class="sm:w-44"><label class="lbl" for="vd">Fecha de visita</label><input id="vd" class="input num" value="22/08/2026"></div>
+          </div>
+          <div id="disc" class="rounded-lg border border-line p-4 space-y-3 bg-side">
+            <div class="flex items-center gap-2 text-sm"><span class="chip st-acc"><i data-lucide="gift"></i>Visita invitada</span><span class="text-meta text-xs">Así sale en la tarjeta y en la ficha</span></div>
+            <div class="grid lg:grid-cols-2 gap-4">
+              <div><label class="lbl" for="dn-es">Nota de transparencia <span class="lang-tag">ES</span> <span class="req">*</span></label><textarea id="dn-es" rows="2" class="input">La Paret me invitó a una sesión. No ha visto la reseña antes de publicarla ni paga por aparecer.</textarea></div>
+              <div><label class="lbl" for="dn-en">Nota de transparencia <span class="lang-tag">EN</span></label><textarea id="dn-en" rows="2" class="input">La Paret invited me for one session. They didn't see this review before publishing and don't pay to be listed.</textarea></div>
+            </div>
+          </div>
+        </div>
+        <div class="fsec space-y-4"><h3>Mi reseña</h3>
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="h-es">Veredicto <span class="lang-tag">ES</span><span class="counter">58 / 120</span></label><input id="h-es" class="input" value="El sitio para hacer metros de cuerda sin salir de la ciudad"></div><div><label class="lbl" for="h-en">Veredicto <span class="lang-tag">EN</span></label><input id="h-en" class="input" value="Where to rack up rope mileage without leaving the city"></div></div>
+          <div class="card overflow-hidden">
+            <div class="flex items-center gap-1 px-2 h-10 border-b border-line bg-side"><div class="seg !p-0.5" role="tablist" aria-label="Idioma de la reseña"><button role="tab" aria-selected="true">ES</button><button role="tab" aria-selected="false">EN <span class="w-1.5 h-1.5 rounded-full bg-warn-icon" aria-hidden="true"></span><span class="sr-only">(incompleto)</span></button></div><span class="w-px h-5 bg-line mx-1"></span><button class="icon-btn" aria-label="Negrita"><i data-lucide="bold"></i></button><button class="icon-btn" aria-label="Enlace"><i data-lucide="link"></i></button><button class="icon-btn" aria-label="Lista"><i data-lucide="list"></i></button><button class="icon-btn" aria-label="Imagen"><i data-lucide="image"></i></button><span class="ml-auto text-xs text-muted num pr-2">412 palabras</span></div>
+            <div class="p-4 prose-ed prose-sm max-h-48 overflow-auto" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Cuerpo de la reseña (ES)"><p>Fui un martes a las 19:00 y había cola en las vías fáciles, pero en el muro de 15 metros siempre encontraba hueco. Las vías se renuevan cada semana por sectores, así que no te aburres aunque vayas tres veces por semana.</p><p>Lo mejor: los autobelays para calentar sin depender de nadie. Lo peor: el vestuario se queda pequeño en hora punta.</p></div>
+          </div>
+        </div>
+        <div class="fsec"><div class="flex items-end gap-3"><div><h3 class="text-sm font-semibold">Notas por criterio</h3><p class="text-xs text-meta mt-0.5">1 a 5. "Sin nota" no cuenta en la media. ← → para cambiar.</p></div><div class="ml-auto text-right"><p class="text-2xs text-meta">Media</p><p class="text-2xl font-semibold num leading-7" id="avg">4,0</p></div></div>
+          <div class="mt-3 card divide-y divide-line" id="scores"></div>
+          <div class="mt-3 grid grid-cols-3 gap-3 text-sm"><div class="card p-3"><p class="text-xs text-meta">Índice principiante</p><p class="font-semibold num mt-0.5">4,3</p></div><div class="card p-3"><p class="text-xs text-meta">Índice familiar</p><p class="font-semibold num mt-0.5">3,1</p></div><div class="card p-3"><p class="text-xs text-meta">Índice precio</p><p class="font-semibold num mt-0.5 flex items-center gap-1">3,4<span class="chip st-warn !h-[18px] !text-[11px]">incompleto</span></p></div></div>
+          <p class="help">Los índices se calculan con las notas y los datos de la ficha (vista previa; la fórmula está en Criterios de nota).</p>
+        </div>
+      </section>
+
+      <!-- GALERÍA -->
+      <section id="p-gal" role="tabpanel" aria-label="Galería" hidden>
+        <div class="flex items-end gap-3"><div><h3 class="text-sm font-semibold">Galería</h3><p class="text-xs text-meta mt-0.5">Arrastra para ordenar. La primera es la que abre el carrusel de la ficha.</p></div><button class="btn btn-ghost ml-auto" data-open="picker"><i data-lucide="plus"></i>Añadir fotos</button></div>
+        <ul class="sortable mt-3 card divide-y divide-line" id="gal" aria-label="Fotos de la galería, ordenables"></ul>
+      </section>
+
+      <!-- RELACIONADOS -->
+      <section id="p-rel" role="tabpanel" aria-label="Relacionados" hidden>
+        <div class="fsec space-y-3"><h3>Artículos que hablan de este rocódromo</h3><p>Salen al final de la ficha como "Lo he contado aquí". Se añaden solos cuando un artículo inserta su tarjeta.</p>
+          <ul class="card divide-y divide-line text-sm"><li class="flex items-center gap-3 px-3 min-h-[44px]"><i data-lucide="file-text" class="w-4 h-4 text-meta"></i><a href="articulo-editor.html" class="flex-1 truncate row-link">Rocódromos para ir solo y encontrar compañero</a><span class="text-xs text-meta">tarjeta en el cuerpo</span></li><li class="flex items-center gap-3 px-3 min-h-[44px]"><i data-lucide="file-text" class="w-4 h-4 text-meta"></i><span class="flex-1 truncate">Dónde escalar en Barcelona cuando llueve</span><button class="icon-btn" aria-label="Quitar relación"><i data-lucide="x"></i></button></li></ul>
+          <button class="btn btn-ghost"><i data-lucide="plus"></i>Relacionar artículo</button></div>
+      </section>
+
+      <!-- SEO -->
+      <section id="p-seo" role="tabpanel" aria-label="SEO" hidden>
+        <div class="banner banner-info"><i data-lucide="info"></i><span>Si lo dejas vacío se genera del nombre y el resumen: "La Paret de Gràcia: precios, horarios y opinión | ChalkGuide".</span></div>
+        <div class="mt-4 grid lg:grid-cols-2 gap-4">
+          <div><div class="lbl"><label for="s-t">Título SEO <span class="lang-tag">ES</span></label><span class="counter">0 / 70</span></div><input id="s-t" class="input" placeholder="La Paret de Gràcia: precios, horarios y opinión | ChalkGuide"></div>
+          <div><div class="lbl"><label for="s-te">Título SEO <span class="lang-tag">EN</span></label><span class="counter">0 / 70</span></div><input id="s-te" class="input" placeholder="La Paret de Gràcia: prices, hours and review | ChalkGuide"></div>
+          <div><div class="lbl"><label for="s-d">Descripción <span class="lang-tag">ES</span></label><span class="counter">0 / 160</span></div><textarea id="s-d" rows="2" class="input" placeholder="Se usa el resumen"></textarea></div>
+          <div><div class="lbl"><label for="s-de">Descripción <span class="lang-tag">EN</span></label><span class="counter">0 / 160</span></div><textarea id="s-de" rows="2" class="input" placeholder="Se usa el resumen"></textarea></div>
+        </div>
+        <div class="mt-4 flex items-center gap-3"><button role="switch" aria-checked="false" aria-labelledby="s-ni" class="switch"></button><span id="s-ni" class="text-sm">No indexar</span></div>
+      </section>
+    </div>
+
+    <!-- lateral -->
+    <aside class="space-y-4 xl:sticky xl:top-[108px] self-start" aria-label="Publicación de la ficha">
+      <section class="card">
+        <div class="card-h"><h2>Publicación</h2></div>
+        <div class="p-4 space-y-3 text-sm">
+          <div class="flex items-center justify-between gap-2"><span class="text-meta">Estado</span><span class="chip st-pub"><span class="dot"></span>Publicada · 12 jun</span></div>
+          <div class="flex items-center justify-between gap-2"><span class="text-meta">Sin publicar</span><button class="chip st-rev hover:underline" data-open="pub">2 cambios · ver</button></div>
+          <div class="flex items-center justify-between gap-2"><span class="text-meta">Verificada</span><span class="num">30 ago 2026</span></div>
+          <div class="flex items-center justify-between gap-2"><span class="text-meta">Opiniones</span><a href="opiniones.html" class="num underline underline-offset-2">12 · media 4,2</a></div>
+        </div>
+        <div class="border-t border-line p-4"><p class="text-xs font-medium mb-2">Listo para publicar <span class="text-ok num">5 / 6</span></p>
+          <ul class="space-y-1.5 text-xs"><li class="flex gap-2"><i data-lucide="circle-check" class="w-3.5 h-3.5 text-ok flex-none mt-px"></i>Resumen ES</li><li class="flex gap-2"><i data-lucide="circle-check" class="w-3.5 h-3.5 text-ok flex-none mt-px"></i>Portada con alt</li><li class="flex gap-2"><i data-lucide="circle-check" class="w-3.5 h-3.5 text-ok flex-none mt-px"></i>Reseña con ≥ 3 notas</li><li class="flex gap-2"><i data-lucide="circle-check" class="w-3.5 h-3.5 text-ok flex-none mt-px"></i>Nota de transparencia (invitada)</li><li class="flex gap-2"><i data-lucide="circle-check" class="w-3.5 h-3.5 text-ok flex-none mt-px"></i>Verificada hace &lt; 6 meses</li><li class="flex gap-2"><i data-lucide="circle-x" class="w-3.5 h-3.5 text-danger flex-none mt-px"></i><span>Horario válido · <a href="#h-sat" class="underline underline-offset-2">sábado</a></span></li></ul>
+          <button class="btn btn-rev w-full mt-3" data-open="pub" aria-describedby="blk">Publicar cambios</button><p id="blk" class="text-xs text-meta mt-1.5">El error del horario bloquea publicar; lo demás solo avisa.</p></div>
+      </section>
+      <section class="card p-4 text-sm space-y-2"><p class="text-xs font-medium">Zona delicada</p><button class="btn btn-ghost w-full justify-start" data-open="hide"><i data-lucide="eye-off"></i>Ocultar ficha…</button><button class="btn btn-danger-ghost w-full justify-start" disabled title="Tiene 12 opiniones: ocúltala en su lugar"><i data-lucide="trash-2"></i>Eliminar…</button><p class="text-xs text-meta">No se puede eliminar con opiniones de usuarios; ocúltala.</p></section>
+    </aside>
+  </div>
+
+  <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-bg border-t border-line px-3 pt-2 pb-[calc(8px+env(safe-area-inset-bottom))] flex gap-2">
+    <a href="#" class="btn btn-ghost flex-1"><i data-lucide="external-link"></i>Ver</a>
+    <button class="btn btn-rev flex-[2]" data-open="pub"><i data-lucide="upload"></i>Publicar cambios</button>
+  </div>
+</main>
+
+<div id="pub" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pub-h"><div class="dialog lg"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="pub-h">2 cambios sin publicar</h2><p class="text-sm text-meta mt-1">Frente a lo publicado el 30 ago.</p></div>
+  <div class="dialog-b"><ul class="divide-y divide-line text-sm border border-line rounded-lg">
+    <li class="p-3 flex flex-wrap items-center gap-2"><span class="font-medium w-40">Cuota mensual</span><span class="diff-del num">69,00 €</span><i data-lucide="arrow-right" class="w-3.5 h-3.5 text-muted"></i><span class="diff-add num">72,00 €</span><button class="ml-auto text-xs text-meta underline underline-offset-2">Revertir</button></li>
+    <li class="p-3 flex flex-wrap items-center gap-2"><span class="font-medium w-40">Precios verificados</span><span class="diff-del num">30/08/2026</span><i data-lucide="arrow-right" class="w-3.5 h-3.5 text-muted"></i><span class="diff-add num">09/10/2026</span><button class="ml-auto text-xs text-meta underline underline-offset-2">Revertir</button></li></ul>
+    <div class="mt-4 banner banner-err"><i data-lucide="circle-alert"></i><span>No se puede publicar todavía: el horario del sábado tiene un error (también está en el borrador). <a href="#h-sat" class="underline underline-offset-2" data-close>Ir al campo</a></span></div></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close>Seguir editando</button><button class="btn btn-rev" disabled>Publicar cambios</button></div></div></div>
+
+<div id="hide" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="hd-h" aria-describedby="hd-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="hd-h">¿Ocultar «La Paret de Gràcia»?</h2><p id="hd-d" class="text-sm text-meta mt-1">Deja de verse en la guía, en el listado y en el comparador. Sus 12 opiniones y tu reseña se conservan. Puedes volver a publicarla cuando quieras.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-primary" data-close data-toast="Ficha oculta">Ocultar ficha</button></div></div></div>
+
+<div id="picker" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pk-h"><div class="dialog"><div class="grab"></div><div class="dialog-h"><h2 id="pk-h">Añadir a la galería</h2></div><div class="dialog-b text-sm text-meta">Selector de medios en modo múltiple (ver <a class="underline" href="design-system.html#medios">design system</a>).</div><div class="dialog-f"><button class="btn btn-ghost" data-close>Cerrar</button></div></div></div>
+
+<script>
+/* horario */
+const D=[['Lunes','07:00','23:30'],['Martes','07:00','23:30'],['Miércoles','07:00','23:30'],['Jueves','07:00','23:30'],['Viernes','07:00','23:30'],['Sábado','21:00','09:00',1],['Domingo','09:00','21:00']];
+document.getElementById('hours').innerHTML=D.map(([d,a,b,err])=>`<div class="px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2 ${err?'bg-danger-soft/40':''}" ${err?'id="h-sat"':''}>
+  <span class="w-24 text-sm">${d}</span>
+  <input class="input num !w-[88px]" value="${a}" aria-label="${d}, abre">
+  <span class="text-muted">–</span>
+  <input class="input num !w-[88px]" value="${b}" aria-label="${d}, cierra" ${err?'aria-invalid="true" aria-describedby="sat-e"':''}>
+  <button class="btn btn-quiet btn-sm hidden sm:inline-flex"><i data-lucide="plus"></i>Tramo</button>
+  <label class="flex items-center gap-2 text-xs text-meta ml-auto"><input type="checkbox" class="cb">Cerrado</label>
+  ${err?'<p id="sat-e" class="err w-full !mt-0"><i data-lucide="circle-alert"></i>La hora de cierre (09:00) es anterior a la de apertura (21:00). ¿Querías 09:00–21:00?</p>':''}</div>`).join('');
+/* tres estados */
+const T=[['Cuerda','has_lead','yes'],['Bloque','has_boulder','yes'],['Zona de entrenamiento','has_training_area','yes'],['Test de aseguramiento obligatorio','belay_test_required','yes'],['Alquiler de material','gear_rental','yes'],['Cursos de iniciación','has_beginner_courses','yes'],['Cafetería','has_cafe','no'],['Sirve cerveza','serves_beer','no'],['Zona infantil','has_kids_area','no'],['Duchas','has_showers','yes'],['Wifi','has_wifi','unk']];
+document.getElementById('tris').innerHTML=T.map(([l,k,v])=>`<div class="tri-row"><span class="text-sm flex-1" id="t-${k}">${l}</span><div class="seg tri" role="radiogroup" aria-labelledby="t-${k}"><button role="radio" data-v="yes" aria-checked="${v==='yes'}">Sí</button><button role="radio" data-v="no" aria-checked="${v==='no'}">No</button><button role="radio" data-v="unk" aria-checked="${v==='unk'}">No lo sé</button></div></div>`).join('');
+/* notas */
+const S=[['Apertura de vías y bloques','setting',5],['Variedad','variety',4],['Afluencia','crowding',3],['Instalaciones','facilities',4],['Para principiantes','beginner_friendly',5],['Para familias','family_friendly',2],['Relación calidad-precio','value',0]];
+document.getElementById('scores').innerHTML=S.map(([l,k,v])=>`<div class="px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2"><span class="text-sm flex-1 min-w-[160px]" id="s-${k}">${l}</span><div class="seg score" role="radiogroup" aria-labelledby="s-${k}">${[1,2,3,4,5].map(n=>`<button role="radio" aria-checked="${n===v}">${n}</button>`).join('')}<button role="radio" class="none" aria-checked="${v===0}">Sin nota</button></div></div>`).join('');
+function avg(){const vals=[...document.querySelectorAll('#scores .seg')].map(s=>{const c=s.querySelector('[aria-checked=true]');return c&&!c.classList.contains('none')?+c.textContent:null;}).filter(Boolean);document.getElementById('avg').textContent=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1).replace('.',',');}
+document.getElementById('scores').addEventListener('seg',avg);avg();
+/* tipo de visita */
+document.getElementById('vtype').addEventListener('seg',e=>{document.getElementById('disc').hidden=e.target.dataset.v!=='invited';});
+/* galería */
+const G=[['Pared principal de 15 metros','linear-gradient(160deg,#9b5a3a,#3d2a22)',1],['Zona de autobelays','linear-gradient(150deg,#5b6b78,#1c232a)'],['Sala de entrenamiento','linear-gradient(150deg,#6d7a62,#2b3227)'],['Vías fáciles del sector norte','linear-gradient(150deg,#b0835a,#4b3422)'],['Recepción y tienda','linear-gradient(150deg,#c9a24a,#5a4417)'],['Vestuarios','linear-gradient(150deg,#5d6a7a,#232a33)',0,1]];
+const gal=document.getElementById('gal');
+gal.innerHTML=G.map(([t,g,cover,noalt])=>`<li class="flex items-center gap-3 pl-1 pr-2 py-1.5" data-label="${t}"><button class="handle" aria-label="Reordenar: ${t}"><i data-lucide="grip-vertical"></i></button><span class="photo w-16 h-11 rounded flex-none" style="background-image:${g}"></span><span class="text-sm flex-1 truncate">${t}</span>${cover?'<span class="chip st-neutral">También es la portada</span>':''}${noalt?'<span class="chip st-warn"><i data-lucide="triangle-alert"></i>Sin alt</span>':''}<button class="icon-btn" aria-label="Quitar ${t} de la galería"><i data-lucide="x"></i></button></li>`).join('');
+gal.addEventListener('sorted',()=>CG.toast('Orden de la galería guardado'));
+</script>
+</body>
+</html>

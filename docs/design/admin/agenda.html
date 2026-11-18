@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Agenda · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=8"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* bandeja (igual que Opiniones) */
+  .q[aria-current="true"]{background:var(--acc-soft)}
+  .q[aria-current="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--acc)}
+  .q.is-past .q-body{opacity:.7}
+  /* bloque de fecha */
+  .dblock{width:44px;flex:none;text-align:center;line-height:1}
+  .dblock .dw{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--meta)}
+  .dblock .dn{display:block;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:3px}
+  .dblock .dm{display:block;font-size:11px;color:var(--meta);margin-top:2px}
+  .dblock.today .dw{color:var(--acc)}
+  /* confianza del agente */
+  .conf{display:inline-flex;gap:2px} .conf i{width:8px;height:6px;border-radius:2px;background:var(--line-strong)} .conf i.on{background:var(--fg)}
+  /* campo deducido por el agente */
+  .inf{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--meta);font-weight:400}
+  .inf svg{width:12px;height:12px}
+  /* vista previa del sitio */
+  .pv{background:var(--side);border:1px solid var(--line);border-radius:8px;padding:12px}
+  .pv a{text-decoration:underline;text-underline-offset:2px}
+  /* calendario (patrón del Inicio) */
+  .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+  .cal>div{min-height:104px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px;position:relative}
+  .cal>div:nth-child(7n){border-right:0}
+  .cal .out{background:var(--side)} .cal .out .d{color:var(--muted)}
+  .cal .d{font-size:12px;font-variant-numeric:tabular-nums;color:var(--meta);display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:99px}
+  .cal .today .d{background:var(--acc);color:#fff;font-weight:600}
+  .ev{display:block;width:100%;text-align:left;margin-top:4px;font-size:11.5px;line-height:15px;padding:3px 5px;border-radius:4px;overflow:hidden;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-strong);background:var(--elev)}
+  .ev span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+  .ev:hover{background:var(--subtle)}
+  .ev.todo{box-shadow:inset 0 0 0 1px var(--warn-icon);color:var(--warn);background:var(--warn-soft);border-style:dashed}
+  .cal .add{position:absolute;right:4px;top:4px;opacity:0} .cal>div:hover .add,.cal .add:focus-visible{opacity:1}
+  @media (pointer:coarse){.cal .add{opacity:1}}
+  /* filas de grupo por mes */
+  .tbl tr.grp td{height:32px;background:var(--side);font-size:12px;font-weight:500;color:var(--meta)}
+  .tbl tbody tr.grp:hover td{background:var(--side)}
+  /* popover de filtros */
+  .pop-wrap{position:relative}
+  .pop-wrap>.menu{position:absolute;top:calc(100% + 4px);left:0;z-index:40}
+</style>
+</head>
+<body data-page="agenda" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Agenda</h1>
+    <span class="chip st-neutral ml-1 hidden md:inline-flex" title="Lo que ve el sitio en /agenda"><i data-lucide="globe"></i>El sitio muestra los próximos 60 días</span>
+    <span class="ml-auto hidden xl:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · ver estado:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup"><option value="data">Con datos</option><option value="loading">Cargando</option><option value="empty">Vacío</option><option value="error">Error</option></select></span>
+    <div class="ml-auto xl:ml-0 flex items-center gap-2">
+      <a href="exportar.html?tipo=eventos" class="btn btn-ghost hidden sm:inline-flex"><i data-lucide="download"></i>Exportar</a>
+      <button class="btn btn-primary" data-new><i data-lucide="plus"></i><span class="hidden sm:inline">Nuevo evento</span><span class="sm:hidden">Nuevo</span></button>
+    </div>
+  </header>
+
+  <!-- vistas -->
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Vistas de la agenda" class="flex gap-5 min-w-max" id="views">
+      <button role="tab" class="tab t" data-v="review" aria-controls="panel"><i data-lucide="inbox" class="w-4 h-4"></i>Por aprobar <span class="count" id="cnt-review">5</span></button>
+      <button role="tab" class="tab t" data-v="next" aria-controls="panel">Próximos <span class="num text-muted" id="cnt-next"></span></button>
+      <button role="tab" class="tab t" data-v="past" aria-controls="panel">Pasados <span class="num text-muted" id="cnt-past"></span></button>
+      <button role="tab" class="tab t" data-v="rej" aria-controls="panel">Descartados <span class="num text-muted" id="cnt-rej"></span></button>
+      <button role="tab" class="tab t" data-v="all" aria-controls="panel">Todos <span class="num text-muted" id="cnt-all"></span></button>
+    </div>
+  </div>
+
+  <!-- barra de herramientas -->
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line" id="toolbar">
+    <div class="relative w-full sm:w-64"><label for="q" class="sr-only">Buscar eventos</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="q" class="input !pl-8 !pr-8" placeholder="Buscar por título o lugar"><span class="kbd absolute right-2 top-1/2 -translate-y-1/2 hidden sm:inline">/</span></div>
+    <div class="pop-wrap">
+      <button class="btn btn-ghost" id="fTypeBtn" aria-haspopup="true" aria-expanded="false" aria-controls="fTypeMenu"><i data-lucide="tag"></i>Tipo<span class="count hidden" id="fTypeN"></span><i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+      <div class="menu hidden" id="fTypeMenu" role="group" aria-label="Filtrar por tipo"></div>
+    </div>
+    <button class="btn btn-ghost" aria-haspopup="true"><i data-lucide="mountain"></i>Lugar<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost" aria-haspopup="true" id="fDate"><i data-lucide="calendar-range"></i><span id="fDateL">Fechas</span><i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost hidden sm:inline-flex" aria-haspopup="true"><i data-lucide="sparkles"></i>Origen<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <div class="seg ml-auto hidden md:inline-flex" role="radiogroup" aria-label="Presentación" id="layoutSeg"><button role="radio" data-l="list" aria-checked="true"><i data-lucide="list" class="w-3.5 h-3.5"></i>Lista</button><button role="radio" data-l="month" aria-checked="false"><i data-lucide="calendar" class="w-3.5 h-3.5"></i>Mes</button></div>
+    <p class="ml-auto text-xs text-meta hidden xl:flex items-center gap-1.5" id="kbdHint"><span class="kbd">J</span><span class="kbd">K</span> moverse · <span class="kbd">A</span> aprobar · <span class="kbd">E</span> editar · <span class="kbd">D</span> descartar</p>
+  </div>
+  <div id="chips" class="px-4 md:px-6 py-2 border-b border-line flex flex-wrap items-center gap-2 text-xs" hidden></div>
+
+  <div id="panel" role="tabpanel" aria-labelledby="views">
+    <div id="st-data"></div>
+
+    <div id="st-loading" hidden aria-busy="true" aria-label="Cargando eventos">
+      <div class="lg:grid lg:grid-cols-[420px_1fr]">
+        <div class="lg:border-r border-line divide-y divide-line"><script>document.write(Array.from({length:5},(_,i)=>`<div class="px-4 py-3 flex gap-3"><span class="sk w-11 h-12 flex-none"></span><span class="flex-1 space-y-2 pt-1"><span class="sk block h-3" style="width:${55+((i*17)%35)}%"></span><span class="sk block h-3 w-1/2"></span><span class="sk block h-4 w-24"></span></span></div>`).join(''))</script></div>
+        <div class="hidden lg:block p-6 space-y-4"><span class="sk block h-5 w-72"></span><span class="sk block h-24 w-full max-w-[640px]"></span><span class="sk block h-3 w-80"></span><span class="sk block h-3 w-64"></span></div>
+      </div>
+    </div>
+    <div id="st-empty" hidden></div>
+    <div id="st-error" hidden><div class="empty"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se han podido cargar los eventos</h3><p>Comprueba la conexión. Si sigue, puede ser Supabase: mira su estado.</p><p class="mono text-2xs text-muted">PGRST301 · guide.events</p><button class="btn btn-ghost mt-2"><i data-lucide="rotate-cw"></i>Reintentar</button></div></div>
+  </div>
+
+  <!-- barra de lote -->
+  <div id="batch" class="fixed z-40 left-1/2 -translate-x-1/2 bottom-20 md:bottom-6 card pop px-2 py-1.5 flex items-center gap-1 text-sm" style="display:none" aria-live="polite">
+    <span class="px-2 num" id="batchN">2 seleccionados</span>
+    <button class="btn btn-quiet" id="batchOk"><i data-lucide="check"></i>Aprobar</button>
+    <button class="btn btn-quiet" id="batchRej"><i data-lucide="x"></i>Descartar</button>
+    <button class="icon-btn" id="batchClear" aria-label="Quitar selección"><i data-lucide="x"></i></button>
+  </div>
+
+  <p class="mx-4 md:mx-6 my-6 text-xs text-meta border border-dashed border-line-strong rounded px-3 py-2">Mockup: <a class="underline" href="#revisar">#revisar</a> (bandeja) · <a class="underline" href="#duplicado">#duplicado</a> · <a class="underline" href="#caducado">#caducado</a> · <a class="underline" href="#proximos">#proximos</a> · <a class="underline" href="#mes">#mes</a> · <a class="underline" href="#pasados">#pasados</a> · <a class="underline" href="#descartados">#descartados</a> · <a class="underline" href="#editar-aprobar">#editar-aprobar</a> (borrador del agente) · <a class="underline" href="#editar">#editar</a> (aprobado) · <a class="underline" href="#nuevo">#nuevo</a> · <a class="underline" href="#errores">#errores</a> · <a class="underline" href="#eliminar">#eliminar</a> · <a class="underline" href="#cargando">#cargando</a> · <a class="underline" href="#vacio">#vacio</a> · <a class="underline" href="#error">#error</a>. Hoy, en el mockup: viernes 23 de octubre de 2026.</p>
+</main>
+
+<!-- detalle en hoja (< 1024) -->
+<div id="sheet" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="d-h-m"><div class="drawer !w-[min(560px,100vw)]"><div class="grab"></div><div id="sheetBody" class="flex flex-col min-h-0 flex-1"></div></div></div>
+
+<!-- menú de motivos de descarte -->
+<div id="rejMenu" class="menu fixed z-[70] hidden" role="menu" aria-label="Motivo del descarte">
+  <p class="grp-label px-2 pt-1.5 pb-1">Motivo · ayuda al agente</p>
+  <button class="menu-i" role="menuitem" data-why="Duplicado"><i data-lucide="copy"></i>Duplicado</button>
+  <button class="menu-i" role="menuitem" data-why="No es de escalada"><i data-lucide="circle-off"></i>No es de escalada</button>
+  <button class="menu-i" role="menuitem" data-why="Solo para socios o privado"><i data-lucide="lock"></i>Solo para socios o privado</button>
+  <button class="menu-i" role="menuitem" data-why="Fuera del área de Barcelona"><i data-lucide="map-pin-off"></i>Fuera del área de Barcelona</button>
+  <button class="menu-i" role="menuitem" data-why="Datos incorrectos"><i data-lucide="calendar-x"></i>Fecha o datos incorrectos</button>
+  <div class="menu-sep"></div>
+  <button class="menu-i" role="menuitem" data-why=""><i data-lucide="x"></i>Descartar sin motivo</button>
+</div>
+
+<!-- menú de fila -->
+<div id="rowMenu" class="menu fixed z-[70] hidden" role="menu" aria-label="Acciones del evento">
+  <button class="menu-i" role="menuitem" data-act="edit"><i data-lucide="pencil"></i>Editar</button>
+  <button class="menu-i" role="menuitem" data-act="dup"><i data-lucide="copy-plus"></i>Duplicar (otra fecha)</button>
+  <a class="menu-i" role="menuitem" href="#" data-act="site"><i data-lucide="external-link"></i>Ver en el sitio</a>
+  <a class="menu-i" role="menuitem" href="#" data-act="org"><i data-lucide="link"></i>Abrir web del organizador</a>
+  <div class="menu-sep"></div>
+  <button class="menu-i" role="menuitem" data-act="unpub"><i data-lucide="undo-2"></i>Retirar de la agenda</button>
+  <button class="menu-i danger" role="menuitem" data-act="del"><i data-lucide="trash-2"></i>Eliminar…</button>
+</div>
+
+<!-- drawer: editor de evento -->
+<div id="edit" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="ed-h"><div class="drawer !w-[min(520px,100vw)]"><div class="grab"></div>
+  <div class="drawer-h"><h2 id="ed-h" class="text-base font-semibold truncate">Editar evento</h2><span id="ed-chip" class="flex-none"></span><button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <form class="drawer-b space-y-5" id="ed-form" novalidate>
+    <div id="ed-err" class="banner banner-err" role="alert" tabindex="-1" hidden><i data-lucide="circle-alert"></i><span>Revisa 2 campos antes de publicar: <a href="#e-tes" class="underline">título</a> y <a href="#e-url" class="underline">enlace del organizador</a>.</span></div>
+    <div id="ed-agent" class="banner banner-warn" hidden><i data-lucide="sparkles"></i><span>Propuesto por el agente el <b id="ed-found">lun 19 oct</b> desde <a href="#" class="underline" id="ed-src">presabadalona.cat/agenda</a>. Los campos con <span class="inf !text-fg"><i data-lucide="sparkles"></i>deducido</span> no estaban explícitos en la web: compruébalos.</span></div>
+
+    <fieldset class="grid gap-3"><legend class="sr-only">Título</legend>
+      <div><label class="lbl" for="e-tes">Título <span class="lang-tag">ES</span> <span class="req">*</span><span class="sr-only">(obligatorio)</span><span class="counter" id="c-tes">0 / 200</span></label><input id="e-tes" class="input" maxlength="200" aria-describedby="e-tes-e"><p id="e-tes-e" class="err" hidden><i data-lucide="circle-alert"></i>Escribe el título en español.</p></div>
+      <div><label class="lbl" for="e-ten">Título <span class="lang-tag">EN</span><span class="counter" id="c-ten">0 / 200</span></label><input id="e-ten" class="input" maxlength="200" aria-describedby="e-ten-h"><p id="e-ten-h" class="help">Sin título en inglés, el evento no sale en <span class="mono">/en/agenda</span>.</p></div>
+    </fieldset>
+
+    <div><p class="lbl" id="ty-l">Tipo <span class="req">*</span><span class="sr-only">(obligatorio)</span><span class="inf ml-1" id="ty-inf" hidden><i data-lucide="sparkles"></i>deducido</span></p>
+      <div class="seg !grid grid-cols-3 w-full" role="radiogroup" aria-labelledby="ty-l" id="tySeg"></div></div>
+
+    <fieldset class="space-y-3"><legend class="lbl !mb-0">Cuándo <span class="text-meta font-normal">· hora de Barcelona</span></legend>
+      <label class="flex items-center gap-2 text-sm"><button type="button" class="switch" role="switch" aria-checked="false" id="e-allday" aria-label="Todo el día"></button>Todo el día</label>
+      <div class="grid grid-cols-[minmax(0,1fr)_120px] gap-3">
+        <div><label class="lbl" for="e-d1">Empieza <span class="req">*</span><span class="sr-only">(obligatorio)</span></label><input id="e-d1" type="date" class="input num" aria-describedby="e-d1-w"></div>
+        <div class="tm"><label class="lbl" for="e-h1">Hora</label><input id="e-h1" type="time" class="input num"></div>
+      </div>
+      <p id="e-d1-w" class="err !text-warn" hidden><i data-lucide="triangle-alert" class="!text-warn-icon"></i>Esta fecha ya ha pasado: no saldrá en la agenda.</p>
+      <div class="grid grid-cols-[minmax(0,1fr)_120px] gap-3">
+        <div><label class="lbl" for="e-d2">Termina <span class="opt">(opcional)</span><span class="inf ml-1" id="end-inf" hidden><i data-lucide="sparkles"></i>deducido</span></label><input id="e-d2" type="date" class="input num" aria-describedby="e-d2-e"></div>
+        <div class="tm"><label class="lbl" for="e-h2">Hora</label><input id="e-h2" type="time" class="input num"></div>
+      </div>
+      <p id="e-d2-e" class="err" hidden><i data-lucide="circle-alert"></i>Termina antes de empezar.</p>
+    </fieldset>
+
+    <fieldset><legend class="lbl">Dónde</legend>
+      <div class="seg !grid grid-cols-2 w-full" role="radiogroup" aria-label="Tipo de lugar" id="whereSeg"><button type="button" role="radio" data-w="gym" aria-checked="true"><i data-lucide="mountain" class="w-3.5 h-3.5"></i>Rocódromo de la guía</button><button type="button" role="radio" data-w="other" aria-checked="false"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i>Otro lugar</button></div>
+      <div id="w-gym" class="mt-3"><label class="sr-only" for="e-gym">Rocódromo</label><select id="e-gym" class="select"><option value="">Elige un rocódromo…</option></select><p class="help">En la agenda, el nombre enlaza a su ficha.</p></div>
+      <div id="w-other" class="mt-3" hidden><label class="sr-only" for="e-loc">Lugar</label><input id="e-loc" class="input" maxlength="200" placeholder="Montserrat (Monistrol)"><p class="help">Texto libre, sin enlace. Máx. 200.</p></div>
+    </fieldset>
+
+    <div><label class="lbl" for="e-price">Precio <span class="opt">(opcional)</span><span class="counter" id="c-price">0 / 120</span></label><input id="e-price" class="input" maxlength="120" placeholder="15 € · gratis para socios"><p class="help">Tal como lo dice el organizador. Vacío: no se muestra.</p></div>
+
+    <div><label class="lbl" for="e-url">Enlace del organizador</label><div class="input affix" id="e-url-w"><span class="pre">https://</span><input id="e-url" aria-describedby="e-url-h e-url-e" placeholder="presabadalona.cat/agenda/clinic-plafo"></div><p id="e-url-h" class="help">Sale como «Más información». La agenda del sitio avisa de que fechas y precios pueden cambiar.</p><p id="e-url-e" class="err" hidden><i data-lucide="circle-alert"></i>No parece una dirección web. Ejemplo: <span class="mono">via-sants.cat/agenda</span></p></div>
+
+    <details class="sec border-t border-line pt-4" id="descSec"><summary class="flex items-center gap-2 text-sm font-medium"><i data-lucide="chevron-right" class="chev w-4 h-4 text-meta"></i>Descripción <span class="text-meta font-normal">· opcional, hoy no se muestra en el sitio</span></summary>
+      <div class="mt-3"><div role="tablist" aria-label="Idioma de la descripción" class="flex gap-4 border-b border-line" data-tabs><button type="button" role="tab" class="tab" aria-selected="true" aria-controls="ds-es">ES</button><button type="button" role="tab" class="tab" aria-selected="false" aria-controls="ds-en">EN</button></div>
+        <div id="ds-es" class="pt-3"><label class="sr-only" for="e-des">Descripción en español</label><textarea id="e-des" rows="4" maxlength="2000" class="input" placeholder="Para quién es, qué hay que llevar, cómo apuntarse…"></textarea><p class="help flex">Máx. 2000<span class="counter">0 / 2000</span></p></div>
+        <div id="ds-en" class="pt-3" hidden><label class="sr-only" for="e-den">Descripción en inglés</label><textarea id="e-den" rows="4" maxlength="2000" class="input"></textarea></div>
+      </div></details>
+
+    <div class="border-t border-line pt-4"><p class="lbl">Así sale en la agenda <span class="text-meta font-normal">· aproximado</span></p><div id="ed-pv"></div></div>
+
+    <section id="ed-src-box" class="border-t border-line pt-4 text-sm" hidden aria-labelledby="src-h">
+      <h3 id="src-h" class="text-sm font-semibold flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 text-meta"></i>Lo que leyó el agente</h3>
+      <blockquote class="mt-2 border-l-2 border-line-strong pl-3 text-meta" lang="ca" id="ed-quote"></blockquote>
+      <p class="mt-2 text-xs text-meta">Fuente fija (<span class="mono">source_url</span>): no se edita. El enlace del organizador sí.</p>
+    </section>
+  </form>
+  <div class="drawer-f flex-wrap" id="ed-foot"></div>
+</div></div>
+
+<!-- confirmar eliminar -->
+<div id="del" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="del-h" aria-describedby="del-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="del-h">¿Eliminar «Clínic de entrenamiento en tabla»?</h2><p id="del-d" class="text-sm text-meta mt-1">Se borra del panel y, si estaba aprobado, de la agenda del sitio. <b class="text-fg font-medium">No se puede deshacer.</b></p></div>
+  <div class="dialog-b" id="del-agent"><div class="banner banner-warn"><i data-lucide="sparkles"></i><span>Lo propuso el agente. Si lo eliminas, <b>puede volver a proponerlo</b> la próxima semana. Para que no vuelva, descártalo: queda en Descartados y el agente lo recuerda.</span></div></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-ghost" id="delRej">Descartar en su lugar</button><button class="btn btn-danger" data-close data-toast="Evento eliminado" data-action="">Eliminar</button></div></div></div>
+
+<!-- confirmar retirar (aprobado → borrador) -->
+<div id="unpub" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="un-h" aria-describedby="un-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="un-h">¿Retirar «Noche de bloque y cerveza» de la agenda?</h2><p id="un-d" class="text-sm text-meta mt-1">Deja de salir en <span class="mono">/agenda</span> y en la pizarra de la home en unos minutos. Vuelve a <b class="text-fg font-medium">Por aprobar</b>, sin perder nada.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-primary" data-close data-toast="Retirado · vuelve a Por aprobar">Retirar</button></div></div></div>
+
+<script>
+/* ---------- datos de ejemplo (hoy: vie 23 oct 2026) ---------- */
+const TODAY='2026-10-23';
+const TYPES={competition:'Competición',workshop:'Taller',outing:'Quedada',social:'Encuentro',course:'Curso',other:'Otro'};
+const GYMS=['Magnesi Poblenou','La Paret de Gràcia','Via Sants','Presa Badalona','Altura Cornellà','Bloc del Besòs','Sharma Climbing BCN'];
+/* s: draft|approved|rejected · src: agent|manual */
+const EV=[
+ {id:1,s:'draft',src:'agent',t:'Clínic de entrenamiento en tabla',en:'Board training clinic',ty:'workshop',d:'2026-10-29',h:'18:00',d2:'2026-10-29',h2:'21:00',gym:'Presa Badalona',p:'15 €',url:'presabadalona.cat/agenda/clinic-plafo',surl:'presabadalona.cat/agenda',found:'lun 19 oct, 06:12',conf:.86,inf:['end'],note:'La web no dice la hora de fin; pongo 3 h, como el clínic de septiembre.',q:'Dijous 29 d’octubre, de 18 h a ··· · Clínic d’entrenament a la plafó amb l’equip de setters. 15 € (inclou entrada). Places limitades.'},
+ {id:2,s:'draft',src:'agent',t:'Quedada para encontrar compañero de cuerda',en:'',ty:'outing',d:'2026-10-31',h:'19:00',gym:'Via Sants',p:'',url:'via-sants.cat/comunitat',surl:'instagram.com/viasants',found:'mar 20 oct, 06:09',conf:.58,inf:['type','price'],note:'Sale de una publicación de Instagram, no de su web. No menciona precio; supongo que es gratis para abonados.',q:'Dissabte 31 a les 19 h: trobada per a qui busca company de corda. Porteu el vostre material!'},
+ {id:3,s:'draft',src:'agent',t:'Open de bloque de otoño',en:'Autumn bouldering open',ty:'competition',d:'2026-11-07',h:'10:00',d2:'2026-11-07',h2:'19:00',gym:'Presa Badalona',p:'20 €',url:'presabadalona.cat/open-tardor',surl:'presabadalona.cat/agenda',found:'lun 19 oct, 06:12',conf:.74,inf:[],dup:11,note:'Puede ser el mismo evento que ya tienes el 7 de noviembre.',q:'Open de bloc de tardor · dissabte 7 de novembre · inscripcions obertes · 20 €.'},
+ {id:4,s:'draft',src:'agent',t:'Taller de nudos y aseguramiento',en:'Knots and belaying workshop',ty:'workshop',d:'2026-10-18',h:'11:00',gym:'La Paret de Gràcia',p:'25 €',url:'laparet.cat/tallers',surl:'laparet.cat/tallers',found:'lun 12 oct, 06:10',conf:.9,inf:[],note:'',q:'Diumenge 18 d’octubre, 11 h. Taller de nusos i assegurament per a principiants. 25 €.'},
+ {id:5,s:'draft',src:'manual',t:'Jornada de puertas abiertas para familias',en:'',ty:'social',d:'2026-11-14',h:'10:00',d2:'2026-11-14',h2:'14:00',gym:'Altura Cornellà',p:'Gratis',url:'alturacornella.com/families',created:'mar 20 oct'},
+ {id:10,s:'approved',src:'manual',t:'Liga interna de bloque · 3.ª jornada',en:'Bouldering league · round 3',ty:'competition',d:'2026-10-23',h:'19:00',gym:'Magnesi Poblenou',p:'Gratis para socios',url:'magnesi.cat/lliga'},
+ {id:12,s:'approved',src:'manual',t:'Salida a Montserrat para principiantes',en:'Beginner trip to Montserrat',ty:'outing',d:'2026-10-24',ad:1,loc:'Montserrat (Monistrol)',p:'35 €',url:'guiesmontserrat.cat/sortides'},
+ {id:13,s:'approved',src:'manual',t:'Curso de iniciación a la cuerda',en:'Intro to rope climbing course',ty:'course',d:'2026-10-27',h:'18:30',gym:'La Paret de Gràcia',p:'90 € · 4 sesiones',url:'laparet.cat/cursos'},
+ {id:14,s:'approved',src:'agent',t:'Noche de bloque y cerveza',en:'',ty:'social',d:'2026-10-29',h:'20:00',gym:'Bloc del Besòs',p:'12 €',url:'blocdelbesos.cat/agenda'},
+ {id:11,s:'approved',src:'manual',t:'Open de bloque de otoño · Presa Badalona',en:'Autumn bouldering open',ty:'competition',d:'2026-11-07',h:'10:00',gym:'Presa Badalona',p:'20 €',url:'presabadalona.cat/open-tardor'},
+ {id:15,s:'approved',src:'manual',t:'Taller de técnica de pies',en:'Footwork workshop',ty:'workshop',d:'2026-11-08',h:'11:00',gym:'Altura Cornellà',p:'25 €',url:'alturacornella.com/tallers'},
+ {id:16,s:'approved',src:'agent',t:'Salida a Siurana: deportiva para segundo año',en:'Siurana sport climbing trip',ty:'outing',d:'2026-11-14',h:'08:00',loc:'Siurana (Priorat)',p:'40 € con transporte',url:'sharmabcn.com/outdoor'},
+ {id:17,s:'approved',src:'manual',t:'Competición abierta de dificultad',en:'Open lead competition',ty:'competition',d:'2026-11-20',h:'10:00',gym:'La Paret de Gràcia',p:'20 €',url:'laparet.cat/open'},
+ {id:18,s:'approved',src:'agent',t:'Recogida solidaria de juguetes',en:'',ty:'social',d:'2026-12-05',ad:1,gym:'Via Sants',p:'Gratis',url:'via-sants.cat/solidari'},
+ {id:20,s:'approved',src:'manual',t:'Liga interna de bloque · 2.ª jornada',en:'Bouldering league · round 2',ty:'competition',d:'2026-10-09',h:'19:00',gym:'Magnesi Poblenou',p:'Gratis para socios',url:'magnesi.cat/lliga'},
+ {id:21,s:'approved',src:'agent',t:'Proyección: «La Dura Dura»',en:'',ty:'social',d:'2026-10-15',h:'20:30',gym:'Sharma Climbing BCN',p:'5 €',url:'sharmabcn.com/events'},
+ {id:22,s:'approved',src:'manual',t:'Curso de autorrescate en vías largas',en:'Multi-pitch self-rescue course',ty:'course',d:'2026-10-03',h:'09:00',loc:'Sant Llorenç del Munt',p:'120 €',url:'escolaescalada.cat'},
+ {id:30,s:'rejected',src:'agent',t:'Clase de yoga para escaladores',en:'',ty:'other',d:'2026-11-03',h:'09:00',gym:'Magnesi Poblenou',p:'10 €',why:'No es de escalada',url:'magnesi.cat/ioga'},
+ {id:31,s:'rejected',src:'agent',t:'Liga interna de bloque · 3.ª jornada',en:'',ty:'competition',d:'2026-10-23',h:'19:00',gym:'Magnesi Poblenou',p:'',why:'Duplicado',url:'magnesi.cat/lliga'},
+ {id:32,s:'rejected',src:'agent',t:'Entreno del club (solo socios)',en:'',ty:'other',d:'2026-10-28',h:'20:00',gym:'Bloc del Besòs',p:'',why:'Solo para socios o privado',url:'blocdelbesos.cat/club'},
+];
+const DW=['dom','lun','mar','mié','jue','vie','sáb'],MO=['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'],MOL=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const dt=s=>new Date(s+'T12:00:00');
+const fDay=e=>{const x=dt(e.d);return `${DW[x.getDay()]} ${x.getDate()} ${MO[x.getMonth()]}`;};
+const fTime=e=>e.ad?'Todo el día':(e.h||'')+(e.h2?`–${e.h2}`:'');
+const place=e=>e.gym||e.loc||'';
+const isPast=e=>e.d<TODAY;
+const byId=id=>EV.find(e=>e.id===id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const dblock=e=>{const x=dt(e.d);const t=e.d===TODAY;return `<span class="dblock ${t?'today':''}" aria-hidden="true"><span class="dw">${t?'hoy':DW[x.getDay()]}</span><span class="dn">${x.getDate()}</span><span class="dm">${MO[x.getMonth()]}</span></span>`;};
+const conf=c=>{const n=Math.round(c*5);return `<span class="conf" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}</span>`;};
+const confWord=c=>c>=.8?'alta':c>=.65?'media':'baja';
+const originChip=(e,short)=>e.src==='agent'?`<span class="chip st-neutral" title="Propuesto por el agente de novedades"><i data-lucide="sparkles"></i>${short?'Agente':'Propuesto por el agente'}</span>`:`<span class="chip st-neutral"><i data-lucide="user-pen"></i>Manual</span>`;
+const stChip=e=>e.s==='draft'?`<span class="chip st-warn"><i data-lucide="circle-dashed"></i>Por aprobar</span>`:e.s==='approved'?(isPast(e)?`<span class="chip st-neutral"><i data-lucide="history"></i>Pasado</span>`:`<span class="chip st-pub"><span class="dot"></span>En la agenda</span>`):`<span class="chip st-hidden"><i data-lucide="x"></i>Descartado</span>`;
+const langChip=e=>`<span class="lang ${e.en?'lang-ok':'lang-miss'}" title="${e.en?'Con título en inglés: sale en /en':'Sin título en inglés: no sale en /en'}">EN</span>`;
+function flags(e){const f=[];
+  if(e.s==='draft'&&isPast(e))f.push(`<span class="chip st-danger"><i data-lucide="calendar-x"></i>Ya ha pasado</span>`);
+  if(e.dup)f.push(`<span class="chip st-warn"><i data-lucide="copy"></i>Posible duplicado</span>`);
+  if(e.src==='agent'&&e.s==='draft'&&e.conf<.65)f.push(`<span class="chip st-warn"><i data-lucide="gauge"></i>Confianza baja</span>`);
+  return f.join('');}
+
+/* vista previa con la estructura de EventDetails.vue */
+function preview(e,lang='es'){
+  const t=lang==='en'?e.en:e.t;
+  if(lang==='en'&&!e.en)return `<div class="pv text-sm text-meta flex gap-2"><i data-lucide="eye-off" class="w-4 h-4 flex-none mt-0.5"></i><span>No sale en <span class="mono">/en/agenda</span>: falta el título en inglés.</span></div>`;
+  const meta=[e.ad?null:e.h,e.p].filter(Boolean).map(x=>`<span class="mono whitespace-nowrap">${esc(x)}</span>`).join(' · ');
+  const pl=place(e)?(e.gym?`<a href="rocodromo-editor.html">${esc(e.gym)}</a>`:esc(e.loc)):'';
+  return `<div class="pv flex gap-3" ${lang==='en'?'lang="en"':''}>${dblock(e)}<div class="min-w-0 text-sm"><span class="block leading-snug font-medium">${esc(t)||'<span class="text-muted">Sin título</span>'}</span>
+    ${pl||meta?`<span class="mt-0.5 block text-xs text-meta">${pl}${pl&&meta?' · ':''}${meta}</span>`:''}
+    <span class="mt-2 flex flex-wrap items-center gap-3"><span class="chip st-neutral">${lang==='en'?{competition:'Competition',workshop:'Workshop',outing:'Meet-up',social:'Social',course:'Course',other:'Other'}[e.ty]:TYPES[e.ty]}</span>${e.url?`<a href="#" class="text-xs">${lang==='en'?'More info':'Más información'}</a>`:''}</span></div></div>`;
+}
+
+/* ---------- estado de la vista ---------- */
+let view='review', layout='list', cur=1, sel=new Set(), typeF=new Set(), q='';
+const inView=e=>({review:e.s==='draft',next:e.s==='approved'&&!isPast(e),past:e.s==='approved'&&isPast(e),rej:e.s==='rejected',all:true})[view];
+const match=e=>(!typeF.size||typeF.has(e.ty))&&(!q||(e.t+' '+place(e)).toLowerCase().includes(q.toLowerCase()));
+function rowsFor(){let r=EV.filter(inView).filter(match);
+  r.sort((a,b)=>view==='past'||view==='rej'?b.d.localeCompare(a.d):a.d.localeCompare(b.d)||(a.h||'').localeCompare(b.h||''));
+  if(view==='review'){/* caducados al final: no piden decisión urgente */ r.sort((a,b)=>(isPast(a)-isPast(b))||a.d.localeCompare(b.d));}
+  return r;}
+function counts(){const c=v=>{const o=view;view=v;const n=EV.filter(inView).length;view=o;return n;};
+  document.getElementById('cnt-review').textContent=c('review');['next','past','rej','all'].forEach(v=>document.getElementById('cnt-'+v).textContent=c(v));}
+
+/* ---------- bandeja: Por aprobar ---------- */
+function qItem(e){const on=e.id===cur;return `<li class="q relative ${isPast(e)?'is-past':''}" ${on?'aria-current="true"':''} data-id="${e.id}">
+  <div class="flex gap-3 px-4 py-3">
+    <input type="checkbox" class="cb mt-1" data-sel="${e.id}" ${sel.has(e.id)?'checked':''} aria-label="Seleccionar «${esc(e.t)}»">
+    <button class="q-body flex-1 min-w-0 text-left flex gap-3" data-open-id="${e.id}">
+      ${dblock(e)}
+      <span class="min-w-0 flex-1">
+        <span class="block text-sm font-medium leading-5 line-clamp-2">${esc(e.t)}</span>
+        <span class="block text-xs text-meta mt-0.5 truncate">${esc(place(e))} · <span class="num">${fTime(e)}</span></span>
+        <span class="mt-1.5 flex flex-wrap items-center gap-1.5">${originChip(e,true)}${e.src==='agent'?`<span class="inline-flex items-center gap-1 text-2xs text-meta" title="Confianza del agente">${conf(e.conf)}<span class="sr-only">Confianza ${confWord(e.conf)}</span></span>`:''}${flags(e)}${langChip(e)}</span>
+      </span>
+    </button>
+  </div>
+  <div class="lg:hidden flex gap-2 px-4 pb-3 pl-[44px]">${isPast(e)?`<button class="btn btn-ghost flex-1" data-rej="${e.id}"><i data-lucide="x"></i>Descartar</button>`:`<button class="btn btn-ghost flex-1" data-ok="${e.id}"><i data-lucide="check"></i>Aprobar</button><button class="btn btn-ghost flex-1" data-edit="${e.id}"><i data-lucide="pencil"></i>Editar</button><button class="icon-btn border border-line-strong" data-rej="${e.id}" aria-label="Descartar «${esc(e.t)}»"><i data-lucide="x"></i></button>`}</div>
+</li>`;}
+
+function detail(e,mobile){
+  const h=mobile?'d-h-m':'d-h';const past=isPast(e);const dup=e.dup&&byId(e.dup);
+  const field=(k,lbl,val,key)=>`<div class="grid grid-cols-[112px_minmax(0,1fr)] gap-3 py-2 border-b border-line"><dt class="text-meta">${lbl}</dt><dd class="min-w-0">${val}${e.inf&&e.inf.includes(key)?` <span class="inf"><i data-lucide="sparkles"></i>deducido</span>`:''}</dd></div>`;
+  return `
+  <div class="${mobile?'drawer-h':'h-12 px-6 flex items-center gap-2 border-b border-line'}"><h2 id="${h}" class="text-base font-semibold truncate">${esc(e.t)}</h2>${mobile?'<button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button>':`<span class="ml-auto flex gap-1 flex-none"><button class="icon-btn" aria-label="Anterior (K)" data-nav="-1"><i data-lucide="chevron-up"></i></button><button class="icon-btn" aria-label="Siguiente (J)" data-nav="1"><i data-lucide="chevron-down"></i></button><button class="icon-btn" aria-label="Más acciones" data-menu="${e.id}"><i data-lucide="more-horizontal"></i></button></span>`}</div>
+  <div class="${mobile?'drawer-b':'p-6'} space-y-5 max-w-[720px]">
+    <div class="flex flex-wrap items-center gap-2">${stChip(e)}${originChip(e)}${flags(e)}</div>
+    ${past?`<div class="banner banner-err"><i data-lucide="calendar-x"></i><span>Fue el <b>${fDay(e)}</b>. Ya no saldría en la agenda: descártalo para que el agente lo recuerde.</span></div>`:''}
+    ${dup?`<div class="banner banner-warn"><i data-lucide="copy"></i><span class="flex-1">Parece el mismo que <b>«${esc(dup.t)}»</b>, ya en la agenda (${fDay(dup)}, ${esc(place(dup))}). <span class="block mt-2 flex flex-wrap gap-2"><button class="btn btn-ghost btn-sm" data-edit="${dup.id}"><i data-lucide="external-link"></i>Abrir el existente</button><button class="btn btn-ghost btn-sm" data-rejwhy="Duplicado" data-id="${e.id}"><i data-lucide="x"></i>Descartar como duplicado</button></span></span></div>`:''}
+
+    <section aria-labelledby="pv-${h}"><div class="flex items-center gap-2 mb-2"><h3 id="pv-${h}" class="text-xs font-medium text-meta">Así sale en la agenda</h3>
+      <div class="seg ml-auto" role="radiogroup" aria-label="Idioma de la vista previa" data-pvseg><button role="radio" aria-checked="true" data-lang="es">ES</button><button role="radio" aria-checked="false" data-lang="en">EN</button></div></div>
+      <div data-pv="${e.id}">${preview(e)}</div></section>
+
+    <dl class="text-sm">
+      ${field('ty','Tipo',TYPES[e.ty],'type')}
+      ${field('d','Cuándo',`<span class="num">${fDay(e)} · ${fTime(e)}</span>`,'end')}
+      ${field('w','Dónde',e.gym?`<a href="rocodromo-editor.html" class="underline underline-offset-2">${esc(e.gym)}</a> <span class="text-meta">· ficha</span>`:esc(e.loc))}
+      ${field('p','Precio',e.p?esc(e.p):'<span class="text-muted">Sin precio</span>','price')}
+      ${field('u','Organizador',e.url?`<a href="#" class="underline underline-offset-2 break-all">${esc(e.url)}</a>`:'<span class="text-muted">Sin enlace</span>')}
+      ${field('en','Título EN',e.en?esc(e.en):'<span class="text-muted">Falta · no sale en /en</span>')}
+    </dl>
+
+    ${e.src==='agent'?`<section class="rounded-lg bg-side border border-line p-4 text-sm space-y-3" aria-labelledby="ag-${h}">
+      <h3 id="ag-${h}" class="font-semibold flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 text-meta"></i>Qué encontró el agente</h3>
+      <dl class="grid grid-cols-[112px_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
+        <dt class="text-meta">Fuente</dt><dd class="min-w-0"><a href="#" class="underline underline-offset-2 break-all">${esc(e.surl)}</a></dd>
+        <dt class="text-meta">Revisada</dt><dd class="num">${e.found}</dd>
+        <dt class="text-meta">Confianza</dt><dd class="flex items-center gap-2">${conf(e.conf)}<span>${confWord(e.conf)}</span></dd>
+      </dl>
+      ${e.note?`<p><span class="text-meta">Nota:</span> ${esc(e.note)}</p>`:''}
+      <blockquote class="border-l-2 border-line-strong pl-3 text-meta" lang="ca">${esc(e.q)}</blockquote>
+    </section>`:`<p class="text-xs text-meta">Lo creaste tú el ${e.created||'—'} y lo guardaste como borrador.</p>`}
+
+    <div class="rounded-lg border border-line p-3 text-xs text-meta">Al aprobar sale en <span class="mono">/agenda</span>${e.en?' y <span class="mono">/en/agenda</span>':''} y, si es de este mes, en la pizarra de la home, en menos de 10 minutos. Puedes retirarlo cuando quieras.</div>
+  </div>
+  <div class="${mobile?'drawer-f flex-wrap':'px-6 pb-6 flex flex-wrap gap-2'}">
+    ${past?`<button class="btn btn-primary ${mobile?'flex-1':''}" data-rej="${e.id}"><i data-lucide="x"></i>Descartar <span class="kbd hidden lg:inline !border-white/30 !text-white/70 !bg-transparent">D</span></button><button class="btn btn-ghost ${mobile?'flex-1':''}" data-edit="${e.id}"><i data-lucide="pencil"></i>Cambiar la fecha</button>`
+     :`<button class="btn btn-primary ${mobile?'w-full':''}" data-ok="${e.id}"><i data-lucide="check"></i>Aprobar <span class="kbd hidden lg:inline !border-white/30 !text-white/70 !bg-transparent">A</span></button><button class="btn btn-ghost ${mobile?'flex-1':''}" data-edit="${e.id}"><i data-lucide="pencil"></i>Editar y aprobar <span class="kbd hidden lg:inline">E</span></button><button class="btn btn-ghost ${mobile?'flex-1':''}" data-rej="${e.id}" aria-haspopup="menu"><i data-lucide="x"></i>Descartar<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>`}
+  </div>`;}
+
+function renderReview(){
+  const r=rowsFor();
+  if(!r.length) return emptyHTML(q||typeF.size?'filtered':'review');
+  if(!r.find(e=>e.id===cur)) cur=r[0].id;
+  return `<div class="lg:grid lg:grid-cols-[420px_minmax(0,1fr)] lg:h-[calc(100vh-32px-48px-41px-57px)]">
+    <div class="lg:border-r border-line lg:overflow-y-auto min-w-0">
+      <p class="px-4 py-2 text-xs text-meta bg-side border-b border-line flex items-center gap-2"><input type="checkbox" class="cb" id="selAll" aria-label="Seleccionar todos los de la vista">Por fecha del evento · los que ya han pasado, al final</p>
+      <ul class="divide-y divide-line" aria-label="Eventos por aprobar">${r.map(qItem).join('')}</ul>
+      <p class="px-4 py-3 text-xs text-meta border-t border-line flex gap-2"><i data-lucide="info" class="w-3.5 h-3.5 flex-none mt-0.5"></i>Nada sale en el sitio sin tu aprobación. El agente revisa las webs de los rocódromos una vez por semana.</p>
+    </div>
+    <section id="detail" class="hidden lg:block lg:overflow-y-auto min-w-0" aria-labelledby="d-h" aria-live="polite">${detail(byId(cur))}</section>
+  </div>`;
+}
+
+/* ---------- tabla / tarjetas ---------- */
+function renderTable(){
+  const r=rowsFor(); if(!r.length) return emptyHTML(q||typeF.size?'filtered':view);
+  const showSt=view==='all', rej=view==='rej';
+  let last='', rows='', cards='';
+  const nInMonth=k=>r.filter(e=>e.d.slice(0,7)===k).length;
+  r.forEach(e=>{const k=e.d.slice(0,7);const x=dt(e.d);
+    if(k!==last){last=k;const lbl=`${MOL[x.getMonth()]} ${x.getFullYear()} <span class="text-muted font-normal num">· ${nInMonth(k)}</span>`;
+      rows+=`<tr class="grp"><td colspan="${showSt?9:8}" class="!pl-4 md:!pl-6">${lbl}</td></tr>`;cards+=`<li class="px-4 py-2 bg-side text-xs font-medium text-meta">${lbl}</li>`;}
+    rows+=`<tr data-id="${e.id}">
+      <td class="w-12 !pl-4 md:!pl-6"><input type="checkbox" class="cb" aria-label="Seleccionar «${esc(e.t)}»"></td>
+      <td class="!pl-2 num"><span class="font-medium">${x.getDate()} ${MO[x.getMonth()]}</span> <span class="text-meta">${DW[x.getDay()]}</span><span class="block text-xs text-meta -mt-0.5">${fTime(e)}</span></td>
+      <td class="!whitespace-normal py-2"><button class="row-link text-left font-medium" data-edit="${e.id}">${esc(e.t)}</button><span class="block text-xs text-meta truncate">${e.gym?`<i data-lucide="mountain" class="inline w-3 h-3 -mt-0.5"></i> ${esc(e.gym)}`:esc(e.loc)}</span></td>
+      ${showSt?`<td>${stChip(e)}</td>`:''}
+      <td class="hidden lg:table-cell"><span class="chip st-neutral">${TYPES[e.ty]}</span></td>
+      ${rej?`<td class="text-meta">${esc(e.why)||'—'}</td>`:`<td class="hidden xl:table-cell text-meta truncate">${esc(e.p)||'—'}</td>`}
+      <td class="hidden xl:table-cell">${e.src==='agent'?'<span class="inline-flex items-center gap-1 text-meta"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i>Agente</span>':'<span class="text-meta">Manual</span>'}</td>
+      <td>${langChip(e)}</td>
+      <td class="w-14 !pr-4">${rej?`<button class="btn btn-quiet btn-sm" data-toast="Recuperado · vuelve a Por aprobar"><i data-lucide="undo-2"></i>Recuperar</button>`:`<button class="icon-btn" data-menu="${e.id}" aria-label="Acciones de «${esc(e.t)}»" aria-haspopup="menu"><i data-lucide="more-horizontal"></i></button>`}</td></tr>`;
+    cards+=`<li class="px-4 py-3 flex gap-3 items-start" data-id="${e.id}">${dblock(e)}
+      <button class="flex-1 min-w-0 text-left" data-edit="${e.id}"><span class="block text-sm font-medium leading-5 line-clamp-2">${esc(e.t)}</span><span class="block text-xs text-meta mt-0.5 truncate">${esc(place(e))} · <span class="num">${fTime(e)}</span></span>
+        <span class="mt-1.5 flex flex-wrap items-center gap-1.5">${showSt?stChip(e):''}<span class="chip st-neutral">${TYPES[e.ty]}</span>${e.src==='agent'?'<span class="chip st-neutral"><i data-lucide="sparkles"></i><span class="sr-only">Propuesto por el </span>Agente</span>':''}${rej&&e.why?`<span class="text-xs text-meta">${esc(e.why)}</span>`:''}${langChip(e)}</span></button>
+      ${rej?`<button class="icon-btn" data-toast="Recuperado · vuelve a Por aprobar" aria-label="Recuperar «${esc(e.t)}»"><i data-lucide="undo-2"></i></button>`:`<button class="icon-btn -mr-2" data-menu="${e.id}" aria-label="Acciones de «${esc(e.t)}»" aria-haspopup="menu"><i data-lucide="more-horizontal"></i></button>`}</li>`;
+  });
+  const head=`<thead><tr><th class="w-12 !pl-4 md:!pl-6"><input type="checkbox" class="cb" aria-label="Seleccionar todos los eventos de la página"></th>
+    <th class="w-36 !pl-2" aria-sort="${view==='past'||rej?'descending':'ascending'}"><button class="sort">Fecha<i data-lucide="${view==='past'||rej?'arrow-down':'arrow-up'}"></i></button></th>
+    <th>Evento</th>${showSt?'<th class="w-36">Estado</th>':''}<th class="w-32 hidden lg:table-cell">Tipo</th>${rej?'<th class="w-52">Motivo</th>':'<th class="w-44 hidden xl:table-cell">Precio</th>'}<th class="w-28 hidden xl:table-cell">Origen</th><th class="w-16">Idiomas</th><th class="w-14 !pr-4"><span class="sr-only">Acciones</span></th></tr></thead>`;
+  const note=view==='next'?`<p class="px-4 md:px-6 py-2 text-xs text-meta bg-side border-b border-line flex gap-2"><i data-lucide="globe" class="w-3.5 h-3.5 flex-none mt-0.5"></i>Todos estos salen en el sitio: los próximos 60 días en <span class="mono">/agenda</span> y cada mes en <span class="mono">/agenda/aaaa-mm</span>.</p>`:view==='rej'?`<p class="px-4 md:px-6 py-2 text-xs text-meta bg-side border-b border-line flex gap-2"><i data-lucide="sparkles" class="w-3.5 h-3.5 flex-none mt-0.5"></i>No salen en el sitio. Se guardan para que el agente no los vuelva a proponer; «Recuperar» los devuelve a Por aprobar.</p>`:'';
+  return `${note}<div class="hidden md:block"><table class="tbl table-fixed"><caption class="sr-only">Eventos · ${document.querySelector('#views [aria-selected=true]')?.textContent.trim()}</caption>${head}<tbody>${rows}</tbody></table></div>
+    <ul class="md:hidden divide-y divide-line">${cards}</ul>
+    <div class="px-4 md:px-6 min-h-12 py-2 flex items-center gap-3 border-t border-line text-sm text-meta"><span class="num">1–${r.length} de ${r.length}</span><label class="hidden sm:flex items-center gap-2">Por página <select class="select !w-20 !h-7"><option>25</option><option>50</option></select></label></div>`;
+}
+
+/* ---------- mes (patrón del calendario del Inicio) ---------- */
+function renderMonth(){
+  let html='';const lead=[28,29,30];
+  for(let i=0;i<35;i++){let d,out=false;if(i<3){d=lead[i];out=true;}else{d=i-2;if(d>31){d-=31;out=true;}}
+    const key=out?null:`2026-10-${String(d).padStart(2,'0')}`;const today=key===TODAY;
+    const evs=key?EV.filter(e=>e.d===key&&e.s!=='rejected'&&match(e)):[];
+    const items=evs.map(e=>`<button class="ev ${e.s==='draft'?'todo':''}" data-${e.s==='draft'?'focus':'edit'}="${e.id}" title="${esc(e.t)}"><span>${e.ad?'':`<span class="num">${e.h}</span> `}${esc(e.t)}${e.s==='draft'?' · por aprobar':''}</span></button>`).join('');
+    const future=key&&key>=TODAY;
+    html+=`<div role="gridcell" class="${out?'out':''} ${today?'today':''}" aria-label="${out?'':d+' de octubre'}${today?', hoy':''}${evs.length?', '+evs.length+' eventos':''}"><span class="d">${d}</span>${future?`<button class="add icon-btn !w-6 !h-6" data-new-on="${key}" aria-label="Nuevo evento el ${d} de octubre"><i data-lucide="plus" class="!w-3.5 !h-3.5"></i></button>`:''}${items}</div>`;}
+  return `<section class="m-4 md:m-6 card overflow-hidden" aria-labelledby="h-cal">
+    <div class="card-h"><h2 id="h-cal">Octubre 2026</h2><div class="flex items-center gap-1"><button class="icon-btn !w-7 !h-7" aria-label="Mes anterior"><i data-lucide="chevron-left"></i></button><button class="btn btn-quiet btn-sm">Hoy</button><button class="icon-btn !w-7 !h-7" aria-label="Mes siguiente"><i data-lucide="chevron-right"></i></button></div>
+      <label class="ml-auto flex items-center gap-2 text-xs text-meta"><input type="checkbox" class="cb" checked>Mostrar por aprobar</label></div>
+    <div class="cal text-2xs font-mono uppercase tracking-[.1em] text-muted bg-side border-b border-line" aria-hidden="true">${['lun','mar','mié','jue','vie','sáb','dom'].map(x=>`<span class="px-2 py-1.5">${x}</span>`).join('')}</div>
+    <div class="cal" role="grid" aria-label="Octubre de 2026">${html}</div>
+    <div class="px-4 py-2.5 border-t border-line flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-meta">
+      <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="box-shadow:inset 0 0 0 1px var(--line-strong)"></span>En la agenda</span>
+      <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:var(--warn-soft);box-shadow:inset 0 0 0 1px var(--warn-icon)"></span>Por aprobar</span>
+      <span class="ml-auto">Clic en un evento para editarlo · <span class="kbd">+</span> en un día crea uno con esa fecha</span></div>
+  </section>`;
+}
+
+/* ---------- vacíos ---------- */
+function emptyHTML(kind){
+  const E={
+    review:['inbox','Nada por aprobar','Cuando el agente de novedades encuentre actividades en las webs de los rocódromos, llegarán aquí como borradores. Hasta entonces, solo verás los que guardes tú como borrador.',`<button class="btn btn-ghost mt-2" data-view="next">Ver próximos</button>`],
+    next:['calendar-plus','No hay eventos próximos','La agenda del sitio enseña «Pizarra limpia» mientras no haya nada aprobado.',`<button class="btn btn-primary mt-2" data-new><i data-lucide="plus"></i>Nuevo evento</button>`],
+    past:['history','Aún no hay eventos pasados','',''],
+    rej:['circle-check','No has descartado nada','Los descartados se guardan para que el agente no los vuelva a proponer.',''],
+    all:['calendar-plus','La agenda está vacía','Crea el primer evento o espera a las propuestas del agente.',`<button class="btn btn-primary mt-2" data-new><i data-lucide="plus"></i>Nuevo evento</button>`],
+    filtered:['search-x',`Nada con ${q?`«${esc(q)}»`:'estos filtros'} en esta vista`,'Hay 2 resultados en Todos.',`<div class="flex gap-2 mt-2"><button class="btn btn-ghost" data-view="all">Buscar en todos</button><button class="btn btn-quiet" data-clear>Quitar filtros</button></div>`]}[kind];
+  return `<div class="empty"><span class="ico"><i data-lucide="${E[0]}"></i></span><h3>${E[1]}</h3>${E[2]?`<p>${E[2]}</p>`:''}${E[3]}</div>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  counts();
+  document.querySelectorAll('#views [role=tab]').forEach(t=>{const on=t.dataset.v===view;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;});
+  document.getElementById('layoutSeg').style.display=view==='next'?'':'none';
+  document.getElementById('kbdHint').style.display=view==='review'?'':'none';
+  document.getElementById('fDateL').textContent={next:'Próximos 60 días',past:'Últimos 90 días'}[view]||'Fechas';
+  const body=view==='review'?renderReview():(view==='next'&&layout==='month'?renderMonth():renderTable());
+  document.getElementById('st-data').innerHTML=body;
+  const ch=document.getElementById('chips');ch.hidden=!typeF.size;
+  ch.innerHTML=[...typeF].map(t=>`<span class="chip st-acc">Tipo: ${TYPES[t]}<button class="-mr-1 ml-0.5" data-untype="${t}" aria-label="Quitar filtro ${TYPES[t]}"><i data-lucide="x"></i></button></span>`).join('')+(typeF.size?'<button class="btn btn-quiet btn-sm" data-clear>Quitar filtros</button>':'');
+  document.getElementById('fTypeN').hidden=!typeF.size;document.getElementById('fTypeN').classList.toggle('hidden',!typeF.size);document.getElementById('fTypeN').textContent=typeF.size;
+  updBatch(); CG.icons();
+}
+function updBatch(){const b=document.getElementById('batch');b.style.display=(!sel.size||view!=='review')?'none':'';document.getElementById('batchN').textContent=`${sel.size} ${sel.size===1?'seleccionado':'seleccionados'}`;}
+
+/* ---------- filtro de tipo (useEventTypeFilter) ---------- */
+const fMenu=document.getElementById('fTypeMenu');
+fMenu.innerHTML=Object.entries(TYPES).map(([k,l])=>`<label class="menu-i"><input type="checkbox" class="cb" data-type="${k}">${l}<span class="ml-auto num text-xs text-muted">${EV.filter(e=>e.ty===k).length}</span></label>`).join('');
+document.getElementById('fTypeBtn').onclick=e=>{const open=fMenu.classList.toggle('hidden');e.currentTarget.setAttribute('aria-expanded',!open);};
+fMenu.addEventListener('change',e=>{const k=e.target.dataset.type;e.target.checked?typeF.add(k):typeF.delete(k);render();});
+document.getElementById('q').addEventListener('input',e=>{q=e.target.value;render();});
+
+/* ---------- editor ---------- */
+let edE=null, edMode='edit';
+const $=id=>document.getElementById(id);
+$('tySeg').innerHTML=Object.entries(TYPES).map(([k,l])=>`<button type="button" role="radio" data-ty="${k}" aria-checked="false">${l}</button>`).join('');
+$('e-gym').innerHTML+=GYMS.map(g=>`<option>${g}</option>`).join('');
+function edState(){const ty=$('tySeg').querySelector('[aria-checked=true]');const w=$('whereSeg').querySelector('[aria-checked=true]').dataset.w;const ad=$('e-allday').getAttribute('aria-checked')==='true';
+  return {t:$('e-tes').value,en:$('e-ten').value,ty:ty?ty.dataset.ty:'other',d:$('e-d1').value||TODAY,h:ad?'':$('e-h1').value,h2:ad?'':$('e-h2').value,ad,gym:w==='gym'?$('e-gym').value:null,loc:w==='other'?$('e-loc').value:null,p:$('e-price').value,url:$('e-url').value};}
+function edSync(){const s=edState();
+  $('c-tes').textContent=`${s.t.length} / 200`;$('c-ten').textContent=`${s.en.length} / 200`;$('c-price').textContent=`${s.p.length} / 120`;
+  document.querySelectorAll('#edit .tm').forEach(x=>x.style.visibility=s.ad?'hidden':'');
+  $('e-d1-w').hidden=!($('e-d1').value&&$('e-d1').value<TODAY);
+  const bad=$('e-d2').value&&$('e-d2').value<$('e-d1').value;$('e-d2-e').hidden=!bad;$('e-d2').setAttribute('aria-invalid',!!bad);
+  $('ed-pv').innerHTML=`<div class="grid gap-2">${preview(s)}${preview(s,'en')}</div>`;CG.icons();}
+function openEdit(id,mode){
+  const on=mode&&mode.on; if(on)mode='new'; edMode=mode||'edit'; const e=id?byId(id):null; edE=e;
+  const n=mode==='new'; const ag=e&&e.src==='agent';
+  $('ed-h').textContent=n?'Nuevo evento':(e.s==='draft'?'Revisar y aprobar':'Editar evento');
+  $('ed-chip').innerHTML=n?'':stChip(e);
+  $('ed-agent').hidden=!(ag&&e.s==='draft'); if(ag){$('ed-src').textContent=e.surl;$('ed-found').textContent=e.found.split(',')[0];}
+  $('ed-src-box').hidden=!ag; if(ag)$('ed-quote').textContent=e.q||'';
+  $('ed-err').hidden=true; ['e-tes','e-url-w'].forEach(x=>$(x).removeAttribute('aria-invalid')); $('e-tes-e').hidden=true; $('e-url-e').hidden=true;
+  const v=n?{t:'',en:'',ty:'',d:on||'',h:'',d2:'',h2:'',gym:'',loc:'',p:'',url:''}:e;
+  $('e-tes').value=v.t;$('e-ten').value=v.en||'';$('e-d1').value=v.d||'';$('e-h1').value=v.h||'';$('e-d2').value=v.d2||'';$('e-h2').value=v.h2||'';
+  $('e-allday').setAttribute('aria-checked',!!v.ad);$('e-price').value=v.p||'';$('e-url').value=v.url||'';$('e-des').value='';$('e-den').value='';
+  $('tySeg').querySelectorAll('[role=radio]').forEach(b=>b.setAttribute('aria-checked',b.dataset.ty===v.ty));
+  const isGym=!v.loc; $('whereSeg').querySelectorAll('[role=radio]').forEach(b=>b.setAttribute('aria-checked',(b.dataset.w==='gym')===isGym)); $('w-gym').hidden=!isGym;$('w-other').hidden=isGym;$('e-gym').value=v.gym||'';$('e-loc').value=v.loc||'';
+  $('ty-inf').hidden=!(e&&e.inf&&e.inf.includes('type'));$('end-inf').hidden=!(e&&e.inf&&e.inf.includes('end'));
+  /* pie según estado */
+  let f='';
+  if(n) f=`<button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-ghost ml-auto" id="saveDraft">Guardar borrador</button><button class="btn btn-primary" id="savePub"><i data-lucide="check"></i>Publicar</button>`;
+  else if(e.s==='draft') f=`<button class="btn btn-ghost" id="edRej"><i data-lucide="x"></i>Descartar</button><button class="btn btn-ghost ml-auto" data-close data-toast="Cambios guardados · sigue por aprobar">Guardar</button><button class="btn btn-primary" id="savePub"><i data-lucide="check"></i>Guardar y aprobar</button>`;
+  else if(e.s==='approved') f=`<button class="btn btn-danger-ghost" id="edDel"><i data-lucide="trash-2"></i><span class="hidden sm:inline">Eliminar…</span><span class="sr-only sm:hidden">Eliminar</span></button><button class="btn btn-ghost ml-auto" data-close>Cancelar</button><button class="btn btn-primary" data-close data-toast="Guardado · se actualiza en la agenda en unos minutos">Guardar</button>`;
+  else f=`<button class="btn btn-ghost ml-auto" data-close>Cerrar</button><button class="btn btn-primary" data-close data-toast="Recuperado · vuelve a Por aprobar"><i data-lucide="undo-2"></i>Recuperar</button>`;
+  $('ed-foot').innerHTML=f;
+  edSync(); CG.open('edit');
+}
+function validate(){let errs=[];
+  const tOk=!!$('e-tes').value.trim(); $('e-tes').setAttribute('aria-invalid',!tOk); $('e-tes-e').hidden=tOk; if(!tOk)errs.push('<a href="#e-tes" class="underline">título</a>');
+  const u=$('e-url').value.trim(); const uOk=!u||/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(u.replace(/^https?:\/\//,'')); $('e-url-w').setAttribute('aria-invalid',!uOk); $('e-url-e').hidden=uOk; if(!uOk)errs.push('<a href="#e-url" class="underline">enlace del organizador</a>');
+  if(!$('e-d1').value)errs.push('<a href="#e-d1" class="underline">fecha</a>');
+  if(errs.length){$('ed-err').hidden=false;$('ed-err').querySelector('span').innerHTML=`Revisa ${errs.length===1?'1 campo':errs.length+' campos'} antes de publicar: ${errs.join(' y ')}.`;CG.icons();$('ed-err').focus();return false;}
+  return true;}
+document.getElementById('ed-form').addEventListener('input',edSync);
+document.addEventListener('click',e=>{
+  if(e.target.closest('#e-allday')) setTimeout(edSync,0);
+  const ty=e.target.closest('#tySeg [role=radio]'); if(ty){$('ty-inf').hidden=true;setTimeout(edSync,0);}
+  const w=e.target.closest('#whereSeg [role=radio]'); if(w){const g=w.dataset.w==='gym';$('w-gym').hidden=!g;$('w-other').hidden=g;setTimeout(edSync,0);}
+  if(e.target.closest('#savePub')){if(!validate())return;CG.close('edit');CG.toast(edMode==='new'?'Evento publicado · sale en la agenda en unos minutos':`«${esc($('e-tes').value)}» aprobado · sale en la agenda en unos minutos`,{action:'Deshacer'});}
+  if(e.target.closest('#saveDraft')){if(!$('e-tes').value.trim()){validate();return;}CG.close('edit');CG.toast('Guardado como borrador · está en Por aprobar',{action:'Deshacer'});}
+  if(e.target.closest('#edRej')){openRej(e.target.closest('#edRej'),edE.id);}
+  if(e.target.closest('#edDel')){CG.close('edit');openDel(edE.id);}
+});
+$('e-allday').addEventListener('click',()=>setTimeout(edSync,0));
+
+/* ---------- acciones ---------- */
+let rejId=null, menuId=null;
+function place2(menu,btn){menu.classList.remove('hidden');const r=btn.getBoundingClientRect();const w=menu.offsetWidth,h=menu.offsetHeight;
+  let x=Math.min(r.left,innerWidth-w-8),y=r.bottom+4;if(y+h>innerHeight-8)y=r.top-h-4;menu.style.left=Math.max(8,x)+'px';menu.style.top=Math.max(8,y)+'px';menu.querySelector('.menu-i').focus();}
+function openRej(btn,id){rejId=id;place2(document.getElementById('rejMenu'),btn);}
+function openDel(id){const e=byId(id);$('del-h').textContent=`¿Eliminar «${e.t}»?`;$('del-agent').hidden=e.src!=='agent';CG.open('del');}
+function approve(id){const e=byId(id);e.s='approved';sel.delete(id);next(id);render();CG.toast(`«${esc(e.t)}» aprobado · sale en la agenda en unos minutos`,{action:'Deshacer'});CG.announce(`${e.t} aprobado`);}
+function reject(id,why){const e=byId(id);e.s='rejected';e.why=why;sel.delete(id);next(id);CG.close('edit');CG.close('sheet');render();CG.toast(`Descartado${why?' · '+why.toLowerCase():''} · el agente no lo volverá a proponer`,{action:'Deshacer'});}
+function next(id){const r=rowsFor();const i=r.findIndex(e=>e.id===id);const n=r[i+1]||r[i-1];cur=n?n.id:null;}
+function focusItem(id){cur=id;if(matchMedia('(min-width:1024px)').matches){render();}else{$('sheetBody').innerHTML=detail(byId(id),true);CG.icons();CG.open('sheet');}}
+
+document.addEventListener('click',e=>{
+  const t=e.target;
+  if(!t.closest('#rejMenu')&&!t.closest('[data-rej]')&&!t.closest('#edRej'))document.getElementById('rejMenu').classList.add('hidden');
+  if(!t.closest('#rowMenu')&&!t.closest('[data-menu]'))document.getElementById('rowMenu').classList.add('hidden');
+  if(!t.closest('.pop-wrap'))fMenu.classList.add('hidden');
+  let b;
+  if(b=t.closest('[data-view]')){view=b.dataset.view;render();return;}
+  if(b=t.closest('#views [role=tab]')){view=b.dataset.v;sel.clear();render();return;}
+  if(b=t.closest('#layoutSeg [role=radio]')){layout=b.dataset.l;setTimeout(render,0);return;}
+  if(b=t.closest('[data-open-id]')){focusItem(+b.dataset.openId);return;}
+  if(b=t.closest('[data-focus]')){view='review';cur=+b.dataset.focus;render();return;}
+  if(b=t.closest('[data-nav]')){const r=rowsFor();const i=r.findIndex(x=>x.id===cur);const n=r[Math.max(0,Math.min(r.length-1,i+(+b.dataset.nav)))];cur=n.id;render();return;}
+  if(b=t.closest('[data-ok]')){CG.close('sheet');approve(+b.dataset.ok);return;}
+  if(b=t.closest('[data-rejwhy]')){reject(+b.dataset.id,b.dataset.rejwhy);return;}
+  if(b=t.closest('[data-rej]')){openRej(b,+b.dataset.rej);return;}
+  if(b=t.closest('#rejMenu [data-why]')){document.getElementById('rejMenu').classList.add('hidden');reject(rejId,b.dataset.why);return;}
+  if(b=t.closest('[data-edit]')){CG.close('sheet');openEdit(+b.dataset.edit);return;}
+  if(b=t.closest('[data-new-on]')){openEdit(null,{on:b.dataset.newOn});return;}
+  if(b=t.closest('[data-new]')){openEdit(null,'new');return;}
+  if(b=t.closest('[data-menu]')){menuId=+b.dataset.menu;const m=document.getElementById('rowMenu');const ev=byId(menuId);
+    m.querySelector('[data-act=unpub]').style.display=ev.s==='approved'&&!isPast(ev)?'':'none';place2(m,b);return;}
+  if(b=t.closest('#rowMenu [data-act]')){e.preventDefault();document.getElementById('rowMenu').classList.add('hidden');const a=b.dataset.act;
+    if(a==='edit')openEdit(menuId); if(a==='del')openDel(menuId);
+    if(a==='unpub'){$('un-h').textContent=`¿Retirar «${byId(menuId).t}» de la agenda?`;CG.open('unpub');}
+    if(a==='dup'){const s=byId(menuId);openEdit(menuId);$('ed-h').textContent='Duplicar evento';$('ed-chip').innerHTML='';$('e-d1').value='';$('e-d2').value='';edMode='new';
+      $('ed-foot').innerHTML=`<button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-ghost ml-auto" id="saveDraft">Guardar borrador</button><button class="btn btn-primary" id="savePub"><i data-lucide="check"></i>Publicar</button>`;CG.icons();$('e-d1').focus();}
+    return;}
+  if(b=t.closest('[data-untype]')){typeF.delete(b.dataset.untype);fMenu.querySelector(`[data-type=${b.dataset.untype}]`).checked=false;render();return;}
+  if(b=t.closest('[data-clear]')){typeF.clear();q='';$('q').value='';fMenu.querySelectorAll('input').forEach(x=>x.checked=false);render();return;}
+  if(b=t.closest('#delRej')){CG.close('del');openRej(b,EV[0].id);return;}
+  if(b=t.closest('[data-pvseg] [role=radio]')){const box=b.closest('section').querySelector('[data-pv]');setTimeout(()=>{box.innerHTML=preview(byId(+box.dataset.pv),b.dataset.lang);CG.icons();},0);return;}
+  if(t.closest('#batchClear')){sel.clear();render();return;}
+  if(t.closest('#batchOk')){const n=sel.size;[...sel].forEach(id=>{byId(id).s='approved';});sel.clear();render();CG.toast(`${n} eventos aprobados · salen en la agenda en unos minutos`,{action:'Deshacer'});return;}
+  if(t.closest('#batchRej')){openRej(t.closest('#batchRej'),null);return;}
+});
+document.addEventListener('change',e=>{const c=e.target.closest('[data-sel]');if(c){c.checked?sel.add(+c.dataset.sel):sel.delete(+c.dataset.sel);updBatch();}
+  if(e.target.id==='selAll'){rowsFor().forEach(x=>e.target.checked?sel.add(x.id):sel.delete(x.id));render();}});
+/* teclado de la bandeja */
+addEventListener('keydown',e=>{
+  const tag=(e.target.tagName||'').toLowerCase();
+  if(e.key==='Escape'){document.getElementById('rejMenu').classList.add('hidden');document.getElementById('rowMenu').classList.add('hidden');fMenu.classList.add('hidden');}
+  if(['input','textarea','select'].includes(tag)||document.querySelector('.overlay.open')||e.metaKey||e.ctrlKey)return;
+  if(e.key==='/'){e.preventDefault();$('q').focus();return;}
+  if(view!=='review'||!cur)return;const k=e.key.toLowerCase();
+  if(k==='j'||k==='k'){const r=rowsFor();const i=r.findIndex(x=>x.id===cur);cur=r[Math.max(0,Math.min(r.length-1,i+(k==='j'?1:-1)))].id;render();document.querySelector(`.q[data-id="${cur}"] .q-body`)?.focus();}
+  if(k==='a'&&!isPast(byId(cur)))approve(cur);
+  if(k==='e'){e.stopPropagation();openEdit(cur);}
+  if(k==='d'){const btn=document.querySelector(`#detail [data-rej]`);btn&&openRej(btn,cur);}
+},true);
+
+/* ---------- estados del mockup y hashes ---------- */
+function show(s){['data','loading','empty','error'].forEach(x=>$('st-'+x).hidden=x!==s);$('demoState').value=s;
+  if(s==='empty'){$('st-empty').innerHTML=emptyHTML(view);CG.icons();}}
+$('demoState').onchange=e=>show(e.target.value);
+function fromHash(){const h=location.hash.slice(1);CG.close('edit');CG.close('del');
+  const map={revisar:'review',duplicado:'review',caducado:'review',proximos:'next',mes:'next',pasados:'past',descartados:'rej'};
+  if(map[h])view=map[h]; layout=h==='mes'?'month':'list';
+  document.querySelectorAll('#layoutSeg [role=radio]').forEach(b=>b.setAttribute('aria-checked',b.dataset.l===layout));
+  if(h==='duplicado')cur=3; else if(h==='caducado')cur=4; else if(h==='revisar')cur=1;
+  render(); show({cargando:'loading',vacio:'empty',error:'error'}[h]||'data');
+  if(h==='editar-aprobar'){view='review';cur=2;render();openEdit(2);}
+  if(h==='editar')openEdit(14);
+  if(h==='nuevo')openEdit(null,'new');
+  if(h==='errores'){openEdit(null,'new');$('e-url').value='laparet cat/tallers';setTimeout(()=>{validate();edSync();},50);}
+  if(h==='eliminar')openDel(1);
+}
+document.addEventListener('DOMContentLoaded',fromHash);
+addEventListener('hashchange',fromHash);
+</script>
+</body>
+</html>

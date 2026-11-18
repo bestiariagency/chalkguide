@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Suscripción confirmada + afines (D66) · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/consent-tw.js"></script>
+<link rel="stylesheet" href="_shared/consent.css">
+<script src="_shared/consent.js"></script>
+</head>
+<body class="bg-background text-foreground text-base leading-relaxed">
+<div class="mock-bar bg-white text-[#1c1a17] border-b border-[#ddd]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+    <strong class="font-medium mr-1">D66 · 2/3 · /newsletter/confirmed</strong>
+    <span class="text-[#5e584e]">Estado:</span>
+    <span id="mock" class="flex flex-wrap gap-1"></span>
+    <a class="underline ml-auto" href="newsletter-afines.html">1 · Formulario</a>
+    <a class="underline" href="newsletter-preferencias.html">3 · Preferencias</a>
+  </div>
+</div>
+
+<header class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-6">
+    <span class="flex items-end gap-2"><img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-7 w-auto block"><span class="font-mono text-[12px] tracking-[.14em] leading-none pb-[3px] text-meta" aria-hidden="true">BCN</span></span>
+    <nav class="hidden lg:flex items-center gap-10 text-[15px]" aria-label="Principal"><a href="#">Rocódromos</a><a href="#">Pies de gato</a><a href="#">Resolar</a><a href="#">Blog</a><a href="#">Agenda</a><a href="#">Sobre mí</a></nav>
+    <button type="button" class="lg:hidden grid place-items-center size-11" aria-label="Abrir menú"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M8 12h12M4 18h16"/></svg></button>
+  </div>
+</header>
+
+<main id="main" class="max-w-page mx-auto px-4 md:px-6 pt-12 md:pt-16 lg:pt-20 pb-20 md:pb-28">
+  <div id="page"></div>
+</main>
+
+<footer class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-[13px] text-meta">
+    <img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-6 w-auto block">
+    <p>© 2026 ChalkGuide · pie resumido en el mockup</p>
+  </div>
+</footer>
+
+<script>
+const S = {
+  offer:   'Ofrece afines',
+  granted: 'Ya los dio en el formulario',
+  notoken: 'Sin token (no se ofrece)',
+  error:   'Error al guardar',
+  expired: 'Enlace caducado',
+};
+let st = (location.hash.slice(1) in S) ? location.hash.slice(1) : 'offer';
+
+const receives = `
+  <aside class="slab bg-board p-6 lg:col-span-5" aria-labelledby="rc-h">
+    <p id="rc-h" class="font-hand text-[28px] leading-tight text-accent -rotate-1">Qué te llega</p>
+    <ul class="mt-4 border-t border-foreground text-[15px]">
+      <li class="py-3 border-b border-line-strong">Novedades de los rocódromos</li>
+      <li class="py-3 border-b border-line-strong">El artículo nuevo</li>
+      <li class="py-3 border-b border-line-strong">Un pie de gato que merece la pena</li>
+    </ul>
+    <p class="mt-5 text-[13px] text-meta">Sin spam. Baja en un clic.</p>
+  </aside>`;
+const ctas = `
+  <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+    <a href="#" class="btn btn-primary">Ver los rocódromos ${ICO.arrow}</a>
+    <a href="#" class="btn btn-ghost">Leer el blog</a>
+  </div>`;
+
+/* La oferta: placa propia, debajo de la confirmación. «Sí» y «No, gracias» idénticos (btn-ghost, mismo ancho). */
+function offer(error) {
+  return `
+  <section id="offer" class="slab bg-board mt-10 p-5 md:p-7" aria-labelledby="of-h">
+    <h2 id="of-h" class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">¿Quieres también avisos de Chalk app?</h2>
+    <p class="mt-2 text-[15px] text-meta">Tu suscripción a la newsletter ya está confirmada, elijas lo que elijas.</p>
+    <fieldset class="mt-5 border-t border-line pt-5">
+      <legend class="sr-only">Avisos de Chalk app y productos afines</legend>
+      <p id="of-text" class="text-[17px] leading-[1.5] max-w-[60ch]">«${RELATED_TEXT_V1}»</p>
+      ${moreBtn()}
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 sm:max-w-[440px]" role="group" aria-describedby="of-text">
+        <button type="button" class="btn btn-ghost w-full" data-choice="yes" ${error ? '' : ''}>Sí, avísame</button>
+        <button type="button" class="btn btn-ghost w-full" data-choice="no">No, gracias</button>
+      </div>
+      ${error ? `<p role="alert" class="mt-3 flex items-start gap-1.5 text-[15px] leading-snug text-danger-text">${ICO.err}<span>No se ha guardado. Tu newsletter sigue confirmada; prueba otra vez con «Sí, avísame».</span></p>` : ''}
+    </fieldset>
+  </section>`;
+}
+const doneYes = `
+  <section class="slab bg-board mt-10 p-5 md:p-7" role="status" tabindex="-1" id="done" aria-labelledby="dn-h">
+    <h2 id="dn-h" class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">Hecho: también te avisaré de Chalk app</h2>
+    <p class="mt-2 text-[15px] text-meta max-w-[60ch]">Puedes retirarlo cuando quieras con el enlace del pie de cualquier email. La newsletter no cambia.</p>
+  </section>`;
+const doneNo = `
+  <section class="slab bg-board mt-10 p-5 md:p-7" role="status" tabindex="-1" id="done" aria-labelledby="dn-h">
+    <h2 id="dn-h" class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">Entendido: solo la newsletter</h2>
+    <p class="mt-2 text-[15px] text-meta max-w-[60ch]">Si cambias de idea, lo puedes activar desde «Preferencias», al pie de cualquier email.</p>
+  </section>`;
+const already = `
+  <p class="mt-6 flex items-start gap-2 text-[15px] text-meta max-w-[60ch]"><span class="state state-on mt-px">${ICO.dot}Activos</span><span>También recibirás los avisos de Chalk app. Puedes retirarlos desde «Preferencias», al pie de cualquier email.</span></p>`;
+
+function render(focusDone) {
+  document.querySelectorAll('#mock button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === st));
+  const page = document.getElementById('page');
+  if (st === 'expired') {
+    page.innerHTML = `
+      <div class="max-w-[720px]" role="status">
+        <svg width="40" height="40" fill="none" stroke="#b02a25" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <h1 class="title-section mt-6">Este enlace no funciona</h1>
+        <p class="mt-6 text-[19px] leading-[1.5] text-meta">Puede haber caducado o haberse usado ya. Si aún no estás dentro, vuelve a apuntarte y te envío otro.</p>
+        <a href="#" class="btn btn-ghost mt-8">Volver a apuntarme</a>
+      </div>`;
+    return;
+  }
+  const extra = st === 'offer' ? offer(false) : st === 'error' ? offer(true) : st === 'granted' ? already : st === 'yes' ? doneYes : st === 'no' ? doneNo : '';
+  page.innerHTML = `
+    ${ICO.check.replace('width="56" height="56"', 'width="64" height="64"')}
+    <h1 class="title-section mt-6">Suscripción confirmada</h1>
+    <div class="mt-6 grid items-start gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <p class="max-w-read text-[19px] leading-[1.5] text-meta" role="status">Gracias por apuntarte. Ya estás dentro: la próxima carta llega a final de mes.</p>
+        ${extra}
+        ${ctas}
+      </div>
+      ${receives}
+    </div>`;
+  if (focusDone) document.getElementById('done')?.focus();
+}
+document.getElementById('mock').innerHTML = Object.entries(S).map(([k, l]) => `<button type="button" class="mock-sel px-2 rounded border border-[#ccc]" data-s="${k}">${l}</button>`).join('');
+document.addEventListener('click', e => {
+  const m = e.target.closest('#mock button'); if (m) { st = m.dataset.s; location.hash = st; render(); return; }
+  const c = e.target.closest('[data-choice]'); if (!c) return;
+  if (c.dataset.choice === 'no') { st = 'no'; render(true); return; }  // sin llamada: no hay nada que registrar
+  c.setAttribute('aria-busy', 'true'); c.innerHTML = `<span class="spin"></span><span>Guardando…</span>`;
+  c.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+  setTimeout(() => { st = 'yes'; render(true); }, 800);  // set_related_consent(token, true, 'preferences')
+});
+render();
+</script>
+</body>
+</html>

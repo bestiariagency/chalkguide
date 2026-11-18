@@ -1,0 +1,149 @@
+/* ChalkGuide · superficies de lectura (3.18) y buscadores (3.19).
+   Se carga DESPUÉS de chalk.css. Una sola paleta "papel" que se aplica de dos maneras:
+   - Opción B  · html[data-mode="b"]            → solo dentro de los bloques .paper (hoja sobre la pizarra).
+   - Opción C  · html[data-mode="c"][data-theme="light"] → en todo el documento (tema claro completo).
+   El tema oscuro (actual) no cambia. */
+
+/* ===== Tokens nuevos también en oscuro (para que el mismo componente sirva en las dos superficies) ===== */
+:root {
+  --prose: #DCD8D1;          /* ya existe en main.css como --color-prose */
+  --accent-fill: #E8923A;    /* NUEVO: relleno de acento (botón primario, checkbox, nota 1–5, rango) */
+  --chalk: #E8923A;          /* NUEVO: trazo de tiza y relleno de barras (decorativo) */
+  --bar-track: #242424;
+  --hl-bg: #3a2010;          /* NUEVO: resaltado de término buscado */
+  --hl-line: #E8923A;
+  --tex-line: rgba(240,237,232,.022);
+  --tex-line-2: rgba(240,237,232,.014);
+}
+
+/* ===== Paleta "papel" (tokens con ratios en README §9) ===== */
+html[data-mode="b"] .paper,
+html[data-mode="c"][data-theme="light"] {
+  --background: #F4F1EA;   /* papel */
+  --board: #FBF9F5;        /* tarjeta sobre papel */
+  --elevated: #EBE6DC;     /* hundido: cabecera de tabla, campo, hover */
+  --line: #DCD5C8;         /* decorativo 0.5 px */
+  --line-strong: #C2B9A9;  /* decorativo 0.5 px */
+  --control: #827A6D;      /* borde 1 px de controles: 3.8 / 3.4 / 4.0 */
+  --accent: #9A4A16;       /* acento para texto, enlaces, precios, bordes activos: 5.5 / 5.0 / 5.9 */
+  --accent-fill: #E8923A;  /* el naranja de marca sigue para rellenos con texto on-accent (7.9) */
+  --accent-hover: #C4721F;
+  --accent-muted: #F7E4D0; /* fondo de chip activo y badge acento */
+  --on-accent: #1a0a00;
+  --foreground: #1C1A17;   /* tinta: 15.4 */
+  --prose: #34302A;        /* cuerpo largo: 11.6 */
+  --meta: #5E584E;         /* secundario: 6.2 / 5.7 / 6.7 */
+  --muted: #6B6559;        /* placeholder: 5.1 / 4.65 */
+  --hint: #B5AC9C;         /* solo decorativo */
+  --success: #17855F; --success-text: #1A6E4E; --success-muted: #E3F0E8;
+  --danger: #C23B37;  --danger-text: #B02A25;  --danger-muted: #F8E1DE;
+  --chalk: #D2702A;        /* trazo de "tiza" sobre papel: más denso, como cera naranja */
+  --bar-track: #E3DDD1;
+  --hl-bg: #F7E4D0; --hl-line: #D2702A;
+  --tex-line: rgba(28,26,23,.035); --tex-line-2: rgba(28,26,23,.022);
+  --ring: 0 0 0 2px var(--background), 0 0 0 4px var(--accent);
+  color: var(--foreground);
+}
+html[data-mode="c"][data-theme="light"] { color-scheme: light; }
+html[data-mode="c"][data-theme="dark"], html[data-mode="b"] { color-scheme: dark; }
+
+/* ===== Overrides de chalk.css que tenían hex fijos o usaban --accent como relleno ===== */
+.prose-cg p, .prose-cg li { color: var(--prose); }
+.btn-primary { background: var(--accent-fill); }
+.bar { background: var(--bar-track); }
+.bar > span { background: var(--chalk); }
+.check input:checked + .box { background: var(--accent-fill); border-color: var(--accent-fill); }
+.rating input:checked + span { background: var(--accent-fill); border-color: var(--accent-fill); }
+.range-dual .fill { background: var(--accent-fill); }
+.range-dual .track { background: var(--bar-track); }
+.chalk-ul path, .chalk-circle path { stroke: var(--chalk); }
+.board-tex { background-image: linear-gradient(var(--tex-line) 1px, transparent 1px), linear-gradient(90deg, var(--tex-line-2) 1px, transparent 1px); }
+:focus-visible { box-shadow: var(--ring); }
+.paper { color: var(--foreground); }
+
+/* ===== Opción B · la hoja ===== */
+html[data-mode="b"] .paper {
+  position: relative; background-color: var(--background); border-radius: 4px;
+  /* papel: fibra muy tenue (multiply) */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.22 0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  /* hoja clavada: canto claro arriba + sombra corta + sombra larga difusa sobre la pizarra */
+  box-shadow: 0 0 0 .5px rgba(255,255,255,.08), 0 1px 2px rgba(0,0,0,.5), 0 24px 48px -20px rgba(0,0,0,.75);
+}
+/* Cinta de carrocero (solo desktop, decorativa). En móvil la hoja va casi a sangre y no se ve. */
+.tape { display: none; }
+html[data-mode="b"] .tape { position: absolute; top: -11px; left: 50%; width: 112px; height: 24px; transform: translateX(-50%) rotate(-2.5deg);
+  background: rgba(226,214,188,.62); box-shadow: 0 1px 2px rgba(0,0,0,.25); border-left: 1px dashed rgba(0,0,0,.06); border-right: 1px dashed rgba(0,0,0,.06); }
+@media (min-width: 768px) { html[data-mode="b"] .tape { display: block; } }
+/* Imágenes sobre papel: sin polvo de tiza, borde interior para que no "floten" */
+html[data-mode="b"] .paper .photo::after, html[data-theme="light"] .photo::after { opacity: .18; }
+html[data-mode="b"] .paper .photo, html[data-theme="light"] .photo { box-shadow: inset 0 0 0 .5px rgba(0,0,0,.12); }
+/* En C la hoja no existe: es solo un contenedor */
+html[data-mode="c"] .paper { background: transparent; box-shadow: none; }
+
+/* ===== Opción C · tema claro: piezas del layout con color fijo ===== */
+html[data-theme="light"] .compare-tray { background: rgba(251,249,245,.92); }
+html[data-theme="light"] .sheet .scrim { background: rgba(28,26,23,.45); }
+html[data-theme="light"] ::selection { background: var(--accent-fill); color: var(--on-accent); }
+
+/* ===== Conmutador de tema (solo C) ===== */
+.theme-dd { position: relative; }
+.theme-panel { position: absolute; right: 0; top: 100%; margin-top: 6px; z-index: 46; width: 220px; padding: 6px; background: var(--board); border: .5px solid var(--line-strong); border-radius: 12px;
+  opacity: 0; transform: translateY(-4px); visibility: hidden; transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base); }
+.theme-dd.is-open .theme-panel { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
+.theme-panel button { display: flex; width: 100%; align-items: center; gap: .6rem; min-height: 44px; padding: 0 .75rem; border-radius: 8px; font-size: 15px; color: var(--meta); transition: background-color var(--dur-fast), color var(--dur-fast); }
+.theme-panel button:hover { background: var(--elevated); color: var(--foreground); }
+.theme-panel button[aria-pressed="true"] { color: var(--foreground); }
+.theme-panel button[aria-pressed="true"] .tk { opacity: 1; }
+.theme-panel .tk { margin-left: auto; opacity: 0; color: var(--accent); }
+
+/* ===== 3.19 · Buscador ===== */
+.search { position: relative; display: flex; align-items: center; }
+.search .s-ico { position: absolute; left: 14px; color: var(--meta); pointer-events: none; }
+.search input { width: 100%; min-height: 48px; padding: 0 3rem 0 2.75rem; background: var(--elevated); color: var(--foreground); border: 1px solid var(--control); border-radius: 8px; font-size: 16px;
+  transition: border-color var(--dur-base) var(--ease-standard), background-color var(--dur-base); -webkit-appearance: none; appearance: none; }
+.search input::-webkit-search-cancel-button { display: none; }
+.search input::placeholder { color: var(--muted); }
+.search input:focus { border-color: var(--accent); }
+.search input:focus-visible { box-shadow: var(--ring); }
+.search .s-clear { position: absolute; right: 2px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--meta); border-radius: 8px; transition: color var(--dur-fast); }
+.search .s-clear:hover { color: var(--foreground); }
+.search .s-kbd { position: absolute; right: 12px; font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 1; padding: 4px 7px; border-radius: 4px; border: .5px solid var(--line-strong); color: var(--meta); background: var(--background); pointer-events: none; }
+.search.has-value .s-kbd { display: none; }
+@media (hover: none) { .search .s-kbd { display: none; } }
+mark.hl { background: var(--hl-bg); color: inherit; border-radius: 2px; padding: 0 .08em; box-shadow: inset 0 -2px 0 var(--hl-line); }
+.result { position: relative; display: grid; gap: .25rem; padding: 1.25rem 0; border-bottom: .5px solid var(--line); }
+@media (min-width: 768px) { .result { grid-template-columns: 140px minmax(0,1fr) 96px; column-gap: 1.5rem; } }
+.result:hover .t-link { background-size: 100% 1.5px; }
+.kbd { font-family: "JetBrains Mono", monospace; font-size: 12px; padding: 2px 6px; border-radius: 4px; border: .5px solid var(--line-strong); color: var(--foreground); background: var(--elevated); }
+.row-paper { transition: background-color var(--dur-fast) var(--ease-standard); }
+@media (hover: hover) { .row-paper:hover { background: var(--elevated); } }
+
+/* ===== Barra de modo (solo mockup) ===== */
+.mode-switch a { color: var(--meta); }
+.mode-switch a[aria-current="true"] { color: #F0EDE8; text-decoration: underline; text-underline-offset: 3px; }
+.mock-bar { color: #A19D94; }
+.mock-bar .text-foreground { color: #F0EDE8; }
+.mock-bar a { color: #E8923A; }
+
+/* ===== C elegida (08.10.26): cuerpo claro + navegación oscura =====
+   Cabecera, barra compacta, menú móvil, desplegable Guías y pie recuperan los tokens oscuros por ámbito.
+   El logo se queda en logo-white (siempre sobre oscuro). */
+html[data-mode="c"] #masthead, html[data-mode="c"] #stickyBar, html[data-mode="c"] #menu,
+html[data-mode="c"] body > footer, html[data-mode="c"] .chrome-dark {
+  --background:#0f0f0f; --board:#1a1a1a; --elevated:#242424; --line:#2a2a2a; --line-strong:#333333; --control:#75716A;
+  --accent:#E8923A; --accent-fill:#E8923A; --accent-hover:#C4721F; --accent-muted:#3a2010; --on-accent:#1a0a00;
+  --foreground:#F0EDE8; --prose:#DCD8D1; --meta:#A19D94; --muted:#888880; --hint:#444440;
+  --success:#1D9E75; --success-text:#3DBE93; --success-muted:#0a2a1e; --danger:#E24B4A; --danger-text:#F06A68; --danger-muted:#2a0a0a;
+  --chalk:#E8923A; --bar-track:#242424; --hl-bg:#3a2010; --hl-line:#E8923A;
+  --tex-line: rgba(240,237,232,.022); --tex-line-2: rgba(240,237,232,.014);
+  --ring: 0 0 0 2px var(--background), 0 0 0 4px var(--accent);
+  color: var(--foreground); color-scheme: dark;
+}
+html[data-mode="c"] #masthead, html[data-mode="c"] body > footer { background: var(--background); }
+html[data-mode="c"] .chrome-dark:not(.board-tex) { background-color: var(--background); }
+/* Unión cabecera oscura ↔ cuerpo claro: el contraste ya hace de borde; sin filete gris.
+   La barra compacta, que flota sobre papel, lleva sombra corta para despegarse al hacer scroll. */
+html[data-mode="c"] #masthead { border-bottom-color: transparent; }
+html[data-mode="c"] .sticky-bar { background: rgba(15,15,15,.9); border-bottom-color: transparent; }
+html[data-mode="c"] .sticky-bar.is-on { box-shadow: 0 1px 0 rgba(0,0,0,.35), 0 10px 24px -14px rgba(28,26,23,.55); }
+html[data-mode="c"] body > footer { border-top-color: transparent; }

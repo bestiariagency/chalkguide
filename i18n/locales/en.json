@@ -1,10 +1,1139 @@
 {
+  "brand": {
+    "name": "ChalkGuide",
+    "city": "BCN",
+    "homeLabel": "ChalkGuide Barcelona, home"
+  },
+  "nav": {
+    "skipToContent": "Skip to content",
+    "main": "Main navigation",
+    "gyms": "Climbing gyms",
+    "gymsDescriptionGeneric": "Gym profiles with prices and my review",
+    "resoling": "Shoe resoling",
+    "resolingDescription": "Price per pair, turnaround and quality",
+    "shoes": "Climbing shoes",
+    "shoesDescription": "Side-by-side comparison",
+    "blog": "Blog",
+    "events": "Events",
+    "about": "About me",
+    "newsletter": "Newsletter",
+    "language": "Language",
+    "languageEs": "Español",
+    "languageEn": "English",
+    "switchToEs": "Switch to Spanish",
+    "switchToEn": "Switch to English",
+    "home": "Home",
+    "breadcrumbs": "Breadcrumbs",
+    "mainCompact": "Compact main navigation",
+    "mainMobile": "Mobile menu navigation",
+    "preview": {
+      "gyms": {
+        "range": "€{min} to €{max} a month",
+        "price": "€{price} a month",
+        "note": "{n} gym. Monthly fee: {name} | {n} gyms. Lowest monthly fee: {name}"
+      },
+      "shoes": {
+        "from": "For beginners, from €{price}",
+        "note": "{n} model to compare side by side | {n} models to compare side by side"
+      },
+      "resoling": {
+        "range": "€{min} to €{max} a pair",
+        "price": "€{price} a pair",
+        "note": "{n} resoler. {min} to {max} days | {n} resolers. {min} to {max} days",
+        "noteDay": "{n} resoler. {days} days | {n} resolers. {days} days",
+        "noteOneDay": "{n} resoler. 1 day | {n} resolers. 1 day",
+        "noteCount": "{n} resoler | {n} resolers"
+      },
+      "blog": {
+        "latest": "Latest article"
+      }
+    },
+    "menu": {
+      "label": "Menu",
+      "open": "Open the menu",
+      "close": "Close the menu",
+      "resolingShort": "Resoling",
+      "blogDescription": "What climbing has taught me",
+      "eventsDescription": "What is on at the gyms this month",
+      "aboutDescription": "Who writes this and why",
+      "newsDescription": "What happens in climbing, always with its source"
+    },
+    "news": "News"
+  },
+  "footer": {
+    "guides": "Guides",
+    "media": "Publication",
+    "clearAccounts": "Full transparency",
+    "transparency": "Transparency",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "legalNotice": "Legal notice",
+    "chalkApp": "Chalk app",
+    "language": "Language",
+    "promise": "No review is bought. Anything paid is flagged.",
+    "copyright": "© {year} ChalkGuide"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "seeMore": "See more",
+    "inSpanish": "(in Spanish)",
+    "seeAll": "See all",
+    "readArticle": "Read article",
+    "back": "Back",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "close": "Close",
+    "sortBy": "Sort by",
+    "filters": "Filters",
+    "clearFilters": "Clear filters",
+    "results": "No results | 1 result | {count} results",
+    "share": "Share",
+    "shareCopied": "Link copied",
+    "compare": "Compare",
+    "compareAdded": "Added to compare ({count}/3)",
+    "compareFull": "You are already comparing 3 models.",
+    "priceUnavailable": "Price not available",
+    "noData": "No data",
+    "remove": "Remove",
+    "saveChanges": "Save changes",
+    "usedByMe": "I have used these",
+    "priceUnconfirmed": "Price not confirmed",
+    "compareMin": "Pick at least 2 models",
+    "cancel": "Cancel",
+    "clearFiltersCount": "Clear filters ({count})",
+    "search": {
+      "label": "Search",
+      "clear": "Clear search",
+      "closeFilters": "Close filters",
+      "countQuery": "{count} of {total} {noun} matching “{query}”",
+      "see": "See {count} {noun}",
+      "none": "No results",
+      "noMatch": "No {noun} matches “{query}”",
+      "alsoFilters": "You also have {count} active filter. | You also have {count} active filters.",
+      "tryOther": "Try another word or fewer letters.",
+      "missing": "Is a {noun} missing?",
+      "tellMe": "Tell me"
+    }
+  },
+  "transparency": {
+    "guestVisit": "Guest visit",
+    "guestVisitHint": "I was invited in. I say so in the review, and my opinion is not up for negotiation.",
+    "affiliate": "Affiliate link",
+    "affiliateHint": "If you buy through this link, I may earn a commission. It costs you nothing extra.",
+    "verified": "Data checked on {date}",
+    "verifiedHint": "I check this by hand on the gym's website. It may have changed since.",
+    "stale": "Checked on {date} · may have changed",
+    "staleShort": "{date} · may have changed",
+    "learnMore": "How I rate and what gets flagged"
+  },
+  "ratings": {
+    "author": "Author's rating",
+    "readers": "Readers' rating",
+    "notEnough": "Not enough reviews yet (minimum {min})",
+    "criteria": "Criterion",
+    "outOf": "out of 5",
+    "outOfValue": "{value} out of 5",
+    "reviewsCount": "No reviews | 1 review | {count} reviews"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "write": "Review",
+    "signInToWrite": "Sign in with Google to leave a review",
+    "signInHint": "Signing in with Google does not subscribe you to the newsletter.",
+    "empty": "No one has reviewed this yet",
+    "emptyHint": "If you have climbed here, tell us about it. You only need to sign in with Google.",
+    "beFirst": "Be the first",
+    "yourReview": "Your review",
+    "edit": "Edit",
+    "optionalText": "Tell it in your own words (optional)",
+    "charLimit": "{count} / {max}",
+    "charLimitReached": "You have reached the limit of {max} characters.",
+    "submit": "Send review",
+    "sent": "Review published. Thanks for sharing.",
+    "error": "Could not send it. Check your connection and try again.",
+    "cleanBoard": "A clean slate",
+    "errorTitle": "Could not send it",
+    "deleted": "Review deleted.",
+    "deleteErrorTitle": "Could not delete it",
+    "deleteError": "Check your connection and try again.",
+    "missing": "· missing",
+    "ratingGroup": "{label}, from 1 to 5",
+    "scoreOption": "{n} out of {max}",
+    "editNote": "You can change your review whenever you like.",
+    "placeholder": "What you liked and what you did not",
+    "cancel": "Cancel",
+    "save": "Save changes",
+    "publicName": "Published with your first name and last-name initial from your Google account (for example, Marta G.).",
+    "close": "Close",
+    "sentHint": "It now counts towards the readers’ score.",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete your review?",
+    "deleteConfirmBody": "It will disappear from the page and from the readers’ score. This cannot be undone.",
+    "deleteConfirm": "Yes, delete",
+    "status": {
+      "hidden": "Hidden"
+    },
+    "overall": "Your overall score",
+    "overallRequired": "Give a score from 1 to 5 to publish.",
+    "criteriaTitle": "Score by criterion",
+    "criteriaHint": "Optional: score only the ones you want.",
+    "clear": "Remove",
+    "clearScore": "Remove the score for {label}",
+    "rateLimited": "You have reached the limit of 5 new reviews in 24 hours. Please try again later.",
+    "photos": {
+      "legend": "Photos (optional)",
+      "help": "Up to {max}. JPG, PNG, WebP or HEIC, up to 20 MB each.",
+      "listLabel": "Added photos",
+      "add": "Add photos",
+      "addOne": "Add photo",
+      "dragHint": "or drag them here",
+      "dragHintOne": "or drag it here",
+      "dropMore": "Drop to add · {n} left",
+      "remove": "Remove photo {n}",
+      "removeNamed": "Remove photo {n} ({name})",
+      "retry": "Retry",
+      "retryFailed": "Retry the photos that did not upload",
+      "uploadingLabel": "Uploading photo {n}",
+      "tileState": "Photo {label}: {state}.",
+      "state": {
+        "preparing": "Preparing",
+        "ready": "ready",
+        "uploading": "uploading, {percent}%",
+        "error": "not uploaded",
+        "saved": "saved"
+      },
+      "announce": {
+        "added": "Photo added. You have {n} of {max}. | {count} photos added. You have {n} of {max}.",
+        "removed": "Photo removed. You have {n} of {max}."
+      },
+      "errors": {
+        "notImage": "{name} is not a photo. Use JPG, PNG, WebP or HEIC.",
+        "tooBig": "{name} is {mb} MB. The maximum is {max} MB.",
+        "heic": "I can't open {name} in this browser. Upload it from your phone or save it as JPG.",
+        "unreadable": "I can't read {name}. Try another photo.",
+        "upload": "{name} was not uploaded. Check your connection and press Retry.",
+        "overflow": "Only {max} photos fit. I left out {names}.",
+        "full": "You already have {max} photos. Remove one to change it.",
+        "limit": "No more photos fit in this review.",
+        "rate": "You have uploaded a lot of photos today. Try again tomorrow.",
+        "rightsOutdated": "Photos can't be uploaded right now. Reload the page and try again.",
+        "removeTitle": "Couldn't remove a photo",
+        "remove": "Check your connection and edit your review again."
+      },
+      "submitError": "A photo was not uploaded. Try again or send the review without it.",
+      "sendWithout": "Send without that photo",
+      "finishing": "Finishing the photo upload… | Finishing the upload of {count} photos…",
+      "rights": "I confirm these photos are my own, that nobody recognisable appears without their permission, and that ChalkGuide may show them on the page next to my review.",
+      "rightsRequired": "Tick the box to upload the photos.",
+      "rejected": "A photo was not published: {reason}. It no longer takes up a slot; you can upload another.",
+      "rejectedNoReason": "A photo was not published. It no longer takes up a slot; you can upload another.",
+      "reject": {
+        "not_own": "it didn't look like your own photo",
+        "identifiable_people": "other people could be recognised",
+        "off_topic": "it was unrelated to the listing",
+        "low_quality": "it was blurry or low quality",
+        "inappropriate": "it had inappropriate content"
+      },
+      "view": "View photo {n} of {total} by {name}",
+      "viewMine": "View your photo {n} of {total}",
+      "viewer": {
+        "title": "Photos by {name}",
+        "titleMine": "Your photos",
+        "prev": "Previous photo",
+        "next": "Next photo",
+        "caption": "Uploaded by {name}, not by ChalkGuide",
+        "captionMine": "Uploaded by you, not by ChalkGuide",
+        "you": "you",
+        "alt": "Photo {n} of {total} by {name} at {item}"
+      }
+    }
+  },
+  "newsletter": {
+    "kicker": "Weekly newsletter",
+    "title": "One letter a week. Nothing more.",
+    "subtitle": "News from the gyms, the latest article and a climbing shoe worth knowing about.",
+    "emailLabel": "Your email",
+    "emailPlaceholder": "name{'@'}example.com",
+    "cta": "Subscribe",
+    "consent": "I want to receive the weekly ChalkGuide newsletter by email. I can unsubscribe whenever I like.",
+    "privacyLink": "Privacy policy",
+    "consentRequired": "Tick the box to confirm you want to receive it.",
+    "emailInvalid": "Enter a valid email address, for example name{'@'}example.com.",
+    "emailMissingDomain": "The domain is missing (.com, .es…).",
+    "noSpam": "No spam. Unsubscribe in one click.",
+    "sending": "Sending…",
+    "checkInbox": "Nearly there!",
+    "checkInboxBody": "I have sent you an email to confirm your subscription. Check your spam folder too.",
+    "confirmed": "Subscription confirmed",
+    "confirmedBody": "Thanks for signing up. You are in: the next letter arrives with the next weekly edition.",
+    "confirmedNext": "While you wait, here is where to start reading.",
+    "confirmedNextCta": "Read the blog",
+    "unsubscribed": "You have been unsubscribed",
+    "unsubscribedBody": "You will not receive the newsletter again. If you change your mind, you can subscribe again whenever you like.",
+    "error": "We could not complete your subscription. Please try again in a while.",
+    "linkExpiredBody": "It may have expired or already been used. If you are not subscribed yet, sign up again and I will send you another.",
+    "linkInvalidTitle": "This link does not work",
+    "linkInvalidBody": "It may have expired, already been used or be incomplete. If you would like to get the newsletter, you can sign up again.",
+    "unsubscribeInvalidBody": "You have not been unsubscribed: this link is not valid or has already been used. To finish, open any newsletter email and click the unsubscribe link at the bottom.",
+    "unsubscribeErrorBody": "You have not been unsubscribed: something failed on our side or with the connection. Press Retry; the link may be fine.",
+    "resubscribe": "Sign me up again",
+    "receiveTitle": "What you get",
+    "receiveItem1": "News from the gyms",
+    "receiveItem2": "The latest article",
+    "receiveItem3": "A climbing shoe worth knowing about",
+    "howTitle": "How it works",
+    "howStep1": "You enter your email and tick the box.",
+    "howStep2": "I send you an email to confirm. Without confirmation, there is no subscription.",
+    "howStep3": "The next letter arrives with the next weekly edition.",
+    "signature": "I write to you once a week.",
+    "formLabel": "Newsletter sign-up",
+    "goTo": "Go to the newsletter",
+    "successBlogCta": "Meanwhile, read the blog",
+    "confirmedGymsCta": "See the gyms",
+    "relatedOptional": "(Optional)",
+    "moreInfo": "More information",
+    "relatedSuccess": "Once you confirm, the newsletter and the Chalk app notices are switched on. If you were already subscribed, nothing changes: you switch the notices on from “Preferences”, at the bottom of any email."
+  },
+  "partner": {
+    "title": "Find a climbing partner",
+    "heading": "Climbing alone?",
+    "intro": "Add yourself to your gym's board.",
+    "body": "Write which day you are going and at what level, and see who else is coming.",
+    "openApp": "Open Chalk app",
+    "waitlistTitle": "Looking for a partner at {gym}?",
+    "waitlistBody": "{count} people are waiting for us to open their board. At {target} we switch it on.",
+    "waitlistCta": "Join the waiting list",
+    "waitlistDone": "You are on the list. I will let you know when it opens.",
+    "exampleLabel": "Example",
+    "sampleName": "Xavi",
+    "exampleCaption": "Example board: the day and the number are not real.",
+    "sampleWhen": "Friday, evening",
+    "sampleMore": "+4 more",
+    "authorBadge": "author"
+  },
+  "states": {
+    "emptyTitle": "Nothing here yet",
+    "emptyBody": "When there is something to show, you will see it here.",
+    "noResultsTitle": "No results with these filters",
+    "noResultsBody": "Try removing one of the filters.",
+    "errorTitle": "Something went wrong",
+    "errorBody": "We could not load this. Please try again in a moment.",
+    "notFoundCode": "404",
+    "notFoundTitle": "This page does not exist",
+    "notFoundBody": "The link may have changed. Search for what you need or start with one of the guides.",
+    "notFoundSearch": "Search",
+    "notFoundHome": "Go to the home page",
+    "notFoundHand": "Wrong route. Try these:",
+    "notFoundSpanish": "View this page in Spanish"
+  },
   "seo": {
-    "defaultTitle": "Climbing gyms in Barcelona",
-    "defaultDescription": "Directory of climbing gyms in the Barcelona metropolitan area, with reviews."
+    "homeTitle": "ChalkGuide: a climber's guide to Barcelona",
+    "homeDescription": "ChalkGuide is a guide to climbing in Barcelona, written by a climber: climbing gyms with verified prices, climbing shoes, resoling and events.",
+    "defaultTitle": "Climbing gyms in Barcelona: prices, hours and honest reviews",
+    "defaultDescription": "A guide to Barcelona's climbing gyms with verified prices, a climber's reviews and a climbing shoe comparison. No bought reviews.",
+    "titleTemplate": "{title} · ChalkGuide",
+    "siteName": "ChalkGuide",
+    "ogImageAlt": "ChalkGuide, climbing in Barcelona",
+    "gymTitle": "{name}: prices, hours and review",
+    "gymDescription": "{name} in Barcelona: prices, opening hours, facilities and my take as a climber, with every detail checked before I publish it.",
+    "resolerTitle": "Resole climbing shoes at {name}: price and time",
+    "resolerDescription": "{name}: price per pair, turnaround and terms for resoling your climbing shoes in Barcelona, with the details I have been able to check.",
+    "shoeTitle": "{name}: review, specs and price",
+    "shoeDescription": "{name}: profile, stiffness, closure and price range. I add my own experience only if I have worn them, and you can compare them.",
+    "categoryTitle": "{name}: climbing guides for Barcelona",
+    "categoryDescription": "Articles on {name} for climbing in Barcelona: practical guides, written by a climber and with no filler.",
+    "monthDescription": "Climbing competitions, courses and meet-ups in Barcelona in {month}, each one checked by hand before I publish it.",
+    "aboutDescription": "Who writes ChalkGuide and why: a Barcelona climber who visits, measures and scores climbing gyms and gear.",
+    "transparencyDescription": "How I rate climbing gyms and gear, how the indices are calculated, which links are affiliate links and which visits are invited.",
+    "privacyDescription": "What data ChalkGuide processes, what for, how long it is kept and how to exercise your data protection rights.",
+    "cookiesDescription": "Which cookies ChalkGuide uses, what each one is for and how to manage them or change your mind later.",
+    "legalNoticeDescription": "ChalkGuide's legal notice: who owns the site and the terms on which you can use it.",
+    "newsletterTitle": "Climbing newsletter for Barcelona",
+    "newsletterDescription": "A letter with what I find out about Barcelona's climbing gyms, gear and events. No filler, no bought reviews.",
+    "newsTitle": "Climbing news from Catalonia and Spain",
+    "newsDescription": "What is happening in climbing in Catalonia and Spain, summarised with the source linked. Picked by Xavi. The weekly newsletter that collects them is in Spanish.",
+    "newsCategoryTitle": "{name}: climbing news",
+    "newsCategoryDescription": "Climbing news about {name}: our own summaries with the source linked."
+  },
+  "events": {
+    "types": {
+      "competition": "Competition",
+      "workshop": "Workshop",
+      "outing": "Meet-up",
+      "social": "Social",
+      "course": "Course",
+      "other": "Other"
+    },
+    "seoTitle": "Climbing events in Barcelona: what's coming up",
+    "seoDescription": "Competitions, courses and meet-ups at Barcelona's climbing gyms over the next two months, each one checked by hand.",
+    "intro": "Competitions, courses and meet-ups at Barcelona's climbing gyms over the next two months. I check each one by hand before publishing it.",
+    "boardsLabel": "Event boards",
+    "cleanBoard": "Clean board",
+    "emptyAgendaTitle": "No events in the next two months",
+    "emptyAgendaBody": "When something has been approved, you will see it here.",
+    "disclaimer": "Each event links to the organiser's website; dates and prices may change.",
+    "filterLabel": "Event type",
+    "count": "No events | 1 event | {count} events",
+    "moreInfo": "More information",
+    "cancelled": "Cancelled",
+    "monthNav": "Calendar months",
+    "previousMonth": "Previous month:",
+    "nextMonth": "Next month:",
+    "monthTitle": "Events in {month}",
+    "monthSeoTitle": "Climbing events in Barcelona: {month}",
+    "next": "Next up",
+    "time": "Time",
+    "price": "Price",
+    "at": "at",
+    "allDay": "All day",
+    "noneFuture": "Nothing in {month} yet",
+    "noneFutureHint": "I usually publish with a couple of months of notice.",
+    "noneLeft": "Nothing else this month",
+    "noneLeftNext": "See {month}",
+    "nonePast": "No events published in {month}",
+    "archiveNote": "This month has passed. I'm leaving it up as an archive."
+  },
+  "blog": {
+    "seoTitle": "Climbing blog for Barcelona: practical guides",
+    "seoDescription": "Practical guides on where to climb, gear and costs in Barcelona, plus what I am learning along the way. No filler.",
+    "categoriesLabel": "Categories",
+    "all": "All",
+    "emptyTitle": "No articles yet",
+    "emptyBody": "When I publish the first one, you will see it here.",
+    "featured": "Featured",
+    "latest": "Latest",
+    "category": "Category",
+    "categoryList": "Articles on {name}",
+    "categoryEmptyTitle": "This category has no articles yet",
+    "categoryEmptyBody": "In the meantime, have a look at the rest of the blog.",
+    "allArticles": "See the whole blog",
+    "search": {
+      "placeholder": "Climbing gyms, prices, gear…",
+      "help": "Type at least 2 letters.",
+      "tooShort": "Type at least 2 letters to search.",
+      "searching": "Searching “{term}”…",
+      "results": "{count} article for “{term}” | {count} articles for “{term}”",
+      "noResults": "No articles for “{term}”",
+      "errorTitle": "I couldn't search right now",
+      "errorBody": "Try again in a few seconds.",
+      "emptyHand": "I haven't written that yet",
+      "emptyTitle": "No articles for “{term}”",
+      "emptyInScope": "No articles in {name} for “{term}”",
+      "emptyBody": "Check the spelling or try another word.",
+      "searchAll": "Search the whole blog",
+      "scopeLabel": "Where to search",
+      "scopeCategory": "In {name}",
+      "scopeAll": "In the whole blog",
+      "narrow": "Only in {name}",
+      "wantTopic": "Want me to write about it?",
+      "tellMeTopic": "Tell me",
+      "loadMore": "Show more results",
+      "showing": "{shown} of {total}"
+    },
+    "readingTime": "{count} min read",
+    "allBlog": "All the blog",
+    "noCover": "No cover",
+    "toc": {
+      "title": "In this article",
+      "label": "Article contents",
+      "summary": "In this article · {count} section | In this article · {count} sections",
+      "remaining": "{count} min left",
+      "done": "You have reached the end",
+      "newsletter": "Get the weekly letter",
+      "anchor": "Link to the section “{title}”"
+    },
+    "keepReading": "Keep reading",
+    "mentioned": "Listings mentioned in this article",
+    "video": {
+      "kicker": "Video · YouTube",
+      "play": "Play video",
+      "watch": "Watch on YouTube",
+      "external": "(opens youtube.com)",
+      "notice": "It loads from YouTube (Google) only when you play it. YouTube then receives your IP address and may store data in your browser.",
+      "cookies": "Cookies",
+      "loading": "Loading video…"
+    },
+    "itemCard": {
+      "gym": "Climbing gym",
+      "resoler": "Resoler",
+      "shoe": "Climbing shoe",
+      "view": "View details"
+    },
+    "itemKind": {
+      "gym": "Climbing gym",
+      "resoler": "Resoler",
+      "shoe": "Climbing shoes"
+    },
+    "author": {
+      "name": "Xavi"
+    },
+    "prose": {
+      "noteBy": "Note from {name}",
+      "note": "Author's note",
+      "table": "Table"
+    }
+  },
+  "pages": {
+    "preparingTitle": "This page is not published yet",
+    "preparingBody": "It has no content yet. In the meantime, you can go back to the home page.",
+    "lastUpdated": "Last updated: {date}"
   },
   "home": {
-    "title": "ChalkGuide",
-    "intro": "Climbing gym directory for Barcelona. Coming soon."
+    "hero": {
+      "title": "Climbing in Barcelona",
+      "regionLabel": "Highlights",
+      "regionRole": "carousel",
+      "ropeLabel": "Go to the next section",
+      "kind": {
+        "review": "Review",
+        "shoe": "Climbing shoes",
+        "gym": "Climbing gym",
+        "article": "Article",
+        "event": "Event"
+      },
+      "meta": {
+        "gymLead": "{district} · €{price} a month · up to {height} m",
+        "gymBoulder": "{district} · €{price} a month · bouldering",
+        "gymNoPrice": "{district}",
+        "shoePriceRange": "€{min}–{max}",
+        "shoePrice": "€{price}"
+      }
+    },
+    "paths": {
+      "title": "Where do you start?",
+      "label": "Your profile",
+      "new": "I have just started",
+      "regular": "I climb every week",
+      "new1": "Which gym suits me if I am just starting out",
+      "new2": "Pass or monthly membership: which makes sense",
+      "new3": "How to choose your first climbing shoes",
+      "regular1": "Compare Barcelona climbing gyms",
+      "regular2": "When to resole and where",
+      "regular3": "Outdoor rock within 2 hours"
+    },
+    "gyms": {
+      "title": "The gyms, one by one",
+      "caption": "Comparison of featured climbing gyms"
+    },
+    "shoes": {
+      "title": "Climbing shoes at a glance",
+      "caption": "Quick comparison of climbing shoes"
+    },
+    "blog": {
+      "title": "From the blog",
+      "seeAll": "All the blog"
+    },
+    "news": {
+      "lede": "What is happening in climbing, near and far, summarised with its source.",
+      "seeAll": "All news",
+      "list": "Latest news"
+    }
+  },
+  "gyms": {
+    "filters": {
+      "lead": "Lead climbing",
+      "kids": "Kids' area",
+      "noBelayTest": "No belay test",
+      "early": "Opens at 7:00"
+    },
+    "list": {
+      "seoTitle": "Climbing gyms in Barcelona: prices, hours and my verdict",
+      "seoDescription": "Barcelona climbing gyms visited one by one, with verified prices, calculated indices and my score.",
+      "title": "Climbing gyms in Barcelona",
+      "intro": "Gyms visited one by one, with verified prices and my score. The indices are calculated the same way for every gym.",
+      "heading": "Climbing gym listing",
+      "caption": "Barcelona climbing gyms with monthly price, beginner index and author score"
+    },
+    "detail": {
+      "onThisPage": "On this page",
+      "keyData": "Key facts",
+      "appearsIn": "Featured in",
+      "metro": "Metro",
+      "perMonth": "{price}/month",
+      "height": "{value} m",
+      "routes": "No routes | 1 route | {count} routes",
+      "autobelays": "1 autobelay | {count} autobelays",
+      "nav": {
+        "review": "My review",
+        "data": "Prices and hours",
+        "facilities": "Facilities",
+        "opinions": "Opinions",
+        "partner": "Find a climbing partner"
+      },
+      "authorName": "Xavi",
+      "authorInitial": "X",
+      "visitedOn": "visited on",
+      "noReview": "I have not written the review yet.",
+      "transparencyNotice": "Transparency notice",
+      "website": "Gym website",
+      "price": {
+        "monthly": "Monthly membership",
+        "pass10": "10-entry pass",
+        "day": "Day pass",
+        "registration": "Registration fee"
+      },
+      "fac": {
+        "surface": "Surface area",
+        "height": "Maximum height",
+        "routes": "Routes",
+        "autobelays": "Autobelays",
+        "boulder": "Bouldering area",
+        "training": "Training area",
+        "belayTest": "Belay test",
+        "required": "Required",
+        "notRequired": "Not required",
+        "gearRental": "Gear rental",
+        "courses": "Intro courses",
+        "cafe": "Café",
+        "beer": "Beer",
+        "kids": "Kids' area",
+        "noFromAge": "No · from age {age}",
+        "showers": "Showers",
+        "wifi": "Wi-Fi"
+      },
+      "indices": {
+        "title": "Indices · calculated, not opined",
+        "family": "Family",
+        "monthlyCost": "Per month, 2 visits/week"
+      },
+      "partner": {
+        "title": "Looking for a partner at {gym}?",
+        "body": "We are putting together the waiting list so we can open the board for this gym.",
+        "soon": "Coming soon."
+      }
+    },
+    "columns": {
+      "gym": "Gym",
+      "monthly": "Monthly",
+      "beginnerIndex": "Beginner index"
+    },
+    "sort": {
+      "score": "Author score",
+      "scoreShort": "Score",
+      "price": "Price",
+      "beginner": "Beginner",
+      "family": "Family-friendly",
+      "variety": "Variety"
+    },
+    "sortedBy": "Sorted by {criterion}",
+    "verifiedIn": "Prices verified in {month}",
+    "howIndex": "How I work out the index",
+    "seeAll": "No gyms | See the gym | Compare all {count} gyms",
+    "type": {
+      "boulder": "Bouldering",
+      "lead": "Lead",
+      "both": "Bouldering and lead"
+    },
+    "search": {
+      "nounOne": "gym",
+      "nounMany": "gyms",
+      "placeholder": "Name, district or metro"
+    },
+    "style": {
+      "label": "Style",
+      "veryTechnical": "Very technical",
+      "technical": "Technical",
+      "mixed": "Mixed",
+      "dynamic": "Dynamic",
+      "veryDynamic": "Very dynamic",
+      "low": "Technical",
+      "high": "Dynamic"
+    },
+    "grading": {
+      "label": "Grades",
+      "generous": "Generous",
+      "fairlyGenerous": "Fairly generous",
+      "average": "About average",
+      "fairlyHard": "Fairly tough",
+      "hard": "Tough",
+      "low": "Generous",
+      "high": "Tough"
+    },
+    "scale": {
+      "srValue": "{value}: {n} of 5, from {low} to {high}"
+    },
+    "card": {
+      "entry": "Day entry",
+      "entrySr": "(single day)",
+      "family": "Family",
+      "variety": "Variety",
+      "outOf5": "out of 5",
+      "varietySr": "out of 5, my score",
+      "noReview": "not reviewed",
+      "metro": "Metro:",
+      "scalesLabel": "How it is graded and set (not a score)"
+    },
+    "legend": {
+      "summary": "What each figure means",
+      "entry": {
+        "term": "Day entry.",
+        "text": "Price of a single day pass, without gear rental."
+      },
+      "family": {
+        "term": "Family (1–5).",
+        "text": "Calculated index: kids area, minimum age, café and my score for that criterion."
+      },
+      "variety": {
+        "term": "Variety (1–5).",
+        "text": "My score: angles, hold types and how often the problems are reset. “—” if I have not reviewed it yet."
+      },
+      "scalesTitle": "Grading and Style are not scores: they help you choose.",
+      "grading": {
+        "term": "Grading.",
+        "text": "How hard the grades feel against the Barcelona average: from generous to hard."
+      },
+      "style": {
+        "term": "Style.",
+        "text": "How routes and problems are set: from technical (footwork, balance, static moves) to dynamic (jumps and coordination)."
+      },
+      "scalesNote": "Neither is better. If you are starting out and want to have fun, generous grades let you send more; style depends on what you enjoy. This is my view after visiting them."
+    },
+    "scales": {
+      "title": "How it is graded and set",
+      "notAGrade": "Not a score: it helps you choose",
+      "footer": "No position is better. Grading: against the Barcelona average. Style: technical means footwork and balance; dynamic means jumps and coordination. If you are starting out and want to have fun, look for generous grades.",
+      "link": "How I rate"
+    }
+  },
+  "resolers": {
+    "list": {
+      "seoTitle": "Climbing shoe resoling in Barcelona: prices",
+      "seoDescription": "Workshops for resoling climbing shoes in Barcelona: price per pair, turnaround, whether they take shoes by post, and my review of the ones I have tried.",
+      "title": "Climbing shoe resoling in Barcelona",
+      "intro": "Barcelona workshops with the price per pair, how long they take and whether they accept postal orders. I check the details with each workshop; where I have had shoes resoled myself, I add my review.",
+      "heading": "List of resolers",
+      "caption": "Resolers with price per pair, rand, turnaround and postal service",
+      "randTerm": "Rand:",
+      "randNote": "the rubber band that wraps around the toe. If it arrives worn, the resole costs more."
+    },
+    "columns": {
+      "workshop": "Workshop",
+      "perPair": "Per pair",
+      "rand": "Rand",
+      "turnaround": "Turnaround",
+      "mail": "Post",
+      "services": "Services"
+    },
+    "sort": {
+      "score": "Author's rating",
+      "scoreShort": "Author",
+      "price": "Price",
+      "days": "Turnaround"
+    },
+    "filters": {
+      "mail": "Accepts shoes by post"
+    },
+    "mail": {
+      "accepts": "takes post",
+      "declines": "no post"
+    },
+    "turnaround": "{range} day | {range} days",
+    "turnaroundShort": "{range} d",
+    "detail": {
+      "kicker": "Resoler",
+      "perPairFact": "{price} per pair",
+      "reviewTitle": "My experience",
+      "noReview": "I have not had shoes resoled here yet; I have checked the details with the workshop.",
+      "emptyHint": "If you have had shoes resoled here, tell us how it went. You only need to sign in with Google.",
+      "pricesTitle": "Prices and service",
+      "perPair": "Price per pair",
+      "rand": "Rand repair",
+      "turnaround": "Turnaround",
+      "mail": "Postal service",
+      "rubbers": "Rubbers",
+      "website": "Workshop website",
+      "appearsIn": "Featured in",
+      "resoledIn": "resoled in",
+      "paidByMe": "paid for by me",
+      "guest": "guest visit",
+      "services": "Services"
+    },
+    "services": {
+      "half_sole": "Half sole",
+      "full_sole": "Full resole",
+      "rand": "Rand repair",
+      "toe_patch": "Toe patch",
+      "closure_repair": "Strap and lace repair",
+      "stitching": "Stitching repair",
+      "other": "Other"
+    },
+    "search": {
+      "nounOne": "resoler",
+      "nounMany": "resolers",
+      "placeholder": "Name, district or service"
+    }
+  },
+  "shoes": {
+    "emptyHint": "If you have climbed in them, tell us how they went. You only need to sign in with Google.",
+    "list": {
+      "seoTitle": "Climbing shoe comparison: up to 3 models",
+      "seoDescription": "Compare climbing shoes by profile, closure, stiffness, use and price, with my experience of the ones I have worn.",
+      "title": "Climbing shoes: comparison",
+      "intro": "No models | {count} model with manufacturer data and prices checked on {date}. | {count} models with manufacturer data and prices checked on {date}. Pick 2 or 3 and compare them side by side.",
+      "models": "No models | {count} model | {count} models",
+      "previewNamed": "Preview {name}",
+      "sortLabel": "Sort",
+      "sort": {
+        "price-asc": "Price: low to high",
+        "price-desc": "Price: high to low",
+        "name": "Name: A-Z"
+      }
+    },
+    "filters": {
+      "profile": "Profile",
+      "closure": "Closure",
+      "stiffness": "Stiffness",
+      "use": "Use",
+      "price": "Price",
+      "priceMin": "Minimum price",
+      "priceMax": "Maximum price",
+      "authorExperience": "Author's experience",
+      "level": "Level",
+      "testedOnly": "Only ones I have worn"
+    },
+    "profile": {
+      "flat": "Flat",
+      "moderate": "Moderate",
+      "aggressive": "Aggressive"
+    },
+    "asymmetry": {
+      "none": "None",
+      "slight": "Slight",
+      "moderate": "Moderate",
+      "strong": "Strong"
+    },
+    "stiffnessGroup": {
+      "soft": "Soft",
+      "medium": "Medium",
+      "stiff": "Stiff"
+    },
+    "use": {
+      "gym": "Climbing gym",
+      "boulder": "Bouldering",
+      "sport": "Sport",
+      "trad": "Trad",
+      "multipitch": "Multi-pitch",
+      "training": "Training"
+    },
+    "level": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "rows": {
+      "price": "Price",
+      "profile": "Profile",
+      "asymmetry": "Asymmetry",
+      "closure": "Closure",
+      "rubber": "Rubber",
+      "stiffness": "Stiffness",
+      "use": "Use",
+      "level": "Level",
+      "author": "Author score",
+      "size": "My size",
+      "learned": "What I learned",
+      "buy": "Where to buy"
+    },
+    "usedBadge": "I wear these",
+    "affiliateBadge": "affiliate",
+    "compare": {
+      "title": "Side by side",
+      "inComparison": "Comparing",
+      "removed": "{name} removed from the comparison",
+      "minHint": "Tap the \"+\" on at least 2 models to compare them.",
+      "pricesChecked": "Prices checked on {date} · technical data from the manufacturer",
+      "noLinkNote": "Models without a link are compared all the same.",
+      "caption": "No models | Comparison of {count} climbing shoe | Comparison of {count} climbing shoes",
+      "removeNamed": "Remove {name} from the comparison",
+      "thickness": "{mm} mm",
+      "notUsed": "I have not worn these",
+      "whereToBuy": "Where to buy",
+      "seePrice": "See price",
+      "noAffiliate": "No affiliate link. Look for it at your usual shop.",
+      "view": "View comparison",
+      "replaced": "{incoming} replaces {old}",
+      "streetSize": "I wear {size} in street shoes",
+      "addModel": "Add a model",
+      "slot": "slot {n} of {max}",
+      "capacity": "{count} of {max} models",
+      "hintEmpty": "Pick up to {max} models to compare them side by side.",
+      "hintLeft": "You can add {count} more model | You can add {count} more models",
+      "hintFull": "The comparison is full ({max} of {max}). If you pick another model, I will ask which one to replace.",
+      "oneTitle": "You have {name}. Add at least one more model.",
+      "adder": {
+        "label": "Add a model",
+        "placeholder": "Search by brand or model",
+        "noMatch": "No model matches “{query}”. Try the brand (Scarpa) or the rubber (XS Edge).",
+        "count": "No models | 1 model | {count} models"
+      },
+      "replace": {
+        "title": "The comparison is full",
+        "body": "It holds {max} models. Which one should {name} replace?",
+        "option": "Replace {name}"
+      },
+      "pickOneMore": "Pick one more",
+      "addNamed": "Add {name} to the comparison"
+    },
+    "columns": {
+      "model": "Model"
+    },
+    "closure": {
+      "lace": "Laces",
+      "velcro": "Velcro",
+      "slipper": "Slipper"
+    },
+    "learned": "What I learned",
+    "openComparator": "Open the comparison",
+    "containsAffiliate": "Contains affiliate links",
+    "search": {
+      "nounOne": "model",
+      "nounMany": "models",
+      "placeholder": "Brand, model or rubber"
+    },
+    "fit": {
+      "unisex": "Unisex",
+      "women": "Women",
+      "men": "Men",
+      "kids": "Kids"
+    },
+    "detail": {
+      "photos": "Photos",
+      "photoOf": "Photo {n} of {total}: {name}",
+      "summaryLabel": "Summary",
+      "price": "Price",
+      "priceChecked": "checked {date}",
+      "readers": "Readers",
+      "noAverage": "No average yet",
+      "noOpinions": "No opinions",
+      "onThisPage": "On this page",
+      "nav": {
+        "review": "My review",
+        "data": "Technical data",
+        "opinions": "Opinions",
+        "alternatives": "Alternatives"
+      },
+      "seePriceAt": "See price at {shop}",
+      "usingSince": "using them since",
+      "dataTitle": "Technical data",
+      "fromMaker": "from the maker",
+      "spec": {
+        "fit": "Last",
+        "thickness": "Rubber thickness"
+      },
+      "compareWithOthers": "Compare them with other models",
+      "alternatives": "Alternatives",
+      "size": {
+        "label": "My size",
+        "mine": "My size",
+        "street": "Street size",
+        "difference": "Difference",
+        "note": "Fit"
+      },
+      "noReview": {
+        "title": "I haven't used them",
+        "body": "Here is the maker's data and the checked price. If I try them, I will write my review. Meanwhile, see what other climbers say.",
+        "link": "See opinions"
+      }
+    },
+    "drawer": {
+      "inComparator": "In the comparison",
+      "addToComparator": "Add to the comparison",
+      "seeInStore": "See price at the shop",
+      "affiliateNote": "Affiliate link: if you buy, I earn a commission and it costs you nothing extra.",
+      "fullPage": "See the full page"
+    }
+  },
+  "about": {
+    "contact": "Write to me",
+    "numbers": {
+      "title": "In numbers",
+      "gyms": "gyms with a profile",
+      "shoes": "climbing shoes compared"
+    },
+    "latest": {
+      "title": "What I checked most recently",
+      "allGyms": "All climbing gyms",
+      "score": "Author score",
+      "kind": {
+        "gym": "Climbing gym",
+        "resoler": "Resoler",
+        "shoe": "Climbing shoe"
+      }
+    },
+    "contactBody": "Has something changed, would you like to suggest a gym, or is there an event I should know about? Drop me a line."
+  },
+  "auth": {
+    "title": "Sign in to leave a review",
+    "body": "You can read every guide without an account. You only need to sign in with Google to leave a review: a score from 1 to 5 per criterion and some text if you like.",
+    "google": "Continue with Google",
+    "connecting": "Connecting…",
+    "error": "Could not sign in with Google. Please try again.",
+    "signOut": "Sign out",
+    "signedOut": "You have signed out.",
+    "signOutError": "Could not sign out. Please try again."
+  },
+  "author": {
+    "signatureLabel": "About the author",
+    "howIWork": "How I work",
+    "howWeWork": "How we work"
+  },
+  "consent": {
+    "info": {
+      "title": "Chalk app and related product notices",
+      "close": "Close",
+      "whatTitle": "What you'll receive",
+      "whatBody": "Occasional emails, separate from the newsletter, about Chalk app (the app for finding climbing partners, which shares accounts and a database with ChalkGuide) and about climbing-related ChalkGuide products, when they exist. ChalkGuide and Chalk app are part of Bestiari, by Xavier Pilasi. This is not third-party advertising.",
+      "whoTitle": "Who writes to you",
+      "whoBody": "Me, Xavier Pilasi, the controller for ChalkGuide and Chalk app. I do not pass your email to third parties so that they can write to you. Brevo is used as the sending provider.",
+      "optionalTitle": "It's optional",
+      "optionalBody": "If you leave the box unticked, you still subscribe to the newsletter. Signing in with Google does not sign you up for these emails either.",
+      "withdrawTitle": "How to withdraw",
+      "withdrawBody": "With one click on the unsubscribe link in any email, or from your preferences. Withdrawing from this does not unsubscribe you from the newsletter, and the other way round.",
+      "keepTitle": "How long I keep it",
+      "keepBody": "Your email, until you withdraw your consent. Afterwards I keep only proof that you gave and withdrew it, for 3 years from the withdrawal or, if you are still subscribed to the newsletter, for as long as the subscription lasts and 3 years more.",
+      "legalTitle": "Legal basis",
+      "legalBody": "Your consent (Art. 6(1)(a) GDPR). More detail in the",
+      "legalLink": "privacy policy"
+    },
+    "offer": {
+      "title": "Would you also like Chalk app notices?",
+      "intro": "Your newsletter subscription is already confirmed, whatever you choose.",
+      "legend": "Chalk app and related product notices",
+      "yes": "Yes, notify me",
+      "no": "No, thanks",
+      "saving": "Saving…",
+      "error": "It was not saved. Your newsletter is still confirmed; try again with “Yes, notify me”.",
+      "yesTitle": "Done: I'll also tell you about Chalk app",
+      "yesBody": "You can withdraw whenever you like with the link at the bottom of any email. The newsletter does not change.",
+      "noTitle": "Understood: just the newsletter",
+      "noBody": "If you change your mind, you can switch it on from “Preferences”, at the bottom of any email.",
+      "active": "On",
+      "alreadyBody": "You will also receive the Chalk app notices. You can withdraw from “Preferences”, at the bottom of any email."
+    },
+    "prefs": {
+      "title": "Your preferences",
+      "seoTitle": "Your email preferences",
+      "lead": "Choose which emails you want from ChalkGuide. Each one is separate: withdrawing from one does not affect the other.",
+      "noLogin": "You are managing the address this link was sent to. There is no need to sign in.",
+      "loading": "Loading your preferences",
+      "loadError": "I could not load your preferences. Something failed on my side or with the connection; the link may be fine.",
+      "invalidTitle": "This link does not work",
+      "invalidBody": "It may be incomplete or from an old email. Open the latest email I sent you and click “Preferences” at the bottom: that link always works.",
+      "toNewsletter": "Go to the newsletter",
+      "toHome": "Back to home",
+      "footer": "What you change here is recorded with the date. I do not store your IP address or browser.",
+      "newsletter": {
+        "title": "Newsletter",
+        "activeBody": "One letter a week with news from the gyms, the latest article and a climbing shoe worth knowing about.",
+        "pendingBody": "I sent you an email to confirm the subscription. Until you confirm it, you receive nothing.",
+        "inactiveBody": "You do not receive the newsletter. To come back you need to sign up again and confirm by email.",
+        "leave": "Unsubscribe me",
+        "cancel": "Cancel the sign-up",
+        "again": "Sign me up again",
+        "leaving": "Unsubscribing…"
+      },
+      "related": {
+        "title": "Chalk app and related product notices",
+        "grantedBody": "Occasional emails about Chalk app and climbing-related ChalkGuide products.",
+        "pendingBody": "You ticked them when you signed up. They switch on once you confirm your email; until then you receive nothing.",
+        "offerBody": "If you want to receive them, this is the text you accept:",
+        "unconfirmedBody": "You will be able to switch them on once you confirm your email.",
+        "locked": "First you need to confirm your email with the link I sent you. That is how I know the address is yours.",
+        "withdraw": "Withdraw",
+        "grant": "Yes, notify me",
+        "saving": "Saving…",
+        "withdrawing": "Withdrawing…",
+        "unavailableBody": "I cannot offer this option right now. Please try again later."
+      },
+      "state": {
+        "newsletterActive": "You receive it",
+        "newsletterPending": "Not confirmed",
+        "newsletterInactive": "You do not receive it",
+        "relatedGranted": "On",
+        "relatedPending": "Not confirmed",
+        "relatedNone": "You do not receive them"
+      },
+      "flash": {
+        "newsletterOff": "Done: you will no longer receive the newsletter. The Chalk app notices do not change.",
+        "relatedOff": "Done: you will no longer receive these notices. The newsletter does not change.",
+        "relatedOn": "Done: I'll tell you about Chalk app. You can withdraw here whenever you like.",
+        "unconfirmed": "It was not saved: your email is not confirmed yet. Confirm it with the link I sent you.",
+        "failed": "It was not saved. Something failed on my side or with the connection; please try again."
+      }
+    }
+  },
+  "news": {
+    "lede": "What is happening in climbing in Catalonia, Spain and the world, summarised in our own words. Every item links to its source.",
+    "categoryLede": "{name} news, summarised with its source.",
+    "category": "Category",
+    "searchPlaceholder": "Competition, Montserrat, IFSC…",
+    "categoriesLabel": "Categories",
+    "all": "All",
+    "scopeLabel": "Scope",
+    "scope": {
+      "all": "All",
+      "cat": "Catalonia",
+      "es": "Spain",
+      "intl": "International"
+    },
+    "thisWeek": "This week",
+    "previousWeek": "Last week",
+    "weekOf": "Week of",
+    "featured": "With a note from Xavi",
+    "noteLabel": "Xavi’s note",
+    "withNote": "With a note from Xavi",
+    "markSummary": "ChalkGuide summary",
+    "markSource": "Source:",
+    "listLabel": "News from {range}",
+    "emptyTitle": "No news yet",
+    "emptyBody": "When I publish the first ones, you will see them here.",
+    "emptyCategoryTitle": "This category has no news yet",
+    "emptyCategoryBody": "In the meantime, have a look at the rest of the news.",
+    "emptyScopeTitle": "No news with this scope",
+    "emptyScopeBody": "Try another scope.",
+    "allNews": "All news",
+    "goBlog": "Go to the blog",
+    "newsletterSpanish": "The weekly ChalkGuide letter is written in Spanish. You get it in Spanish unless that week has an English version.",
+    "pager": {
+      "label": "Pagination",
+      "newer": "Newer",
+      "older": "Older",
+      "of": "{current} / {total}",
+      "goTo": "Go to page {n}",
+      "current": "Page {n}"
+    },
+    "search": {
+      "searching": "Searching “{term}”…",
+      "results": "{count} result for “{term}” | {count} results for “{term}”",
+      "emptyTitle": "No news about “{term}”",
+      "emptyBody": "Try another word or clear the filter.",
+      "errorTitle": "I could not search right now",
+      "errorBody": "Try again in a few seconds.",
+      "loadMore": "Show more results",
+      "showing": "{shown} of {total}",
+      "tooShort": "Type at least 2 letters to search."
+    },
+    "detail": {
+      "back": "Back to {name}",
+      "sourceTitle": "Original source",
+      "readAt": "Read on {source}",
+      "external": "(external site)",
+      "publishedOn": "Published on {date}",
+      "inLanguage": "in {language}",
+      "transparency": "This text is ChalkGuide’s own summary, approved by Xavi before it is published. The facts come from the source; if something does not add up, the source rules.",
+      "howWeDoIt": "How we do the news",
+      "more": "More news",
+      "related": "Related",
+      "relatedKind": {
+        "gym": "Climbing gym",
+        "resoler": "Resoler",
+        "shoe": "Climbing shoes",
+        "article": "Article",
+        "event": "Events"
+      },
+      "photoBy": "Photo: {credit}",
+      "photoLicense": "Licence: {license}"
+    }
   }
 }

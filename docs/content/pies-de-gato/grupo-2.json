@@ -1,0 +1,216 @@
+[
+  {
+    "name": "La Sportiva Kubo",
+    "slug": "la-sportiva-kubo",
+    "brand": "La Sportiva",
+    "model": "Kubo",
+    "summary_es": "Pie de gato versátil de doble velcro, con upper sin forro de microfibra y piel y protección de puntera contra la abrasión. Pensado para quien busca comodidad y versatilidad en rocódromo y roca.",
+    "summary_en": "Versatile shoe with a double hook-and-loop closure, an unlined microfibre and leather upper and an abrasion-protected toe. Made for climbers who want comfort and versatility on the wall and on rock.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Edge",
+    "recommended_use": [
+      "Rocódromo"
+    ],
+    "price_min_eur": 113.99,
+    "price_max_eur": 140,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-518560",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Theory",
+    "slug": "la-sportiva-theory",
+    "brand": "La Sportiva",
+    "model": "Theory",
+    "summary_es": "Pie de gato técnico de velcro fino, sin bordes en la suela (D-Tech) y talón de volumen reducido. Barrabes lo describe como ideal para rocódromo, con presas y volúmenes grandes y movimientos dinámicos.",
+    "summary_en": "Technical shoe with a thin hook-and-loop closure, an edgeless D-Tech sole and a low-volume heel. Barrabes describes it as ideal for the climbing wall, with big volumes and dynamic moves.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Grip2",
+    "recommended_use": [
+      "Rocódromo"
+    ],
+    "price_min_eur": 99,
+    "price_max_eur": 164.99,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-48249",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Futura",
+    "slug": "la-sportiva-futura",
+    "brand": "La Sportiva",
+    "model": "Futura",
+    "summary_es": "Pie de gato sin canto (No-Edge) con Fast Lacing System y goma XS Grip2 de 3 mm. Barrabes lo presenta como el No-Edge más polivalente de La Sportiva, para interior y exterior.",
+    "summary_en": "No-Edge shoe with the Fast Lacing System and 3 mm XS Grip2 rubber. Barrabes calls it the most versatile No-Edge in the La Sportiva range, for indoors and outdoors.",
+    "closure": "Cordones",
+    "rubber": "Vibram XS Grip2",
+    "rubber_thickness_mm": 3,
+    "recommended_use": [
+      "Rocódromo",
+      "Deportiva"
+    ],
+    "price_min_eur": 148.5,
+    "price_max_eur": 165,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-256082",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva Otaki",
+    "slug": "la-sportiva-otaki",
+    "brand": "La Sportiva",
+    "model": "Otaki",
+    "summary_es": "Pie de gato fuertemente asimétrico y con mucho downturn, que da presión sobre el dedo gordo en presas pequeñas. Con velcro, talón S-Heel y parche texturizado para toe hooks. Para búlder y escalada deportiva.",
+    "summary_en": "Strongly asymmetric shoe with plenty of downturn, putting pressure on the big toe for small holds. Hook-and-loop closure, S-Heel and a textured toe-hook patch. For bouldering and sport climbing.",
+    "profile": "Agresivo",
+    "asymmetry": "Fuerte",
+    "closure": "Velcro",
+    "recommended_use": [
+      "Bloque",
+      "Deportiva"
+    ],
+    "price_min_eur": 130.53,
+    "price_max_eur": 170,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-518542",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "La Sportiva TC Pro",
+    "slug": "la-sportiva-tc-pro",
+    "brand": "La Sportiva",
+    "model": "TC Pro",
+    "summary_es": "Pie de gato de corte alto con cordones, acolchado en el tobillo y goma XS Edge de 4 mm. Barrabes lo recomienda para vías largas y fisuras, y lo cataloga en escalada clásica.",
+    "summary_en": "High-cut lace-up shoe with ankle padding and 4 mm XS Edge rubber. Barrabes recommends it for long routes and crack climbing, and files it under traditional climbing.",
+    "closure": "Cordones",
+    "rubber": "Vibram XS Edge",
+    "rubber_thickness_mm": 4,
+    "recommended_use": [
+      "Vías largas",
+      "Clásica"
+    ],
+    "price_min_eur": 161.99,
+    "price_max_eur": 179.99,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-96412",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Origin",
+    "slug": "scarpa-origin",
+    "brand": "Scarpa",
+    "model": "Origin",
+    "summary_es": "Pie de gato para hombre de perfil plano, ligeramente asimétrico y con dos tiras de velcro. Suela Vision de 4 mm y upper de piel de 1,8 mm. Barrabes lo recomienda para iniciación, vías largas y entrenamiento en rocódromo.",
+    "summary_en": "Men's shoe with a flat profile, slight asymmetry and two hook-and-loop straps. 4 mm Vision sole and a 1.8 mm leather upper. Barrabes recommends it for beginners, long routes and training on the wall.",
+    "fit": "Hombre",
+    "profile": "Plano",
+    "asymmetry": "Ligera",
+    "closure": "Velcro",
+    "rubber": "Vision",
+    "rubber_thickness_mm": 4,
+    "recommended_use": [
+      "Rocódromo",
+      "Vías largas",
+      "Entrenamiento"
+    ],
+    "levels": [
+      "Inicio"
+    ],
+    "price_min_eur": 116.1,
+    "price_max_eur": 129,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-521426",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Origin VS",
+    "slug": "scarpa-origin-vs",
+    "brand": "Scarpa",
+    "model": "Origin VS",
+    "summary_es": "Pie de gato de velcro para búlder indoor, con ajuste neutro, upper de microfibra, suela S72 y parche blando M50 en la puntera para toe hooks. Prioriza la comodidad en sesiones largas.",
+    "summary_en": "Hook-and-loop shoe for indoor bouldering, with a neutral fit, microfibre upper, S72 sole and a soft M50 toe patch for toe hooks. Built for comfort over long sessions.",
+    "closure": "Velcro",
+    "rubber": "Scarpa S72",
+    "recommended_use": [
+      "Rocódromo",
+      "Bloque"
+    ],
+    "price_min_eur": 102.9,
+    "price_max_eur": 124,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-588736",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Vapor V",
+    "slug": "scarpa-vapor-v",
+    "brand": "Scarpa",
+    "model": "Vapor V",
+    "summary_es": "Pie de gato asimétrico de doble velcro, con upper de microfibra y goma XS Edge de 3,5 mm. Barrabes lo describe como sensible y preciso, para búlder o vías deportivas duras.",
+    "summary_en": "Asymmetric shoe with a double hook-and-loop closure, microfibre upper and 3.5 mm XS Edge rubber. Barrabes describes it as sensitive and precise, for bouldering or hard sport routes.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Edge",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Bloque",
+      "Deportiva"
+    ],
+    "price_min_eur": 139.4,
+    "price_max_eur": 164,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-32149",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Vapor S",
+    "slug": "scarpa-vapor-s",
+    "brand": "Scarpa",
+    "model": "Vapor S",
+    "summary_es": "Pie de gato asimétrico con sistema Nano Strap que sujeta el tobillo y reduce el deslizamiento del talón en los heel hooks. Goma XS Grip2 de 3,5 mm y punta en ángulo muy bajo, útil también en fisuras finas.",
+    "summary_en": "Asymmetric shoe with a Nano Strap that wraps the ankle and cuts heel slippage on heel hooks. 3.5 mm XS Grip2 rubber and a very low-angle toe profile, which also works on thin cracks.",
+    "rubber": "Vibram XS Grip2",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Deportiva"
+    ],
+    "price_min_eur": 114.8,
+    "price_max_eur": 164,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-199275",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Instinct VS",
+    "slug": "scarpa-instinct-vs",
+    "brand": "Scarpa",
+    "model": "Instinct VS",
+    "summary_es": "Pie de gato asimétrico y de perfil agresivo, con velcro, goma XS Edge de 3,5 mm en el antepié y XS Grip2 de 2 mm en el talón. Para escaladores exigentes en búlder y vías deportivas duras, con apoyos pequeños y desplomes.",
+    "summary_en": "Asymmetric, aggressive shoe with a hook-and-loop strap, 3.5 mm XS Edge rubber on the forefoot and 2 mm XS Grip2 on the heel. For demanding climbers on bouldering and hard sport routes, small holds and overhangs.",
+    "profile": "Agresivo",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Edge (antepié) y XS Grip2 (talón)",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Bloque",
+      "Deportiva"
+    ],
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 142.83,
+    "price_max_eur": 179,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/pies-gato/product-6786",
+    "verified_at": "2026-11-06"
+  }
+]

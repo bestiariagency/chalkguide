@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Rocódromos en Barcelona · buscador y tarjetas (3.19 · iteración 2) · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="_shared/lectura.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw-vars.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+<link rel="stylesheet" href="_shared/lectura.css">
+<style>
+  /* ===== Iteración 2 · tarjeta de rocódromo ===== */
+  .gym .gym-photo { background:var(--elevated); }
+  .gym .zoom { transition: transform 600ms var(--ease-out); }
+  @media (hover:hover) { .gym:hover .zoom { transform:scale(1.03); } }
+  /* Datos "de valor": 3 columnas en todos los anchos (precio · familiar · variedad). Cifra en mono 20 px y medidor debajo */
+  .stats { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; padding-top:14px; border-top:.5px solid var(--line); }
+  .stats dt { font-size:13px; color:var(--meta); margin-bottom:4px; white-space:nowrap; }
+  .stats dd { min-height:38px; }
+  /* Escalas descriptivas (no son nota): bloque aparte, en una caja de papel, 2 filas compactas */
+  .scales { display:grid; gap:6px; margin-top:12px; padding:10px 12px; background:var(--background); border:.5px solid var(--line); border-radius:8px; }
+  .scales > div { display:grid; grid-template-columns:44px minmax(0,1fr); align-items:center; gap:10px; min-height:20px; }
+  .scales dt { font-size:12px; color:var(--meta); }
+  .scales dd { display:flex; align-items:center; gap:10px; min-width:0; }
+  .scales dd .gscale { flex:none; }
+  .scales .w { font-size:13px; color:var(--foreground); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* Medidor 1–5: 5 tramos de 12 × 6 px, relleno chalk (decorativo; el número va al lado) */
+  .m5 { display:inline-flex; gap:3px; }
+  .m5 i { width:12px; height:6px; border-radius:2px; background:var(--bar-track); }
+  .m5 i.on { background:var(--chalk); }
+  .m5 i.half { background:linear-gradient(90deg, var(--chalk) 50%, var(--bar-track) 50%); }
+  /* Escala de grados: regla neutra con 5 marcas y un punto de tinta; sin color de "mejor/peor" */
+  .gscale { position:relative; display:block; width:100%; max-width:120px; height:12px; }
+  .scales .gscale { width:64px; height:10px; }
+  .scales .gscale .track { top:4px; }
+  .scales .gscale .dot { width:10px; height:10px; margin-left:-5px; box-shadow:0 0 0 2px var(--background); }
+  .gscale .track { position:absolute; left:0; right:0; top:5px; height:2px; background:var(--line-strong); display:flex; justify-content:space-between; }
+  .gscale .track i { width:2px; height:8px; margin-top:-3px; background:var(--control); border-radius:1px; }
+  .gscale .dot { position:absolute; top:0; left:var(--p); width:12px; height:12px; margin-left:-6px; border-radius:999px; background:var(--foreground); box-shadow:0 0 0 2px var(--board); transition:box-shadow var(--dur-base); }
+  .legend summary::-webkit-details-marker { display:none; }
+  .legend summary { color:var(--meta); transition:color var(--dur-fast); } .legend summary:hover { color:var(--foreground); }
+</style>
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="rocodromos" data-route-es="/rocodromos" data-route-en="/en/climbing-gyms">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="board-tex border-b-[0.5px] border-line">
+    <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-10 md:pt-10 md:pb-14">
+      <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Rocódromos</span></li></ol></nav>
+      <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5 max-w-[18ch]">Rocódromos en Barcelona</h1>
+      <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">Cinco rocódromos visitados uno a uno, con precios verificados. Los índices se calculan igual para todos.</p>
+      <p class="mt-4 font-mono text-[12px] text-meta">Prueba en el buscador: <button type="button" class="kbd" data-try="gracia">gracia</button> <button type="button" class="kbd" data-try="l3">l3</button> <button type="button" class="kbd" data-try="bloque">bloque</button> <button type="button" class="kbd" data-try="cornella cuerda">cornella cuerda</button> <button type="button" class="kbd" data-try="tarragona">tarragona</button> · atajo <span class="kbd">/</span></p>
+    </div>
+  </section>
+
+  <div class="py-8 md:py-12">
+    <div class="max-w-page mx-auto md:px-6">
+      <section class="paper mx-2 sm:mx-4 md:mx-0 px-4 py-6 sm:px-8 md:px-10 md:py-10" aria-labelledby="h-list">
+        <h2 id="h-list" class="sr-only">Listado de rocódromos</h2>
+
+        <!-- Barra de búsqueda + filtros + orden -->
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 lg:gap-8">
+          <form role="search" class="w-full lg:max-w-[420px]" onsubmit="event.preventDefault()">
+            <label for="q" class="label-mini block mb-3">Buscar</label>
+            <div class="search" id="qwrap">
+              <svg class="ico s-ico !w-[18px] !h-[18px]" aria-hidden="true"><use href="#i-search"/></svg>
+              <input id="q" type="search" name="q" autocomplete="off" enterkeyhint="search" spellcheck="false" placeholder="Nombre, barrio o metro" aria-describedby="q-help" aria-controls="results">
+              <span class="s-kbd" aria-hidden="true">/</span>
+              <button type="button" class="s-clear" id="q-clear" aria-label="Borrar búsqueda" hidden><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-x"/></svg></button>
+            </div>
+            <p id="q-help" class="sr-only">Los resultados se actualizan mientras escribes. Pulsa barra para ir al buscador y Escape para borrarlo.</p>
+          </form>
+          <div class="flex items-center gap-3 lg:hidden">
+            <button type="button" class="btn btn-ghost flex-1" data-sheet-open="filters-sheet" aria-controls="filters-sheet" aria-expanded="false"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-sliders"/></svg><span class="label">Filtros <span class="font-mono text-meta" id="fcount-m"></span></span></button>
+          </div>
+          <div class="lg:shrink-0">
+            <p id="sort-label" class="label-mini mb-3">Ordenar por</p>
+            <div class="seg w-full lg:w-auto" role="group" aria-labelledby="sort-label" data-seg id="sort">
+              <span class="ind" aria-hidden="true"></span>
+              <button type="button" aria-pressed="true" data-key="price">Precio</button>
+              <button type="button" aria-pressed="false" data-key="family">Familiar</button>
+              <button type="button" aria-pressed="false" data-key="variety">Variedad</button>
+            </div>
+          </div>
+        </div>
+        <div class="hidden lg:block mt-6">
+          <p id="f-label" class="label-mini mb-3">Filtros</p>
+          <div class="flex flex-wrap gap-2" role="group" aria-labelledby="f-label" data-chipset></div>
+        </div>
+
+        <!-- Contador + limpiar -->
+        <div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-meta min-h-[44px]">
+          <p id="count-visible" class="text-foreground" aria-hidden="true"></p>
+          <button type="button" class="btn-inline" id="clear-filters" hidden>Quitar filtros</button>
+        </div>
+        <p class="sr-only" aria-live="polite" aria-atomic="true" id="count-live"></p>
+        <!-- Leyenda de los datos y las dos escalas: una vez para toda la lista, no en cada tarjeta -->
+        <details class="legend mb-3 text-sm text-meta">
+          <summary class="inline-flex items-center gap-1.5 min-h-[44px] cursor-pointer select-none"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-info"/></svg>Qué significa cada dato</summary>
+          <div class="pt-1 pb-3 max-w-[760px] space-y-4">
+            <dl class="grid sm:grid-cols-3 gap-x-8 gap-y-2">
+              <div><dt class="inline text-foreground">Entrada.</dt> <dd class="inline">Precio de una entrada de día suelta, sin alquiler de material.</dd></div>
+              <div><dt class="inline text-foreground">Familiar (1–5).</dt> <dd class="inline">Índice calculado: zona infantil, edad mínima, cafetería y mi nota en ese criterio. <a href="#" class="link">Cómo lo calculo</a></dd></div>
+              <div><dt class="inline text-foreground">Variedad (1–5).</dt> <dd class="inline">Mi nota: ángulos, tipos de presa y cada cuánto cambian los bloques. «—» si aún no lo he reseñado.</dd></div>
+            </dl>
+            <div class="border-t-[0.5px] border-line pt-3">
+              <p class="text-foreground font-medium">Grados y Estilo no son notas: sirven para elegir.</p>
+              <dl class="grid sm:grid-cols-2 gap-x-8 gap-y-2 mt-1.5">
+                <div><dt class="inline text-foreground">Grados.</dt> <dd class="inline">Lo duros que son los grados frente a la media de Barcelona: de generosos a duros.</dd></div>
+                <div><dt class="inline text-foreground">Estilo.</dt> <dd class="inline">Cómo se abren las vías y los bloques: de técnico (pies, equilibrio, movimientos estáticos) a dinámico (saltos y coordinación).</dd></div>
+              </dl>
+              <p class="mt-2">Ninguno es mejor. Si empiezas y quieres pasarlo bien, unos grados generosos te dejan encadenar más; el estilo depende de lo que te divierta. Es mi criterio tras visitarlos.</p>
+            </div>
+          </div>
+        </details>
+
+        <!-- Resultados: tarjetas con foto en todos los anchos (1 / 2 / 3 columnas) -->
+        <div id="results">
+          <ul class="mt-2 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 num" id="cards"></ul>
+          <div id="empty" class="hidden mt-2 border-[0.5px] border-line-strong rounded-lg bg-board p-6 md:p-10 text-center">
+            <svg class="ico !w-6 !h-6 mx-auto text-meta" aria-hidden="true"><use href="#i-search"/></svg>
+            <p class="font-medium mt-3" id="empty-title"></p>
+            <p class="text-sm text-meta mt-1 max-w-[48ch] mx-auto" id="empty-body"></p>
+            <div class="mt-5 flex flex-wrap justify-center gap-3">
+              <button type="button" class="btn btn-ghost" id="empty-filters" hidden><span class="label">Quitar filtros</span></button>
+              <button type="button" class="btn btn-ghost" id="empty-query"><span class="label">Borrar búsqueda</span></button>
+            </div>
+            <p class="text-sm text-meta mt-6">¿Falta un rocódromo? <a href="#" class="link">Dímelo</a> y lo visito.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- Hoja de filtros (móvil) -->
+<div class="sheet sheet--dialog" id="filters-sheet" aria-hidden="true">
+  <div class="scrim" data-sheet-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="fs-title">
+    <div class="w-12 h-1 bg-line-strong rounded-full mx-auto mt-3" aria-hidden="true"></div>
+    <div class="px-5 pt-4 pb-2 flex items-center justify-between"><h2 id="fs-title" class="text-xl font-medium">Filtros</h2><button type="button" class="w-11 h-11 -mr-2 grid place-items-center text-meta rounded-md" data-sheet-close aria-label="Cerrar filtros"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+    <div class="px-5 pb-4 flex flex-wrap gap-2" role="group" aria-label="Filtros" data-chipset></div>
+    <div class="px-5 pb-6 pt-2 flex items-center justify-between gap-3 border-t-[0.5px] border-line">
+      <button type="button" class="btn-inline" id="clear-filters-m">Quitar filtros</button>
+      <button type="button" class="btn btn-primary" data-sheet-close id="see-results"><span class="label">Ver 5 rocódromos</span></button>
+    </div>
+  </div>
+</div>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$ } = window.CG;
+  // day = price_day_eur · family = gym_indices.family_index · variety = nota del autor en el criterio `variety` (null sin reseña)
+  // grade = gyms.grading_difficulty (1 generosos – 5 duros) · dyn = gyms.setting_dynamism (1 muy técnico – 5 muy dinámico). Escalas descriptivas, null = sin dato
+  const U = (id, alt) => ({ src: `https://images.unsplash.com/${id}?w=720&h=480&fit=crop&q=70&auto=format`, alt });
+  const G = [
+    { slug:'presa', name:'Presa Badalona', type:'Bloque', area:'Badalona', metro:'Pompeu Fabra (L2)', day:13, family:4.6, variety:4, grade:2, dyn:4, f:{lead:0,kids:1,nobelay:1,early:1}, ver:'20.09.26', old:false, img:U('photo-1689775884353-b01c7a8ad1b2','Escalador en un bloque amarillo con presas de colores') },
+    { slug:'altura', name:'Altura Cornellà', type:'Cuerda + bloque', area:'Cornellà', metro:'Cornellà Centre (L5)', day:14, family:4.2, variety:5, grade:4, dyn:3, f:{lead:1,kids:1,nobelay:0,early:0}, ver:'03.11.25', old:true, img:U('photo-1730659071194-4c833ac5da4e','Sala de bloque amplia con varias personas mirando la pared') },
+    { slug:'magnesi', name:'Magnesi Poblenou', type:'Bloque', area:'Poblenou', metro:'Llacuna (L4)', day:15, family:3.8, variety:4, grade:3, dyn:5, f:{lead:0,kids:1,nobelay:1,early:0}, ver:'12.09.26', old:false, img:U('photo-1689775884478-9ed19b79d659','Escalador en un desplome con presas rojas y verdes') },
+    { slug:'paret', name:'La Paret de Gràcia', type:'Cuerda + bloque', area:'Gràcia', metro:'Fontana (L3)', day:16.5, family:2.4, variety:3, grade:5, dyn:2, f:{lead:1,kids:0,nobelay:0,early:1}, ver:'30.08.26', old:false, invited:true, img:U('photo-1775654792524-739718a3b001','Escalador en un bloque azul, visto desde abajo') },
+    { slug:'sants', name:'Via Sants', type:'Cuerda + bloque', area:'Sants', metro:'Sants Estació (L3, L5)', day:12, family:1.8, variety:null, grade:1, dyn:1, f:{lead:1,kids:0,nobelay:0,early:0}, ver:'14.02.26', old:true, img:U('photo-1704030641902-b10c41ebc147','Pared amarilla con presas pequeñas') },
+  ];
+  const GRADE = ['', 'Generosos', 'Algo generosos', 'En la media', 'Algo duros', 'Duros'];
+  const DYN = ['', 'Muy técnico', 'Técnico', 'Mixto', 'Dinámico', 'Muy dinámico'];
+
+  const FILTERS = [['lead','Con cuerda'],['kids','Zona infantil'],['nobelay','Sin test de aseguramiento'],['early','Abre a las 7:00']];
+  const active = new Set(); let sortKey = 'price'; let q = '';
+  const input = $('#q'), wrap = $('#qwrap'), clearBtn = $('#q-clear');
+
+  // Normalización: minúsculas y sin acentos, carácter a carácter (mantiene los índices para resaltar)
+  const n1 = (c) => c.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const norm = (s) => [...s].map(n1).join('');
+  const tokens = () => norm(q).trim().split(/\s+/).filter(Boolean);
+  const esc = (s) => s.replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const hl = (text) => {
+    const t = tokens(); if (!t.length) return esc(text);
+    const nt = norm(text), marks = new Array(text.length).fill(false);
+    t.forEach(tok => { let i = nt.indexOf(tok); while (i >= 0) { for (let k = i; k < i + tok.length; k++) marks[k] = true; i = nt.indexOf(tok, i + 1); } });
+    let out = '', open = false;
+    [...text].forEach((c, i) => { if (marks[i] && !open) { out += '<mark class="hl">'; open = true; } if (!marks[i] && open) { out += '</mark>'; open = false; } out += esc(c); });
+    return out + (open ? '</mark>' : '');
+  };
+  const hay = (g) => norm([g.name, g.type, g.area, g.metro].join(' '));
+
+  const list = () => {
+    const t = tokens();
+    return G.filter(g => [...active].every(k => g.f[k]) && t.every(tok => hay(g).includes(tok)))
+            .sort((a, b) => sortKey === 'price' ? a.day - b.day : (b[sortKey] ?? -1) - (a[sortKey] ?? -1));
+  };
+  const verified = (g) => g.old
+    ? `<svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-clock"/></svg>verificado ${g.ver} · puede haber cambiado`
+    : `<svg class="ico !w-3.5 !h-3.5 text-success-text" aria-hidden="true"><use href="#i-badge-check"/></svg>verificado ${g.ver}`;
+  const href = (g) => g.slug === 'paret' ? 'rocodromo-ficha.html' : '#';
+  const eur = (n) => (Number.isInteger(n) ? n : n.toFixed(2).replace('.', ',')) + '\u202F€';
+  const dec = (n) => n.toFixed(1).replace('.', ',');
+  // Medidor 1–5 en 5 tramos (más es más: familiar, variedad). Decorativo: el número va al lado.
+  const meter = (v) => `<span class="m5" aria-hidden="true">${[1,2,3,4,5].map(i => `<i class="${v >= i - .25 ? 'on' : v >= i - .75 ? 'half' : ''}"></i>`).join('')}</span>`;
+  // Escala de grados: posición sobre una regla neutra (no es calidad)
+  const scale = (v) => `<span class="gscale" aria-hidden="true" style="--p:${(v - 1) * 25}%"><span class="track">${[0,1,2,3,4].map(() => '<i></i>').join('')}</span><span class="dot"></span></span>`;
+  const card = (g, i) => `<li><article class="card gym h-full flex flex-col">
+      <div class="gym-photo relative aspect-[16/9] sm:aspect-[3/2] overflow-hidden">
+        <img class="zoom absolute inset-0 w-full h-full object-cover" src="${g.img.src}" alt="${g.img.alt}" loading="lazy" decoding="async" width="720" height="480">
+        ${g.invited ? '<span class="badge badge-accent absolute left-3 top-3"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-gift"/></svg>visita invitada</span>' : ''}
+      </div>
+      <div class="p-4 md:p-5 flex flex-col flex-1">
+        <h3 class="text-lg font-medium leading-snug"><a href="${href(g)}" class="stretch t-link">${hl(g.name)}</a></h3>
+        <p class="text-sm text-meta mt-0.5 truncate">${hl(g.type)} · ${hl(g.area)}</p>
+        <p class="text-sm text-meta flex items-center gap-1.5 min-w-0"><svg class="ico !w-3.5 !h-3.5 shrink-0" aria-hidden="true"><use href="#i-train"/></svg><span class="sr-only">Metro: </span><span class="truncate">${hl(g.metro)}</span></p>
+        <dl class="stats mt-4">
+          <div><dt>Entrada<span class="sr-only"> de día</span></dt><dd><span class="font-mono text-[20px] leading-none text-foreground">${eur(g.day)}</span></dd></div>
+          <div><dt>Familiar</dt><dd><span class="font-mono text-[20px] leading-none text-foreground">${dec(g.family)}</span><span class="sr-only"> de 5</span><span class="block mt-2">${meter(g.family)}</span></dd></div>
+          <div><dt>Variedad</dt><dd>${g.variety == null ? '<span class="font-mono text-[20px] leading-none text-meta" aria-hidden="true">—</span><span class="block text-[12px] text-meta mt-1">sin reseña</span>' : `<span class="font-mono text-[20px] leading-none text-foreground">${g.variety}</span><span class="sr-only"> de 5, mi nota</span><span class="block mt-2">${meter(g.variety)}</span>`}</dd></div>
+        </dl>
+        <dl class="scales" aria-label="Cómo se escala (no es una nota)">
+          <div><dt>Grados</dt><dd>${g.grade ? `${scale(g.grade)}<span class="w">${GRADE[g.grade]}<span class="sr-only">: ${g.grade} de 5, de generosos a duros</span></span>` : '<span class="w !text-meta">Sin dato</span>'}</dd></div>
+          <div><dt>Estilo</dt><dd>${g.dyn ? `${scale(g.dyn)}<span class="w">${DYN[g.dyn]}<span class="sr-only">: ${g.dyn} de 5, de muy técnico a muy dinámico</span></span>` : '<span class="w !text-meta">Sin dato</span>'}</dd></div>
+        </dl>
+        <p class="mt-auto pt-4 text-[12px] font-mono text-meta flex items-center gap-1.5">${verified(g)}</p>
+      </div></article></li>`;
+
+  const chips = () => $$('[data-chipset]').forEach(set => {
+    set.innerHTML = FILTERS.map(([k, l]) => `<button type="button" class="chip" aria-pressed="${active.has(k)}" data-fk="${k}"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>${l}</button>`).join('');
+  });
+
+  let liveT;
+  const render = () => {
+    const r = list(), n = r.length, t = q.trim();
+    $('#cards').innerHTML = r.map(card).join('');
+    $('#cards').classList.toggle('hidden', n === 0);
+    $('#empty').classList.toggle('hidden', n > 0);
+    const f = active.size;
+    const what = 'rocódromos';
+    const vis = (t || f) ? `<span class="font-mono">${n}</span> de <span class="font-mono">5</span> ${what}${t ? ` con «${esc(t)}»` : ''}` : `<span class="font-mono">5</span> rocódromos`;
+    $('#count-visible').innerHTML = vis;
+    clearTimeout(liveT); liveT = setTimeout(() => { $('#count-live').textContent = n === 0 ? 'Ningún resultado' : `${n} de 5 ${what}`; }, 400);
+    $('#clear-filters').hidden = !f; $('#clear-filters').textContent = `Quitar filtros (${f})`;
+    $('#clear-filters-m').style.visibility = f ? 'visible' : 'hidden';
+    $('#fcount-m').textContent = f ? `(${f})` : '';
+    $('#see-results .label').textContent = n === 0 ? 'Ningún resultado' : n === 1 ? 'Ver 1 rocódromo' : `Ver ${n} rocódromos`;
+    if (n === 0) {
+      $('#empty-title').textContent = t ? `Ningún rocódromo coincide con «${t}»` : 'Ningún rocódromo con estos filtros';
+      $('#empty-body').textContent = f && t ? `Además tienes ${f === 1 ? '1 filtro activo' : f + ' filtros activos'}. Prueba a quitarlos, o busca por barrio (Gràcia) o línea de metro (L3).`
+        : f ? 'Prueba a quitar alguno de los filtros.' : 'Prueba con un barrio (Gràcia), una ciudad (Badalona) o una línea de metro (L3).';
+      $('#empty-filters').hidden = !f; $('#empty-query').hidden = !t;
+    }
+    wrap.classList.toggle('has-value', !!q); clearBtn.hidden = !q;
+    // URL compartible (noindex en producción): ?q=…
+    const u = new URL(location.href); t ? u.searchParams.set('q', t) : u.searchParams.delete('q'); history.replaceState(null, '', u);
+    const mb = document.querySelector('.mock-bar span .text-foreground'); if (mb) mb.textContent = '/rocodromos' + (t ? '?q=' + encodeURIComponent(t) : '');
+  };
+
+  input.addEventListener('input', () => { q = input.value; render(); });
+  const clearQ = (focus = true) => { input.value = ''; q = ''; render(); if (focus) input.focus(); };
+  clearBtn.addEventListener('click', () => clearQ());
+  $('#empty-query').addEventListener('click', () => clearQ());
+  const clearF = () => { active.clear(); chips(); render(); };
+  $('#clear-filters').addEventListener('click', clearF); $('#clear-filters-m').addEventListener('click', clearF); $('#empty-filters').addEventListener('click', clearF);
+  document.addEventListener('click', (e) => { const c = e.target.closest('[data-fk]'); if (!c) return; const k = c.dataset.fk; active.has(k) ? active.delete(k) : active.add(k); $$(`[data-fk="${k}"]`).forEach(x => x.setAttribute('aria-pressed', String(active.has(k)))); render(); });
+  const seg = $('#sort');
+  $$('button', seg).forEach(b => b.addEventListener('click', () => { sortKey = b.dataset.key; $$('button', seg).forEach(x => x.setAttribute('aria-pressed', String(x === b))); window.CG.place(seg); render(); }));
+  $$('[data-try]').forEach(b => b.addEventListener('click', () => { input.value = b.dataset.try; q = input.value; render(); input.focus(); }));
+  // Atajos: "/" enfoca el buscador; Escape lo vacía (o sale si ya está vacío)
+  addEventListener('keydown', (e) => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+    if (e.key === '/' && !typing && !e.metaKey && !e.ctrlKey) { e.preventDefault(); input.focus(); }
+    if (e.key === 'Escape' && document.activeElement === input) { if (input.value) clearQ(); else input.blur(); }
+  });
+  const init = new URLSearchParams(location.search).get('q'); if (init) { input.value = init; q = init; }
+  chips(); render();
+})();
+</script>
+</body>
+</html>

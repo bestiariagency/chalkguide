@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Rocódromos en Barcelona: precios, horarios y opinión · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="rocodromos" data-route-es="/rocodromos" data-route-en="/en/climbing-gyms">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="board-tex border-b-[0.5px] border-line">
+    <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-12 md:pt-10 md:pb-16">
+      <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Rocódromos</span></li></ol></nav>
+      <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5 max-w-[18ch]">Rocódromos en Barcelona</h1>
+      <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">Cinco rocódromos visitados uno a uno, con precios verificados y mi nota. Los índices se calculan igual para todos.</p>
+    </div>
+  </section>
+
+  <section class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-14" aria-labelledby="h-list">
+    <h2 id="h-list" class="sr-only">Listado de rocódromos</h2>
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+      <div>
+        <p class="label-mini mb-3">Filtros</p>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Filtros" id="filters">
+          <button type="button" class="chip" aria-pressed="false" data-chip data-f="lead"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Con cuerda</button>
+          <button type="button" class="chip" aria-pressed="false" data-chip data-f="kids"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Zona infantil</button>
+          <button type="button" class="chip" aria-pressed="false" data-chip data-f="nobelay"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Sin test de aseguramiento</button>
+          <button type="button" class="chip" aria-pressed="false" data-chip data-f="early"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Abre a las 7:00</button>
+        </div>
+      </div>
+      <div>
+        <p id="sort-label" class="label-mini mb-3">Ordenar por</p>
+        <div class="seg w-full lg:w-auto" role="group" aria-labelledby="sort-label" data-seg data-sort-group="gyms" data-asc="price" data-status="sort-status">
+          <span class="ind" aria-hidden="true"></span>
+          <button type="button" aria-pressed="true" data-key="score">Nota del autor</button>
+          <button type="button" aria-pressed="false" data-key="price">Precio</button>
+          <button type="button" aria-pressed="false" data-key="beginner">Principiante</button>
+        </div>
+      </div>
+    </div>
+    <p class="mt-6 text-sm text-meta" aria-live="polite"><span id="count" class="text-foreground">5 resultados</span><span class="sr-only" id="sort-status"></span></p>
+
+    <!-- Desktop: tabla -->
+    <table class="hidden md:table w-full mt-4 text-left num" id="tbl">
+      <caption class="sr-only">Rocódromos de Barcelona con precio mensual, índice principiante y nota del autor</caption>
+      <thead>
+        <tr class="border-b-[0.5px] border-line-strong label-mini">
+          <th scope="col" class="py-3 pr-4 font-normal">Rocódromo</th>
+          <th scope="col" class="py-3 pr-4 font-normal text-right">Mensual</th>
+          <th scope="col" class="py-3 pr-4 font-normal">Índice principiante</th>
+          <th scope="col" class="py-3 font-normal text-right">Nota del autor</th>
+        </tr>
+      </thead>
+      <tbody data-sortable="gyms">
+        <tr data-score="4.3" data-price="55" data-beginner="8.6" data-lead="0" data-kids="1" data-nobelay="1" data-early="1" style="view-transition-name:g-presa" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+          <th scope="row" class="py-5 pr-4 font-normal"><a href="#" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">Presa Badalona</a><span class="block text-sm text-meta">Bloque · Badalona · Pompeu Fabra (L2)</span><span class="mt-1.5 inline-flex"><span class="badge"><svg class="ico !w-3.5 !h-3.5 text-success-text" aria-hidden="true"><use href="#i-badge-check"/></svg>verificado 20.09.26</span></span></th>
+          <td class="py-5 pr-4 text-right font-mono">55 €</td>
+          <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:86%"></span></span><span class="font-mono">8.6</span></span></td>
+          <td class="py-5 text-right"><span class="badge badge-accent !text-[15px] !py-1.5">4.3<span class="opacity-70">/5</span></span></td>
+        </tr>
+        <tr data-score="4.1" data-price="58" data-beginner="7.6" data-lead="1" data-kids="1" data-nobelay="0" data-early="0" style="view-transition-name:g-altura" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+          <th scope="row" class="py-5 pr-4 font-normal"><a href="#" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">Altura Cornellà</a><span class="block text-sm text-meta">Cuerda + bloque · Cornellà · Cornellà Centre (L5)</span><span class="mt-1.5 inline-flex"><span class="badge !bg-transparent border border-dashed border-control"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-clock"/></svg>Verificado el 03.11.25 · puede haber cambiado</span></span></th>
+          <td class="py-5 pr-4 text-right font-mono">58 €</td>
+          <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:76%"></span></span><span class="font-mono">7.6</span></span></td>
+          <td class="py-5 text-right"><span class="badge !text-[15px] !py-1.5 !text-foreground">4.1<span class="text-meta">/5</span></span></td>
+        </tr>
+        <tr data-score="4.0" data-price="62" data-beginner="9.0" data-lead="0" data-kids="1" data-nobelay="1" data-early="0" style="view-transition-name:g-magnesi" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+          <th scope="row" class="py-5 pr-4 font-normal"><a href="#" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">Magnesi Poblenou</a><span class="block text-sm text-meta">Bloque · Poblenou · Llacuna (L4)</span><span class="mt-1.5 inline-flex"><span class="badge"><svg class="ico !w-3.5 !h-3.5 text-success-text" aria-hidden="true"><use href="#i-badge-check"/></svg>verificado 12.09.26</span></span></th>
+          <td class="py-5 pr-4 text-right font-mono">62 €</td>
+          <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:90%"></span></span><span class="font-mono">9.0</span></span></td>
+          <td class="py-5 text-right"><span class="badge !text-[15px] !py-1.5 !text-foreground">4.0<span class="text-meta">/5</span></span></td>
+        </tr>
+        <tr data-score="3.6" data-price="69" data-beginner="6.8" data-lead="1" data-kids="0" data-nobelay="0" data-early="1" style="view-transition-name:g-paret" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+          <th scope="row" class="py-5 pr-4 font-normal"><a href="rocodromo-ficha.html" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">La Paret de Gràcia</a><span class="block text-sm text-meta">Cuerda + bloque · Gràcia · Fontana (L3)</span><span class="mt-1.5 inline-flex flex-wrap gap-1.5"><span class="badge badge-accent"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-gift"/></svg>visita invitada</span><span class="badge"><svg class="ico !w-3.5 !h-3.5 text-success-text" aria-hidden="true"><use href="#i-badge-check"/></svg>verificado 30.08.26</span></span></th>
+          <td class="py-5 pr-4 text-right font-mono">69 €</td>
+          <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:68%"></span></span><span class="font-mono">6.8</span></span></td>
+          <td class="py-5 text-right"><span class="badge !text-[15px] !py-1.5 !text-foreground">3.6<span class="text-meta">/5</span></span></td>
+        </tr>
+        <tr data-score="3.3" data-price="52" data-beginner="6.2" data-lead="1" data-kids="0" data-nobelay="0" data-early="0" style="view-transition-name:g-sants" class="border-b-[0.5px] border-line transition-colors duration-150 hover:bg-elevated/60">
+          <th scope="row" class="py-5 pr-4 font-normal"><a href="#" class="text-lg font-medium t-link hover:bg-[length:100%_1.5px]">Via Sants</a><span class="block text-sm text-meta">Cuerda + bloque · Sants · Sants Estació (L3, L5)</span><span class="mt-1.5 inline-flex"><span class="badge !bg-transparent border border-dashed border-control"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-clock"/></svg>Verificado el 14.02.26 · puede haber cambiado</span></span></th>
+          <td class="py-5 pr-4 text-right font-mono">52 €</td>
+          <td class="py-5 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="--w:62%"></span></span><span class="font-mono">6.2</span></span></td>
+          <td class="py-5 text-right"><span class="badge !text-[15px] !py-1.5 !text-foreground">3.3<span class="text-meta">/5</span></span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Móvil: filas-ficha -->
+    <ul class="md:hidden mt-4 space-y-3 num" data-sortable="gyms" id="cards">
+      <li class="bg-board border-[0.5px] border-line rounded-md p-4" data-score="4.3" data-price="55" data-beginner="8.6" data-lead="0" data-kids="1" data-nobelay="1" data-early="1" style="view-transition-name:gm-presa">
+        <div class="flex justify-between items-start gap-3"><div><a href="#" class="text-lg font-medium">Presa Badalona</a><p class="text-sm text-meta">Bloque · Badalona</p></div><span class="badge badge-accent !text-[15px] !py-1.5 shrink-0">4.3<span class="opacity-70">/5</span></span></div>
+        <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">55 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">8.6</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:86%"></span></dd></div></dl>
+        <p class="mt-3 font-mono text-[12px] text-meta">✓ verificado 20.09.26</p>
+      </li>
+      <li class="bg-board border-[0.5px] border-line rounded-md p-4" data-score="4.1" data-price="58" data-beginner="7.6" data-lead="1" data-kids="1" data-nobelay="0" data-early="0" style="view-transition-name:gm-altura">
+        <div class="flex justify-between items-start gap-3"><div><a href="#" class="text-lg font-medium">Altura Cornellà</a><p class="text-sm text-meta">Cuerda + bloque · Cornellà</p></div><span class="badge !text-[15px] !py-1.5 !text-foreground shrink-0">4.1<span class="text-meta">/5</span></span></div>
+        <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">58 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">7.6</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:76%"></span></dd></div></dl>
+        <p class="mt-3"><span class="badge !bg-transparent border border-dashed border-control">Verificado el 03.11.25 · puede haber cambiado</span></p>
+      </li>
+      <li class="bg-board border-[0.5px] border-line rounded-md p-4" data-score="4.0" data-price="62" data-beginner="9.0" data-lead="0" data-kids="1" data-nobelay="1" data-early="0" style="view-transition-name:gm-magnesi">
+        <div class="flex justify-between items-start gap-3"><div><a href="#" class="text-lg font-medium">Magnesi Poblenou</a><p class="text-sm text-meta">Bloque · Poblenou</p></div><span class="badge !text-[15px] !py-1.5 !text-foreground shrink-0">4.0<span class="text-meta">/5</span></span></div>
+        <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">62 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">9.0</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:90%"></span></dd></div></dl>
+        <p class="mt-3 font-mono text-[12px] text-meta">✓ verificado 12.09.26</p>
+      </li>
+      <li class="bg-board border-[0.5px] border-line rounded-md p-4" data-score="3.6" data-price="69" data-beginner="6.8" data-lead="1" data-kids="0" data-nobelay="0" data-early="1" style="view-transition-name:gm-paret">
+        <div class="flex justify-between items-start gap-3"><div><a href="rocodromo-ficha.html" class="text-lg font-medium">La Paret de Gràcia</a><p class="text-sm text-meta">Cuerda + bloque · Gràcia</p></div><span class="badge !text-[15px] !py-1.5 !text-foreground shrink-0">3.6<span class="text-meta">/5</span></span></div>
+        <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">69 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">6.8</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:68%"></span></dd></div></dl>
+        <p class="mt-3 flex flex-wrap items-center gap-2"><span class="badge badge-accent">visita invitada</span><span class="font-mono text-[12px] text-meta">✓ verificado 30.08.26</span></p>
+      </li>
+      <li class="bg-board border-[0.5px] border-line rounded-md p-4" data-score="3.3" data-price="52" data-beginner="6.2" data-lead="1" data-kids="0" data-nobelay="0" data-early="0" style="view-transition-name:gm-sants">
+        <div class="flex justify-between items-start gap-3"><div><a href="#" class="text-lg font-medium">Via Sants</a><p class="text-sm text-meta">Cuerda + bloque · Sants</p></div><span class="badge !text-[15px] !py-1.5 !text-foreground shrink-0">3.3<span class="text-meta">/5</span></span></div>
+        <dl class="grid grid-cols-2 gap-4 mt-4 text-sm"><div><dt class="text-meta">Mensual</dt><dd class="font-mono text-base">52 €</dd></div><div><dt class="text-meta">Principiante</dt><dd class="font-mono text-base">6.2</dd><dd class="bar mt-1.5" aria-hidden="true"><span style="--w:62%"></span></dd></div></dl>
+        <p class="mt-3"><span class="badge !bg-transparent border border-dashed border-control">Verificado el 14.02.26 · puede haber cambiado</span></p>
+      </li>
+    </ul>
+
+    <!-- Sin resultados -->
+    <div id="empty" class="hidden mt-4 border-[0.5px] border-line-strong rounded-lg bg-board p-8 text-center" role="status">
+      <svg class="ico !w-6 !h-6 mx-auto text-meta" aria-hidden="true"><use href="#i-sliders"/></svg>
+      <p class="font-medium mt-3">Ningún resultado con estos filtros</p>
+      <p class="text-sm text-meta mt-1">Prueba a quitar alguno de los filtros.</p>
+      <button type="button" class="btn btn-ghost mt-5" id="clear"><span class="label">Quitar filtros</span></button>
+    </div>
+
+    <div class="mt-10 grid md:grid-cols-2 gap-6 text-sm text-meta">
+      <p><span class="text-foreground">Índice principiante (0–10):</span> alquiler de material, cursos de iniciación, test de aseguramiento y horario. Se calcula, no lo opino. <a href="#" class="link">Cómo valoro y qué se marca</a></p>
+      <p><span class="text-foreground">En preparación:</span> Bloc del Besòs (Sant Adrià) y Cova Sant Cugat. Saldrán cuando los haya visitado.</p>
+    </div>
+  </section>
+</main>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$, vt } = window.CG;
+  const chips = $$('#filters [data-chip]'), rows = [...$$('#tbl tbody tr'), ...$$('#cards > li')];
+  const plural = (n) => n === 0 ? 'Sin resultados' : n === 1 ? '1 resultado' : n + ' resultados';
+  const apply = () => {
+    const on = chips.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.f);
+    vt(() => {
+      rows.forEach(r => r.hidden = !on.every(f => r.dataset[f] === '1'));
+      const n = $$('#cards > li').filter(r => !r.hidden).length;
+      $('#count').textContent = plural(n);
+      $('#empty').classList.toggle('hidden', n > 0);
+      $('#tbl').classList.toggle('md:table', n > 0);
+    });
+  };
+  document.getElementById('filters').addEventListener('chip-change', apply);
+  $('#clear').addEventListener('click', () => { chips.forEach(c => c.setAttribute('aria-pressed', 'false')); apply(); chips[0].focus(); });
+})();
+</script>
+</body>
+</html>

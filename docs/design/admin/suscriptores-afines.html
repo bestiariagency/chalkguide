@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Suscriptores + afines (D66) · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=8"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* prueba de consentimiento */
+  .proof{border:1px solid var(--line);border-radius:8px;background:var(--side)}
+  .proof dl{display:grid;grid-template-columns:128px minmax(0,1fr);row-gap:8px;column-gap:12px;padding:12px}
+  .proof dt{color:var(--meta)}
+  .proof dd{min-width:0}
+  .quote{border-left:2px solid var(--line-strong);padding:6px 0 6px 12px;color:var(--fg)}
+  /* historial */
+  .tl li{display:flex;gap:10px;position:relative;padding-bottom:12px}
+  .tl li:not(:last-child)::before{content:"";position:absolute;left:3.5px;top:14px;bottom:0;width:1px;background:var(--line)}
+  .tl .d{margin-top:6px;width:8px;height:8px;border-radius:99px;flex:none;background:var(--line-strong)}
+  .tl .d.ok{background:var(--st-pub)} .tl .d.off{background:var(--meta)} .tl .d.warn{background:var(--warn-icon)}
+  /* menú de fila */
+  .tbl td.when small{display:block;font-size:11.5px;color:var(--muted)}
+  /* D66: etiqueta de finalidad en el historial */
+  .purpose{display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:4px;font-size:11px;font-weight:500;color:var(--acc);background:var(--acc-soft);margin-right:6px;vertical-align:1px}
+  @media (max-width:389px){.proof dl{grid-template-columns:1fr;row-gap:2px}.proof dd{margin-bottom:8px}}
+</style>
+</head>
+<body data-page="suscriptores" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Suscriptores</h1>
+    <span class="chip st-neutral ml-1 hidden md:inline-flex" title="El proveedor de email (Brevo) se conecta en F4.6"><i data-lucide="plug"></i>Envíos sin conectar</span>
+    <span class="ml-auto hidden xl:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · ver estado:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup"><option value="data">Con datos</option><option value="pre">Antes de F4.6</option><option value="loading">Cargando</option><option value="empty">Vacío (primera vez)</option><option value="none">Sin resultados</option><option value="error">Error</option></select></span>
+    <a id="expLink" href="exportar.html?tipo=suscriptores&amp;estado=activos" class="btn btn-ghost ml-auto xl:ml-0"><i data-lucide="download"></i><span class="hidden sm:inline">Exportar esta vista</span><span class="sm:hidden">Exportar</span></a>
+  </header>
+
+  <!-- aviso mientras no hay proveedor -->
+  <div id="preBanner" class="px-4 md:px-6 pt-4" hidden>
+    <div class="banner banner-info"><i data-lucide="plug"></i><span><b>Aún no se envían emails de confirmación.</b> Llegan cuando se conecte el proveedor (F4.6). Hasta entonces, todas las altas se quedan en «Sin confirmar» y ninguna caduca. Ya puedes ver la prueba de consentimiento y dar de baja.</span></div>
+  </div>
+
+  <!-- resumen -->
+  <div class="px-4 md:px-6 pt-4">
+    <dl class="grid grid-cols-2 lg:grid-cols-4 border border-line rounded-lg overflow-hidden bg-elev text-sm" id="kpis"></dl>
+  </div>
+
+  <!-- vistas -->
+  <div class="mt-4 px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Vistas de suscriptores" class="flex gap-5 min-w-max" id="views"></div>
+  </div>
+
+  <!-- barra -->
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+    <div class="relative w-full sm:w-72"><label for="q" class="sr-only">Buscar por email</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="q" class="input !pl-8 !pr-8" placeholder="Buscar por email" autocomplete="off"><span class="kbd absolute right-2 top-1/2 -translate-y-1/2 hidden sm:inline">/</span></div>
+    <button class="btn btn-ghost" aria-haspopup="true"><i data-lucide="map-pin"></i>Origen<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost" aria-haspopup="true"><i data-lucide="languages"></i>Idioma<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost" aria-haspopup="true"><i data-lucide="calendar-range"></i>Fechas<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost" aria-haspopup="true" title="Avisos de Chalk app y productos afines"><i data-lucide="megaphone"></i>Afines<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost hidden sm:inline-flex" aria-haspopup="true"><i data-lucide="file-check"></i>Texto aceptado<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+  </div>
+  <div id="chips" class="px-4 md:px-6 py-2 border-b border-line flex flex-wrap items-center gap-2 text-xs">
+    <span class="text-meta">Filtros:</span>
+    <span class="chip st-neutral !h-7 !pl-2 !pr-1">Alta desde el 1 sep<button class="icon-btn !w-6 !h-6" aria-label="Quitar filtro: alta desde el 1 sep"><i data-lucide="x"></i></button></span>
+    <button class="text-meta underline underline-offset-2 ml-1">Quitar filtros</button>
+  </div>
+
+  <div id="panel" role="tabpanel" aria-labelledby="views">
+    <div id="st-data">
+      <div id="viewNote" class="px-4 md:px-6 py-2 border-b border-line bg-side text-xs text-meta flex items-start gap-1.5"></div>
+      <div class="hidden md:block scroller shadow-r overflow-x-auto">
+        <table class="tbl min-w-[940px]">
+          <caption class="sr-only" id="cap"></caption>
+          <thead id="thead"></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <ul id="cards" class="md:hidden divide-y divide-line"></ul>
+      <div class="px-4 md:px-6 min-h-12 py-2 flex items-center gap-3 border-t border-line text-sm text-meta"><span class="num" id="pager"></span><div class="ml-auto flex gap-1"><button class="icon-btn" aria-label="Página anterior" disabled style="opacity:.45"><i data-lucide="chevron-left"></i></button><button class="icon-btn" aria-label="Página siguiente"><i data-lucide="chevron-right"></i></button></div></div>
+    </div>
+    <div id="st-loading" hidden aria-busy="true" aria-label="Cargando suscriptores">
+      <div class="divide-y divide-line"><script>document.write(Array.from({length:8},(_,i)=>`<div class="px-4 md:px-6 h-11 flex items-center gap-4"><span class="sk w-4 h-4 hidden md:block"></span><span class="sk h-3" style="width:${150+((i*37)%90)}px"></span><span class="sk h-4 w-16 hidden md:block"></span><span class="sk h-3 w-8 hidden md:block"></span><span class="sk h-3 w-24 hidden lg:block"></span><span class="sk h-3 w-20 ml-auto"></span></div>`).join(''))</script></div>
+    </div>
+    <div id="st-empty" hidden><div class="empty"><span class="ico"><i data-lucide="mail"></i></span><h3>Aún no hay suscriptores</h3><p>Las altas llegan desde el pie, el inicio, las fichas y los artículos. Cada una guarda su prueba de consentimiento.</p><a href="#" class="btn btn-ghost mt-2"><i data-lucide="external-link"></i>Ver el formulario en el sitio</a></div></div>
+    <div id="st-none" hidden><div class="empty"><span class="ico"><i data-lucide="search-x"></i></span><h3>Nadie coincide con «laura@»</h3><p>En «Activos», con alta desde el 1 sep. Puede que esté en otra vista o que ya no exista (supresión RGPD).</p><div class="flex flex-wrap justify-center gap-2 mt-2"><button class="btn btn-ghost">Buscar en Todos</button><button class="btn btn-ghost">Quitar filtros</button></div></div></div>
+    <div id="st-error" hidden><div class="empty"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se han podido cargar los suscriptores</h3><p>Comprueba la conexión. Si sigue, puede ser Supabase: mira su estado.</p><p class="mono text-2xs text-muted">PGRST301 · guide.admin_subscribers</p><button class="btn btn-ghost mt-2"><i data-lucide="rotate-cw"></i>Reintentar</button></div></div>
+  </div>
+
+  <!-- barra de lote -->
+  <div id="batch" class="fixed z-40 left-1/2 -translate-x-1/2 bottom-20 md:bottom-6 card pop px-2 py-1.5 flex items-center gap-1 text-sm" style="display:none" aria-live="polite">
+    <span class="px-2 num" id="batchN"></span>
+    <button class="btn btn-quiet" id="batchUnsub"><i data-lucide="user-x"></i>Dar de baja…</button>
+    <a class="btn btn-quiet hidden sm:inline-flex" href="exportar.html?tipo=suscriptores&amp;seleccion=1"><i data-lucide="download"></i>Exportar</a>
+    <button class="icon-btn" id="batchClear" aria-label="Quitar selección"><i data-lucide="x"></i></button>
+  </div>
+
+  <p class="mx-4 md:mx-6 my-6 text-xs text-meta border border-dashed border-line-strong rounded px-3 py-2">D66: <a class="underline" href="#ficha">#ficha</a> (afines dados) · <a class="underline" href="#ficha-afines-pendiente">#ficha-afines-pendiente</a> · <a class="underline" href="#ficha-afines-retirado">#ficha-afines-retirado</a> · <a class="underline" href="#retirar-afines">#retirar-afines</a> · <a class="underline" href="suscriptores.html">original (F6.14)</a>.<br>Mockup: <a class="underline" href="#activos">#activos</a> · <a class="underline" href="#sin-confirmar">#sin-confirmar</a> · <a class="underline" href="#bajas">#bajas</a> · <a class="underline" href="#todos">#todos</a> · <a class="underline" href="#ficha">#ficha</a> (activo) · <a class="underline" href="#ficha-pendiente">#ficha-pendiente</a> · <a class="underline" href="#ficha-caducado">#ficha-caducado</a> · <a class="underline" href="#ficha-baja">#ficha-baja</a> (volvió y se fue) · <a class="underline" href="#baja">#baja</a> · <a class="underline" href="#lote">#lote</a> · <a class="underline" href="#suprimir">#suprimir</a> · <a class="underline" href="#antes-f46">#antes-f46</a> · <a class="underline" href="#cargando">#cargando</a> · <a class="underline" href="#vacio">#vacio</a> · <a class="underline" href="#sin-resultados">#sin-resultados</a> · <a class="underline" href="#error">#error</a>. Hoy, en el mockup: jueves 29 de octubre de 2026. Horas de Barcelona.</p>
+</main>
+
+<!-- menú de fila -->
+<div id="rowMenu" class="menu fixed z-[70] hidden" role="menu" aria-label="Acciones del suscriptor"></div>
+
+<!-- ficha (drawer 480; hoja en < 768) -->
+<div id="det" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="det-h"><div class="drawer !w-[min(480px,100vw)]"><div class="grab"></div><div id="detBody" class="flex flex-col min-h-0 flex-1"></div></div></div>
+
+<!-- dar de baja -->
+<div id="unsub" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="un-h" aria-describedby="un-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="un-h" class="break-words"></h2><p id="un-d" class="text-sm text-meta mt-1"></p></div>
+  <div class="dialog-b space-y-4">
+    <ul id="un-list" class="text-sm mono text-[12.5px] space-y-1 hidden"></ul>
+    <fieldset><legend class="lbl">Motivo <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></legend>
+      <div class="space-y-1 text-sm" id="un-reasons">
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="ur" class="radio" value="request">Me lo pidió (email, mensaje o en persona)</label>
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="ur" class="radio" value="wrong">Email erróneo o de prueba</label>
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="ur" class="radio" value="abuse">Alta que no hizo esa persona</label>
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="ur" class="radio" value="other">Otro</label>
+      </div>
+    </fieldset>
+    <p class="text-xs text-meta flex items-start gap-1.5"><i data-lucide="history" class="w-3.5 h-3.5 mt-px flex-none"></i>Queda en su historial: fecha, «desde el panel» y el motivo. La prueba de consentimiento se conserva.</p>
+  </div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" id="unBtn" disabled><i data-lucide="user-x"></i><span id="unBtnL">Dar de baja</span></button></div></div></div>
+
+<!-- D66 · retirar afines (patrón de la baja, D35) -->
+<div id="wrel" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="wr-h" aria-describedby="wr-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="wr-h" class="break-words">¿Retirar los avisos afines de <span class="mono text-[15px]" id="wr-email"></span>?</h2>
+    <p id="wr-d" class="text-sm text-meta mt-1">Dejará de recibir avisos de Chalk app y productos afines. <b class="text-fg">La newsletter no cambia.</b> <b class="text-fg">Desde el panel no se puede deshacer:</b> solo esa persona puede volver a darlos, desde sus preferencias.</p></div>
+  <div class="dialog-b space-y-4">
+    <fieldset><legend class="lbl">Motivo <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></legend>
+      <div class="space-y-1 text-sm">
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="wr" class="radio" value="request">Me lo pidió (email, mensaje o en persona)</label>
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="wr" class="radio" value="wrong">Email erróneo o de prueba</label>
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="wr" class="radio" value="abuse">Lo marcó alguien que no era esa persona</label>
+        <label class="flex items-center gap-2 min-h-8"><input type="radio" name="wr" class="radio" value="other">Otro</label>
+      </div>
+    </fieldset>
+    <p class="text-xs text-meta flex items-start gap-1.5"><i data-lucide="history" class="w-3.5 h-3.5 mt-px flex-none"></i>Queda en su historial como «Afines · retirado desde el panel» con la fecha y el motivo. La prueba de que los dio se conserva.</p>
+  </div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" id="wrBtn" disabled><i data-lucide="megaphone-off"></i><span>Retirar afines</span></button></div></div></div>
+
+<!-- suprimir datos (RGPD) -->
+<div id="erase" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="er-h" aria-describedby="er-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="er-h" class="break-words">¿Suprimir los datos de <span class="mono text-[15px]" id="er-email">marta.g@example.com</span>?</h2>
+    <p id="er-d" class="text-sm text-meta mt-1">Derecho de supresión (RGPD, art. 17). <b class="text-fg">No se puede deshacer.</b> Si solo quiere dejar de recibir emails, usa «Dar de baja»: así se conserva la prueba de que se respetó su decisión.</p></div>
+  <div class="dialog-b space-y-4 text-sm">
+    <div class="grid sm:grid-cols-2 gap-3">
+      <div><p class="text-xs font-medium text-meta mb-1">Se borra</p><ul class="space-y-1"><li class="flex gap-1.5"><i data-lucide="minus" class="w-3.5 h-3.5 mt-[3px] text-danger flex-none"></i>El email</li><li class="flex gap-1.5"><i data-lucide="minus" class="w-3.5 h-3.5 mt-[3px] text-danger flex-none"></i>El vínculo con su cuenta</li><li class="flex gap-1.5"><i data-lucide="minus" class="w-3.5 h-3.5 mt-[3px] text-danger flex-none"></i>La página exacta del alta y el enlace de baja</li></ul></div>
+      <div><p class="text-xs font-medium text-meta mb-1">Se queda, sin email</p><ul class="space-y-1"><li class="flex gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 mt-[3px] text-meta flex-none"></i>Un historial anónimo: fechas, origen y versión del texto (para las cifras)</li><li class="flex gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 mt-[3px] text-meta flex-none"></i>Su cuenta de ChalkGuide y Chalk app, si tiene: no se toca</li></ul></div>
+    </div>
+    <div class="banner banner-warn"><i data-lucide="triangle-alert"></i><span>Si exportaste suscriptores antes, borra también esos archivos. <span class="text-meta">Cuando se conecte el proveedor, también se borrará allí.</span></span></div>
+    <fieldset><legend class="lbl">Motivo <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></legend>
+      <div class="space-y-1" id="er-reasons"><label class="flex items-center gap-2 min-h-8"><input type="radio" name="er" class="radio" value="request">Lo pidió la persona</label><label class="flex items-center gap-2 min-h-8"><input type="radio" name="er" class="radio" value="wrong">Email de prueba o erróneo</label><label class="flex items-center gap-2 min-h-8"><input type="radio" name="er" class="radio" value="other">Otro</label></div></fieldset>
+    <div><label class="lbl" for="typed">Escribe el email para confirmar</label><input id="typed" class="input mono" placeholder="marta.g@example.com" autocomplete="off" spellcheck="false" aria-describedby="typed-h"><p id="typed-h" class="text-xs text-meta mt-1">Tiene que coincidir exactamente.</p></div>
+  </div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" id="eraseBtn" disabled><i data-lucide="trash-2"></i>Suprimir para siempre</button></div></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+/* ---------- datos de ejemplo ---------- */
+const SRC={footer:'Pie de página',home:'Inicio',item_page:'Ficha',article:'Artículo',article_mid:'Artículo · a mitad',article_end:'Artículo · al final',popup:'Ventana emergente',admin_import:'Importado'};
+const VIA={link:'Enlace del email',brevo:'Proveedor de email',admin:'Desde el panel',user:'Desde su cuenta'};
+/* D66 · afines (related_*) */
+SRC.newsletter_page='Página de newsletter';SRC.preferences='Preferencias';SRC.chalk_waitlist='Lista de espera de Chalk app';
+const RVIA={link:'Enlace del email',preferences:'Desde sus preferencias',brevo:'Proveedor de email',user:'Desde su cuenta',admin:'Desde el panel'};
+const RTXT={1:{es:'Quiero que me avisen por email de novedades de Chalk app y de otros productos de ChalkGuide relacionados con la escalada. Puedo retirar mi consentimiento cuando quiera.',en:"I'd like to be told by email about news from Chalk app and other climbing-related ChalkGuide products. I can withdraw my consent at any time.",from:'12 nov 2026'}};
+const RCHIP={granted:['st-pub','dot','Dado'],pending:['st-warn','clock','Pendiente'],withdrawn:['st-neutral','megaphone-off','Retirado']};
+const rchip=s=>{if(!s||s==='none')return '<span class="text-muted" aria-label="Sin dar">—</span>';const[c,i,l]=RCHIP[s];return `<span class="chip ${c}">${i==='dot'?'<span class="dot"></span>':`<i data-lucide="${i}"></i>`}${l}</span>`;};
+const TXT={3:{es:'Quiero recibir la newsletter de ChalkGuide (máx. 1 al mes). He leído la política de privacidad y puedo darme de baja cuando quiera.',en:'I want to receive the ChalkGuide newsletter (max. once a month). I have read the privacy policy and can unsubscribe at any time.',from:'14 sep 2026'},2:{es:'Quiero recibir novedades de ChalkGuide por email. Puedo darme de baja cuando quiera.',en:null,from:'5 oct 2025',to:'14 sep 2026'}};
+let D=[
+ {id:1,rel:{s:'granted',at:'9 oct 2026, 08:41',src:'article_end',v:1,conf:'9 oct 2026, 08:44 · con el doble opt-in'},email:'marta.g@example.com',st:'active',lang:'ES',src:'article_end',page:'/blog/cuanto-cuesta-escalar-en-barcelona',at:'9 oct 2026, 08:41',atS:'9 oct 2026',conf:'9 oct 2026, 08:44',confS:'9 oct',v:3,acc:true,
+  h:[['ok','Dio los avisos afines (al confirmar el email)','9 oct 2026, 08:44','La persona','rel'],['ok','Confirmó el email (doble opt-in)','9 oct 2026, 08:44','La persona'],['','Marcó la casilla de afines · texto v1 · ES','9 oct 2026, 08:41','La persona','rel'],['','Se suscribió · Artículo · al final · texto v3 · ES','9 oct 2026, 08:41','La persona (con sesión iniciada)']]},
+ {id:2,rel:{s:'none'},email:'anna.roca@example.com',st:'active',lang:'EN',src:'home',page:'/en',at:'8 oct 2026, 19:02',atS:'8 oct 2026',conf:'8 oct 2026, 19:10',confS:'8 oct',v:3,acc:false,h:[['ok','Confirmó el email (doble opt-in)','8 oct 2026, 19:10','La persona'],['','Se suscribió · Inicio · texto v3 · EN','8 oct 2026, 19:02','La persona']]},
+ {id:3,rel:{s:'granted',at:'14 nov 2026, 18:02',src:'preferences',v:1,conf:'14 nov 2026, 18:02 · desde sus preferencias'},email:'pau.martinez@example.com',st:'active',lang:'ES',src:'item_page',page:'/rocodromos/la-paret-de-gracia',at:'8 oct 2026, 12:15',atS:'8 oct 2026',conf:'8 oct 2026, 12:31',confS:'8 oct',v:3,acc:true,h:[['ok','Dio los avisos afines · Preferencias · texto v1 · ES','14 nov 2026, 18:02','La persona','rel'],['ok','Confirmó el email (doble opt-in)','8 oct 2026, 12:31','La persona'],['','Se suscribió · Ficha · texto v3 · ES','8 oct 2026, 12:15','La persona']]},
+ {id:4,rel:{s:'withdrawn',at:'7 oct 2026, 22:48',src:'article_mid',v:1,conf:'8 oct 2026, 07:02 · con el doble opt-in',wd:'1 nov 2026, 09:15',wvia:'link'},email:'laura.vidal@example.com',st:'active',lang:'ES',src:'article_mid',page:'/blog/pies-de-gato-para-empezar',at:'7 oct 2026, 22:48',atS:'7 oct 2026',conf:'8 oct 2026, 07:02',confS:'8 oct',v:3,acc:false,h:[['off','Retiró los avisos afines · Enlace del email','1 nov 2026, 09:15','La persona','rel'],['ok','Dio los avisos afines (al confirmar el email)','8 oct 2026, 07:02','La persona','rel'],['ok','Confirmó el email (doble opt-in)','8 oct 2026, 07:02','La persona'],['','Marcó la casilla de afines · texto v1 · ES','7 oct 2026, 22:48','La persona','rel'],['','Se suscribió · Artículo · a mitad · texto v3 · ES','7 oct 2026, 22:48','La persona']]},
+ {id:5,rel:{s:'none'},email:'tom.h@example.com',st:'active',lang:'EN',src:'footer',page:'/en/climbing-gyms',at:'6 oct 2026, 17:20',atS:'6 oct 2026',conf:'6 oct 2026, 17:23',confS:'6 oct',v:3,acc:false,h:[['ok','Confirmó el email (doble opt-in)','6 oct 2026, 17:23','La persona'],['','Se suscribió · Pie de página · texto v3 · EN','6 oct 2026, 17:20','La persona']]},
+ {id:6,rel:{s:'none'},email:'nuria.casals@example.com',st:'active',lang:'ES',src:'footer',page:'/resoladores',at:'2 sep 2026, 10:05',atS:'2 sep 2026',conf:'2 sep 2026, 10:09',confS:'2 sep',v:2,acc:false,h:[['ok','Confirmó el email (doble opt-in)','2 sep 2026, 10:09','La persona'],['','Se suscribió · Pie de página · texto v2 · ES','2 sep 2026, 10:05','La persona']]},
+ {id:7,rel:{s:'pending',at:'27 oct 2026, 21:14',src:'footer',v:1},email:'jordi.puig@example.com',st:'pending',lang:'ES',src:'footer',page:'/',at:'27 oct 2026, 21:14',atS:'27 oct 2026',wait:'hace 2 días',exp:'caduca el 3 nov',v:3,acc:false,h:[['warn','Email de confirmación enviado (nombra newsletter y afines)','27 oct 2026, 21:14','Sistema'],['','Marcó la casilla de afines · texto v1 · ES','27 oct 2026, 21:14','La persona','rel'],['','Se suscribió · Pie de página · texto v3 · ES','27 oct 2026, 21:14','La persona']]},
+ {id:8,rel:{s:'none'},email:'claire.d@example.com',st:'pending',lang:'EN',src:'article_end',page:'/en/blog/climbing-in-barcelona-guide',at:'28 oct 2026, 09:30',atS:'28 oct 2026',wait:'hace 1 día',exp:'caduca el 4 nov',v:3,acc:false,h:[['warn','Email de confirmación enviado','28 oct 2026, 09:30','Sistema'],['','Se suscribió · Artículo · al final · texto v3 · EN','28 oct 2026, 09:30','La persona']]},
+ {id:9,rel:{s:'none'},email:'xavier.b@example.com',st:'expired',lang:'ES',src:'item_page',page:'/rocodromos/sharma-climbing-bcn',at:'12 oct 2026, 18:40',atS:'12 oct 2026',wait:'hace 17 días',exp:'se anonimiza el 11 nov',v:3,acc:false,h:[['off','Caducó sin confirmar (7 días)','19 oct 2026, 18:40','Sistema'],['warn','Email de confirmación enviado','12 oct 2026, 18:40','Sistema'],['','Se suscribió · Ficha · texto v3 · ES','12 oct 2026, 18:40','La persona']]},
+ {id:10,rel:{s:'granted',at:'3 oct 2026, 11:00',src:'home',v:1,conf:'3 oct 2026, 11:04 · con el doble opt-in'},email:'sara.lopez@example.com',st:'unsub',lang:'ES',src:'home',page:'/',at:'3 oct 2026, 11:00',atS:'3 oct 2026',conf:'3 oct 2026, 11:04',confS:'3 oct',v:3,un:'26 oct 2026, 08:12',unS:'26 oct 2026',via:'link',acc:false,
+  h:[['off','Se dio de baja · Enlace del email','26 oct 2026, 08:12','La persona'],['ok','Dio los avisos afines (al confirmar el email)','3 oct 2026, 11:04','La persona','rel'],['ok','Confirmó el email (doble opt-in)','3 oct 2026, 11:04','La persona'],['','Marcó la casilla de afines · texto v1 · ES','3 oct 2026, 11:00','La persona','rel'],['','Volvió a suscribirse · Inicio · texto v3 · ES','3 oct 2026, 11:00','La persona'],['off','Se dio de baja · Desde el panel · «Me lo pidió»','2 jul 2026, 16:30','Tú (Xavi)'],['ok','Confirmó el email (doble opt-in)','11 may 2026, 09:12','La persona'],['','Se suscribió · Pie de página · texto v2 · ES','11 may 2026, 09:10','La persona']]},
+ {id:11,rel:{s:'withdrawn',at:'14 jun 2026, 13:20',src:'article',v:1,conf:'14 jun 2026, 13:22 · con el doble opt-in',wd:'20 oct 2026, 10:00',wvia:'admin',wreason:'Me lo pidió'},email:'marc.f@example.com',st:'unsub',lang:'ES',src:'article',page:'/blog/rocodromos-para-ninos',at:'14 jun 2026, 13:20',atS:'14 jun 2026',conf:'14 jun 2026, 13:22',confS:'14 jun',v:2,un:'20 oct 2026, 10:00',unS:'20 oct 2026',via:'admin',reason:'Me lo pidió',acc:true,h:[['off','Retiró los avisos afines · Desde el panel · «Me lo pidió»','20 oct 2026, 10:01','Tú (Xavi)','rel'],['off','Se dio de baja · Desde el panel · «Me lo pidió»','20 oct 2026, 10:00','Tú (Xavi)'],['ok','Dio los avisos afines (al confirmar el email)','14 jun 2026, 13:22','La persona','rel'],['ok','Confirmó el email (doble opt-in)','14 jun 2026, 13:22','La persona'],['','Se suscribió · Artículo · texto v2 · ES','14 jun 2026, 13:20','La persona']]},
+];
+const PRE=D.map(r=>({...r,st:'pending',conf:null,wait:'sin email enviado',exp:'no caduca',un:null,rel:r.rel.s==='none'?r.rel:{s:'pending',at:r.rel.at,src:r.rel.src,v:1},h:r.h.filter(x=>x[1].startsWith('Se suscribió')||x[1].startsWith('Volvió')||x[1].startsWith('Marcó'))}));
+let data=D, view='active', sel=new Set(), cur=null, pre=false;
+
+const CHIP={active:['st-pub','dot','Activo'],pending:['st-warn','clock','Sin confirmar'],expired:['st-hidden','hourglass','Caducado'],unsub:['st-neutral','user-x','Baja'],bounced:['st-danger','mail-x','Rebotado']};
+const chip=s=>{const[c,i,l]=CHIP[s];return `<span class="chip ${c}">${i==='dot'?'<span class="dot"></span>':`<i data-lucide="${i}"></i>`}${l}</span>`;};
+const inView=r=>view==='all'||(view==='active'&&r.st==='active')||(view==='pending'&&(r.st==='pending'||r.st==='expired'))||(view==='unsub'&&(r.st==='unsub'||r.st==='bounced'));
+
+/* ---------- resumen y pestañas ---------- */
+function kpis(){const k=pre?[['Activos','0','—'],['Sin confirmar','11','esperan al proveedor'],['Bajas','0','—'],['Altas en 30 días','6','todas sin confirmar']]
+  :[['Activos','1.284','+38 en 30 días · 214 con afines'],['Sin confirmar','37','12 caducados'],['Bajas','96','5 en 30 días'],['Altas en 30 días','52','71 % confirman · 3 suprimidos']];
+  $('kpis').innerHTML=k.map(([t,n,s],i)=>`<div class="p-3 ${i<2?'border-b lg:border-b-0':''} ${i%2===0?'border-r':''} ${i===1?'lg:border-r':''} border-line"><dt class="text-xs text-meta">${t}</dt><dd class="text-xl font-semibold num">${n}</dd><dd class="text-xs text-meta">${s}</dd></div>`).join('');}
+function tabs(){const n=pre?{active:0,pending:11,unsub:0}:{active:'1.284',pending:37,unsub:96};
+  const T=[['active','Activos',n.active],['pending','Sin confirmar',n.pending],['unsub','Bajas',n.unsub],['all','Todos','']];
+  $('views').innerHTML=T.map(([k,l,c])=>`<button role="tab" class="tab" data-v="${k}" aria-selected="${k===view}" tabindex="${k===view?0:-1}">${l}${c!==''?` <span class="num text-muted">${c}</span>`:''}</button>`).join('');}
+const NOTE_ALL='Todos los estados. Los registros suprimidos (RGPD) no salen aquí: solo cuentan en el resumen.';
+const NOTE={active:'Reciben la newsletter. Solo cuentan los que confirmaron el email (doble opt-in).',pending:'Se suscribieron pero no han confirmado: <b class="text-fg font-medium">no reciben nada</b>. Caducan a los 7 días sin confirmar y a los 30 se anonimizan solos.',unsub:'No reciben nada. Se guarda la prueba de que se respetó su baja. <b class="text-fg font-medium">Desde el panel no se puede volver a suscribir a nadie.</b>',all:NOTE_ALL};
+const NOTE_PRE={pending:'Se suscribieron pero no han confirmado: no reciben nada. Mientras no haya proveedor no caducan.'};
+
+/* ---------- tabla y tarjetas ---------- */
+function cols(){
+  const base=[['Email','email'],...(view==='all'||view==='pending'?[['Estado','st']]:[]),['Idioma','lang'],['Origen','src'],['Alta','at']];
+  if(view==='active')return [...base,['Confirmado','conf'],['Texto','v'],['Cuenta','acc'],['Afines','rel']];
+  if(view==='pending')return [...base,['Esperando','wait'],['Afines','rel']];
+  if(view==='unsub')return [...base,['Baja','un'],['Vía','via'],['Afines','rel']];
+  return [...base,['Último cambio','last'],['Afines','rel']];}
+function cell(r,k){switch(k){
+  case 'email':return `<td class="sticky-l2 edge-l" style="left:52px"><button class="mono !text-[12.5px] font-medium row-link text-left" data-det="${r.id}">${r.email}</button></td>`;
+  case 'st':return `<td>${chip(r.st)}</td>`;
+  case 'lang':return `<td><span class="lang">${r.lang}</span></td>`;
+  case 'src':return `<td class="text-meta">${SRC[r.src]}</td>`;
+  case 'at':return `<td class="text-meta num">${r.atS}</td>`;
+  case 'conf':return `<td class="text-meta num">${r.confS}</td>`;
+  case 'v':return `<td><span class="mono text-xs text-meta">v${r.v}</span>${r.v<3?'<span class="sr-only"> (texto anterior)</span>':''}</td>`;
+  case 'acc':return `<td class="text-meta">${r.acc?'<span class="inline-flex items-center gap-1 text-xs"><i data-lucide="user-round" class="w-3.5 h-3.5"></i>Sí</span>':'<span class="text-muted">—</span>'}</td>`;
+  case 'wait':return `<td class="when text-meta">${r.wait}<small>${r.exp}</small></td>`;
+  case 'un':return `<td class="text-meta num">${r.unS}</td>`;
+  case 'via':return `<td class="text-meta">${VIA[r.via]}${r.reason?`<small class="block text-2xs text-muted">«${r.reason}»</small>`:''}</td>`;
+  case 'rel':return `<td>${rchip(r.rel.s)}</td>`;
+  case 'last':return `<td class="text-meta num">${r.un?('Baja · '+r.unS):r.conf?('Confirmó · '+r.confS):('Alta · '+r.atS)}</td>`;}}
+function render(){
+  tabs();kpis();const rows=data.filter(inView);const C=cols();
+  $('viewNote').innerHTML=`<i data-lucide="info" class="w-3.5 h-3.5 mt-px flex-none"></i><span>${(pre&&NOTE_PRE[view])||NOTE[view]}</span>`;
+  $('cap').textContent=`Suscriptores · ${$('views').querySelector('[aria-selected=true]').textContent.trim()} · alta desde el 1 sep · por fecha de alta, más recientes primero`;
+  const allSel=rows.length&&rows.every(r=>sel.has(r.id));
+  $('thead').innerHTML=`<tr><th class="sticky-l w-10 !pl-6"><input type="checkbox" class="cb" id="selAll" aria-label="Seleccionar todos los de la página" ${allSel?'checked':''}></th>`+C.map(([l,k])=>k==='email'?`<th class="sticky-l2 edge-l" style="left:52px">Email</th>`:k==='at'?`<th aria-sort="descending"><button class="sort">Alta<i data-lucide="arrow-down"></i></button></th>`:k==='rel'?`<th><abbr title="Avisos de Chalk app y productos afines" class="no-underline">Afines</abbr></th>`:`<th>${l}</th>`).join('')+`<th class="sticky-r edge-r w-12"><span class="sr-only">Acciones</span></th></tr>`;
+  $('rows').innerHTML=rows.map(r=>`<tr${sel.has(r.id)?' aria-selected="true"':''}><td class="sticky-l !pl-6"><input type="checkbox" class="cb" data-sel="${r.id}" aria-label="Seleccionar ${r.email}" ${sel.has(r.id)?'checked':''} ${r.st==='unsub'?'disabled title="Ya está de baja"':''}></td>${C.map(([,k])=>cell(r,k)).join('')}<td class="sticky-r edge-r text-right"><button class="icon-btn" data-menu="${r.id}" aria-label="Acciones de ${r.email}" aria-haspopup="menu" aria-expanded="false"><i data-lucide="more-horizontal"></i></button></td></tr>`).join('');
+  $('cards').innerHTML=rows.map(r=>`<li class="flex items-stretch"><button class="flex-1 min-w-0 text-left pl-4 pr-2 py-3 min-h-[64px]" data-det="${r.id}"><span class="block mono text-[13px] font-medium truncate">${r.email}</span><span class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-meta">${chip(r.st)}<span class="lang">${r.lang}</span><span>${SRC[r.src]}</span><span aria-hidden="true">·</span><span class="num">${r.st==='unsub'?'baja '+r.unS:r.st==='pending'||r.st==='expired'?r.wait:r.atS}</span>${r.rel.s!=='none'?`<span class="inline-flex items-center gap-1"><span class="text-muted">Afines</span>${rchip(r.rel.s)}</span>`:''}</span></button><button class="icon-btn !w-11 !h-11 self-center mr-2 flex-none" data-menu="${r.id}" aria-label="Acciones de ${r.email}" aria-haspopup="menu"><i data-lucide="more-horizontal"></i></button></li>`).join('');
+  $('pager').textContent=view==='active'?(pre?'0 de 0':'1–25 de 412'):`1–${rows.length} de ${rows.length}`;
+  const exp={active:'activos',pending:'sin-confirmar',unsub:'bajas',all:'todos'}[view];$('expLink').href=`exportar.html?tipo=suscriptores&estado=${exp}&alta-desde=2026-09-01`;
+  updBatch();CG.icons();}
+function updBatch(){const b=$('batch');if(!sel.size){b.style.display='none';return;}b.style.display='flex';$('batchN').textContent=`${sel.size} seleccionado${sel.size>1?'s':''}`;}
+
+/* ---------- ficha ---------- */
+const byId=id=>data.find(r=>r.id===id);
+function proofText(r){return [`Suscriptor: ${r.email}`,`Consentimiento: ${r.at} (hora de Barcelona)`,`Origen: ${SRC[r.src]} · ${r.page}`,`Texto aceptado: versión ${r.v} (${r.lang}): «${TXT[r.v][r.lang==='EN'&&TXT[r.v].en?'en':'es']}»`,`Doble opt-in: ${r.conf?'confirmado el '+r.conf:'sin confirmar'}`,`Baja: ${r.un?r.un+' · '+VIA[r.via]:'—'}`].join('\n');}
+function openDet(id,from){const r=byId(id);cur=id;const t=TXT[r.v];const useEn=r.lang==='EN'&&t.en;
+  const doi=r.conf?`<span class="inline-flex items-center gap-1 text-st-pub font-medium"><i data-lucide="badge-check" class="w-3.5 h-3.5"></i>Confirmado</span> <span class="num">${r.conf}</span>`
+    :r.st==='expired'?`<span class="font-medium">Caducado</span> sin confirmar · <span class="text-meta">${r.exp}</span>`
+    :pre?`<span class="font-medium text-warn">Sin confirmar</span> · <span class="text-meta">el email de confirmación llega con F4.6</span>`
+    :`<span class="font-medium text-warn">Sin confirmar</span> · enviado ${r.wait} · <span class="text-meta">${r.exp}</span>`;
+  const unsubRow=r.un?`<dt>Baja</dt><dd><span class="num">${r.un}</span><span class="block text-xs text-meta">${VIA[r.via]}${r.reason?` · «${r.reason}»`:''}</span></dd>`:`<dt>Baja</dt><dd class="text-muted">—</dd>`;
+  const canUnsub=r.st!=='unsub';
+  $('detBody').innerHTML=`
+  <div class="drawer-h"><h2 id="det-h" class="mono !text-[13px] font-medium truncate min-w-0">${r.email}</h2>${chip(r.st)}<button class="icon-btn ml-auto flex-none" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="drawer-b space-y-6 text-sm">
+    ${r.st==='unsub'?`<div class="banner banner-info"><i data-lucide="user-x"></i><span>No recibe nada. Solo esta persona puede volver, con un alta nueva desde el sitio y su confirmación por email.</span></div>`:''}
+    ${r.st==='expired'?`<div class="banner banner-info"><i data-lucide="hourglass"></i><span>No confirmó en 7 días: nunca recibió la newsletter. El email se anonimiza solo ${r.exp.replace('se anonimiza ','')} (minimización de datos).</span></div>`:''}
+    <section aria-labelledby="pr-h">
+      <div class="flex items-center gap-2 mb-2"><h3 id="pr-h" class="text-xs font-medium text-meta">Prueba de consentimiento</h3><button class="btn btn-quiet !h-7 !px-2 ml-auto text-xs" data-copy><i data-lucide="copy"></i>Copiar como texto</button></div>
+      <div class="proof"><dl>
+        <dt>Cuándo</dt><dd class="num">${r.at}<span class="block text-xs text-meta">hora de Barcelona</span></dd>
+        <dt>Desde dónde</dt><dd>${SRC[r.src]}<a href="#" class="block mono text-xs text-meta break-all underline underline-offset-2 decoration-line-strong hover:text-fg">${r.page}</a></dd>
+        <dt>Texto aceptado</dt><dd>Versión ${r.v} · <span class="lang">${useEn?'EN':'ES'}</span>${r.v<3?' <span class="text-xs text-meta">(anterior a la vigente)</span>':''}
+          <details class="mt-1 group"><summary class="cursor-pointer text-meta underline underline-offset-2 decoration-line-strong hover:text-fg list-none inline-flex items-center gap-1 min-h-8"><i data-lucide="chevron-right" class="w-3.5 h-3.5 group-open:rotate-90 t"></i>Ver el texto exacto</summary>
+          <blockquote class="quote mt-1" lang="${useEn?'en':'es'}">${useEn?t.en:t.es}</blockquote><p class="text-xs text-meta mt-1">Vigente del ${t.from}${t.to?' al '+t.to:' hasta hoy'}.${r.lang==='EN'&&!t.en?' En esa versión no había texto en inglés: vio el español.':''}</p></details></dd>
+        <dt>Doble opt-in</dt><dd>${doi}</dd>
+        ${unsubRow}
+        <dt>Idioma</dt><dd>${r.lang==='EN'?'Inglés':'Español'}</dd>
+        <dt>Cuenta</dt><dd>${r.acc?'Tiene cuenta (Google) <span class="block text-xs text-meta">Iniciar sesión no es consentimiento: lo que vale es la casilla de arriba.</span>':'<span class="text-muted">Sin cuenta</span>'}</dd>
+      </dl></div>
+      <p class="text-xs text-meta mt-2">No se guardan IP ni navegador.</p>
+    </section>
+    ${relSection(r)}
+    <section aria-labelledby="hi-h"><h3 id="hi-h" class="text-xs font-medium text-meta mb-3">Historial <span class="font-normal">· no se puede editar · las dos finalidades</span></h3>
+      <ol class="tl">${r.h.map(([c,l,w,a,p])=>`<li><span class="d ${c}" aria-hidden="true"></span><span class="min-w-0">${p==='rel'?'<span class="purpose">Afines</span>':''}${l}<span class="block text-xs text-muted"><span class="num">${w}</span> · ${a}</span></span></li>`).join('')}</ol></section>
+    <section aria-labelledby="pv-h"><h3 id="pv-h" class="text-xs font-medium text-meta mb-2">Proveedor de email</h3>
+      <p class="text-meta flex items-start gap-1.5"><i data-lucide="plug" class="w-4 h-4 mt-0.5 flex-none"></i><span>Sin conectar todavía (F4.6). Cuando lo esté, aquí verás si está sincronizado.</span></p></section>
+  </div>
+  <div class="drawer-f flex-wrap">
+    ${canUnsub?`<button class="btn btn-ghost" data-unsub="${r.id}"><i data-lucide="user-x"></i>Dar de baja…</button>`:''}
+    ${canWrel(r)?`<button class="btn btn-ghost" data-wrel="${r.id}"><i data-lucide="megaphone-off"></i>Retirar afines…</button>`:''}
+    <button class="btn btn-danger-ghost ${canUnsub?'ml-auto':''}" data-erase="${r.id}"><i data-lucide="trash-2"></i>Suprimir datos…</button>
+    <p class="w-full text-xs text-meta">${canUnsub||canWrel(r)?'La baja y la retirada de afines son independientes y no se pueden deshacer desde el panel. Suprimir anonimiza el registro (RGPD).':'Suprimir anonimiza el registro (RGPD). No se puede deshacer.'}</p>
+  </div>`;
+  CG.open('det',from);CG.icons();}
+
+/* ---------- D66 · afines en la ficha ---------- */
+const canWrel=r=>r.rel.s==='granted'||r.rel.s==='pending';
+function relSection(r){const x=r.rel;
+  const title=`<div class="flex items-center gap-2 mb-2"><h3 id="ra-h" class="text-xs font-medium text-meta">Avisos de Chalk app y productos afines</h3>${x.s!=='none'?rchip(x.s):''}</div>`;
+  if(x.s==='none')return `<section aria-labelledby="ra-h">${title}<p class="text-meta">No los ha dado. <span class="text-xs block mt-1">Solo esa persona puede darlos: con la casilla del formulario, tras confirmar el email o desde sus preferencias. Iniciar sesión no cuenta.</span></p></section>`;
+  const t=RTXT[x.v];const useEn=r.lang==='EN'&&t.en;
+  const conf=x.s==='pending'?`<span class="font-medium text-warn">Pendiente</span> · <span class="text-meta">se activa si confirma el email; si caduca, se descarta</span>`:`<span class="inline-flex items-center gap-1 text-st-pub font-medium"><i data-lucide="badge-check" class="w-3.5 h-3.5"></i>Vigente desde</span> <span class="num">${x.conf}</span>`;
+  return `<section aria-labelledby="ra-h">${title}
+    ${x.s==='withdrawn'?`<div class="banner banner-info mb-2"><i data-lucide="megaphone-off"></i><span>No recibe avisos afines. Solo esta persona puede volver a darlos, desde sus preferencias.${r.st==='active'?' La newsletter sigue activa.':''}</span></div>`:''}
+    <div class="proof"><dl>
+      <dt>Cuándo</dt><dd class="num">${x.at}<span class="block text-xs text-meta">hora de Barcelona</span></dd>
+      <dt>Desde dónde</dt><dd>${SRC[x.src]}${x.src==='preferences'?'<span class="block text-xs text-meta">con el enlace de sus emails, sin login</span>':''}</dd>
+      <dt>Texto aceptado</dt><dd>Versión ${x.v} · <span class="lang">${useEn?'EN':'ES'}</span>
+        <details class="mt-1 group"><summary class="cursor-pointer text-meta underline underline-offset-2 decoration-line-strong hover:text-fg list-none inline-flex items-center gap-1 min-h-8"><i data-lucide="chevron-right" class="w-3.5 h-3.5 group-open:rotate-90 t"></i>Ver el texto exacto</summary>
+        <blockquote class="quote mt-1" lang="${useEn?'en':'es'}">${useEn?t.en:t.es}</blockquote><p class="text-xs text-meta mt-1">Vigente del ${t.from} hasta hoy.</p></details></dd>
+      <dt>Estado</dt><dd>${conf}</dd>
+      <dt>Retirada</dt><dd>${x.wd?`<span class="num">${x.wd}</span><span class="block text-xs text-meta">${RVIA[x.wvia]}${x.wreason?` · «${x.wreason}»`:''}</span>`:'<span class="text-muted">—</span>'}</dd>
+    </dl></div>
+    <p class="text-xs text-meta mt-2">Independiente de la newsletter: dar de baja no la retira, y retirarla no da de baja.</p>
+  </section>`;}
+let wrId=null;
+function openWrel(id,from){wrId=id;$('wr-email').textContent=byId(id).email;document.querySelectorAll('input[name=wr]').forEach(x=>x.checked=false);$('wrBtn').disabled=true;CG.open('wrel',from);}
+document.addEventListener('change',e=>{if(e.target.name==='wr')$('wrBtn').disabled=false;});
+$('wrBtn').onclick=()=>{const r=byId(wrId);const lab=document.querySelector('input[name=wr]:checked').parentElement.textContent.trim().replace(/ \(.*\)$/,'');
+  r.rel={...r.rel,s:'withdrawn',wd:'14 nov 2026, 10:20',wvia:'admin',wreason:lab};r.h.unshift(['off',`Retiró los avisos afines · Desde el panel · «${lab}»`,'14 nov 2026, 10:20','Tú (Xavi)','rel']);
+  CG.close('wrel');render();openDet(wrId);CG.toast(`Afines retirados a ${r.email} · la newsletter no cambia`,{action:null});};
+
+/* ---------- baja ---------- */
+let unIds=[];
+function openUnsub(ids,from){unIds=ids;const one=ids.length===1;const r=byId(ids[0]);
+  $('un-h').innerHTML=one?`¿Dar de baja a <span class="mono text-[15px]">${r.email}</span>?`:`¿Dar de baja a ${ids.length} suscriptores?`;
+  $('un-d').innerHTML=`${one?'Dejará':'Dejarán'} de recibir la newsletter. <b class="text-fg">Desde el panel no se puede deshacer:</b> solo ${one?'esa persona puede':'cada persona puede'} volver a suscribirse, con un alta nueva y su confirmación por email.`;
+  const L=$('un-list');L.classList.toggle('hidden',one);L.innerHTML=one?'':ids.slice(0,5).map(i=>`<li class="truncate">${byId(i).email}</li>`).join('')+(ids.length>5?`<li class="font-sans text-meta">y ${ids.length-5} más</li>`:'');
+  $('unBtnL').textContent=one?'Dar de baja':`Dar de baja a ${ids.length}`;
+  document.querySelectorAll('input[name=ur]').forEach(x=>x.checked=false);$('unBtn').disabled=true;CG.open('unsub',from);}
+document.addEventListener('change',e=>{if(e.target.name==='ur')$('unBtn').disabled=false;if(e.target.name==='er')chkErase();});
+$('unBtn').onclick=()=>{const n=unIds.length;const em=n===1?byId(unIds[0]).email:'';
+  unIds.forEach(i=>{const r=byId(i);r.st='unsub';r.un='29 oct 2026, 10:20';r.unS='29 oct 2026';r.via='admin';r.reason='Me lo pidió';r.h.unshift(['off','Se dio de baja · Desde el panel · «Me lo pidió»','29 oct 2026, 10:20','Tú (Xavi)']);sel.delete(i);});
+  CG.close('unsub');CG.close('det');render();CG.toast(n===1?`${em} dado de baja · ya no recibirá emails`:`${n} suscriptores dados de baja`,{action:null});};
+
+/* ---------- suprimir ---------- */
+function openErase(id,from){cur=id;const r=byId(id);$('er-email').textContent=r.email;$('typed').placeholder=r.email;$('typed').value='';document.querySelectorAll('input[name=er]').forEach(x=>x.checked=false);chkErase();CG.open('erase',from);}
+function chkErase(){const r=byId(cur);$('eraseBtn').disabled=!(r&&$('typed').value.trim().toLowerCase()===r.email&&document.querySelector('input[name=er]:checked'));}
+$('typed').oninput=chkErase;
+$('eraseBtn').onclick=()=>{data=data.filter(r=>r.id!==cur);CG.close('erase');CG.close('det');render();CG.toast('Datos suprimidos · ya no hay forma de saber quién era',{action:null});};
+
+/* ---------- menú de fila ---------- */
+function openMenu(btn){const r=byId(+btn.dataset.menu);const m=$('rowMenu');
+  m.innerHTML=`<button class="menu-i" role="menuitem" data-act="det"><i data-lucide="file-search"></i>Ver prueba de consentimiento</button><button class="menu-i" role="menuitem" data-act="copy"><i data-lucide="copy"></i>Copiar email</button>`+
+   (r.st!=='unsub'||canWrel(r)?'<div class="menu-sep"></div>':'')+
+   (r.st!=='unsub'?`<button class="menu-i" role="menuitem" data-act="unsub"><i data-lucide="user-x"></i>Dar de baja…</button>`:'')+
+   (canWrel(r)?`<button class="menu-i" role="menuitem" data-act="wrel"><i data-lucide="megaphone-off"></i>Retirar afines…</button>`:'')+
+   `<div class="menu-sep"></div><button class="menu-i danger" role="menuitem" data-act="erase"><i data-lucide="trash-2"></i>Suprimir datos (RGPD)…</button>`;
+  m.dataset.id=r.id;m.classList.remove('hidden');const b=btn.getBoundingClientRect();const w=m.offsetWidth,h=m.offsetHeight;
+  m.style.left=Math.max(8,Math.min(innerWidth-w-8,b.right-w))+'px';m.style.top=(b.bottom+h+8>innerHeight?b.top-h-4:b.bottom+4)+'px';
+  btn.setAttribute('aria-expanded','true');m._btn=btn;CG.icons();m.querySelector('button').focus();}
+function closeMenu(){const m=$('rowMenu');if(m.classList.contains('hidden'))return;m.classList.add('hidden');m._btn&&m._btn.setAttribute('aria-expanded','false');}
+
+document.addEventListener('click',e=>{const t=e.target;let b;
+  if(!t.closest('#rowMenu')&&!t.closest('[data-menu]'))closeMenu();
+  if(b=t.closest('#views [role=tab]')){view=b.dataset.v;sel.clear();render();$('views').querySelector('[aria-selected=true]').focus();return;}
+  if(b=t.closest('[data-det]')){openDet(+b.dataset.det,b);return;}
+  if(b=t.closest('[data-menu]')){openMenu(b);return;}
+  if(b=t.closest('#rowMenu [data-act]')){const id=+$('rowMenu').dataset.id,btn=$('rowMenu')._btn;closeMenu();const a=b.dataset.act;
+    if(a==='det')openDet(id,btn);if(a==='copy')CG.toast('Email copiado',{action:null});if(a==='unsub')openUnsub([id],btn);if(a==='wrel')openWrel(id,btn);if(a==='erase')openErase(id,btn);return;}
+  if(b=t.closest('[data-wrel]')){openWrel(+b.dataset.wrel,b);return;}
+  if(b=t.closest('[data-unsub]')){openUnsub([+b.dataset.unsub],b);return;}
+  if(b=t.closest('[data-erase]')){openErase(+b.dataset.erase,b);return;}
+  if(t.closest('[data-copy]')){navigator.clipboard&&navigator.clipboard.writeText(proofText(byId(cur))).catch(()=>{});CG.toast('Prueba copiada como texto',{action:null});return;}
+  if(t.closest('#batchUnsub')){openUnsub([...sel],t.closest('#batchUnsub'));return;}
+  if(t.closest('#batchClear')){sel.clear();render();return;}
+});
+document.addEventListener('change',e=>{const c=e.target.closest('[data-sel]');if(c){c.checked?sel.add(+c.dataset.sel):sel.delete(+c.dataset.sel);updBatch();}
+  if(e.target.id==='selAll'){data.filter(inView).filter(r=>r.st!=='unsub').forEach(r=>e.target.checked?sel.add(r.id):sel.delete(r.id));render();}});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();
+  const tl=e.target.closest&&e.target.closest('#views [role=tab]');if(tl&&['ArrowRight','ArrowLeft'].includes(e.key)){const T=[...$('views').children];let i=T.indexOf(tl)+(e.key==='ArrowRight'?1:-1);i=(i+T.length)%T.length;T[i].click();}
+  const tag=(e.target.tagName||'').toLowerCase();if(e.key==='/'&&!['input','textarea','select'].includes(tag)&&!document.querySelector('.overlay.open')){e.preventDefault();$('q').focus();}});
+
+/* ---------- estados del mockup y hashes ---------- */
+function show(s){pre=s==='pre';data=pre?PRE:D;$('preBanner').hidden=!pre;if(pre)view='pending';
+  ['data','loading','empty','none','error'].forEach(x=>$('st-'+x).hidden=x!==(s==='pre'?'data':s));$('demoState').value=s;$('chips').hidden=s==='empty';render();}
+$('demoState').onchange=e=>show(e.target.value);
+function fromHash(){const h=location.hash.slice(1);['det','unsub','erase','wrel'].forEach(x=>CG.close(x));sel.clear();
+  const v={activos:'active','sin-confirmar':'pending',bajas:'unsub',todos:'all',ficha:'active','ficha-pendiente':'pending','ficha-caducado':'pending','ficha-baja':'unsub',baja:'active',lote:'active',suprimir:'active','ficha-afines-pendiente':'pending','ficha-afines-retirado':'active','retirar-afines':'active'}[h];if(v)view=v;
+  show({cargando:'loading',vacio:'empty','sin-resultados':'none',error:'error','antes-f46':'pre'}[h]||'data');
+  if(h==='ficha')openDet(1);if(h==='ficha-pendiente')openDet(7);if(h==='ficha-caducado')openDet(9);if(h==='ficha-baja')openDet(10);
+  if(h==='baja'){openDet(1);setTimeout(()=>openUnsub([1]),40);}
+  if(h==='lote'){[2,3,5].forEach(i=>sel.add(i));render();openUnsub([2,3,5]);}
+  if(h==='ficha-afines-pendiente')openDet(7);if(h==='ficha-afines-retirado')openDet(4);
+  if(h==='retirar-afines'){openDet(1);setTimeout(()=>openWrel(1),40);}
+  if(h==='suprimir'){openDet(1);setTimeout(()=>openErase(1),40);}
+}
+document.addEventListener('DOMContentLoaded',fromHash);
+addEventListener('hashchange',fromHash);
+</script>
+</body>
+</html>

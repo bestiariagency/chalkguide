@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel · Vista por anchos 390 / 768 · ChalkGuide</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>:focus-visible{outline:2px solid #C2410C;outline-offset:2px}iframe{background:#fff;border:1px solid #D4D4D8;border-radius:12px}</style>
+</head>
+<body class="bg-[#F4F4F5] text-[#18181B] font-sans antialiased">
+<main class="px-4 md:px-8 py-8">
+  <p class="text-sm text-[#52525B]"><a href="index.html" class="underline underline-offset-2">← Índice del panel</a></p>
+  <h1 class="text-2xl font-semibold tracking-tight mt-2">Vista por anchos · 390 (móvil) y 768 (tablet)</h1>
+  <p class="mt-1 text-[#52525B] max-w-3xl">Marcos de ancho real e interactivos. Desplaza en horizontal si no caben.</p>
+  <div class="mt-4 flex gap-2 text-sm" role="group" aria-label="Ronda"><button data-r="55" class="px-3 py-1.5 rounded-md bg-[#18181B] text-white" aria-pressed="true">5.5 · Mockups</button><button data-r="52" class="px-3 py-1.5 rounded-md border border-[#D4D4D8] bg-white" aria-pressed="false">5.2 · Direcciones</button></div>
+  <div id="out" class="mt-8 space-y-12"></div>
+</main>
+<script>
+const R55=[['390',[['inicio.html','Inicio'],['opiniones.html','Opiniones'],['medios.html','Medios'],['articulo-editor.html','Editor'],['articulos.html','Artículos'],['rocodromo-editor.html','Rocódromo'],['suscriptores.html','Suscriptores'],['categorias.html','Categorías'],['login.html','Login']]],['768',[['articulos.html','Artículos'],['articulo-editor.html','Editor'],['opiniones.html','Opiniones'],['rocodromo-editor.html','Rocódromo']]]];
+const R52=[['390',[['direccion-a-consola.html#inicio','A · Inicio'],['direccion-a-consola.html#articulos','A · Artículos'],['direccion-a-consola.html#editor','A · Editor'],['direccion-b-taller.html#inicio','B · Inicio'],['direccion-b-taller.html#editor','B · Editor']]],['768',[['direccion-a-consola.html#articulos','A · Artículos'],['direccion-b-taller.html#articulos','B · Artículos']]]];
+const out=document.getElementById('out');
+function render(R){out.innerHTML=R.map(([w,pages])=>`<section><h2 class="text-lg font-semibold">${w} px</h2><div class="mt-4 flex gap-6 overflow-x-auto pb-4">${pages.map(([f,l])=>`<figure class="flex-none"><figcaption class="text-xs font-mono text-[#52525B] mb-2">${w} · ${l}</figcaption><iframe title="${l}, ${w} px" src="${f}" width="${+w+2}" height="844" loading="lazy"></iframe></figure>`).join('')}</div></section>`).join('');}
+const qs=new URLSearchParams(location.search);if(qs.get('solo')){const w=qs.get('w')||'390';render([[w,[[qs.get('solo'),qs.get('solo')]]]]);}else render(R55);
+document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-r]').forEach(x=>{const on=x===b;x.setAttribute('aria-pressed',on);x.className=on?'px-3 py-1.5 rounded-md bg-[#18181B] text-white':'px-3 py-1.5 rounded-md border border-[#D4D4D8] bg-white';});render(b.dataset.r==='55'?R55:R52);});
+</script>
+</body>
+</html>

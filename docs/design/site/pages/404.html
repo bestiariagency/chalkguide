@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<title>Esta página no existe · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-route-es="(cualquier ruta inexistente · HTTP 404)" data-route-en="">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main" class="board-tex border-b-[0.5px] border-line">
+  <section class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24 grid lg:grid-cols-12 gap-10 items-center">
+    <div class="lg:col-span-7">
+      <p class="font-mono text-[64px] md:text-[96px] leading-none text-accent">404</p>
+      <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-4">Esta página no existe</h1>
+      <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">Puede que el enlace haya cambiado. Busca lo que necesitas o empieza por una de las guías.</p>
+      <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-read" role="search" onsubmit="event.preventDefault()">
+        <label for="q" class="sr-only">Buscar</label>
+        <input id="q" type="search" class="field flex-1" placeholder="Rocódromo, pie de gato, artículo…">
+        <button type="submit" class="btn btn-primary"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-search"/></svg><span class="label">Buscar</span></button>
+      </form>
+      <a href="../direccion-e-pizarra.html" class="link inline-block mt-6">Ir al inicio</a>
+    </div>
+    <div class="lg:col-span-5">
+      <p class="font-hand text-[28px] text-meta -rotate-1">Vía equivocada. Prueba por aquí:</p>
+      <ul class="mt-4 space-y-3">
+        <li><a href="rocodromos.html" class="card p-5 flex items-center justify-between gap-3"><span><span class="block font-medium">Rocódromos</span><span class="block text-sm text-meta">5 fichas con precios y mi reseña</span></span><svg class="ico text-meta" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></li>
+        <li><a href="resolar-pies-de-gato.html" class="card p-5 flex items-center justify-between gap-3"><span><span class="block font-medium">Resolar pies de gato</span><span class="block text-sm text-meta">Precio por par, plazo y calidad</span></span><svg class="ico text-meta" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></li>
+        <li><a href="pies-de-gato.html" class="card p-5 flex items-center justify-between gap-3"><span><span class="block font-medium">Pies de gato</span><span class="block text-sm text-meta">Comparador lado a lado</span></span><svg class="ico text-meta" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+</body>
+</html>

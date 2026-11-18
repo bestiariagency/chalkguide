@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Cookies: banner, preferencias y pie (D69, D85) · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/consent-tw.js"></script>
+<link rel="stylesheet" href="_shared/consent.css">
+<style>
+  /* ===== Reserva al final de la página mientras el banner está abierto (nunca tapa newsletter ni pie) =====
+     El banner es fixed: no ocupa sitio en el flujo (CLS 0). El hueco se añade debajo del pie, fuera de la vista
+     inicial, para que todo se pueda desplazar por encima del banner. */
+  html { scroll-padding-bottom:var(--cc-h,0px); }
+  body { padding-bottom:var(--cc-h,0px); }
+
+  /* ===== Botón del consentimiento: el mismo para los tres (AEPD: mismo peso, tamaño y posición) ===== */
+  .cc-btn { min-height:44px; padding:0 12px; width:100%; }
+
+  /* ===== A · Barra de papel (recomendada) ===== */
+  .cc { position:fixed; z-index:45; left:0; right:0; bottom:0; background:#fbf9f5; color:#1c1a17;
+        border-top:1px solid #c2b9a9; box-shadow:0 -14px 32px -18px rgb(28 26 23 / .45);
+        padding-bottom:env(safe-area-inset-bottom); animation:cc-in 180ms cubic-bezier(.2,.8,.2,1); }
+  .cc[hidden] { display:none; }
+  .cc.out { opacity:0; transform:translateY(8px); transition:opacity 150ms, transform 150ms; }
+  @keyframes cc-in { from { opacity:0; transform:translateY(12px); } }
+  .cc-in { max-width:1200px; margin:0 auto; padding:16px; display:grid; gap:12px; }
+  .cc-btns { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+  @media (min-width:640px) { .cc-in { padding:20px 24px; } .cc-btns { width:456px; } }
+  @media (min-width:1024px) {
+    .cc-in { grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:40px; padding:16px 24px; }
+    .cc-btns { width:432px; }
+  }
+  .cc-title { font-size:15px; line-height:1.35; font-weight:500; }
+  .cc-text { margin-top:4px; font-size:14px; line-height:1.45; color:#5e584e; max-width:78ch; }
+  .cc-text a { color:#9a4a16; }
+
+  /* ===== B · Placa de pizarra (alternativa): flotante abajo a la izquierda desde lg; hoja inferior por debajo ===== */
+  .cc.is-b { background:#1a1a1a; color:#f0ede8; border-top-color:#333; box-shadow:0 -14px 32px -18px rgb(0 0 0 / .7);
+             --ring:0 0 0 2px #1a1a1a,0 0 0 4px #e8923a; }
+  .cc.is-b .cc-text { color:#a19d94; }
+  .cc.is-b .cc-text a { color:#e8923a; }
+  .cc.is-b .btn-ghost { color:#f0ede8; border-color:#a19d94; }
+  .cc.is-b .btn-ghost:hover { background:#2a2a2a; border-color:#f0ede8; }
+  @media (min-width:1024px) {
+    .cc.is-b { left:24px; right:auto; bottom:24px; width:440px; border:1px solid #333; border-radius:var(--radius-slab);
+               box-shadow:var(--shadow-slab-dark); padding-bottom:0; }
+    .cc.is-b .cc-in { grid-template-columns:1fr; padding:20px; row-gap:16px; }
+    .cc.is-b .cc-btns { width:auto; }
+  }
+
+  /* ===== Panel de preferencias (segunda capa): <dialog> modal, lo abre la persona ===== */
+  dialog.cc-pm { width:min(640px,calc(100vw - 32px)); max-height:min(88dvh,820px); padding:0; border:0; border-radius:var(--radius-slab); background:#fbf9f5; color:#1c1a17; box-shadow:0 30px 60px -20px rgb(0 0 0 / .45); }
+  dialog.cc-pm::backdrop { background:rgb(15 15 15 / .55); }
+  dialog.cc-pm[open] { display:flex; flex-direction:column; animation:pop 180ms cubic-bezier(.2,.8,.2,1); }
+  @media (max-width:639px) { dialog.cc-pm { width:100vw; max-width:100vw; max-height:92dvh; margin:auto 0 0; border-radius:12px 12px 0 0; padding-bottom:env(safe-area-inset-bottom); } }
+  .cat { padding:16px 0; border-top:1px solid #dcd5c8; }
+  .cat:first-child { border-top:0; padding-top:4px; }
+  .cat-head { display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:16px; align-items:center; }
+  .cat h3 { font-size:17px; line-height:1.3; font-weight:500; }
+  .cat .desc { margin-top:4px; font-size:15px; line-height:1.5; color:#5e584e; max-width:56ch; }
+
+  /* Interruptor: role="switch", 44 px de alto táctil, estado también en texto (nunca solo color) */
+  .sw { display:inline-flex; align-items:center; gap:10px; min-height:44px; padding:0 2px; border-radius:8px; font-size:14px; color:#5e584e; cursor:pointer; }
+  .sw .track { position:relative; width:44px; height:26px; flex-shrink:0; border-radius:13px; border:1px solid #827a6d; background:#ebe6dc; transition:background-color 150ms,border-color 150ms; }
+  .sw .knob { position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#5e584e; transition:transform 150ms,background-color 150ms; }
+  .sw:hover .track { border-color:#5e584e; }
+  .sw[aria-checked=true] { color:#1c1a17; }
+  .sw[aria-checked=true] .track { background:#e8923a; border-color:#9a4a16; }   /* borde 5,93:1 sobre papel; el naranja solo da 2,32:1 */
+  .sw[aria-checked=true] .knob { transform:translateX(18px); background:#1a0a00; }
+  .sw:focus-visible { box-shadow:0 0 0 2px #fbf9f5,0 0 0 4px #9a4a16; }
+
+  details.ck summary { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:15px; font-weight:500; color:#9a4a16; cursor:pointer; list-style:none; }
+  details.ck summary::-webkit-details-marker { display:none; }
+  details.ck summary svg { transition:transform 150ms; }
+  details.ck[open] summary svg { transform:rotate(90deg); }
+  details.ck summary span { background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat; padding-bottom:2px; }
+  .ck-list { margin-top:4px; display:grid; gap:8px; }
+  .ck-row { display:grid; grid-template-columns:minmax(0,1fr); gap:2px; padding:10px 12px; border-radius:6px; background:#efebe3; font-size:14px; line-height:1.45; }
+  @media (min-width:640px) { .ck-row { grid-template-columns:150px minmax(0,1fr) 120px; column-gap:16px; } }
+  .ck-row code { font-family:'JetBrains Mono',ui-monospace,monospace; font-size:13px; color:#1c1a17; overflow-wrap:anywhere; }
+  .ck-row .m { color:#5e584e; }
+
+  .lock { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:14px; font-weight:500; color:#1a5c41; }
+
+  /* Enlace del pie (abre el panel; sin JS va a /cookies#preferencias) */
+  .foot-link { display:inline-flex; align-items:center; min-height:44px; transition:color 150ms; }
+  .foot-link:hover { color:var(--color-foreground); }
+
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .mock-note { margin:0 0 24px; padding:10px 12px; border-left:3px solid #e8923a; background:rgb(232 146 58 / .12); font-size:13px; line-height:1.5; color:inherit; max-width:80ch; }
+  body.no-notes .mock-note { display:none; }
+  .annex-title { font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; }
+</style>
+</head>
+<body class="bg-background text-foreground text-base leading-relaxed">
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-board focus:px-3 focus:py-2 focus:rounded">Saltar al contenido</a>
+
+<!-- ===== Solo mockup ===== -->
+<div class="mock-bar bg-white text-[#1c1a17] border-b border-[#ddd]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+    <strong class="font-medium mr-1">D69 · D85 · Cookies</strong>
+    <span class="text-[#5e584e]">Dirección:</span>
+    <span class="flex gap-1"><button type="button" class="mock-sel px-2 rounded border border-[#ccc]" data-v="a">A · Barra de papel (recomendada)</button><button type="button" class="mock-sel px-2 rounded border border-[#ccc]" data-v="b">B · Placa de pizarra</button></span>
+    <span class="text-[#5e584e] ml-2">Escena:</span>
+    <span class="flex flex-wrap gap-1">
+      <button type="button" class="px-2 rounded border border-[#ccc]" data-scene="first">Primera visita</button>
+      <button type="button" class="px-2 rounded border border-[#ccc]" data-scene="bottom">Bajar a newsletter y pie</button>
+      <button type="button" class="px-2 rounded border border-[#ccc]" data-scene="panel">Panel (primera vez)</button>
+      <button type="button" class="px-2 rounded border border-[#ccc]" data-scene="chosen">Ya elegido · reabrir desde el pie</button>
+      <button type="button" class="px-2 rounded border border-[#ccc]" data-scene="cookies">Bloque en /cookies</button>
+    </span>
+    <button type="button" class="ml-auto underline" id="notes-toggle">Ocultar notas</button>
+  </div>
+</div>
+
+<!-- ===== Página de ejemplo: la home v2 tal cual (hero = captura) ===== -->
+<header class="sr-only">Cabecera incluida en la captura del hero</header>
+<main id="main" tabindex="-1">
+  <!-- El LCP es la tarjeta del hero (captura). El banner llega después, en idle, y es más pequeño. -->
+  <picture>
+    <source media="(min-width:768px)" srcset="_home-v2/hero-1440.jpg">
+    <img src="_home-v2/hero-390.jpg" alt="Hero de la home v2 (captura): Escalar en Barcelona" class="block w-full h-auto bg-[#141414]" width="390" height="844">
+  </picture>
+
+  <section class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24">
+    <p class="mock-note"><strong>Qué mirar.</strong> El banner aparece en <em>idle</em> tras la carga (aquí, 600 ms), fijo abajo, sin fondo oscuro y sin bloquear nada. En 390 tapa la cuerda del hero, nunca la tarjeta (LCP). Mientras está abierto, el final de la página gana un hueco igual a su alto: newsletter y pie se pueden subir por encima. El dock (D45) vive arriba y no choca.</p>
+    <h2 class="title-section">¿Por dónde empiezas?</h2>
+    <p class="mt-6 text-[19px] leading-[1.5] text-meta max-w-[56ch]">Contenido de relleno de la home para poder desplazarse. Rocódromos, pies de gato y blog siguen aquí, igual que en <code class="font-mono text-[15px]">home-v2.html</code>.</p>
+    <div class="mt-10 grid md:grid-cols-3 gap-5">
+      <div class="slab bg-board p-6"><p class="text-[13px] text-meta">01</p><p class="mt-2 text-[20px] font-medium">Elegir rocódromo</p><p class="mt-2 text-[15px] text-meta">Precios, horarios y cómo se escala en cada uno.</p></div>
+      <div class="slab bg-board p-6"><p class="text-[13px] text-meta">02</p><p class="mt-2 text-[20px] font-medium">Primer pie de gato</p><p class="mt-2 text-[15px] text-meta">Comparador con precios verificados en Barrabes.</p></div>
+      <div class="slab bg-board p-6"><p class="text-[13px] text-meta">03</p><p class="mt-2 text-[20px] font-medium">Leer el blog</p><p class="mt-2 text-[15px] text-meta">Técnica, material y la escena de Barcelona.</p></div>
+    </div>
+  </section>
+  <section class="bg-elevated"><div class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24">
+    <h2 class="title-section">Blog</h2>
+    <p class="mt-6 text-[17px] leading-[1.6] text-prose max-w-[62ch]">Más relleno para que haya scroll: el banner sigue ahí al bajar, porque desplazarse no es aceptar. Solo se cierra con «Aceptar», «Rechazar» o guardando desde «Configurar».</p>
+  </div></section>
+</main>
+
+<!-- Newsletter: bloque naranja de todas las páginas (resumido del de home-v2) -->
+<section id="newsletter" class="field-orange dust" aria-labelledby="t-news">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-28">
+    <h2 id="t-news" class="title-section-lg">Una carta al mes.<br>Nada más.</h2>
+    <div class="mt-10 grid lg:grid-cols-12 gap-x-6 gap-y-8 items-start">
+      <p class="lg:col-span-5 text-[20px] md:text-[24px] leading-[1.35] tracking-[-.01em] font-medium max-w-[26ch]">Novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.</p>
+      <div class="lg:col-span-6 lg:col-start-7 on-paper slab-dark bg-paper p-5 md:p-7">
+        <label for="nl-email" class="block text-[15px] font-medium mb-2">Tu email</label>
+        <div class="flex flex-col gap-3 lg:flex-row"><input id="nl-email" type="email" placeholder="nombre@correo.com" class="field-input"><button type="button" class="btn btn-ink w-full lg:w-auto">Suscribirme</button></div>
+        <label class="mt-4 flex items-start gap-3 min-h-11 text-[15px] leading-[1.45]"><input type="checkbox" class="check"><span>Quiero recibir novedades de ChalkGuide por email. Puedo darme de baja cuando quiera.</span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pie: «Preferencias de cookies» en la fila inferior, junto al © y al idioma -->
+<footer class="chrome-dark" id="site-footer">
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-16 md:pt-20 pb-8">
+    <div class="grid lg:grid-cols-12 gap-x-6 gap-y-12">
+      <div class="lg:col-span-5">
+        <img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-7 w-auto block">
+        <p class="mt-8 text-[24px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium max-w-[20ch]">Ninguna reseña se compra. Lo pagado se marca.</p>
+      </div>
+      <nav aria-label="Cuentas claras" class="lg:col-span-7 text-[15px]">
+        <p class="text-[13px] font-medium text-meta">Cuentas claras</p>
+        <ul class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-x-6">
+          <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Transparencia</a></li>
+          <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Privacidad</a></li>
+          <li><a href="#cookies-page" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Cookies</a></li>
+          <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Aviso legal</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="mt-12 pt-5 border-t border-line-strong flex flex-wrap items-center gap-x-6 gap-y-1 text-[13px] text-meta">
+      <p class="mr-auto">© 2026 ChalkGuide</p>
+      <!-- Sin JS: enlace normal a /cookies#preferencias. Con JS: abre el panel (aria-haspopup). -->
+      <span class="flex flex-wrap gap-x-6">
+        <a href="#cookies-page" class="foot-link" data-cc-open aria-haspopup="dialog">Preferencias de cookies</a>
+        <a href="#" lang="en" hreflang="en" class="foot-link">English</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Anexo: bloque «Tu elección» de /cookies ===== -->
+<section id="cookies-page" class="border-t-4 border-[#e8923a]" aria-labelledby="t-ck">
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-12 md:pt-16 pb-20">
+    <p class="annex-title text-meta">Anexo · /cookies (en: /en/cookies) · arriba del texto legal</p>
+    <h2 id="t-ck" class="title-section mt-6">Cookies</h2>
+    <p class="mt-6 text-[19px] leading-[1.5] text-meta max-w-[56ch]">Entradilla de la página legal (loro-lola). El bloque de abajo va justo después, antes de la tabla de cookies, con <code class="font-mono text-[15px]">id="preferencias"</code>.</p>
+    <div id="ck-block" class="mt-10 max-w-[820px]"></div>
+    <div class="mt-10 max-w-[820px]">
+      <p class="annex-title text-meta">Sin JavaScript</p>
+      <div class="mt-3 slab bg-board pref">
+        <div class="min-w-0">
+          <h3 class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">Tu elección</h3>
+          <p class="mt-2 text-[15px] text-meta max-w-[56ch]">Sin JavaScript no se carga ninguna cookie de Google ni de Meta, así que no hay nada que elegir. Para cambiar tus preferencias, activa JavaScript.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Primera capa: banner =====
+     No modal: role="dialog" aria-modal="false", no roba el foco, va el primero en el DOM tras el salto
+     (aquí se inserta con JS al final; en la app se mueve #cc-main al principio de <body>). -->
+<div id="cc" class="cc" role="dialog" aria-modal="false" aria-labelledby="cc-t" aria-describedby="cc-d" hidden>
+  <div class="cc-in">
+    <div class="min-w-0">
+      <h2 id="cc-t" class="cc-title">Las cookies, a tu elección</h2>
+      <p id="cc-d" class="cc-text">Con tu permiso, Google mide las visitas y Google y Meta te enseñan ChalkGuide en otras webs. Sin él, todo funciona igual. <a href="#cookies-page" class="link">Política de cookies</a></p>
+    </div>
+    <div class="cc-btns">
+      <button type="button" class="btn btn-ghost cc-btn" data-cc="accept">Aceptar</button>
+      <button type="button" class="btn btn-ghost cc-btn" data-cc="reject">Rechazar</button>
+      <button type="button" class="btn btn-ghost cc-btn" data-cc-open aria-haspopup="dialog">Configurar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Segunda capa: panel de preferencias ===== -->
+<dialog id="pm" class="cc-pm" aria-labelledby="pm-t" aria-describedby="pm-d">
+  <div class="flex items-start gap-3 px-5 md:px-7 pt-5 md:pt-6 pb-4 border-b border-[#dcd5c8]">
+    <div class="min-w-0 pt-2">
+      <h2 id="pm-t" class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">Preferencias de cookies</h2>
+      <p id="pm-saved" class="mt-1 text-[13px] text-meta"></p>
+    </div>
+    <button type="button" class="ml-auto grid place-items-center size-11 rounded-lg hover:bg-[#ebe6dc] shrink-0" data-pm-close aria-label="Cerrar sin guardar"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="overflow-y-auto px-5 md:px-7 py-5">
+    <p id="pm-d" class="text-[15px] leading-[1.55] text-prose max-w-[60ch]">Elige qué permites. Lo que no actives no se carga. Puedes cambiarlo cuando quieras desde «Preferencias de cookies», al pie de cada página. <a href="#cookies-page" class="link text-accent">Política de cookies</a></p>
+    <div class="mt-5">
+      <section class="cat" aria-labelledby="c-nec">
+        <div class="cat-head">
+          <h3 id="c-nec">Necesarias</h3>
+          <span class="lock"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Siempre activas</span>
+        </div>
+        <p class="desc">Guardan esta elección y, si inicias sesión con Google, tu sesión. Sin ellas la web no funciona.</p>
+        <details class="ck"><summary><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>Qué guardan y de quién</span></summary>
+          <div class="ck-list">
+            <div class="ck-row"><code>cc_cookie</code><span>ChalkGuide · tu elección de cookies</span><span class="m">Por confirmar</span></div>
+            <div class="ck-row"><code>sb-…-auth-token</code><span>ChalkGuide (Supabase) · sesión, solo si inicias sesión</span><span class="m">Por confirmar</span></div>
+          </div>
+        </details>
+      </section>
+      <section class="cat" aria-labelledby="c-an">
+        <div class="cat-head">
+          <h3 id="c-an">Analítica</h3>
+          <button type="button" role="switch" class="sw" aria-checked="false" aria-labelledby="c-an" aria-describedby="c-an-d" data-cat="analytics"><span class="sw-state" aria-hidden="true">No</span><span class="track" aria-hidden="true"><span class="knob"></span></span></button>
+        </div>
+        <p id="c-an-d" class="desc">Google Analytics: qué páginas se leen y desde dónde llegan, para saber qué escribir. No sirve para anuncios.</p>
+        <details class="ck"><summary><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>Qué guardan y de quién</span></summary>
+          <div class="ck-list">
+            <div class="ck-row"><code>_ga, _ga_&lt;id&gt;</code><span>Google · distinguir visitas</span><span class="m">Por confirmar</span></div>
+          </div>
+        </details>
+      </section>
+      <section class="cat" aria-labelledby="c-ad">
+        <div class="cat-head">
+          <h3 id="c-ad">Publicidad y remarketing</h3>
+          <button type="button" role="switch" class="sw" aria-checked="false" aria-labelledby="c-ad" aria-describedby="c-ad-d" data-cat="ads"><span class="sw-state" aria-hidden="true">No</span><span class="track" aria-hidden="true"><span class="knob"></span></span></button>
+        </div>
+        <p id="c-ad-d" class="desc">Google Ads y el píxel de Meta: recordar que has visitado ChalkGuide para enseñarte sus anuncios en otras webs y redes. Nunca subo tu email.</p>
+        <details class="ck"><summary><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>Qué guardan y de quién</span></summary>
+          <div class="ck-list">
+            <div class="ck-row"><code>_gcl_*</code><span>Google · medir anuncios</span><span class="m">Por confirmar</span></div>
+            <div class="ck-row"><code>_fbp</code><span>Meta · listas de remarketing</span><span class="m">Por confirmar</span></div>
+          </div>
+        </details>
+      </section>
+    </div>
+    <p class="mt-4 flex items-start gap-2 text-[14px] leading-[1.5] text-meta max-w-[60ch]"><svg width="16" height="16" class="shrink-0 mt-[3px]" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Los vídeos de YouTube no dependen de esto: solo se cargan cuando pulsas «Reproducir».</span></p>
+  </div>
+  <div class="px-5 md:px-7 py-4 border-t border-[#dcd5c8] grid gap-2 sm:grid-cols-3">
+    <button type="button" class="btn btn-ghost cc-btn" data-cc="reject">Rechazar todo</button>
+    <button type="button" class="btn btn-ghost cc-btn" data-cc="accept">Aceptar todo</button>
+    <button type="button" class="btn btn-ghost cc-btn" data-cc="save">Guardar selección</button>
+  </div>
+</dialog>
+
+<!-- Anuncio para lectores de pantalla: aparición del banner y elección guardada -->
+<p id="cc-live" class="sr-only" role="status" aria-live="polite"></p>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const cc = $('#cc'), pm = $('#pm'), live = $('#cc-live');
+let variant = new URLSearchParams(location.search).get('v') === 'b' ? 'b' : 'a';
+let choice = null;   // { analytics:boolean, ads:boolean, date:string }
+let opener = null;
+
+const fmt = d => d.toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' });
+function syncH() { document.documentElement.style.setProperty('--cc-h', cc.hidden ? '0px' : cc.offsetHeight + 'px'); }
+new ResizeObserver(syncH).observe(cc);
+
+function setVariant(v) {
+  variant = v; cc.classList.toggle('is-b', v === 'b');
+  $$('[data-v]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
+  syncH();
+}
+function showBanner() {
+  if (choice) return;
+  cc.hidden = false; cc.classList.remove('out'); syncH();
+  live.textContent = ''; setTimeout(() => { live.textContent = 'Aviso de cookies al final de la página: Aceptar, Rechazar o Configurar.'; }, 50);
+}
+function hideBanner() {
+  const hadFocus = cc.contains(document.activeElement);
+  cc.classList.add('out');
+  setTimeout(() => { cc.hidden = true; syncH(); }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 150);
+  if (hadFocus) $('#main').focus({ preventScroll:true });
+}
+function setSwitches(a, d) {
+  $$('.sw').forEach(s => { const on = s.dataset.cat === 'analytics' ? a : d; s.setAttribute('aria-checked', on); s.querySelector('.sw-state').textContent = on ? 'Sí' : 'No'; });
+}
+function openPanel(btn) {
+  opener = btn || null;
+  setSwitches(choice?.analytics ?? false, choice?.ads ?? false);   // nunca premarcadas: sin elección, todo en No
+  $('#pm-saved').textContent = choice ? `Tu elección actual, guardada el ${fmt(choice.date)}.` : 'Todavía no has elegido. No se carga nada hasta que lo hagas.';
+  pm.showModal();
+  pm.querySelector('[data-pm-close]').focus();
+}
+function save(a, d) {
+  choice = { analytics:a, ads:d, date:new Date() };
+  if (pm.open) pm.close();
+  hideBanner(); renderCookiesBlock();
+  live.textContent = 'Preferencias de cookies guardadas.';
+}
+
+document.addEventListener('click', e => {
+  const v = e.target.closest('[data-v]'); if (v) { setVariant(v.dataset.v); return; }
+  const sc = e.target.closest('[data-scene]'); if (sc) { scene(sc.dataset.scene); return; }
+  const o = e.target.closest('[data-cc-open]'); if (o) { e.preventDefault(); openPanel(o); return; }
+  const a = e.target.closest('[data-cc]');
+  if (a) {
+    const k = a.dataset.cc;
+    if (k === 'accept') save(true, true);
+    if (k === 'reject') save(false, false);
+    if (k === 'save') save($('.sw[data-cat=analytics]').getAttribute('aria-checked') === 'true', $('.sw[data-cat=ads]').getAttribute('aria-checked') === 'true');
+    return;
+  }
+  const s = e.target.closest('.sw');
+  if (s) { const on = s.getAttribute('aria-checked') !== 'true'; s.setAttribute('aria-checked', on); s.querySelector('.sw-state').textContent = on ? 'Sí' : 'No'; return; }
+  if (e.target.closest('[data-pm-close]') || e.target === pm) pm.close();
+});
+pm.addEventListener('close', () => { if (opener && document.contains(opener) && !opener.closest('[hidden]')) opener.focus(); });
+
+function renderCookiesBlock() {
+  const yes = '<span class="state state-on"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4" fill="currentColor"/></svg>Activada</span>';
+  const no = '<span class="state state-off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>Desactivada</span>';
+  const body = choice
+    ? `<p class="mt-2 text-[15px] text-meta">Guardada el ${fmt(choice.date)}.</p>
+       <dl class="mt-4 grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-2 text-[15px] max-w-[440px]">
+         <dt class="min-h-8 flex items-center">Analítica</dt><dd class="flex items-center">${choice.analytics ? yes : no}</dd>
+         <dt class="min-h-8 flex items-center">Publicidad y remarketing</dt><dd class="flex items-center">${choice.ads ? yes : no}</dd>
+       </dl>`
+    : `<p class="mt-2 text-[15px] text-meta max-w-[56ch]">Todavía no has elegido. Hasta que lo hagas no se carga ninguna cookie de Google ni de Meta.</p>`;
+  $('#ck-block').innerHTML = `<div class="slab bg-board pref" id="preferencias">
+    <div class="min-w-0"><h3 class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">Tu elección</h3>${body}</div>
+    <div class="md:pt-1"><button type="button" class="btn btn-ghost w-full md:w-auto" data-cc-open aria-haspopup="dialog">${choice ? 'Cambiar preferencias' : 'Elegir ahora'}</button></div>
+  </div>`;
+}
+
+function scene(k) {
+  if (pm.open) pm.close();
+  if (k === 'first')  { choice = null; window.scrollTo({ top:0 }); showBanner(); }
+  if (k === 'bottom') { choice = null; showBanner(); setTimeout(() => { const f = $('#site-footer').getBoundingClientRect(); window.scrollTo({ top:scrollY + f.bottom - innerHeight + cc.offsetHeight }); }, 250); }  /* en la app el pie es lo último: el hueco va justo debajo */
+  if (k === 'panel')  { choice = null; showBanner(); openPanel($('#cc [data-cc-open]')); }
+  if (k === 'chosen') { choice = { analytics:true, ads:false, date:new Date(2026,10,13) }; cc.hidden = true; syncH(); $('#site-footer').scrollIntoView(); openPanel($('#site-footer [data-cc-open]')); }
+  if (k === 'cookies'){ choice = { analytics:true, ads:false, date:new Date(2026,10,13) }; cc.hidden = true; syncH(); $('#cookies-page').scrollIntoView(); }
+  renderCookiesBlock();
+}
+$('#notes-toggle').addEventListener('click', e => { const off = document.body.classList.toggle('no-notes'); e.target.textContent = off ? 'Mostrar notas' : 'Ocultar notas'; });
+
+setVariant(variant); renderCookiesBlock();
+/* En la app: requestIdleCallback (respaldo setTimeout 2 s). Aquí 600 ms para verlo. */
+setTimeout(showBanner, 600);
+/* Solo mockup: ?scene=panel|bottom|chosen|cookies para capturas; ?audit=1 escribe medidas en <body data-audit>. */
+const qp = new URLSearchParams(location.search);
+if (qp.get('scene')) setTimeout(() => scene(qp.get('scene')), 700);
+if (qp.get('audit')) setTimeout(() => {
+  const r = cc.getBoundingClientRect(), vh = innerHeight;
+  const lum = c => { const [r,g,b] = c.match(/\d+(\.\d+)?/g).slice(0,3).map(Number).map(v => { v /= 255; return v <= .03928 ? v/12.92 : ((v+.055)/1.055)**2.4; }); return .2126*r+.7152*g+.0722*b; };
+  const bgOf = el => { while (el) { const c = getComputedStyle(el).backgroundColor; if (c && !c.includes('rgba(0, 0, 0, 0)') && !/,\s*0\)$/.test(c)) return c; el = el.parentElement; } return 'rgb(244,241,234)'; };
+  const fails = [];
+  [...cc.querySelectorAll('*'), ...pm.querySelectorAll('*')].forEach(el => {
+    if (![...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) return;
+    if (!el.getClientRects().length) return;
+    const a = lum(getComputedStyle(el).color), b = lum(bgOf(el)); const ratio = (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+    if (ratio < 4.5) fails.push(el.textContent.trim().slice(0,20) + ':' + ratio.toFixed(2));
+  });
+  const small = [...cc.querySelectorAll('button,a'), ...pm.querySelectorAll('button,summary')].filter(b => b.getClientRects().length && b.getBoundingClientRect().height < 44 && !b.closest('p')).map(b => b.textContent.trim().slice(0,16));
+  document.body.dataset.audit = JSON.stringify({ w:innerWidth, hscroll:document.documentElement.scrollWidth > innerWidth, bannerH:Math.round(r.height), pctVH:Math.round(r.height/vh*100), bannerArea:Math.round(r.width*r.height), contrastFails:fails, smallTargets:small });
+}, qp.get('scene') ? 1500 : 1000);
+</script>
+</body>
+</html>

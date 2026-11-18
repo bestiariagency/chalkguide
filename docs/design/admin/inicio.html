@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Inicio · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+  .cal>div{min-height:96px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px;position:relative}
+  .cal>div:nth-child(7n){border-right:0}
+  .cal .out{background:var(--side)} .cal .out .d{color:var(--muted)}
+  .cal .d{font-size:12px;font-variant-numeric:tabular-nums;color:var(--meta);display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:99px}
+  .cal .today .d{background:var(--acc);color:#fff;font-weight:600}
+  .ev{display:block;margin-top:4px;font-size:11.5px;line-height:15px;padding:3px 5px;border-radius:4px;overflow:hidden}
+  .ev span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+  .ev.pub{background:var(--st-pub-bg);color:var(--st-pub)} .ev.sched{background:var(--st-sched-bg);color:var(--st-sched)} .ev.rev{background:var(--st-rev-bg);color:var(--st-rev)}
+  .ev.agenda{color:var(--meta);background:transparent;box-shadow:inset 0 0 0 1px var(--line-strong)} .ev.agenda.todo{box-shadow:inset 0 0 0 1px var(--warn-icon);color:var(--warn)}
+  .cal .add{position:absolute;right:4px;top:4px;opacity:0} .cal>div:hover .add,.cal .add:focus-visible{opacity:1}
+</style>
+</head>
+<body data-page="inicio" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 hidden md:flex items-center gap-2 border-b border-line text-sm">
+    <span class="font-medium">Inicio</span>
+    <div class="ml-auto flex items-center gap-2"><a href="#" class="btn btn-ghost t"><i data-lucide="external-link"></i>Ver sitio</a><a href="articulo-editor.html" class="btn btn-primary t"><i data-lucide="plus"></i>Nuevo artículo</a></div>
+  </header>
+
+  <div class="px-4 md:px-6 py-6 max-w-[1440px]">
+    <div class="flex flex-wrap items-end gap-x-4 gap-y-1">
+      <h1 class="text-xl font-semibold tracking-tight">Buenos días, Xavi</h1>
+      <p class="text-sm text-meta">Viernes 9 de octubre · últimos 30 días frente a los 30 anteriores</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="mt-5 grid grid-cols-2 lg:grid-cols-4 border border-line rounded-lg overflow-hidden bg-elev">
+      <a href="suscriptores.html" class="p-4 border-b lg:border-b-0 border-r border-line hover:bg-side t">
+        <p class="text-xs text-meta">Suscriptores activos</p><p class="mt-1 text-2xl font-semibold num tracking-tight">1.284</p>
+        <p class="mt-1 text-xs num"><span class="text-ok font-medium">+62</span> <span class="text-meta">altas · 6 bajas</span></p>
+        <svg viewBox="0 0 120 28" class="mt-2 w-full h-7 text-acc" aria-hidden="true" preserveAspectRatio="none"><polyline fill="none" stroke="currentColor" stroke-width="1.5" points="0,22 11,20 22,21 33,17 44,19 55,16 66,12 77,14 88,11 99,7 110,9 120,5"/></svg></a>
+      <div class="p-4 border-b lg:border-b-0 lg:border-r border-line">
+        <p class="text-xs text-meta">Visitas</p><p class="mt-1 text-2xl font-semibold num tracking-tight">18.420</p>
+        <p class="mt-1 text-xs num"><span class="text-ok font-medium">+9 %</span> <span class="text-meta">frente a 16.890</span></p>
+        <svg viewBox="0 0 120 28" class="mt-2 w-full h-7 text-meta" aria-hidden="true" preserveAspectRatio="none"><polyline fill="none" stroke="currentColor" stroke-width="1.5" points="0,18 11,15 22,19 33,14 44,16 55,12 66,15 77,10 88,13 99,9 110,11 120,8"/></svg></div>
+      <a href="articulos.html" class="p-4 border-r border-line hover:bg-side t">
+        <p class="text-xs text-meta">Artículos</p><p class="mt-1 text-2xl font-semibold num tracking-tight">15 <span class="text-sm font-normal text-meta">publicados</span></p>
+        <p class="mt-2 flex flex-wrap gap-1.5"><span class="chip st-sched"><span class="dot"></span>2 programados</span><span class="chip st-draft"><span class="dot"></span>7 borradores</span><span class="chip st-rev"><span class="dot"></span>2 con cambios</span></p></a>
+      <a href="opiniones.html" class="p-4 hover:bg-side t">
+        <p class="text-xs text-meta">Opiniones</p><p class="mt-1 text-2xl font-semibold num tracking-tight">7 <span class="text-sm font-normal text-meta">nuevas</span></p>
+        <p class="mt-2 text-xs text-meta num">desde tu última visita · 31 este mes · 3 ocultas</p></a>
+    </div>
+
+    <div class="mt-6 grid xl:grid-cols-[1fr_380px] gap-6">
+      <!-- Calendario editorial -->
+      <section aria-labelledby="h-cal" class="card overflow-hidden">
+        <div class="card-h !h-auto min-h-[44px] py-2 flex-wrap">
+          <h2 id="h-cal">Calendario editorial</h2>
+          <div class="flex items-center gap-1 ml-1"><button class="icon-btn !w-7 !h-7" aria-label="Mes anterior"><i data-lucide="chevron-left"></i></button><span class="text-sm font-medium w-28 text-center">Octubre 2026</span><button class="icon-btn !w-7 !h-7" aria-label="Mes siguiente"><i data-lucide="chevron-right"></i></button></div>
+          <div class="ml-auto flex items-center gap-3 text-xs text-meta">
+            <label class="hidden sm:flex items-center gap-2"><input type="checkbox" class="cb" checked id="showAgenda">Agenda</label>
+            <div class="seg hidden md:inline-flex" role="radiogroup" aria-label="Vista"><button role="radio" aria-checked="true">Mes</button><button role="radio" aria-checked="false">Lista</button></div>
+          </div>
+        </div>
+        <!-- mes (≥ 768) -->
+        <div class="hidden md:block">
+          <div class="cal text-2xs font-mono uppercase tracking-[.1em] text-muted bg-side border-b border-line" aria-hidden="true">
+            <span class="px-2 py-1.5">lun</span><span class="px-2 py-1.5">mar</span><span class="px-2 py-1.5">mié</span><span class="px-2 py-1.5">jue</span><span class="px-2 py-1.5">vie</span><span class="px-2 py-1.5">sáb</span><span class="px-2 py-1.5">dom</span>
+          </div>
+          <div class="cal" id="cal" role="grid" aria-label="Octubre de 2026"></div>
+        </div>
+        <!-- lista (< 768) -->
+        <ol class="md:hidden divide-y divide-line text-sm" aria-label="Próximas dos semanas">
+          <li class="px-4 py-3 flex gap-3"><div class="w-10 text-center flex-none"><p class="font-mono text-2xs uppercase text-acc">hoy</p><p class="text-lg font-semibold num leading-6">9</p></div><p class="text-meta self-center">Nada publicado hoy. <a href="#" class="underline underline-offset-2 text-fg">Programar un borrador</a></p></li>
+          <li class="px-4 py-3 flex gap-3"><div class="w-10 text-center flex-none"><p class="font-mono text-2xs uppercase text-meta">mié</p><p class="text-lg font-semibold num leading-6">14</p></div><div class="min-w-0"><a href="articulo-editor.html" class="font-medium line-clamp-2">Cuándo resolar: señales de que tus pies de gato lo necesitan</a><p class="mt-1 flex items-center gap-2 text-xs text-meta"><span class="chip st-sched"><span class="dot"></span>08:00</span>Material</p></div></li>
+          <li class="px-4 py-3 flex gap-3"><div class="w-10 text-center flex-none"><p class="font-mono text-2xs uppercase text-meta">sáb</p><p class="text-lg font-semibold num leading-6">17</p></div><div class="min-w-0"><p class="font-medium">Open de bloque de otoño</p><p class="mt-1 text-xs text-meta">Agenda · Presa Badalona</p></div></li>
+          <li class="px-4 py-3 flex gap-3"><div class="w-10 text-center flex-none"><p class="font-mono text-2xs uppercase text-meta">dom</p><p class="text-lg font-semibold num leading-6">18</p></div><div class="min-w-0"><p class="font-medium">Taller de nudos y aseguramiento</p><p class="mt-1 flex items-center gap-2 text-xs text-meta"><span class="chip st-warn"><i data-lucide="sparkles"></i>Por aprobar</span>Agenda · La Paret de Gràcia</p></div></li>
+          <li class="px-4 py-3 flex gap-3"><div class="w-10 text-center flex-none"><p class="font-mono text-2xs uppercase text-meta">mié</p><p class="text-lg font-semibold num leading-6">21</p></div><div class="min-w-0"><a href="articulo-editor.html" class="font-medium line-clamp-2">Rocódromos con zona infantil para ir con hijos</a><p class="mt-1 flex items-center gap-2 text-xs text-meta"><span class="chip st-sched"><span class="dot"></span>08:00</span>Dónde escalar</p></div></li>
+        </ol>
+        <div class="px-4 py-2.5 border-t border-line flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-meta">
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:var(--st-pub-bg);box-shadow:inset 0 0 0 1px var(--st-pub)"></span>Publicado</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:var(--st-sched-bg);box-shadow:inset 0 0 0 1px var(--st-sched)"></span>Programado</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:var(--st-rev-bg);box-shadow:inset 0 0 0 1px var(--st-rev)"></span>Publicado con cambios</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="box-shadow:inset 0 0 0 1px var(--line-strong)"></span>Agenda</span>
+          <span class="ml-auto hidden md:inline">Arrastra un programado a otro día para moverlo · <span class="kbd">+</span> en un día libre programa un borrador</span>
+        </div>
+      </section>
+
+      <!-- Pendiente -->
+      <section aria-labelledby="h-pend" class="card self-start">
+        <div class="card-h"><h2 id="h-pend">Pendiente</h2><span class="text-xs text-muted num">6</span></div>
+        <ul class="divide-y divide-line text-sm">
+          <li><a href="opiniones.html" class="row t flex items-center gap-3 px-4 min-h-[44px] py-2 hover:bg-subtle"><i data-lucide="message-square" class="w-4 h-4 text-acc flex-none"></i><span class="flex-1"><span class="font-medium num">7 opiniones nuevas</span> <span class="text-meta">· 2 con nota ≤ 2</span></span><i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i></a></li>
+          <li><a href="articulos.html#cambios" class="row t flex items-center gap-3 px-4 min-h-[44px] py-2 hover:bg-subtle"><i data-lucide="git-compare-arrows" class="w-4 h-4 text-st-rev flex-none"></i><span class="flex-1"><span class="font-medium num">2 con cambios sin publicar</span> <span class="text-meta">· 1 artículo, 1 ficha</span></span><i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i></a></li>
+          <li><a href="#" class="row t flex items-center gap-3 px-4 min-h-[44px] py-2 hover:bg-subtle"><i data-lucide="calendar-plus" class="w-4 h-4 text-acc flex-none"></i><span class="flex-1"><span class="font-medium num">4 eventos</span> del agente por aprobar <span class="text-meta">· el primero, 18 oct</span></span><i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i></a></li>
+          <li><a href="rocodromo-editor.html" class="row t flex items-center gap-3 px-4 min-h-[44px] py-2 hover:bg-subtle"><i data-lucide="badge-check" class="w-4 h-4 text-warn-icon flex-none"></i><span class="flex-1"><span class="font-medium num">5 fichas</span> sin verificar hace más de 6 meses</span><i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i></a></li>
+          <li><a href="medios.html" class="row t flex items-center gap-3 px-4 min-h-[44px] py-2 hover:bg-subtle"><i data-lucide="image-off" class="w-4 h-4 text-warn-icon flex-none"></i><span class="flex-1"><span class="font-medium num">9 fotos</span> sin texto alternativo</span><i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i></a></li>
+          <li><a href="articulos.html" class="row t flex items-center gap-3 px-4 min-h-[44px] py-2 hover:bg-subtle"><i data-lucide="calendar-x" class="w-4 h-4 text-meta flex-none"></i><span class="flex-1">Nada programado después del <span class="font-medium">21 oct</span></span><i data-lucide="chevron-right" class="w-4 h-4 text-muted"></i></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="mt-6 grid xl:grid-cols-[1fr_380px] gap-6">
+      <section aria-labelledby="h-chart" class="card">
+        <div class="card-h"><h2 id="h-chart">Altas de suscriptores por semana</h2><a href="#" class="ml-auto text-xs text-meta hover:text-fg underline underline-offset-2">Estadísticas</a></div>
+        <figure class="p-4">
+          <svg viewBox="0 -14 600 194" class="w-full h-40" role="img" aria-labelledby="chart-desc"><desc id="chart-desc">Altas semanales de las últimas 12 semanas: 8, 11, 9, 14, 10, 12, 17, 13, 15, 19, 14 y 16.</desc>
+            <g stroke="var(--line)"><line x1="28" y1="20" x2="600" y2="20"/><line x1="28" y1="70" x2="600" y2="70"/><line x1="28" y1="120" x2="600" y2="120"/></g><line x1="28" y1="160" x2="600" y2="160" stroke="var(--line-strong)"/>
+            <g font-family="JetBrains Mono" font-size="10" fill="var(--muted)"><text x="0" y="24">20</text><text x="0" y="74">13</text><text x="0" y="124">7</text><text x="6" y="164">0</text></g>
+            <g fill="var(--line-strong)"><rect x="40" y="96" width="30" height="64" rx="3"/><rect x="87" y="72" width="30" height="88" rx="3"/><rect x="134" y="88" width="30" height="72" rx="3"/><rect x="181" y="48" width="30" height="112" rx="3"/><rect x="228" y="80" width="30" height="80" rx="3"/><rect x="275" y="64" width="30" height="96" rx="3"/><rect x="322" y="24" width="30" height="136" rx="3"/><rect x="369" y="56" width="30" height="104" rx="3"/></g>
+            <g fill="var(--acc)"><rect x="416" y="40" width="30" height="120" rx="3"/><rect x="463" y="8" width="30" height="152" rx="3"/><rect x="510" y="48" width="30" height="112" rx="3"/><rect x="557" y="32" width="30" height="128" rx="3"/></g></svg>
+          <figcaption class="mt-2 flex flex-wrap gap-x-4 text-xs text-meta"><span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-acc"></span>Últimos 30 días: 64 altas</span><a href="#" class="ml-auto hover:text-fg underline underline-offset-2">Ver como tabla</a></figcaption>
+        </figure>
+      </section>
+      <section aria-labelledby="h-act" class="card">
+        <div class="card-h"><h2 id="h-act">Actividad reciente</h2><a href="actividad.html" class="ml-auto text-xs text-meta hover:text-fg underline underline-offset-2">Registro completo</a></div>
+        <ol class="px-4 py-2 text-sm">
+          <li class="flex gap-3 py-2"><i data-lucide="git-compare-arrows" class="w-4 h-4 mt-0.5 text-st-rev flex-none"></i><p class="flex-1">Cambios sin publicar en <a href="articulo-editor.html" class="font-medium hover:underline">Rocódromos para ir solo…</a><span class="block text-xs text-muted num">09:12 · 3 campos</span></p></li>
+          <li class="flex gap-3 py-2"><i data-lucide="download" class="w-4 h-4 mt-0.5 text-meta flex-none"></i><p class="flex-1">Exportaste <span class="font-medium">suscriptores activos</span> · 1.284 filas · CSV<span class="block text-xs text-muted num">08:55 · contiene emails</span></p></li>
+          <li class="flex gap-3 py-2"><i data-lucide="eye-off" class="w-4 h-4 mt-0.5 text-meta flex-none"></i><p class="flex-1">Ocultaste una opinión en <span class="font-medium">Bloc del Besòs</span><span class="block text-xs text-muted num">08:40</span></p></li>
+          <li class="flex gap-3 py-2"><i data-lucide="replace" class="w-4 h-4 mt-0.5 text-meta flex-none"></i><p class="flex-1">Reemplazaste <span class="mono text-xs">sala-bloque-poblenou.jpg</span> (v2)<span class="block text-xs text-muted num">Ayer, 19:05 · en uso en 3 sitios</span></p></li>
+        </ol>
+      </section>
+    </div>
+  </div>
+</main>
+<script>
+/* calendario de octubre de 2026 (empieza en jueves) */
+const ITEMS={
+ '-1':[['pub','Mi primer resolado','articulo-editor.html']],
+ '3':[['rev','Rocódromos para ir solo','articulo-editor.html']],
+ '14':[['sched','08:00 Cuándo resolar','articulo-editor.html']],
+ '17':[['agenda','Open de bloque · Presa']],
+ '18':[['agenda todo','Taller de nudos · por aprobar']],
+ '21':[['sched','08:00 Rocódromos con zona infantil','articulo-editor.html']],
+ '24':[['agenda','Salida a Montserrat']],
+ '8':[['pub','Cuánto cuesta escalar','articulo-editor.html']]
+};
+const cal=document.getElementById('cal');let html='';
+const lead=[28,29,30];
+for(let i=0;i<35;i++){
+  let d,out=false,key;
+  if(i<3){d=lead[i];out=true;key=i===2?'-1':null;} else {d=i-2;if(d>31){d=d-31;out=true;key=null;}else key=String(d);}
+  const today=!out&&d===9;
+  const items=(key&&ITEMS[key])||[];
+  const evs=items.map(([c,t,h])=>h?`<a href="${h}" class="ev ${c}" title="${t}"><span>${t}</span></a>`:`<p class="ev ${c}" title="${t}"><span>${t}</span></p>`).join('');
+  const future=!out&&d>9&&!items.length;
+  html+=`<div role="gridcell" class="${out?'out':''} ${today?'today':''}" aria-label="${out?'':d+' de octubre'}${today?', hoy':''}${items.length?', '+items.length+' elementos':''}"><span class="d">${d}</span>${future?`<button class="add icon-btn !w-6 !h-6" aria-label="Programar un borrador el ${d} de octubre"><i data-lucide="plus" class="!w-3.5 !h-3.5"></i></button>`:''}${evs}</div>`;
+}
+cal.innerHTML=html;
+document.getElementById('showAgenda').onchange=e=>cal.querySelectorAll('.ev.agenda').forEach(x=>x.style.display=e.target.checked?'':'none');
+</script>
+</body>
+</html>

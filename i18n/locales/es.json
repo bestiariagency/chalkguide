@@ -1,10 +1,1139 @@
 {
+  "brand": {
+    "name": "ChalkGuide",
+    "city": "BCN",
+    "homeLabel": "ChalkGuide Barcelona, inicio"
+  },
+  "nav": {
+    "skipToContent": "Saltar al contenido",
+    "main": "Navegación principal",
+    "gyms": "Rocódromos",
+    "gymsDescriptionGeneric": "Fichas con precios y mi reseña",
+    "resoling": "Resolar pies de gato",
+    "resolingDescription": "Precio por par, plazo y calidad",
+    "shoes": "Pies de gato",
+    "shoesDescription": "Comparador lado a lado",
+    "blog": "Blog",
+    "events": "Agenda",
+    "about": "Sobre mí",
+    "newsletter": "Newsletter",
+    "language": "Idioma",
+    "languageEs": "Español",
+    "languageEn": "English",
+    "switchToEs": "Cambiar a español",
+    "switchToEn": "Cambiar a inglés",
+    "home": "Inicio",
+    "breadcrumbs": "Migas de pan",
+    "mainCompact": "Navegación principal compacta",
+    "mainMobile": "Navegación del menú móvil",
+    "preview": {
+      "gyms": {
+        "range": "De {min} a {max} €/mes",
+        "price": "{price} €/mes",
+        "note": "{n} rocódromo. Cuota: {name} | {n} rocódromos. Cuota más baja: {name}"
+      },
+      "shoes": {
+        "from": "Para empezar, desde {price} €",
+        "note": "{n} modelo para comparar lado a lado | {n} modelos para comparar lado a lado"
+      },
+      "resoling": {
+        "range": "De {min} a {max} € el par",
+        "price": "{price} € el par",
+        "note": "{n} resolador. De {min} a {max} días | {n} resoladores. De {min} a {max} días",
+        "noteDay": "{n} resolador. {days} días | {n} resoladores. {days} días",
+        "noteOneDay": "{n} resolador. 1 día | {n} resoladores. 1 día",
+        "noteCount": "{n} resolador | {n} resoladores"
+      },
+      "blog": {
+        "latest": "Último artículo"
+      }
+    },
+    "menu": {
+      "label": "Menú",
+      "open": "Abrir el menú",
+      "close": "Cerrar el menú",
+      "resolingShort": "Resolar",
+      "blogDescription": "Lo que he aprendido escalando",
+      "eventsDescription": "Qué pasa este mes en los rocódromos",
+      "aboutDescription": "Quién escribe esto y por qué",
+      "newsDescription": "Lo que pasa en la escalada, siempre con su fuente"
+    },
+    "news": "Noticias"
+  },
+  "footer": {
+    "guides": "Guías",
+    "media": "Medio",
+    "clearAccounts": "Cuentas claras",
+    "transparency": "Transparencia",
+    "privacy": "Privacidad",
+    "cookies": "Cookies",
+    "legalNotice": "Aviso legal",
+    "chalkApp": "Chalk app",
+    "language": "Idioma",
+    "promise": "Ninguna reseña se compra. Lo pagado se marca.",
+    "copyright": "© {year} ChalkGuide"
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No",
+    "seeMore": "Ver más",
+    "inSpanish": "(en español)",
+    "seeAll": "Ver todo",
+    "readArticle": "Leer artículo",
+    "back": "Volver",
+    "loading": "Cargando…",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "sortBy": "Ordenar por",
+    "filters": "Filtros",
+    "clearFilters": "Quitar filtros",
+    "results": "Sin resultados | 1 resultado | {count} resultados",
+    "share": "Compartir",
+    "shareCopied": "Enlace copiado",
+    "compare": "Comparar",
+    "compareAdded": "Añadido a comparar ({count}/3)",
+    "compareFull": "Ya comparas 3 modelos.",
+    "priceUnavailable": "Precio no disponible",
+    "noData": "Sin dato",
+    "remove": "Quitar",
+    "saveChanges": "Guardar cambios",
+    "usedByMe": "Los he usado yo",
+    "priceUnconfirmed": "Precio sin confirmar",
+    "compareMin": "Elige al menos 2 modelos",
+    "cancel": "Cancelar",
+    "clearFiltersCount": "Quitar filtros ({count})",
+    "search": {
+      "label": "Buscar",
+      "clear": "Borrar búsqueda",
+      "closeFilters": "Cerrar filtros",
+      "countQuery": "{count} de {total} {noun} con «{query}»",
+      "see": "Ver {count} {noun}",
+      "none": "Ningún resultado",
+      "noMatch": "Ningún {noun} coincide con «{query}»",
+      "alsoFilters": "Además tienes {count} filtro activo. | Además tienes {count} filtros activos.",
+      "tryOther": "Prueba con otra palabra o con menos letras.",
+      "missing": "¿Falta algún {noun}?",
+      "tellMe": "Dímelo"
+    }
+  },
+  "transparency": {
+    "guestVisit": "Visita invitada",
+    "guestVisitHint": "Me invitaron a entrar. Lo digo en la reseña y mi opinión no se negocia.",
+    "affiliate": "Enlace de afiliado",
+    "affiliateHint": "Si compras desde este enlace, puedo recibir una comisión. A ti no te cuesta más.",
+    "verified": "Dato verificado el {date}",
+    "verifiedHint": "Compruebo este dato a mano en la web del centro. Puede haber cambiado desde entonces.",
+    "stale": "Verificado el {date} · puede haber cambiado",
+    "staleShort": "{date} · puede haber cambiado",
+    "learnMore": "Cómo valoro y qué se marca"
+  },
+  "ratings": {
+    "author": "Nota del autor",
+    "readers": "Nota de lectores",
+    "notEnough": "Aún no hay suficientes opiniones (mínimo {min})",
+    "criteria": "Criterio",
+    "outOf": "de 5",
+    "outOfValue": "{value} de 5",
+    "reviewsCount": "Sin opiniones | 1 opinión | {count} opiniones"
+  },
+  "reviews": {
+    "title": "Opiniones",
+    "write": "Opinar",
+    "signInToWrite": "Inicia sesión con Google para opinar",
+    "signInHint": "Entrar con Google no te suscribe a la newsletter.",
+    "empty": "Aún nadie ha opinado",
+    "emptyHint": "Si has escalado aquí, cuéntalo. Solo hace falta entrar con Google.",
+    "beFirst": "Ser el primero",
+    "yourReview": "Tu opinión",
+    "edit": "Editar",
+    "optionalText": "Cuéntalo con tus palabras (opcional)",
+    "charLimit": "{count} / {max}",
+    "charLimitReached": "Has llegado al límite de {max} caracteres.",
+    "submit": "Enviar opinión",
+    "sent": "Opinión publicada. Gracias por contarlo.",
+    "error": "No se pudo enviar. Revisa la conexión e inténtalo de nuevo.",
+    "cleanBoard": "Pizarra limpia",
+    "errorTitle": "No se pudo enviar",
+    "deleted": "Opinión borrada.",
+    "deleteErrorTitle": "No se pudo borrar",
+    "deleteError": "Revisa la conexión e inténtalo de nuevo.",
+    "missing": "· falta",
+    "ratingGroup": "{label}, de 1 a 5",
+    "scoreOption": "{n} de {max}",
+    "editNote": "Puedes cambiar tu opinión cuando quieras.",
+    "placeholder": "Qué te gustó y qué no",
+    "cancel": "Cancelar",
+    "save": "Guardar cambios",
+    "publicName": "Se publica con tu nombre y la inicial del apellido de tu cuenta de Google (por ejemplo, Marta G.).",
+    "close": "Cerrar",
+    "sentHint": "Ya cuenta para la nota de lectores.",
+    "delete": "Borrar",
+    "deleteConfirmTitle": "¿Borrar tu opinión?",
+    "deleteConfirmBody": "Desaparece de la ficha y de la nota de lectores. No se puede deshacer.",
+    "deleteConfirm": "Sí, borrar",
+    "status": {
+      "hidden": "Oculta"
+    },
+    "overall": "Tu nota global",
+    "overallRequired": "Pon una nota de 1 a 5 para poder publicar.",
+    "criteriaTitle": "Detalle por criterio",
+    "criteriaHint": "Opcional: puntúa solo los que quieras.",
+    "clear": "Quitar",
+    "clearScore": "Quitar la nota de {label}",
+    "rateLimited": "Has llegado al máximo de 5 opiniones nuevas en 24 horas. Vuelve a intentarlo más tarde.",
+    "photos": {
+      "legend": "Fotos (opcional)",
+      "help": "Hasta {max}. JPG, PNG, WebP o HEIC, de hasta 20 MB cada una.",
+      "listLabel": "Fotos añadidas",
+      "add": "Añadir fotos",
+      "addOne": "Añadir foto",
+      "dragHint": "o arrástralas aquí",
+      "dragHintOne": "o arrástrala",
+      "dropMore": "Suelta para añadir · hasta {n} más",
+      "remove": "Quitar la foto {n}",
+      "removeNamed": "Quitar la foto {n} ({name})",
+      "retry": "Reintentar",
+      "retryFailed": "Reintentar las fotos que no se han subido",
+      "uploadingLabel": "Subiendo la foto {n}",
+      "tileState": "Foto {label}: {state}.",
+      "state": {
+        "preparing": "Preparando",
+        "ready": "lista",
+        "uploading": "subiendo, {percent} %",
+        "error": "no se ha subido",
+        "saved": "guardada"
+      },
+      "announce": {
+        "added": "Foto añadida. Tienes {n} de {max}. | {count} fotos añadidas. Tienes {n} de {max}.",
+        "removed": "Foto quitada. Tienes {n} de {max}."
+      },
+      "errors": {
+        "notImage": "{name} no es una foto. Usa JPG, PNG, WebP o HEIC.",
+        "tooBig": "{name} pesa {mb} MB. El máximo es {max} MB.",
+        "heic": "No puedo abrir {name} en este navegador. Súbela desde el móvil o guárdala como JPG.",
+        "unreadable": "No puedo leer {name}. Prueba con otra foto.",
+        "upload": "{name} no se ha subido. Revisa la conexión y pulsa Reintentar.",
+        "overflow": "Solo caben {max} fotos. He dejado fuera {names}.",
+        "full": "Ya tienes {max} fotos. Quita una para cambiarla.",
+        "limit": "No caben más fotos en esta opinión.",
+        "rate": "Has subido muchas fotos hoy. Vuelve a intentarlo mañana.",
+        "rightsOutdated": "Ahora mismo no se pueden subir fotos. Recarga la página e inténtalo de nuevo.",
+        "removeTitle": "No se pudo quitar una foto",
+        "remove": "Revisa la conexión y edita tu opinión de nuevo."
+      },
+      "submitError": "Una foto no se ha subido. Reinténtalo o envía la opinión sin ella.",
+      "sendWithout": "Enviar sin esa foto",
+      "finishing": "Terminando de subir la foto… | Terminando de subir {count} fotos…",
+      "rights": "Confirmo que estas fotos las he hecho yo, que no se reconoce a nadie sin su permiso y que ChalkGuide puede mostrarlas en la ficha junto a mi opinión.",
+      "rightsRequired": "Marca la casilla para poder subir las fotos.",
+      "rejected": "Una foto no se ha publicado: {reason}. Ya no ocupa sitio; puedes subir otra.",
+      "rejectedNoReason": "Una foto no se ha publicado. Ya no ocupa sitio; puedes subir otra.",
+      "reject": {
+        "not_own": "no parece una foto tuya",
+        "identifiable_people": "se veía a otras personas",
+        "off_topic": "no tenía relación con la ficha",
+        "low_quality": "estaba borrosa o con poca calidad",
+        "inappropriate": "tenía contenido inapropiado"
+      },
+      "view": "Ver foto {n} de {total} de {name}",
+      "viewMine": "Ver tu foto {n} de {total}",
+      "viewer": {
+        "title": "Fotos de {name}",
+        "titleMine": "Tus fotos",
+        "prev": "Foto anterior",
+        "next": "Foto siguiente",
+        "caption": "Subida por {name}, no por ChalkGuide",
+        "captionMine": "Subida por ti, no por ChalkGuide",
+        "you": "ti",
+        "alt": "Foto {n} de {total} de {name} en {item}"
+      }
+    }
+  },
+  "newsletter": {
+    "kicker": "Newsletter semanal",
+    "title": "Una carta a la semana. Nada más.",
+    "subtitle": "Novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.",
+    "emailLabel": "Tu email",
+    "emailPlaceholder": "nombre{'@'}correo.com",
+    "cta": "Suscribirme",
+    "consent": "Quiero recibir la newsletter semanal de ChalkGuide por email. Puedo darme de baja cuando quiera.",
+    "privacyLink": "Política de privacidad",
+    "consentRequired": "Marca la casilla para confirmar que quieres recibirla.",
+    "emailInvalid": "Escribe un email válido, por ejemplo nombre{'@'}correo.com.",
+    "emailMissingDomain": "Falta el dominio (.com, .es…).",
+    "noSpam": "Sin spam. Baja en un clic.",
+    "sending": "Enviando…",
+    "checkInbox": "¡Casi está!",
+    "checkInboxBody": "Te he enviado un email para confirmar la suscripción. Revisa también la carpeta de spam.",
+    "confirmed": "Suscripción confirmada",
+    "confirmedBody": "Gracias por apuntarte. Ya estás dentro: la próxima carta llega con la siguiente edición semanal.",
+    "confirmedNext": "Mientras llega, aquí tienes por dónde empezar a leer.",
+    "confirmedNextCta": "Leer el blog",
+    "unsubscribed": "Baja confirmada",
+    "unsubscribedBody": "No volverás a recibir la newsletter. Si cambias de idea, puedes volver a suscribirte cuando quieras.",
+    "error": "No se pudo completar la suscripción. Inténtalo de nuevo en un rato.",
+    "linkExpiredBody": "Puede haber caducado o haberse usado ya. Si aún no estás dentro, vuelve a apuntarte y te envío otro.",
+    "linkInvalidTitle": "Este enlace no funciona",
+    "linkInvalidBody": "Puede que haya caducado, que ya se haya usado o que esté incompleto. Si quieres recibir la newsletter, puedes volver a apuntarte.",
+    "unsubscribeInvalidBody": "La baja no se ha hecho: este enlace no es válido o ya se usó. Para completarla, abre cualquier correo de la newsletter y pulsa el enlace de baja que lleva al pie.",
+    "unsubscribeErrorBody": "La baja no se ha hecho: ha fallado algo por nuestra parte o por la conexión. Pulsa Reintentar; el enlace puede estar bien.",
+    "resubscribe": "Volver a apuntarme",
+    "receiveTitle": "Qué te llega",
+    "receiveItem1": "Novedades de los rocódromos",
+    "receiveItem2": "El artículo nuevo",
+    "receiveItem3": "Un pie de gato que merece la pena",
+    "howTitle": "Cómo funciona",
+    "howStep1": "Escribes tu email y marcas la casilla.",
+    "howStep2": "Te envío un email para confirmar. Sin confirmar, no hay suscripción.",
+    "howStep3": "La próxima carta llega con la siguiente edición semanal.",
+    "signature": "Te escribo una vez a la semana.",
+    "formLabel": "Suscripción a la newsletter",
+    "goTo": "Ir a la newsletter",
+    "successBlogCta": "Mientras tanto, leer el blog",
+    "confirmedGymsCta": "Ver los rocódromos",
+    "relatedOptional": "(Opcional)",
+    "moreInfo": "Más información",
+    "relatedSuccess": "Al confirmarlo se activan la newsletter y los avisos de Chalk app. Si ya estabas suscrito, no cambia nada: los avisos se activan desde «Preferencias», al pie de cualquier email."
+  },
+  "partner": {
+    "title": "Encuentra compañero",
+    "heading": "¿Vas solo?",
+    "intro": "Apúntate en la pizarra de tu rocódromo.",
+    "body": "Escribe qué día vas y a qué nivel, y mira quién más va.",
+    "openApp": "Abrir Chalk app",
+    "waitlistTitle": "¿Buscas compañero en {gym}?",
+    "waitlistBody": "{count} personas esperan a que abramos su pizarra. Con {target} la activamos.",
+    "waitlistCta": "Apuntarme a la lista de espera",
+    "waitlistDone": "Apuntado. Te aviso cuando abra.",
+    "exampleLabel": "Ejemplo",
+    "sampleName": "Xavi",
+    "exampleCaption": "Pizarra de ejemplo: el día y la cifra no son reales.",
+    "sampleWhen": "Viernes, tarde",
+    "sampleMore": "+4 más",
+    "authorBadge": "autor"
+  },
+  "states": {
+    "emptyTitle": "Nada por aquí todavía",
+    "emptyBody": "Cuando haya algo que mostrar, lo verás aquí.",
+    "noResultsTitle": "Ningún resultado con estos filtros",
+    "noResultsBody": "Prueba a quitar alguno de los filtros.",
+    "errorTitle": "Algo ha fallado",
+    "errorBody": "No hemos podido cargar esto. Inténtalo de nuevo en un momento.",
+    "notFoundCode": "404",
+    "notFoundTitle": "Esta página no existe",
+    "notFoundBody": "Puede que el enlace haya cambiado. Busca lo que necesitas o empieza por una de las guías.",
+    "notFoundSearch": "Buscar",
+    "notFoundHome": "Ir al inicio",
+    "notFoundHand": "Vía equivocada. Prueba por aquí:",
+    "notFoundSpanish": "Ver esta página en español"
+  },
   "seo": {
-    "defaultTitle": "Rocódromos en Barcelona",
-    "defaultDescription": "Directorio de rocódromos del área metropolitana de Barcelona con reseñas."
+    "homeTitle": "ChalkGuide: guía de escalada en Barcelona",
+    "homeDescription": "ChalkGuide es una guía de escalada en Barcelona escrita por un escalador: rocódromos con precios verificados, pies de gato, resolados y agenda.",
+    "defaultTitle": "Rocódromos en Barcelona: precios, horarios y opinión",
+    "defaultDescription": "Guía de rocódromos de Barcelona con precios verificados, reseñas de un escalador y comparador de pies de gato. Sin reseñas compradas.",
+    "titleTemplate": "{title} · ChalkGuide",
+    "siteName": "ChalkGuide",
+    "ogImageAlt": "ChalkGuide, escalar en Barcelona",
+    "gymTitle": "{name}: precios, horarios y opinión",
+    "gymDescription": "{name} en Barcelona: precios, horarios, instalaciones y mi opinión como escalador, con cada dato revisado antes de publicarlo.",
+    "resolerTitle": "Resolar pies de gato en {name}: precio y plazo",
+    "resolerDescription": "{name}: precio por par, plazo y condiciones para resolar tus pies de gato en Barcelona, con los datos que he podido comprobar.",
+    "shoeTitle": "{name}: opinión, specs y precio",
+    "shoeDescription": "{name}: perfil, rigidez, cierre y rango de precio. Añado mi experiencia solo si los he usado, y puedes compararlos con otros.",
+    "categoryTitle": "{name}: guías de escalada en Barcelona",
+    "categoryDescription": "Artículos sobre {name} para escalar en Barcelona: guías prácticas, escritas por un escalador y sin relleno.",
+    "monthDescription": "Competiciones, cursos y quedadas de escalada en Barcelona en {month}, revisadas una a una antes de publicarlas.",
+    "aboutDescription": "Quién escribe ChalkGuide y por qué: un escalador de Barcelona que visita, mide y puntúa rocódromos y material.",
+    "transparencyDescription": "Cómo valoro rocódromos y material, cómo se calculan los índices, qué enlaces son de afiliado y qué visitas son invitadas.",
+    "privacyDescription": "Qué datos trata ChalkGuide, para qué los usa, durante cuánto tiempo los conserva y cómo ejercer tus derechos de protección de datos.",
+    "cookiesDescription": "Qué cookies usa ChalkGuide, para qué sirve cada una y cómo gestionarlas o cambiar tu decisión más adelante.",
+    "legalNoticeDescription": "Aviso legal de ChalkGuide: quién es el titular del sitio y en qué condiciones puedes usarlo.",
+    "newsletterTitle": "Newsletter de escalada en Barcelona",
+    "newsletterDescription": "Una carta con lo que descubro de los rocódromos de Barcelona, material y eventos. Sin relleno, sin reseñas compradas.",
+    "newsTitle": "Noticias de escalada en Cataluña y España",
+    "newsDescription": "Lo que pasa en la escalada de Cataluña y España, resumido y con la fuente enlazada. Selección de Xavi, también en la carta semanal por correo.",
+    "newsCategoryTitle": "{name}: noticias de escalada",
+    "newsCategoryDescription": "Noticias de escalada sobre {name}: resúmenes propios con la fuente enlazada."
+  },
+  "blog": {
+    "seoTitle": "Blog de escalada en Barcelona: guías prácticas",
+    "seoDescription": "Guías prácticas sobre dónde escalar, material y costes en Barcelona, y lo que voy aprendiendo. Sin relleno.",
+    "categoriesLabel": "Categorías",
+    "all": "Todo",
+    "emptyTitle": "Aún no hay artículos",
+    "emptyBody": "Cuando publique el primero, lo verás aquí.",
+    "featured": "Destacados",
+    "latest": "Últimos",
+    "category": "Categoría",
+    "categoryList": "Artículos de {name}",
+    "categoryEmptyTitle": "Esta categoría aún no tiene artículos",
+    "categoryEmptyBody": "Mientras tanto, echa un vistazo al resto del blog.",
+    "allArticles": "Ver todo el blog",
+    "search": {
+      "placeholder": "Rocódromos, precios, material…",
+      "help": "Escribe al menos 2 letras.",
+      "tooShort": "Escribe al menos 2 letras para buscar.",
+      "searching": "Buscando «{term}»…",
+      "results": "{count} artículo con «{term}» | {count} artículos con «{term}»",
+      "noResults": "Ningún artículo con «{term}»",
+      "errorTitle": "No he podido buscar ahora mismo",
+      "errorBody": "Inténtalo de nuevo en unos segundos.",
+      "emptyHand": "Esto aún no lo he escrito",
+      "emptyTitle": "No hay artículos con «{term}»",
+      "emptyInScope": "No hay artículos en {name} con «{term}»",
+      "emptyBody": "Revisa cómo está escrito o prueba con otra palabra.",
+      "searchAll": "Buscar en todo el blog",
+      "scopeLabel": "Dónde buscar",
+      "scopeCategory": "En {name}",
+      "scopeAll": "En todo el blog",
+      "narrow": "Solo en {name}",
+      "wantTopic": "¿Quieres que escriba sobre ello?",
+      "tellMeTopic": "Cuéntamelo",
+      "loadMore": "Ver más resultados",
+      "showing": "{shown} de {total}"
+    },
+    "readingTime": "{count} min de lectura",
+    "allBlog": "Todo el blog",
+    "noCover": "Sin portada",
+    "toc": {
+      "title": "En este artículo",
+      "label": "Índice del artículo",
+      "summary": "En este artículo · {count} apartado | En este artículo · {count} apartados",
+      "remaining": "Queda {count} min | Quedan {count} min",
+      "done": "Has llegado al final",
+      "newsletter": "Recibir la carta semanal",
+      "anchor": "Enlace al apartado «{title}»"
+    },
+    "keepReading": "Sigue leyendo",
+    "mentioned": "Fichas de este artículo",
+    "video": {
+      "kicker": "Vídeo · YouTube",
+      "play": "Reproducir vídeo",
+      "watch": "Ver en YouTube",
+      "external": "(abre youtube.com)",
+      "notice": "Se carga desde YouTube (Google) solo al reproducirlo. Entonces YouTube recibe tu IP y puede guardar datos en tu navegador.",
+      "cookies": "Cookies",
+      "loading": "Cargando vídeo…"
+    },
+    "itemCard": {
+      "gym": "Rocódromo",
+      "resoler": "Resolador",
+      "shoe": "Pie de gato",
+      "view": "Ver ficha"
+    },
+    "itemKind": {
+      "gym": "Rocódromo",
+      "resoler": "Resolador",
+      "shoe": "Pies de gato"
+    },
+    "author": {
+      "name": "Xavi"
+    },
+    "prose": {
+      "noteBy": "Nota de {name}",
+      "note": "Nota del autor",
+      "table": "Tabla"
+    }
+  },
+  "events": {
+    "types": {
+      "competition": "Competición",
+      "workshop": "Taller",
+      "outing": "Quedada",
+      "social": "Encuentro",
+      "course": "Curso",
+      "other": "Otro"
+    },
+    "seoTitle": "Agenda de escalada en Barcelona: próximas actividades",
+    "seoDescription": "Competiciones, cursos y quedadas en los rocódromos de Barcelona durante los próximos dos meses, revisadas una a una.",
+    "intro": "Competiciones, cursos y quedadas en los rocódromos de Barcelona durante los próximos dos meses. Las reviso una a una antes de publicarlas.",
+    "boardsLabel": "Pizarras de actividades",
+    "cleanBoard": "Pizarra limpia",
+    "emptyAgendaTitle": "No hay actividades en los próximos dos meses",
+    "emptyAgendaBody": "Cuando haya algo aprobado, lo verás aquí.",
+    "disclaimer": "Cada actividad enlaza a la web del organizador; las fechas y los precios pueden cambiar.",
+    "filterLabel": "Tipo de actividad",
+    "count": "Sin actividades | 1 actividad | {count} actividades",
+    "moreInfo": "Más información",
+    "cancelled": "Cancelado",
+    "monthNav": "Meses de la agenda",
+    "previousMonth": "Mes anterior:",
+    "nextMonth": "Mes siguiente:",
+    "monthTitle": "Agenda de {month}",
+    "monthSeoTitle": "Agenda de escalada en Barcelona: {month}",
+    "next": "El siguiente",
+    "time": "Hora",
+    "price": "Precio",
+    "at": "en",
+    "allDay": "Todo el día",
+    "noneFuture": "Aún no hay nada en {month}",
+    "noneFutureHint": "Suelo publicar con un par de meses de margen.",
+    "noneLeft": "No queda nada más este mes",
+    "noneLeftNext": "Ver {month}",
+    "nonePast": "Sin actividades publicadas en {month}",
+    "archiveNote": "Este mes ya pasó. Lo dejo como archivo."
+  },
+  "pages": {
+    "preparingTitle": "Esta página aún no está publicada",
+    "preparingBody": "Todavía no tiene contenido. Mientras tanto, puedes volver al inicio.",
+    "lastUpdated": "Última actualización: {date}"
   },
   "home": {
-    "title": "ChalkGuide",
-    "intro": "Directorio de rocódromos de Barcelona. Próximamente."
+    "hero": {
+      "title": "Escalar en Barcelona",
+      "regionLabel": "Destacados",
+      "regionRole": "carrusel",
+      "ropeLabel": "Ir a la sección siguiente",
+      "kind": {
+        "review": "Reseña",
+        "shoe": "Pies de gato",
+        "gym": "Rocódromo",
+        "article": "Artículo",
+        "event": "Agenda"
+      },
+      "meta": {
+        "gymLead": "{district} · {price} €/mes · hasta {height} m",
+        "gymBoulder": "{district} · {price} €/mes · bloque",
+        "gymNoPrice": "{district}",
+        "shoePriceRange": "{min}–{max} €",
+        "shoePrice": "{price} €"
+      }
+    },
+    "paths": {
+      "title": "¿Por dónde empiezas?",
+      "label": "Tu perfil",
+      "new": "Acabo de empezar",
+      "regular": "Ya escalo cada semana",
+      "new1": "Qué rocódromo me conviene si estoy empezando",
+      "new2": "Bono o cuota mensual: qué conviene",
+      "new3": "Cómo elegir tus primeros pies de gato",
+      "regular1": "Comparar los rocódromos de Barcelona",
+      "regular2": "Cuándo resolar y dónde",
+      "regular3": "Roca a menos de 2 horas"
+    },
+    "gyms": {
+      "title": "Los rocódromos, uno a uno",
+      "caption": "Comparativa de rocódromos destacados"
+    },
+    "shoes": {
+      "title": "Pies de gato de un vistazo",
+      "caption": "Comparativa rápida de pies de gato"
+    },
+    "blog": {
+      "title": "Del blog",
+      "seeAll": "Todo el blog"
+    },
+    "news": {
+      "lede": "Lo que pasa en la escalada de aquí y de fuera, resumido y con su fuente.",
+      "seeAll": "Todas las noticias",
+      "list": "Últimas noticias"
+    }
+  },
+  "gyms": {
+    "filters": {
+      "lead": "Con cuerda",
+      "kids": "Zona infantil",
+      "noBelayTest": "Sin test de aseguramiento",
+      "early": "Abre a las 7:00"
+    },
+    "list": {
+      "seoTitle": "Rocódromos en Barcelona: precios, horarios y opinión",
+      "seoDescription": "Rocódromos de Barcelona visitados uno a uno, con precios verificados, índices calculados y mi nota.",
+      "title": "Rocódromos en Barcelona",
+      "intro": "Rocódromos visitados uno a uno, con precios verificados y mi nota. Los índices se calculan igual para todos.",
+      "heading": "Listado de rocódromos",
+      "caption": "Rocódromos de Barcelona con precio mensual, índice principiante y nota del autor"
+    },
+    "detail": {
+      "onThisPage": "En esta ficha",
+      "keyData": "Datos clave",
+      "appearsIn": "Aparece en",
+      "metro": "Metro",
+      "perMonth": "{price}/mes",
+      "height": "{value} m",
+      "routes": "Sin vías | 1 vía | {count} vías",
+      "autobelays": "1 autobelay | {count} autobelays",
+      "nav": {
+        "review": "Mi reseña",
+        "data": "Precios y horarios",
+        "facilities": "Instalaciones",
+        "opinions": "Opiniones",
+        "partner": "Encuentra compañero"
+      },
+      "authorName": "Xavi",
+      "authorInitial": "X",
+      "visitedOn": "visitado el",
+      "noReview": "Todavía no he escrito la reseña.",
+      "transparencyNotice": "Aviso de transparencia",
+      "website": "Web del rocódromo",
+      "price": {
+        "monthly": "Cuota mensual",
+        "pass10": "Bono de 10 entradas",
+        "day": "Entrada de día",
+        "registration": "Matrícula"
+      },
+      "fac": {
+        "surface": "Superficie",
+        "height": "Altura máxima",
+        "routes": "Vías",
+        "autobelays": "Autobelays",
+        "boulder": "Zona de bloque",
+        "training": "Zona de entrenamiento",
+        "belayTest": "Test de aseguramiento",
+        "required": "Obligatorio",
+        "notRequired": "No obligatorio",
+        "gearRental": "Alquiler de material",
+        "courses": "Cursos de iniciación",
+        "cafe": "Cafetería",
+        "beer": "Cerveza",
+        "kids": "Zona infantil",
+        "noFromAge": "No · desde {age} años",
+        "showers": "Duchas",
+        "wifi": "Wifi"
+      },
+      "indices": {
+        "title": "Índices · se calculan, no los opino",
+        "family": "Familia",
+        "monthlyCost": "Al mes, 2 visitas/semana"
+      },
+      "partner": {
+        "title": "¿Buscas compañero en {gym}?",
+        "body": "Estamos preparando la lista de espera para abrir la pizarra de este rocódromo.",
+        "soon": "Próximamente."
+      }
+    },
+    "columns": {
+      "gym": "Rocódromo",
+      "monthly": "Mensual",
+      "beginnerIndex": "Índice principiante"
+    },
+    "sort": {
+      "score": "Nota del autor",
+      "scoreShort": "Nota autor",
+      "price": "Precio",
+      "beginner": "Principiante",
+      "family": "Familiar",
+      "variety": "Variedad"
+    },
+    "sortedBy": "Ordenado por {criterion}",
+    "verifiedIn": "Precios verificados en {month}",
+    "howIndex": "Cómo calculo el índice",
+    "seeAll": "Sin rocódromos | Ver el rocódromo | Comparar los {count} rocódromos",
+    "type": {
+      "boulder": "Bloque",
+      "lead": "Cuerda",
+      "both": "Bloque y cuerda"
+    },
+    "search": {
+      "nounOne": "rocódromo",
+      "nounMany": "rocódromos",
+      "placeholder": "Nombre, barrio o metro"
+    },
+    "style": {
+      "label": "Estilo",
+      "veryTechnical": "Muy técnico",
+      "technical": "Técnico",
+      "mixed": "Mixto",
+      "dynamic": "Dinámico",
+      "veryDynamic": "Muy dinámico",
+      "low": "Técnico",
+      "high": "Dinámico"
+    },
+    "grading": {
+      "label": "Grados",
+      "generous": "Generosos",
+      "fairlyGenerous": "Algo generosos",
+      "average": "En la media",
+      "fairlyHard": "Algo duros",
+      "hard": "Duros",
+      "low": "Generosos",
+      "high": "Duros"
+    },
+    "scale": {
+      "srValue": "{value}: {n} de 5, de {low} a {high}"
+    },
+    "card": {
+      "entry": "Entrada",
+      "entrySr": "de día",
+      "family": "Familiar",
+      "variety": "Variedad",
+      "outOf5": "de 5",
+      "varietySr": "de 5, mi nota",
+      "noReview": "sin reseña",
+      "metro": "Metro:",
+      "scalesLabel": "Cómo se escala (no es una nota)"
+    },
+    "legend": {
+      "summary": "Qué significa cada dato",
+      "entry": {
+        "term": "Entrada.",
+        "text": "Precio de una entrada de día suelta, sin alquiler de material."
+      },
+      "family": {
+        "term": "Familiar (1–5).",
+        "text": "Índice calculado: zona infantil, edad mínima, cafetería y mi nota en ese criterio."
+      },
+      "variety": {
+        "term": "Variedad (1–5).",
+        "text": "Mi nota: ángulos, tipos de presa y cada cuánto cambian los bloques. «—» si aún no lo he reseñado."
+      },
+      "scalesTitle": "Grados y Estilo no son notas: sirven para elegir.",
+      "grading": {
+        "term": "Grados.",
+        "text": "Lo duros que son los grados frente a la media de Barcelona: de generosos a duros."
+      },
+      "style": {
+        "term": "Estilo.",
+        "text": "Cómo se abren las vías y los bloques: de técnico (pies, equilibrio, movimientos estáticos) a dinámico (saltos y coordinación)."
+      },
+      "scalesNote": "Ninguno es mejor. Si empiezas y quieres pasarlo bien, unos grados generosos te dejan encadenar más; el estilo depende de lo que te divierta. Es mi criterio tras visitarlos."
+    },
+    "scales": {
+      "title": "Cómo se escala aquí",
+      "notAGrade": "No es una nota: sirve para elegir",
+      "footer": "Ninguna posición es mejor. Grados: frente a la media de Barcelona. Estilo: técnico es pies y equilibrio; dinámico, saltos y coordinación. Si empiezas y quieres pasarlo bien, busca grados generosos.",
+      "link": "Cómo lo valoro"
+    }
+  },
+  "resolers": {
+    "list": {
+      "seoTitle": "Resolar pies de gato en Barcelona: precios",
+      "seoDescription": "Talleres para resolar pies de gato en Barcelona: precio por par, plazo, si aceptan envío por correo y mi reseña en los que he probado.",
+      "title": "Resolar pies de gato en Barcelona",
+      "intro": "Talleres de Barcelona con precio por par, cuánto tardan y si aceptan envíos. Compruebo los datos con cada taller; en los que he resolado yo, añado mi reseña.",
+      "heading": "Listado de resoladores",
+      "caption": "Resoladores con precio por par, rand, plazo y envío",
+      "randTerm": "Rand:",
+      "randNote": "el borde de goma que rodea la puntera. Si llega desgastado, el resolado cuesta más."
+    },
+    "columns": {
+      "workshop": "Taller",
+      "perPair": "Por par",
+      "rand": "Rand",
+      "turnaround": "Plazo",
+      "mail": "Correo",
+      "services": "Servicios"
+    },
+    "sort": {
+      "score": "Nota del autor",
+      "scoreShort": "Nota autor",
+      "price": "Precio",
+      "days": "Plazo"
+    },
+    "filters": {
+      "mail": "Acepta envío por correo"
+    },
+    "mail": {
+      "accepts": "acepta envío",
+      "declines": "no envía"
+    },
+    "turnaround": "{range} día | {range} días",
+    "turnaroundShort": "{range} d",
+    "detail": {
+      "kicker": "Resolador",
+      "perPairFact": "{price} por par",
+      "reviewTitle": "Mi experiencia",
+      "noReview": "Aún no he resolado aquí; los datos los he comprobado con el taller.",
+      "emptyHint": "Si has resolado aquí, cuéntalo. Solo hace falta entrar con Google.",
+      "pricesTitle": "Precios y servicio",
+      "perPair": "Precio por par",
+      "rand": "Rehacer rand",
+      "turnaround": "Plazo",
+      "mail": "Envío por correo",
+      "rubbers": "Gomas",
+      "website": "Web del taller",
+      "appearsIn": "Aparece en",
+      "resoledIn": "resolado en",
+      "paidByMe": "pagado por mí",
+      "guest": "invitado",
+      "services": "Servicios"
+    },
+    "services": {
+      "half_sole": "Media suela",
+      "full_sole": "Suela completa",
+      "rand": "Rand",
+      "toe_patch": "Parche de puntera",
+      "closure_repair": "Reparación de cierres",
+      "stitching": "Costuras",
+      "other": "Otros"
+    },
+    "search": {
+      "nounOne": "resolador",
+      "nounMany": "resoladores",
+      "placeholder": "Nombre, barrio o servicio"
+    }
+  },
+  "shoes": {
+    "emptyHint": "Si has escalado con ellos, cuéntalo. Solo hace falta entrar con Google.",
+    "list": {
+      "seoTitle": "Comparador de pies de gato: hasta 3 modelos",
+      "seoDescription": "Compara pies de gato por perfil, cierre, rigidez, uso y precio, con mi experiencia en los que he usado.",
+      "title": "Pies de gato: comparador",
+      "intro": "Sin modelos | {count} modelo con datos del fabricante y precios revisados el {date}. | {count} modelos con datos del fabricante y precios revisados el {date}. Elige entre 2 y 3 y compáralos lado a lado.",
+      "models": "Sin modelos | {count} modelo | {count} modelos",
+      "previewNamed": "Vista previa de {name}",
+      "sortLabel": "Ordenar",
+      "sort": {
+        "price-asc": "Precio: menor a mayor",
+        "price-desc": "Precio: mayor a menor",
+        "name": "Nombre: A-Z"
+      }
+    },
+    "filters": {
+      "profile": "Perfil",
+      "closure": "Cierre",
+      "stiffness": "Rigidez",
+      "use": "Uso",
+      "price": "Precio",
+      "priceMin": "Precio mínimo",
+      "priceMax": "Precio máximo",
+      "authorExperience": "Experiencia del autor",
+      "level": "Nivel",
+      "testedOnly": "Solo los que he usado"
+    },
+    "profile": {
+      "flat": "Plano",
+      "moderate": "Moderado",
+      "aggressive": "Agresivo"
+    },
+    "asymmetry": {
+      "none": "Ninguna",
+      "slight": "Ligera",
+      "moderate": "Moderada",
+      "strong": "Fuerte"
+    },
+    "stiffnessGroup": {
+      "soft": "Blando",
+      "medium": "Medio",
+      "stiff": "Rígido"
+    },
+    "use": {
+      "gym": "Rocódromo",
+      "boulder": "Bloque",
+      "sport": "Deportiva",
+      "trad": "Clásica",
+      "multipitch": "Vías largas",
+      "training": "Entrenamiento"
+    },
+    "level": {
+      "beginner": "Inicio",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado"
+    },
+    "rows": {
+      "price": "Precio",
+      "profile": "Perfil",
+      "asymmetry": "Asimetría",
+      "closure": "Cierre",
+      "rubber": "Goma",
+      "stiffness": "Rigidez",
+      "use": "Uso",
+      "level": "Nivel",
+      "author": "Nota del autor",
+      "size": "Mi talla",
+      "learned": "Lo que aprendí",
+      "buy": "Dónde comprar"
+    },
+    "usedBadge": "los uso",
+    "affiliateBadge": "afiliado",
+    "compare": {
+      "title": "Lado a lado",
+      "inComparison": "En comparación",
+      "removed": "{name} fuera de la comparación",
+      "minHint": "Toca el «+» de al menos 2 modelos para compararlos.",
+      "pricesChecked": "Precios revisados el {date} · datos técnicos del fabricante",
+      "noLinkNote": "Los modelos sin enlace se comparan igual.",
+      "caption": "Sin modelos | Comparación de {count} pie de gato | Comparación de {count} pies de gato",
+      "removeNamed": "Quitar {name} de la comparación",
+      "thickness": "{mm} mm",
+      "notUsed": "No los he usado",
+      "whereToBuy": "Dónde comprar",
+      "seePrice": "Ver precio",
+      "noAffiliate": "Sin enlace de afiliado. Búscalo en tu tienda habitual.",
+      "view": "Ver comparación",
+      "replaced": "{incoming} sustituye a {old}",
+      "streetSize": "calzo {size} de calle",
+      "addModel": "Añadir modelo",
+      "slot": "hueco {n} de {max}",
+      "capacity": "{count} de {max} modelos",
+      "hintEmpty": "Elige hasta {max} modelos para compararlos lado a lado.",
+      "hintLeft": "Puedes añadir {count} modelo más | Puedes añadir {count} modelos más",
+      "hintFull": "Comparación llena ({max} de {max}). Si eliges otro modelo, te pregunto cuál sustituir.",
+      "oneTitle": "Tienes {name}. Añade al menos otro modelo.",
+      "adder": {
+        "label": "Añadir un modelo",
+        "placeholder": "Busca por marca o modelo",
+        "noMatch": "Ningún modelo coincide con «{query}». Prueba con la marca (Scarpa) o la goma (XS Edge).",
+        "count": "Ningún modelo | 1 modelo | {count} modelos"
+      },
+      "replace": {
+        "title": "La comparación está llena",
+        "body": "Caben {max} modelos. ¿Cuál sustituyes por {name}?",
+        "option": "Sustituir {name}"
+      },
+      "pickOneMore": "Elige uno más",
+      "addNamed": "Añadir {name} a la comparación"
+    },
+    "columns": {
+      "model": "Modelo"
+    },
+    "closure": {
+      "lace": "Cordones",
+      "velcro": "Velcro",
+      "slipper": "Slipper"
+    },
+    "learned": "Lo que aprendí",
+    "openComparator": "Abrir el comparador",
+    "containsAffiliate": "Contiene enlaces de afiliado",
+    "search": {
+      "nounOne": "modelo",
+      "nounMany": "modelos",
+      "placeholder": "Marca, modelo o goma"
+    },
+    "fit": {
+      "unisex": "Unisex",
+      "women": "Mujer",
+      "men": "Hombre",
+      "kids": "Niños"
+    },
+    "detail": {
+      "photos": "Fotos",
+      "photoOf": "Foto {n} de {total}: {name}",
+      "summaryLabel": "Resumen",
+      "price": "Precio",
+      "priceChecked": "revisado {date}",
+      "readers": "Lectores",
+      "noAverage": "Sin media aún",
+      "noOpinions": "Sin opiniones",
+      "onThisPage": "En esta ficha",
+      "nav": {
+        "review": "Mi reseña",
+        "data": "Datos técnicos",
+        "opinions": "Opiniones",
+        "alternatives": "Alternativas"
+      },
+      "seePriceAt": "Ver precio en {shop}",
+      "usingSince": "los uso desde",
+      "dataTitle": "Datos técnicos",
+      "fromMaker": "del fabricante",
+      "spec": {
+        "fit": "Horma",
+        "thickness": "Grosor de goma"
+      },
+      "compareWithOthers": "Compararlos con otros modelos",
+      "alternatives": "Alternativas",
+      "size": {
+        "label": "Mi talla",
+        "mine": "Mi talla",
+        "street": "De calle",
+        "difference": "Diferencia",
+        "note": "Ajuste"
+      },
+      "noReview": {
+        "title": "No los he usado",
+        "body": "Aquí tienes los datos del fabricante y el precio revisado. Si los pruebo, escribiré mi reseña. Mientras, mira lo que opinan otros escaladores.",
+        "link": "Ver opiniones"
+      }
+    },
+    "drawer": {
+      "inComparator": "En el comparador",
+      "addToComparator": "Añadir al comparador",
+      "seeInStore": "Ver precio en tienda",
+      "affiliateNote": "Enlace de afiliado: si compras, me llevo una comisión y a ti no te cuesta más.",
+      "fullPage": "Ver ficha completa"
+    }
+  },
+  "about": {
+    "contact": "Escríbeme",
+    "numbers": {
+      "title": "En números",
+      "gyms": "rocódromos con ficha",
+      "shoes": "pies de gato comparados"
+    },
+    "latest": {
+      "title": "Lo último que he comprobado",
+      "allGyms": "Todos los rocódromos",
+      "score": "Nota del autor",
+      "kind": {
+        "gym": "Rocódromo",
+        "resoler": "Resolador",
+        "shoe": "Pies de gato"
+      }
+    },
+    "contactBody": "¿Ha cambiado un dato, quieres proponerme un rocódromo o avisarme de una actividad? Escríbeme."
+  },
+  "auth": {
+    "title": "Entrar para opinar",
+    "body": "Las fichas se leen sin cuenta. Solo hace falta entrar con Google para dejar una opinión: nota de 1 a 5 por criterio y un texto si quieres.",
+    "google": "Continuar con Google",
+    "connecting": "Conectando…",
+    "error": "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+    "signOut": "Cerrar sesión",
+    "signedOut": "Has cerrado sesión.",
+    "signOutError": "No se pudo cerrar la sesión. Inténtalo de nuevo."
+  },
+  "author": {
+    "signatureLabel": "Sobre el autor",
+    "howIWork": "Cómo trabajo",
+    "howWeWork": "Cómo trabajamos"
+  },
+  "consent": {
+    "info": {
+      "title": "Avisos de Chalk app y productos afines",
+      "close": "Cerrar",
+      "whatTitle": "Qué recibirás",
+      "whatBody": "Emails ocasionales, aparte de la newsletter, con avisos sobre Chalk app (la aplicación para encontrar compañeros de escalada, que comparte cuentas y base de datos con ChalkGuide) y sobre productos de ChalkGuide relacionados con la escalada, cuando existan. ChalkGuide y Chalk app forman parte de Bestiari, de Xavier Pilasi. No es publicidad de terceros.",
+      "whoTitle": "Quién te escribe",
+      "whoBody": "Yo, Xavier Pilasi, responsable de ChalkGuide y de Chalk app. No cedo tu email a terceros para que te escriban. Para enviarlos uso Brevo como proveedor de envío.",
+      "optionalTitle": "Es opcional",
+      "optionalBody": "Si no marcas la casilla, te suscribes igualmente a la newsletter. Entrar con Google tampoco te apunta a estos avisos.",
+      "withdrawTitle": "Cómo retirarte",
+      "withdrawBody": "Con un clic en el enlace de baja de cualquier email, o desde tus preferencias. Retirarte de esto no te da de baja de la newsletter, y al revés.",
+      "keepTitle": "Cuánto tiempo lo guardo",
+      "keepBody": "Tu email, mientras no retires el consentimiento. Después guardo solo la prueba de que lo diste y lo retiraste durante 3 años desde la retirada o, si sigues suscrito a la newsletter, mientras dure la suscripción y 3 años más.",
+      "legalTitle": "Base legal",
+      "legalBody": "Tu consentimiento (art. 6.1.a RGPD). Más detalle en la",
+      "legalLink": "política de privacidad"
+    },
+    "offer": {
+      "title": "¿Quieres también avisos de Chalk app?",
+      "intro": "Tu suscripción a la newsletter ya está confirmada, elijas lo que elijas.",
+      "legend": "Avisos de Chalk app y productos afines",
+      "yes": "Sí, avísame",
+      "no": "No, gracias",
+      "saving": "Guardando…",
+      "error": "No se ha guardado. Tu newsletter sigue confirmada; prueba otra vez con «Sí, avísame».",
+      "yesTitle": "Hecho: también te avisaré de Chalk app",
+      "yesBody": "Puedes retirarlo cuando quieras con el enlace del pie de cualquier email. La newsletter no cambia.",
+      "noTitle": "Entendido: solo la newsletter",
+      "noBody": "Si cambias de idea, lo puedes activar desde «Preferencias», al pie de cualquier email.",
+      "active": "Activos",
+      "alreadyBody": "También recibirás los avisos de Chalk app. Puedes retirarlos desde «Preferencias», al pie de cualquier email."
+    },
+    "prefs": {
+      "title": "Tus preferencias",
+      "seoTitle": "Tus preferencias de email",
+      "lead": "Elige qué emails quieres recibir de ChalkGuide. Cada uno va por separado: retirar uno no toca el otro.",
+      "noLogin": "Gestionas la dirección a la que llegó este enlace. No hace falta iniciar sesión.",
+      "loading": "Cargando tus preferencias",
+      "loadError": "No he podido cargar tus preferencias. Ha fallado algo por mi parte o por la conexión; el enlace puede estar bien.",
+      "invalidTitle": "Este enlace no funciona",
+      "invalidBody": "Puede que esté incompleto o que sea de un email antiguo. Abre el último email que te envié y pulsa «Preferencias» en el pie: ese enlace siempre funciona.",
+      "toNewsletter": "Ir a la newsletter",
+      "toHome": "Volver al inicio",
+      "footer": "Lo que cambies aquí queda registrado con la fecha. No guardo IP ni navegador.",
+      "newsletter": {
+        "title": "Newsletter",
+        "activeBody": "Una carta a la semana con novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.",
+        "pendingBody": "Te envié un email para confirmar la suscripción. Hasta que lo confirmes no recibes nada.",
+        "inactiveBody": "No recibes la newsletter. Para volver hace falta un alta nueva y confirmarla por email.",
+        "leave": "Darme de baja",
+        "cancel": "Cancelar el alta",
+        "again": "Volver a apuntarme",
+        "leaving": "Dando de baja…"
+      },
+      "related": {
+        "title": "Avisos de Chalk app y productos afines",
+        "grantedBody": "Emails ocasionales con avisos de Chalk app y de productos de ChalkGuide relacionados con la escalada.",
+        "pendingBody": "Los marcaste al apuntarte. Se activan cuando confirmes tu email; hasta entonces no recibes nada.",
+        "offerBody": "Si quieres recibirlos, este es el texto que aceptas:",
+        "unconfirmedBody": "Podrás activarlos cuando confirmes tu email.",
+        "locked": "Antes tienes que confirmar tu email con el enlace que te envié. Así sé que la dirección es tuya.",
+        "withdraw": "Retirar",
+        "grant": "Sí, avísame",
+        "saving": "Guardando…",
+        "withdrawing": "Retirando…",
+        "unavailableBody": "De momento no puedo ofrecerte esta opción. Vuelve a intentarlo más tarde."
+      },
+      "state": {
+        "newsletterActive": "La recibes",
+        "newsletterPending": "Sin confirmar",
+        "newsletterInactive": "No la recibes",
+        "relatedGranted": "Activos",
+        "relatedPending": "Sin confirmar",
+        "relatedNone": "No los recibes"
+      },
+      "flash": {
+        "newsletterOff": "Hecho: ya no recibirás la newsletter. Los avisos de Chalk app no cambian.",
+        "relatedOff": "Hecho: ya no recibirás estos avisos. La newsletter no cambia.",
+        "relatedOn": "Hecho: te avisaré de Chalk app. Puedes retirarlo aquí cuando quieras.",
+        "unconfirmed": "No se ha guardado: tu email aún no está confirmado. Confírmalo con el enlace que te envié.",
+        "failed": "No se ha guardado. Ha fallado algo por mi parte o por la conexión; prueba otra vez."
+      }
+    }
+  },
+  "news": {
+    "lede": "Lo que pasa en la escalada de Cataluña, España y el mundo, resumido con palabras propias. Cada noticia enlaza a su fuente.",
+    "categoryLede": "Noticias de {name}, resumidas con su fuente.",
+    "category": "Categoría",
+    "searchPlaceholder": "Competición, Montserrat, IFSC…",
+    "categoriesLabel": "Categorías",
+    "all": "Todo",
+    "scopeLabel": "Alcance",
+    "scope": {
+      "all": "Todo",
+      "cat": "Cataluña",
+      "es": "España",
+      "intl": "Internacional"
+    },
+    "thisWeek": "Esta semana",
+    "previousWeek": "Semana anterior",
+    "weekOf": "Semana del",
+    "featured": "Con nota de Xavi",
+    "noteLabel": "Nota de Xavi",
+    "withNote": "Con nota de Xavi",
+    "markSummary": "Resumen de ChalkGuide",
+    "markSource": "Fuente:",
+    "listLabel": "Noticias de {range}",
+    "emptyTitle": "Aún no hay noticias",
+    "emptyBody": "Cuando publique las primeras, las verás aquí.",
+    "emptyCategoryTitle": "Esta categoría aún no tiene noticias",
+    "emptyCategoryBody": "Mientras tanto, mira el resto de noticias.",
+    "emptyScopeTitle": "No hay noticias con este alcance",
+    "emptyScopeBody": "Prueba con otro alcance.",
+    "allNews": "Todas las noticias",
+    "goBlog": "Ir al blog",
+    "newsletterSpanish": "La carta semanal de ChalkGuide se escribe en español.",
+    "pager": {
+      "label": "Paginación",
+      "newer": "Más recientes",
+      "older": "Anteriores",
+      "of": "{current} / {total}",
+      "goTo": "Ir a la página {n}",
+      "current": "Página {n}"
+    },
+    "search": {
+      "searching": "Buscando «{term}»…",
+      "results": "{count} resultado para «{term}» | {count} resultados para «{term}»",
+      "emptyTitle": "No hay noticias sobre «{term}»",
+      "emptyBody": "Prueba con otra palabra o quita el filtro.",
+      "errorTitle": "No he podido buscar ahora mismo",
+      "errorBody": "Inténtalo de nuevo en unos segundos.",
+      "loadMore": "Ver más resultados",
+      "showing": "{shown} de {total}",
+      "tooShort": "Escribe al menos 2 letras para buscar."
+    },
+    "detail": {
+      "back": "Volver a {name}",
+      "sourceTitle": "Fuente original",
+      "readAt": "Leer en {source}",
+      "external": "(web externa)",
+      "publishedOn": "Publicada el {date}",
+      "inLanguage": "en {language}",
+      "transparency": "Este texto es un resumen propio de ChalkGuide, aprobado por Xavi antes de publicarse. Los datos son de la fuente; si algo no cuadra, manda la fuente.",
+      "howWeDoIt": "Cómo hacemos las noticias",
+      "more": "Más noticias",
+      "related": "Relacionado",
+      "relatedKind": {
+        "gym": "Rocódromo",
+        "resoler": "Resolador",
+        "shoe": "Pies de gato",
+        "article": "Artículo",
+        "event": "Agenda"
+      },
+      "photoBy": "Foto: {credit}",
+      "photoLicense": "Licencia: {license}"
+    }
   }
 }

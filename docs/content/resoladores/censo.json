@@ -1,0 +1,202 @@
+[
+  {
+    "name": "Resolado La Sportiva (taller oficial)",
+    "slug": "resolado-la-sportiva",
+    "kind": "taller",
+    "city": "Esplugues de Llobregat",
+    "website_url": "https://resoladolasportiva.com/",
+    "accepts_mail": true,
+    "verified": true,
+    "note": "Web 2026: resolado 38 EUR en varios modelos, recogida por mensajero tras pedido online. Ubicación (sede La Sportiva Spain, oficinas de Snow Factor, Esplugues; responsable Killian Cattand) según Desnivel 28/04/2022; la web no da dirección. Tiene página 'Puntos de entrega' (no leída, 404 en la URL probada)."
+  },
+  {
+    "name": "Resolargrip",
+    "slug": "resolargrip",
+    "kind": "taller",
+    "city": "Terrassa",
+    "website_url": "https://resolargrip.com/",
+    "accepts_mail": true,
+    "verified": true,
+    "note": "Web 2026. Raval de Montserrat 41, Terrassa. Recogida por mensajero, envío propio o entrega en taller. Cabecera dice recogida y envío 24 h, 'Cómo comprar' dice 20-25 días laborables de devolución. Pies de gato desde 5 EUR (precio de la web, verificar qué incluye)."
+  },
+  {
+    "name": "Resolados Barcelona",
+    "slug": "resolados-barcelona",
+    "kind": "taller",
+    "city": "Teià (Barcelona)",
+    "website_url": null,
+    "accepts_mail": true,
+    "verified": false,
+    "note": "Sin web propia accesible: resolarpiesdegato.es y resoladosbarcelona.es no resuelven (06/11/2026). Datos de Boulder Lovers (envío puerta a puerta a toda España, info@resoladosbarcelona.es, WhatsApp 629946913; puntera solo si se resuelan ambas suelas; contenido de 2022), Ruano Lin (Instagram resolados_barcelona, taller cerca de Barcelona) y LinkedIn (sede en Teià, página con 403, solo vista en buscador). Confirmar activo en 2026 por WhatsApp. Reintento 06/11/2026: sigue sin web que abra."
+  },
+  {
+    "name": "Ràpid Regidor",
+    "slug": "rapid-regidor",
+    "kind": "taller",
+    "city": "Barcelona",
+    "website_url": null,
+    "accepts_mail": null,
+    "verified": false,
+    "note": "Solo Facebook (facebook.com/rapidregidor.muntanya), reparación de calzado de montaña. Página de Facebook no abierta; dato de resultado de búsqueda. Sin confirmar resolado de pies de gato en 2026 ni envíos."
+  },
+  {
+    "name": "Goma2",
+    "slug": "goma2",
+    "kind": "envio",
+    "city": "Cornudella de Montsant (Tarragona)",
+    "website_url": "https://goma2.net/",
+    "accepts_mail": true,
+    "verified": true,
+    "note": "Web: resolado y reparación de pies de gato y botas, punteras opcionales, oficial La Sportiva y Scarpa. Envío por correo, recogida por mensajero y puntos de recogida (varios en la provincia de Barcelona). Carrer del Comte de Rius 3. Sin año de fundación."
+  },
+  {
+    "name": "Climber Up",
+    "slug": "climber-up",
+    "kind": "envio",
+    "city": "Caldes de Malavella (Girona) y La Seu d'Urgell (Lleida)",
+    "website_url": "https://climberup.com/",
+    "accepts_mail": null,
+    "verified": true,
+    "note": "Red de 10 talleres en España, 2 en Cataluña (Girona y Lleida), web con copyright 2026. La web no confirma envío por correo, solo talleres y puntos de recogida; consultar. Puntos de recogida en Cataluña listados en /puntos-de-recogida/, incluido BDN Climb."
+  },
+  {
+    "name": "Garra",
+    "slug": "garra",
+    "kind": "envio",
+    "city": "San Fernando de Henares (Madrid)",
+    "website_url": "https://garraclimb.com/",
+    "accepts_mail": null,
+    "verified": true,
+    "note": "Fabricante de pies de gato que resuela marcas ajenas: 35 EUR goma Vibram XS Grip2 o Edge, 30 EUR goma Garra, 7 EUR/par la puntera (exige resolar). Devolución por mensajería urgente sin coste solo en península. La web no da dirección del taller (domicilio social en San Fernando de Henares). Precios de la web, verificar."
+  },
+  {
+    "name": "Re-Rubber",
+    "slug": "re-rubber",
+    "kind": "envio",
+    "city": "Granada",
+    "website_url": "https://resoladosrerubber.com/",
+    "accepts_mail": true,
+    "verified": true,
+    "note": "Web: resolando desde 2010, copyright hasta 2026, goma Vibram y Davos, envíos a España y Portugal con recogida MRW, plazo habitual de una semana."
+  },
+  {
+    "name": "El de los Gatos",
+    "slug": "el-de-los-gatos",
+    "kind": "envio",
+    "city": "Etxauri (Navarra)",
+    "website_url": "https://eldelosgatos.com/",
+    "accepts_mail": true,
+    "verified": true,
+    "note": "Web: C/El Soto 8, 31174 Etxauri. Más de 10 años de experiencia, envío al taller, punto de recogida o mensajero a toda España. Sin fecha 2026 visible (noticias de 2018), confirmar que sigue activo."
+  },
+  {
+    "name": "Taller Resolados de Pies de Gato, Carles",
+    "slug": "resolados-carles",
+    "kind": "envio",
+    "city": "Lleida (por confirmar)",
+    "website_url": "https://resoladosdegatoscarles.com/",
+    "accepts_mail": null,
+    "verified": false,
+    "note": "La web sale en buscadores (recogida y envío a cualquier punto de España, entrega los viernes) pero el dominio no resuelve el 06/11/2026. Ciudad no abierta en la web; Lleida viene de un resultado de búsqueda. No usar hasta reconfirmar."
+  },
+  {
+    "name": "Travessa",
+    "slug": "travessa",
+    "kind": "tienda-recogida",
+    "city": "Barcelona",
+    "website_url": null,
+    "accepts_mail": null,
+    "verified": false,
+    "note": "Tienda de escalada en Sants-Montjuïc (guía Salir). Figura como punto de recogida de Goma2 en goma2.net, que es el taller al que enviaría. Web propia no localizada; la tienda no se ha confirmado por su cuenta. Llamar para confirmar. Reintento 06/11/2026: travessa.cat y www.travessa.cat no resuelven."
+  },
+  {
+    "name": "Sala Golem",
+    "slug": "sala-golem",
+    "kind": "tienda-recogida",
+    "city": "Arenys de Munt",
+    "website_url": "https://salagolem.com/",
+    "accepts_mail": null,
+    "verified": true,
+    "note": "Rocódromo. Su web (06/11/2026) dice en catalán: \"som servei de punt de recollida de ressolar peus de gat de GOMA2\". Taller destino: Goma2 (Cornudella de Montsant). No dice cómo se entrega ni los plazos."
+  },
+  {
+    "name": "La Panxa del Bou",
+    "slug": "la-panxa-del-bou",
+    "kind": "tienda-recogida",
+    "city": "Sabadell",
+    "website_url": null,
+    "accepts_mail": null,
+    "verified": false,
+    "note": "Punto de recogida de Goma2 según goma2.net. Web propia no abierta; tipo de local sin confirmar. Taller destino: Goma2. Reintento 06/11/2026: lapanxadelbou.com abre pero solo menciona alquiler de pies de gato (3,50 EUR), no resolado ni recogida. Sigue sin verificar."
+  },
+  {
+    "name": "Esports DOM",
+    "slug": "esports-dom",
+    "kind": "tienda-recogida",
+    "city": "Mataró",
+    "website_url": null,
+    "accepts_mail": null,
+    "verified": false,
+    "note": "Punto de recogida de Goma2 según goma2.net. Web propia no abierta. Taller destino: Goma2. Reintento 06/11/2026: esportsdom.com y www.esportsdom.com no resuelven."
+  },
+  {
+    "name": "BDN Climb",
+    "slug": "bdn-climb",
+    "kind": "tienda-recogida",
+    "city": "Badalona",
+    "website_url": "https://www.bdnclimb.com/",
+    "accepts_mail": null,
+    "verified": false,
+    "note": "Rocódromo (Carrer del Torrent Vallmajor 106, Badalona). Aparece como punto de recogida de Climber Up en climberup.com/puntos-de-recogida/, pero su propia web no menciona resolado ni recogida. Taller destino: Climber Up (no especifica cuál). Reintento 06/11/2026: bdnclimb.com abre, solo menciona alquiler de pies de gato (3 EUR). Sigue sin verificar."
+  },
+  {
+    "name": "Capra Resolados",
+    "slug": "capra-resolados",
+    "kind": "taller",
+    "city": "Barcelona",
+    "website_url": "https://capraresolados.com/",
+    "accepts_mail": null,
+    "verified": true,
+    "note": "Web 06/11/2026: \"Resolamos pies de gato en Barcelona\". Se deja el par en el buzón (QR) de rocódromos asociados (Barrabes, Blocat, Boulder Line 1 y 3, Boulder Planet Mataró y Vallès, Crashpad, Kraken, Monobloc Sagrera y Sants, Natural Climb, Sharma Climbing BCN y Gavà, entre otros) y se sigue el pedido por WhatsApp. La web no da dirección, precios ni envío por correo. Es un taller distinto de Resolado La Sportiva (resoladolasportiva.com); la web de Capra no se presenta como oficial de La Sportiva ni lista Bloc District. Xavi: taller independiente (marca de resolado)."
+  },
+  {
+    "name": "Tonigatos",
+    "slug": "tonigatos",
+    "kind": "envio",
+    "city": "Villena / Alicante",
+    "website_url": "https://www.tonigatos.es/",
+    "accepts_mail": true,
+    "verified": true,
+    "note": "Web 06/11/2026, copyright 2026, tarifas actualizadas 29/10/2026. Taller fundado en Villena en 1990; local en C/ Fiestas Populares y Tradicionales 1, Local 7, 03003 Alicante. Recogida en domicilio por mensajería, devolución gratis desde 5 pares, plazo desde 5 días hábiles. XS Grip2 4 mm 29 EUR. Contactar antes de enviar (630 723 211, WhatsApp). Precios de la web, verificar."
+  },
+  {
+    "name": "El Gato Lucas",
+    "slug": "el-gato-lucas",
+    "kind": "envio",
+    "city": "La Foz de Morcín (Asturias)",
+    "website_url": "https://elgatolucas.com/",
+    "accepts_mail": true,
+    "verified": true,
+    "note": "Web abre 06/11/2026 (cabecera last-modified 11/09/2026; sin año de copyright visible). Luca Grenci, Paseo Daniel El Practicante 5, 33161 La Foz de Morcín. Envío por correo (vuelta 7 EUR, gratis desde 6 pares), recogida a domicilio 14 EUR o Nacex. Reparación hasta 3 semanas. Vibram XS Grip2 media suela 35 EUR. Precios de la web, verificar."
+  },
+  {
+    "name": "Bloc District",
+    "slug": "bloc-district",
+    "kind": "tienda-recogida",
+    "city": "Barcelona (Marina y Tetuan)",
+    "website_url": "https://www.blocdistrict.com/",
+    "accepts_mail": null,
+    "verified": false,
+    "note": "Pista de Xavi: recoge pies de gato para resolar, los de La Sportiva a Capra y los de otras marcas a otro taller. Revisadas portada, /marina/, /tetuan/, /tarifes-i-activitats/, /contacte/ y /blog/ (06/11/2026): la web solo menciona alquiler de pies de gato, ni resolado ni Capra ni taller. Capra tampoco lista Bloc District. No verificado; confirmar con el rocódromo."
+  },
+  {
+    "name": "9gat (Nou Gat)",
+    "slug": "9gat",
+    "kind": "taller",
+    "city": "Girona",
+    "website_url": "https://www.instagram.com/resolado9gat/",
+    "accepts_mail": null,
+    "verified": true,
+    "note": "Instagram oficial + Xavi. Taller de Bloc District para marcas que no son La Sportiva; trabaja con varios rocódromos."
+  }
+]

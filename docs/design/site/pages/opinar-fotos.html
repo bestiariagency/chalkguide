@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Opinar con fotos · La Paret de Gràcia · ChalkGuide (F6.11b)</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="_shared/lectura.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw-vars.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+<link rel="stylesheet" href="_shared/lectura.css">
+<style>
+  /* ===== F6.11b · Fotos en el formulario de opinión ===== */
+  .ph legend { float:left; width:100%; }
+  .ph legend + * { clear:both; }
+  /* Zona vacía (0 fotos): botón ancho con borde discontinuo; con 1–2 fotos, la casilla "Añadir" */
+  .ph-add { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:100%;
+    border:1px dashed var(--control); border-radius:8px; background:var(--board); color:var(--meta); text-align:center;
+    transition: border-color 160ms var(--ease-standard), background-color 160ms var(--ease-standard), color 160ms var(--ease-standard); }
+  .ph-add--wide { min-height:56px; flex-direction:row; gap:8px; }
+  @media (min-width:768px) { .ph-add--wide { min-height:96px; flex-direction:column; gap:4px; } }
+  .ph-add--tile { aspect-ratio:1/1; }
+  @media (hover:hover) { .ph-add:hover { border-color:var(--accent); color:var(--foreground); } }
+  .ph-add:active { transform:scale(.98); }
+  .ph-add .drag-hint { display:none; }
+  @media (hover:hover) and (pointer:fine) { .ph-add .drag-hint { display:block; } }
+  /* Arrastrando sobre la zona */
+  .ph.is-over .ph-add, .ph.is-over .ph-drop { border:1.5px solid var(--accent); background:var(--accent-muted); color:var(--accent); }
+  .ph-drop { display:none; }
+  .ph.is-over.has-photos .ph-drop { display:flex; }
+  /* Miniatura */
+  .ph-tile { position:relative; aspect-ratio:1/1; border-radius:8px; overflow:hidden; background:var(--elevated); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.12); }
+  .ph-tile img { width:100%; height:100%; object-fit:cover; display:block; transition: opacity 200ms var(--ease-standard), filter 200ms var(--ease-standard); }
+  .ph-tile[data-st="prep"] img { opacity:.45; filter:blur(2px); }
+  .ph-tile[data-st="up"] img { opacity:.75; }
+  .ph-tile[data-st="err"] { box-shadow: inset 0 0 0 1px var(--danger-text); background:var(--danger-muted); }
+  .ph-tile[data-st="err"] img { opacity:.25; }
+  .ph-x { position:absolute; top:0; right:0; width:44px; height:44px; display:grid; place-items:center; border-radius:8px; }
+  .ph-x > span { width:28px; height:28px; border-radius:999px; display:grid; place-items:center; background:rgba(28,26,23,.78); color:#fff; transition: background-color 120ms var(--ease-standard), transform 120ms var(--ease-standard); }
+  @media (hover:hover) { .ph-x:hover > span { background:rgba(28,26,23,.95); } }
+  .ph-x:active > span { transform:scale(.92); }
+  .ph-x:focus-visible { box-shadow:none; } .ph-x:focus-visible > span { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent); }
+  .ph-prog { position:absolute; inset:auto 0 0 0; padding:6px; background:linear-gradient(transparent, rgba(28,26,23,.6)); }
+  .ph-prog .lbl { font-family:"JetBrains Mono",monospace; font-size:12px; color:#fff; line-height:1; }
+  .ph-prog .trk { height:4px; margin-top:6px; border-radius:999px; background:rgba(255,255,255,.35); overflow:hidden; }
+  .ph-prog .trk > span { display:block; height:100%; width:var(--p); background:var(--accent-fill); border-radius:inherit; transition: width 200ms linear; }
+  .ph-spin { width:20px; height:20px; border-radius:50%; border:2px solid var(--foreground); border-right-color:transparent; animation:spin .8s linear infinite; }
+  .ph-st { position:absolute; left:6px; bottom:6px; display:inline-flex; align-items:center; gap:4px; height:22px; padding:0 6px; border-radius:4px; font-size:12px; font-weight:500; line-height:1; }
+  .ph-st.rev { background:var(--board); color:var(--foreground); }
+  .ph-st.ok { background:var(--success-muted); color:var(--success-text); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .ph-spin { animation:none; border-right-color:var(--foreground); opacity:.6; } }
+  #states .kbd[aria-pressed="true"] { background:var(--accent-muted); border-color:var(--accent); color:var(--accent); }
+  /* Mensajes de la zona */
+  .ph-msg li { display:flex; gap:8px; align-items:flex-start; }
+</style>
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="rocodromos" data-route-es="/rocodromos/la-paret-de-gracia#opinar" data-route-en="/en/climbing-gyms/la-paret-de-gracia#review">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <!-- Selector de estados (solo mockup): fijo arriba en móvil, columna a la izquierda en escritorio -->
+  <div class="fixed z-[60] inset-x-0 top-0 lg:inset-x-auto lg:left-4 lg:top-1/2 lg:-translate-y-1/2 lg:w-[208px]">
+    <div class="bg-background border-b lg:border border-dashed border-line-strong lg:rounded-md px-3 py-2 font-mono text-[12px] text-meta flex lg:flex-col items-center lg:items-stretch gap-2 overflow-x-auto">
+      <span class="shrink-0">F6.11b · estado:</span>
+      <span class="flex lg:flex-col gap-1.5 shrink-0" id="states">
+        <button type="button" class="kbd lg:text-left" data-s="empty" aria-pressed="false">sin fotos</button>
+        <button type="button" class="kbd lg:text-left" data-s="up" aria-pressed="true">subiendo</button>
+        <button type="button" class="kbd lg:text-left" data-s="over" aria-pressed="false">arrastrando</button>
+        <button type="button" class="kbd lg:text-left" data-s="full" aria-pressed="false">3 de 3</button>
+        <button type="button" class="kbd lg:text-left" data-s="err" aria-pressed="false">errores</button>
+        <button type="button" class="kbd lg:text-left" data-s="edit" aria-pressed="false">editar</button>
+        <button type="button" class="kbd lg:text-left" data-s="sent" aria-pressed="false">enviada</button>
+      </span>
+      <button type="button" class="kbd shrink-0 lg:text-left" data-sheet-open="opinar-sheet" aria-controls="opinar-sheet" aria-expanded="true">abrir diálogo</button>
+      <a class="link shrink-0" href="opiniones-fotos.html">→ fotos en la ficha</a>
+    </div>
+  </div>
+
+  <!-- Contexto: la ficha detrás -->
+  <section class="max-w-page mx-auto px-4 md:px-6 py-10" aria-hidden="true">
+    <p class="label-mini">Cuerda + bloque · Gràcia</p>
+    <p class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-3">La Paret de Gràcia</p>
+    <div class="mt-8 grid md:grid-cols-3 gap-3 opacity-60"><div class="card h-40"></div><div class="card h-40"></div><div class="card h-40"></div></div>
+  </section>
+</main>
+
+<div class="sheet sheet--dialog is-open" id="opinar-sheet" aria-hidden="false">
+  <div class="scrim" data-sheet-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <div class="w-12 h-1 bg-line-strong rounded-full mx-auto mt-3 md:hidden" aria-hidden="true"></div>
+    <div class="p-6 md:p-8">
+      <div class="flex items-start justify-between gap-4">
+        <div><p class="label-mini">La Paret de Gràcia</p><h2 id="dlg-title" class="text-xl font-medium mt-1">Tu opinión</h2></div>
+        <button type="button" class="w-11 h-11 -m-2 grid place-items-center text-meta hover:text-foreground rounded-md shrink-0" data-sheet-close aria-label="Cerrar"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></button>
+      </div>
+
+      <form data-step="form" novalidate id="form" class="mt-4">
+        <p id="edit-note" class="hidden mb-5 text-[13px] text-meta">Enviada el <span class="font-mono">02.10.26</span>. Puedes cambiarla cuando quieras.</p>
+
+        <!-- Nota general (sin cambios) -->
+        <fieldset>
+          <legend class="mb-2 text-[16px] font-medium">Nota general</legend>
+          <div class="rating" role="radiogroup" aria-label="Nota general, de 1 a 5">
+            <label><input type="radio" name="ov" value="1" aria-label="1 de 5"><span>1</span></label><label><input type="radio" name="ov" value="2" aria-label="2 de 5"><span>2</span></label><label><input type="radio" name="ov" value="3" aria-label="3 de 5"><span>3</span></label><label><input type="radio" name="ov" value="4" aria-label="4 de 5" checked><span>4</span></label><label><input type="radio" name="ov" value="5" aria-label="5 de 5"><span>5</span></label>
+          </div>
+        </fieldset>
+        <div class="mt-6 border-t-[0.5px] border-line pt-5">
+          <p class="label-mini">Por criterio (opcional)</p>
+          <p class="mt-2 text-[13px] text-meta border border-dashed border-line-strong rounded-md px-3 py-2 font-mono">Mockup: los 7 criterios van aquí, sin cambios (D29).</p>
+        </div>
+        <div class="mt-6">
+          <label for="txt" class="block text-[15px] mb-2">Cuéntalo con tus palabras (opcional)</label>
+          <textarea id="txt" class="field w-full !min-h-[96px] py-3" maxlength="280" aria-describedby="txt-count" placeholder="Qué te gustó y qué no"></textarea>
+          <p id="txt-count" class="text-[13px] text-meta mt-1.5 font-mono text-right">0 / 280</p>
+        </div>
+
+        <!-- ===== NUEVO · Fotos ===== -->
+        <fieldset class="ph mt-4" id="ph" aria-describedby="ph-help ph-note">
+          <legend class="flex items-baseline justify-between gap-3 text-[15px]">
+            <span>Fotos (opcional)</span>
+            <span id="ph-count" class="font-mono text-[13px] text-meta" aria-hidden="true">0 / 3</span>
+          </legend>
+          <p id="ph-help" class="text-[13px] text-meta mt-1">Hasta 3. JPG, PNG, WebP o HEIC, de hasta 20 MB cada una.</p>
+
+          <div class="relative mt-3">
+            <ul id="ph-list" class="grid grid-cols-3 gap-2" aria-label="Fotos añadidas"></ul>
+            <!-- capa al arrastrar cuando ya hay fotos -->
+            <div class="ph-drop absolute inset-0 rounded-md items-center justify-center text-[15px] font-medium pointer-events-none" aria-hidden="true">Suelta para añadir · te queda <span class="font-mono mx-1" id="ph-left">1</span></div>
+          </div>
+          <input type="file" id="ph-input" accept="image/*" multiple class="sr-only" tabindex="-1" aria-hidden="true">
+
+          <ul id="ph-msg" class="ph-msg mt-3 space-y-2 text-[14px]" aria-live="polite"></ul>
+          <p id="ph-rejected" class="hidden mt-3 text-[13px] text-meta"></p>
+
+          <div id="ph-note" class="mt-3 flex gap-2.5 rounded-md bg-elevated p-3 text-[13px] leading-[1.5] text-meta">
+            <svg class="ico !w-4 !h-4 mt-0.5 shrink-0 text-foreground" aria-hidden="true"><use href="#i-info"/></svg>
+            <p><span class="text-foreground font-medium">Las fotos las reviso antes de publicarlas.</span> Tu nota y tu texto salen al momento; las fotos, cuando las apruebe. Antes de subirlas, tu navegador les quita la ubicación y los datos de la cámara. Sube solo fotos tuyas y sin caras reconocibles de otras personas.</p>
+          </div>
+        </fieldset>
+
+        <div id="submit-error" class="hidden mt-6 rounded-md border border-danger-text/60 bg-danger-muted p-3 text-[15px]" role="alert">
+          <div class="flex gap-2"><svg class="ico text-danger-text mt-0.5 shrink-0" aria-hidden="true"><use href="#i-alert"/></svg><p>Una foto no se ha subido. Reinténtalo o envía la opinión sin ella.</p></div>
+          <div class="mt-3 flex flex-wrap gap-2 pl-8"><button type="button" class="btn btn-ghost" data-retry-all><span class="label">Reintentar</span></button><button type="button" class="btn btn-ghost" data-send-without><span class="label">Enviar sin esa foto</span></button></div>
+        </div>
+
+        <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+          <button type="button" class="btn btn-ghost" data-sheet-close><span class="label">Cancelar</span></button>
+          <button type="submit" class="btn btn-primary" id="submit"><span class="spinner" aria-hidden="true"></span><span class="label">Enviar opinión</span></button>
+        </div>
+        <p id="submit-wait" class="hidden text-[13px] text-meta mt-3 sm:text-right" aria-live="polite"></p>
+        <p class="text-[13px] text-meta mt-4">Se publica con tu nombre y la inicial del apellido.</p>
+      </form>
+
+      <!-- Enviada -->
+      <div data-step="sent" hidden class="text-center py-4" role="status" tabindex="-1" id="sent">
+        <svg class="success-check mx-auto text-success-text" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M17 29l7 7 15-16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="text-xl font-medium mt-3">Opinión enviada. Gracias por contarlo.</p>
+        <p class="text-meta mt-1 text-[15px]">Ya cuenta para la nota de lectores.</p>
+        <div class="mt-5 mx-auto max-w-[380px] flex items-center gap-3 rounded-md bg-elevated p-3 text-left">
+          <div class="flex -space-x-3 shrink-0" aria-hidden="true">
+            <img class="w-11 h-11 rounded-md object-cover ring-2 ring-[var(--elevated)]" src="https://images.unsplash.com/photo-1564769662533-4f00a87b4056?w=120&h=120&fit=crop&q=60&auto=format" alt="">
+            <img class="w-11 h-11 rounded-md object-cover ring-2 ring-[var(--elevated)]" src="https://images.unsplash.com/photo-1689775884478-9ed19b79d659?w=120&h=120&fit=crop&q=60&auto=format" alt="">
+          </div>
+          <p class="text-[14px] leading-[1.45]"><span class="font-medium">Tus 2 fotos, en revisión.</span> <span class="text-meta">Salen en la ficha cuando las apruebe. Hasta entonces solo las ves tú.</span></p>
+        </div>
+        <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+          <button type="button" class="btn btn-ghost" data-go="edit"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-pencil"/></svg><span class="label">Editar</span></button>
+          <button type="button" class="btn btn-primary" data-sheet-close><span class="label">Cerrar</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$, vt, busy, toast } = window.CG;
+  const U = (id, w = 360) => `https://images.unsplash.com/${id}?w=${w}&h=${w}&fit=crop&q=65&auto=format`;
+  const IMG = ['photo-1564769662533-4f00a87b4056', 'photo-1689775884478-9ed19b79d659', 'photo-1704030641902-b10c41ebc147', 'photo-1775654792524-739718a3b001'];
+  const MAX = 3, MAX_MB = 20;
+  const OK_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+
+  // Estado: { id, name, src, st: prep|up|done|err|rev|ok, p }
+  let photos = [], msgs = [], rejected = '', uid = 0;
+  const list = $('#ph-list'), zone = $('#ph'), input = $('#ph-input'), msgEl = $('#ph-msg');
+  const say = (t) => { const a = $('#ph-sr') || Object.assign(document.body.appendChild(document.createElement('p')), { id: 'ph-sr', className: 'sr-only' }); a.setAttribute('aria-live', 'polite'); a.textContent = ''; setTimeout(() => a.textContent = t, 30); };
+
+  const addBtn = (wide) => `<li class="${wide ? 'col-span-3' : ''}"><button type="button" class="ph-add ${wide ? 'ph-add--wide' : 'ph-add--tile'}" data-add aria-describedby="ph-help">
+      <svg class="ico ${wide ? '' : '!w-5 !h-5'}" aria-hidden="true"><use href="#i-plus"/></svg>
+      <span class="text-[15px] ${wide ? '' : '!text-[14px]'} font-medium">${wide ? 'Añadir fotos' : 'Añadir foto'}</span>
+      <span class="drag-hint text-[13px]">${wide ? 'o arrástralas aquí' : 'o arrástrala'}</span>
+    </button></li>`;
+
+  const tile = (p, i) => {
+    const n = i + 1, label = `Foto ${n}`;
+    let inner = `<img src="${p.src}" alt="">`;
+    if (p.st === 'prep') inner += `<div class="absolute inset-0 grid place-items-center"><div class="flex flex-col items-center gap-1.5"><span class="ph-spin" aria-hidden="true"></span><span class="text-[12px] font-medium">Preparando</span></div></div>`;
+    if (p.st === 'up') inner += `<div class="ph-prog"><span class="lbl">${p.p} %</span><div class="trk" role="progressbar" aria-label="Subiendo la foto ${n}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.p}"><span style="--p:${p.p}%"></span></div></div>`;
+    if (p.st === 'err') inner += `<div class="absolute inset-0 flex flex-col items-center justify-center gap-0.5 text-danger-text"><svg class="ico !w-5 !h-5" aria-hidden="true"><use href="#i-alert"/></svg><button type="button" class="min-h-[44px] px-2 text-[13px] font-medium underline underline-offset-4 rounded-md" data-retry="${p.id}" aria-label="Reintentar la foto ${n}">Reintentar</button></div>`;
+    if (p.st === 'rev') inner += `<span class="ph-st rev"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-clock"/></svg>En revisión</span>`;
+    if (p.st === 'ok') inner += `<span class="ph-st ok"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-check"/></svg>Publicada</span>`;
+    const stTxt = { prep: 'preparando', up: `subiendo, ${p.p} %`, done: 'lista', err: 'no se ha subido', rev: 'en revisión', ok: 'publicada' }[p.st];
+    return `<li class="ph-tile" data-st="${p.st}" data-id="${p.id}"><span class="sr-only">${label}, ${p.name}: ${stTxt}.</span>${inner}
+      <button type="button" class="ph-x" data-remove="${p.id}" aria-label="Quitar la foto ${n} (${p.name})"><span><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-x"/></svg></span></button></li>`;
+  };
+
+  const render = () => {
+    list.innerHTML = photos.map(tile).join('') + (photos.length < MAX ? addBtn(photos.length === 0) : '');
+    $('#ph-count').textContent = `${photos.length} / ${MAX}`;
+    $('#ph-left').textContent = MAX - photos.length;
+    zone.classList.toggle('has-photos', photos.length > 0);
+    msgEl.innerHTML = msgs.map(m => `<li class="${m.t === 'err' ? 'text-danger-text' : 'text-meta'}"><svg class="ico !w-4 !h-4 mt-[3px] shrink-0" aria-hidden="true"><use href="#i-${m.t === 'err' ? 'alert' : 'info'}"/></svg><span>${m.x}</span></li>`).join('');
+    const rj = $('#ph-rejected'); rj.classList.toggle('hidden', !rejected); rj.textContent = rejected;
+    $('#submit-error').classList.add('hidden');
+  };
+
+  // Simulación: preparar (comprimir + quitar EXIF) → subir con progreso → lista
+  const run = (p) => {
+    p.st = 'prep'; render();
+    setTimeout(() => { p.st = 'up'; p.p = 0; render();
+      const t = setInterval(() => { if (!photos.includes(p)) return clearInterval(t);
+        p.p = Math.min(100, p.p + 9 + Math.round(Math.random() * 12));
+        if (p.p >= 100) { clearInterval(t); p.st = p.fail ? 'err' : 'done'; if (p.fail) { msgs.push({ t: 'err', x: `<b class="font-medium">${p.name}</b> no se ha subido. Revisa la conexión y pulsa Reintentar.` }); } render(); say(p.fail ? `${p.name} no se ha subido` : `${p.name} lista`); return; }
+        const bar = list.querySelector(`[data-id="${p.id}"] .trk`); if (bar) { bar.setAttribute('aria-valuenow', p.p); bar.firstElementChild.style.setProperty('--p', p.p + '%'); bar.previousElementSibling.textContent = p.p + ' %'; }
+      }, 220);
+    }, 700);
+  };
+
+  const addFiles = (files) => {
+    msgs = [];
+    const room = MAX - photos.length; let added = 0; const left = [];
+    [...files].forEach(f => {
+      const mb = f.size / 1048576;
+      if (!OK_TYPES.includes(f.type) && !/\.(heic|heif)$/i.test(f.name)) return msgs.push({ t: 'err', x: `<b class="font-medium">${f.name}</b> no es una foto. Usa JPG, PNG, WebP o HEIC.` });
+      if (mb > MAX_MB) return msgs.push({ t: 'err', x: `<b class="font-medium">${f.name}</b> pesa ${Math.round(mb)} MB. El máximo es ${MAX_MB} MB.` });
+      if (added >= room) return left.push(f.name);
+      added++; const p = { id: ++uid, name: f.name, src: URL.createObjectURL(f), st: 'prep', p: 0 }; photos.push(p); run(p);
+    });
+    if (left.length) msgs.push({ t: 'info', x: `Solo caben ${MAX} fotos. He dejado fuera ${left.join(', ')}.` });
+    render(); if (added) say(`${added === 1 ? 'Foto añadida' : added + ' fotos añadidas'}. Tienes ${photos.length} de ${MAX}.`);
+  };
+
+  // Eventos de la zona
+  list.addEventListener('click', (e) => {
+    if (e.target.closest('[data-add]')) return input.click();
+    const rm = e.target.closest('[data-remove]');
+    if (rm) { const i = photos.findIndex(p => p.id === +rm.dataset.remove); const [p] = photos.splice(i, 1); msgs = msgs.filter(m => !m.x.includes(p.name)); render();
+      say(`Foto quitada. Tienes ${photos.length} de ${MAX}.`);
+      const next = list.querySelectorAll('[data-remove]')[Math.min(i, photos.length - 1)] || list.querySelector('[data-add]'); next && next.focus(); return; }
+    const rt = e.target.closest('[data-retry]');
+    if (rt) { const p = photos.find(x => x.id === +rt.dataset.retry); p.fail = false; msgs = msgs.filter(m => !m.x.includes(p.name)); run(p); setTimeout(() => list.querySelector(`[data-id="${p.id}"] [data-remove]`)?.focus(), 30); }
+  });
+  input.addEventListener('change', () => { addFiles(input.files); input.value = ''; });
+  // Arrastrar: solo resalta la zona; el diálogo entero evita que el navegador abra el archivo
+  let depth = 0;
+  $('#opinar-sheet').addEventListener('dragover', (e) => e.preventDefault());
+  $('#opinar-sheet').addEventListener('drop', (e) => e.preventDefault());
+  zone.addEventListener('dragenter', (e) => { e.preventDefault(); if (photos.length >= MAX) return; depth++; zone.classList.add('is-over'); });
+  zone.addEventListener('dragleave', () => { if (--depth <= 0) { depth = 0; zone.classList.remove('is-over'); } });
+  zone.addEventListener('drop', (e) => { e.preventDefault(); depth = 0; zone.classList.remove('is-over'); if (photos.length >= MAX) { msgs = [{ t: 'info', x: 'Ya tienes 3 fotos. Quita una para cambiarla.' }]; return render(); } addFiles(e.dataTransfer.files); });
+
+  $('#txt').addEventListener('input', (e) => { $('#txt-count').textContent = `${e.target.value.length} / 280`; });
+
+  // Enviar: espera a las subidas; si una falló, lo dice y ofrece enviar sin ella
+  $('#form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('#submit'); if (btn.getAttribute('aria-busy') === 'true') return;
+    if (photos.some(p => p.st === 'err')) { const se = $('#submit-error'); se.classList.remove('hidden'); se.querySelector('button').focus(); return; }
+    const pending = photos.filter(p => p.st === 'prep' || p.st === 'up').length;
+    if (pending) { const w = $('#submit-wait'); w.classList.remove('hidden'); w.textContent = `Terminando de subir ${pending === 1 ? 'la foto' : pending + ' fotos'}…`; await busy(btn, 1600); w.classList.add('hidden'); }
+    await busy(btn, 800);
+    vt(() => show('sent'));
+  });
+  $('[data-send-without]').addEventListener('click', () => { photos = photos.filter(p => p.st !== 'err'); msgs = []; render(); $('#form').requestSubmit(); });
+  $('[data-retry-all]').addEventListener('click', () => { photos.filter(p => p.st === 'err').forEach(p => { p.fail = false; run(p); }); msgs = []; render(); });
+
+  // Estados del mockup
+  const P = (i, st, name, extra = {}) => ({ id: ++uid, name, src: U(IMG[i]), st, p: 0, ...extra });
+  const show = (s) => {
+    $$('[data-step]').forEach(el => el.hidden = el.dataset.step !== (s === 'sent' ? 'sent' : 'form'));
+    $('#edit-note').classList.toggle('hidden', s !== 'edit');
+    $('#submit .label').textContent = s === 'edit' ? 'Guardar cambios' : 'Enviar opinión';
+    zone.classList.remove('is-over'); msgs = []; rejected = '';
+    $('#txt').value = (s === 'edit' || s === 'full' || s === 'up') ? 'Voy por las mañanas y está casi vacío. Los autobelays son geniales para entrenar sola.' : '';
+    $('#txt-count').textContent = `${$('#txt').value.length} / 280`;
+    if (s === 'empty' || s === 'sent') photos = [];
+    if (s === 'up') photos = [P(0, 'done', 'IMG_2041.jpg'), P(1, 'up', 'IMG_2043.jpg', { p: 64 })];
+    if (s === 'over') { photos = [P(0, 'done', 'IMG_2041.jpg')]; zone.classList.add('is-over'); }
+    if (s === 'full') { photos = [P(0, 'done', 'IMG_2041.jpg'), P(1, 'done', 'IMG_2043.jpg'), P(2, 'done', 'IMG_2050.HEIC')]; msgs = [{ t: 'info', x: 'Solo caben 3 fotos. He dejado fuera IMG_2051.jpg.' }]; }
+    if (s === 'err') { photos = [P(0, 'done', 'IMG_2041.jpg'), P(3, 'err', 'IMG_2043.jpg')];
+      msgs = [{ t: 'err', x: '<b class="font-medium">IMG_2043.jpg</b> no se ha subido. Revisa la conexión y pulsa Reintentar.' },
+              { t: 'err', x: '<b class="font-medium">tarifas-2026.pdf</b> no es una foto. Usa JPG, PNG, WebP o HEIC.' },
+              { t: 'err', x: '<b class="font-medium">DSC_0042.tif</b> pesa 34 MB. El máximo es 20 MB.' },
+              { t: 'err', x: 'No puedo abrir <b class="font-medium">IMG_3301.HEIC</b> en este navegador. Súbela desde el móvil o guárdala como JPG.' }]; }
+    if (s === 'edit') { photos = [P(0, 'ok', 'IMG_2041.jpg'), P(1, 'rev', 'IMG_2043.jpg')]; rejected = 'Una foto no se ha publicado: se veía a otras personas. Ya no ocupa sitio; puedes subir otra.'; }
+    $('[data-sheet-open]').setAttribute('aria-expanded', 'true');
+    $$('#states button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === s));
+    render();
+    if (s === 'sent') $('#sent').focus();
+  };
+  $$('#states button').forEach(b => b.addEventListener('click', () => { const sh = $('#opinar-sheet'); if (!sh.classList.contains('is-open')) window.CG.setSheet(sh, true); vt(() => show(b.dataset.s)); }));
+  $$('[data-go]').forEach(b => b.addEventListener('click', () => vt(() => show(b.dataset.go))));
+  show('up');
+})();
+</script>
+</body>
+</html>

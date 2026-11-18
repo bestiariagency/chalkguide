@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ChalkGuide · Home · Pies de gato con foto (propuesta)</title>
+<link rel="icon" href="../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+/* Tokens = app/assets/css/main.css (@theme, tema claro "papel"). */
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        background: '#f4f1ea', board: '#fbf9f5', elevated: '#ebe6dc',
+        line: '#dcd5c8', 'line-strong': '#c2b9a9', control: '#827a6d',
+        accent: '#9a4a16', 'accent-fill': '#e8923a', 'accent-muted': '#f7e4d0', 'on-accent': '#1a0a00',
+        chalk: '#d2702a', foreground: '#1c1a17', prose: '#34302a', meta: '#5e584e', hint: '#b5ac9c',
+        success: '#17855f', 'success-text': '#1a6e4e', 'danger-text': '#a3322b'
+      },
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'], hand: ['Caveat', 'cursive'] },
+      borderRadius: { sm: '4px', xs: '6px', md: '8px', lg: '12px', xl: '16px' },
+      maxWidth: { page: '1200px' },
+      fontSize: { note: ['13px', '1.45'], micro: ['12px', '1.3'], caption: ['14px', '1.45'], 'body-sm': ['15px', '1.5'], body: ['16px', '1.6'] }
+    }
+  }
+}
+</script>
+<style>
+  :root { --ring:0 0 0 2px #f4f1ea, 0 0 0 4px #9a4a16; --bar-track:#e3ddd1; --ease-out:cubic-bezier(.2,.8,.2,1); }
+  body { font-feature-settings:"cv11","ss01"; -webkit-font-smoothing:antialiased; }
+  .num { font-variant-numeric: tabular-nums; }
+  .display { letter-spacing:-.025em; font-weight:500; line-height:1.12; }
+  .label-mini { font-family:"JetBrains Mono",monospace; font-size:12px; line-height:1; letter-spacing:.14em; text-transform:uppercase; color:#5e584e; }
+  :focus { outline:none; }
+  :focus-visible { box-shadow:var(--ring); border-radius:4px; }
+
+  /* Bandeja de producto: tono papel; la foto (fondo blanco) se funde con multiply */
+  .tile { background:#efebe3; transition:background-color 200ms; }
+  .colhead:focus-visible { border-radius:8px; }
+  @media (hover:hover) {
+    .group:hover .tile { background:#e6e0d5; }
+    .card:hover .tile { background:#e6e0d5; }
+  }
+  @media (hover:hover) and (prefers-reduced-motion:no-preference) {
+    .zoom { transition:transform 600ms var(--ease-out); }
+    .group:hover .zoom, .card:hover .zoom { transform:scale(1.04); }
+  }
+  .t-under { background:linear-gradient(currentColor,currentColor) 0 95%/0% 1.5px no-repeat; transition:background-size 300ms var(--ease-out); }
+  .group:hover .t-under { background-size:100% 1.5px; }
+  .overlay-link::after { content:""; position:absolute; inset:0; z-index:1; border-radius:8px; }
+  .overlay-link:focus-visible { box-shadow:none; }
+  .card:has(a:focus-visible) { box-shadow:var(--ring); }
+
+  .bar { display:block; height:4px; border-radius:9999px; background:var(--bar-track); overflow:hidden; }
+  .bar > span { display:block; height:100%; border-radius:9999px; background:#d2702a; }
+  @media (prefers-reduced-motion:reduce){ *,*::before,*::after{ transition-duration:0s!important; animation-duration:0s!important; } }
+  .note { border-left:2px solid #d2702a; }
+</style>
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed">
+
+<header class="max-w-page mx-auto px-4 md:px-6 pt-10 pb-8">
+  <p class="label-mini">Propuesta · Home · sección pies de gato · 29.10.26</p>
+  <h1 class="display text-[2rem] md:text-[2.5rem] mt-3">Pies de gato de la home, con foto y a ancho completo</h1>
+  <p class="text-meta mt-3 max-w-[64ch]">Sale la «Pizarra del mes»: la tabla ocupa las 12 columnas. Dos opciones, misma tabla transpuesta (columnas = modelos) con la foto de producto como cabecera de cada columna. Cambia el número de modelos y lo que pasa en móvil. Revisar en 1440 y 390.</p>
+  <nav class="mt-5 flex flex-wrap gap-2 text-[15px]" aria-label="Opciones">
+    <a href="#opcion-a" class="inline-flex items-center min-h-[44px] px-4 rounded-md border border-control hover:bg-elevated">A · Escaparate de 3 <span class="ml-2 font-mono text-micro px-1.5 py-0.5 rounded-sm bg-accent-muted text-accent">recomendada</span></a>
+    <a href="#opcion-b" class="inline-flex items-center min-h-[44px] px-4 rounded-md border border-control hover:bg-elevated">B · Escaparate de 4</a>
+    <a href="#sin-foto" class="inline-flex items-center min-h-[44px] px-4 rounded-md border border-control hover:bg-elevated">Estado sin foto</a>
+    <a href="#spec" class="inline-flex items-center min-h-[44px] px-4 rounded-md border border-control hover:bg-elevated">Spec para coneja-lucky</a>
+  </nav>
+  <aside class="note mt-6 pl-4 text-[15px] text-meta max-w-[72ch]">
+    <p><strong class="font-medium text-foreground">Fotos:</strong> uso las tres que hay hoy en el bucket <code class="font-mono text-note">media</code> (Tarantulace, Solution, Skwama). Solution y Skwama no son de iniciación: con los datos actuales la home sacaría Tarantulace, Veloce y Finale/Force V, y <strong class="font-medium text-foreground">solo Tarantulace tiene portada</strong>. Antes de publicar, Xavi debería subir las portadas de los modelos de iniciación (ver «Estado sin foto»).</p>
+  </aside>
+</header>
+
+<!-- OPCIÓN A -->
+<div id="opcion-a" class="scroll-mt-4">
+  <div class="max-w-page mx-auto px-4 md:px-6 pb-4">
+    <p class="label-mini text-accent">Opción A · recomendada</p>
+    <p class="text-xl font-medium mt-2">Escaparate de 3</p>
+    <p class="text-meta text-[15px] mt-1 max-w-[70ch]">La tabla de hoy, ensanchada. Cada columna se abre con la foto del modelo sobre una bandeja de tono papel (la foto de fondo blanco se funde con <code class="font-mono text-note">mix-blend-multiply</code>, sin recortes ni degradados). Se añade la fila «Perfil». «Lo que aprendí» sube a la derecha del título y equilibra la cabecera. La misma tabla sirve en 390, sin scroll.</p>
+  </div>
+  <section class="border-y-[0.5px] border-line" aria-labelledby="a-title">
+      <div class="mx-auto grid max-w-page gap-8 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-10">
+        <div class="order-1 lg:col-span-7 lg:self-end">
+          <p class="label-mini">Pies de gato</p>
+          <h2 id="a-title" class="display mt-3 text-[1.75rem] md:text-[2.25rem]">Pies de gato de un vistazo</h2>
+        </div>
+        <div class="order-2 lg:col-span-12 lg:order-3">
+        <div class="overflow-hidden rounded-lg border-[0.5px] border-line-strong bg-board px-1.5 md:px-3">
+          <table class="w-full table-fixed text-left num text-[14px] md:text-body-sm">
+            <caption class="sr-only">Comparativa rápida de pies de gato</caption>
+            <thead>
+              <tr>
+                <th scope="col" class="w-[19%] md:w-[160px] align-bottom font-normal"><span class="sr-only">Modelo</span></th>
+                <th scope="col" class="px-1 pt-2 pb-3 md:px-3 md:pt-3 md:pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-square md:aspect-[3/2]" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-1.5 md:p-3" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg"></span>
+                <span class="mt-2.5 block truncate text-micro md:text-caption text-meta">La Sportiva</span>
+                <span class="block text-[14px] md:text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Tarantulace</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th><th scope="col" class="px-1 pt-2 pb-3 md:px-3 md:pt-3 md:pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-square md:aspect-[3/2]" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-1.5 md:p-3" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/0fa13ccc-d282-42e8-a64a-08f3e2953a47/1-solution.jpg"></span>
+                <span class="mt-2.5 block truncate text-micro md:text-caption text-meta">La Sportiva</span>
+                <span class="block text-[14px] md:text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Solution</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th><th scope="col" class="px-1 pt-2 pb-3 md:px-3 md:pt-3 md:pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-square md:aspect-[3/2]" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-1.5 md:p-3" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg"></span>
+                <span class="mt-2.5 block truncate text-micro md:text-caption text-meta">La Sportiva</span>
+                <span class="block text-[14px] md:text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Skwama</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal text-meta">Cierre</th><td class="px-1 md:px-3 py-3">Cordones</td><td class="px-1 md:px-3 py-3">Velcro</td><td class="px-1 md:px-3 py-3">Velcro</td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal text-meta">Perfil</th><td class="px-1 md:px-3 py-3">Plano</td><td class="px-1 md:px-3 py-3">Agresivo</td><td class="px-1 md:px-3 py-3">Agresivo</td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal text-meta">Rigidez</th><td class="px-1 md:px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-14 md:w-24" role="img" aria-label="4 de 5"><span style="width:80%"></span></span><span class="hidden md:inline">Rígido</span></span></td><td class="px-1 md:px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-14 md:w-24" role="img" aria-label="3 de 5"><span style="width:60%"></span></span><span class="hidden md:inline">Medio</span></span></td><td class="px-1 md:px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-14 md:w-24" role="img" aria-label="2 de 5"><span style="width:40%"></span></span><span class="hidden md:inline">Blando</span></span></td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal">Precio</th><td class="px-1 md:px-3 py-3 font-mono text-[14px] md:text-body text-accent whitespace-nowrap">80–95 €</td><td class="px-1 md:px-3 py-3 font-mono text-[14px] md:text-body text-accent whitespace-nowrap">150–175 €</td><td class="px-1 md:px-3 py-3 font-mono text-[14px] md:text-body text-accent whitespace-nowrap">145–170 €</td></tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+        <div class="order-3 max-w-[60ch] lg:order-2 lg:col-span-5 lg:self-end">
+          <div class="border-l-2 border-accent pl-4">
+            <p class="font-hand text-[26px] leading-tight text-accent">Lo que aprendí</p>
+            <p class="mt-1 text-[17px] leading-[1.7] text-prose">Con unos Tarantulace de cordones aprendí a pisar antes de pensar en desplomes. Para empezar, comodidad antes que agresividad.</p>
+          </div>
+        </div>
+        <div class="order-4 lg:col-span-12">
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a href="#" class="inline-flex min-h-[44px] items-center gap-2 rounded-md px-1 text-[15px] font-medium hover:text-accent">Abrir el comparador <span aria-hidden="true">→</span></a>
+            <span class="inline-flex items-center gap-1.5 rounded-sm bg-accent-muted px-2 py-[5px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>Contiene enlaces de afiliado</span>
+          </div>
+        </div>
+      </div>
+    </section>
+</div>
+
+<!-- OPCIÓN B -->
+<div id="opcion-b" class="scroll-mt-4 border-t-[0.5px] border-line pt-12 mt-12">
+  <div class="max-w-page mx-auto px-4 md:px-6 pb-4">
+    <p class="label-mini">Opción B</p>
+    <p class="text-xl font-medium mt-2">Escaparate de 4</p>
+    <p class="text-meta text-[15px] mt-1 max-w-[70ch]">Cuatro columnas desde md. En móvil cuatro columnas no caben (precio «100–125 €» y nombres como «Tarantulace» desbordan), así que por debajo de md la tabla se convierte en tarjetas-fila con la foto a la izquierda: se pierde la lectura lado a lado. La cuarta columna muestra el estado sin foto (Veloce).</p>
+  </div>
+  <section class="border-y-[0.5px] border-line" aria-labelledby="b-title">
+      <div class="mx-auto grid max-w-page gap-8 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-10">
+        <div class="order-1 lg:col-span-7 lg:self-end">
+          <p class="label-mini">Pies de gato</p>
+          <h2 id="b-title" class="display mt-3 text-[1.75rem] md:text-[2.25rem]">Pies de gato de un vistazo</h2>
+        </div>
+        <div class="order-2 lg:col-span-12 lg:order-3">
+        <div class="hidden md:block"><div class="overflow-hidden rounded-lg border-[0.5px] border-line-strong bg-board px-1.5 md:px-3">
+          <table class="w-full table-fixed text-left num text-[14px] md:text-body-sm">
+            <caption class="sr-only">Comparativa rápida de pies de gato</caption>
+            <thead>
+              <tr>
+                <th scope="col" class="w-[160px] align-bottom font-normal"><span class="sr-only">Modelo</span></th>
+                <th scope="col" class="px-3 pt-3 pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-[3/2]" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-3" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg"></span>
+                <span class="mt-2.5 block truncate text-caption text-meta">La Sportiva</span>
+                <span class="block text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Tarantulace</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th><th scope="col" class="px-3 pt-3 pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-[3/2]" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-3" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/0fa13ccc-d282-42e8-a64a-08f3e2953a47/1-solution.jpg"></span>
+                <span class="mt-2.5 block truncate text-caption text-meta">La Sportiva</span>
+                <span class="block text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Solution</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th><th scope="col" class="px-3 pt-3 pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-[3/2]" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-3" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg"></span>
+                <span class="mt-2.5 block truncate text-caption text-meta">La Sportiva</span>
+                <span class="block text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Skwama</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th><th scope="col" class="px-3 pt-3 pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-[3/2]" aria-hidden="true"><span class="text-hint"><svg class="size-8 md:size-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg></span></span>
+                <span class="mt-2.5 block truncate text-caption text-meta">Scarpa</span>
+                <span class="block text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Veloce</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="px-3 py-3 font-normal text-meta">Cierre</th><td class="px-3 py-3">Cordones</td><td class="px-3 py-3">Velcro</td><td class="px-3 py-3">Velcro</td><td class="px-3 py-3">Velcro</td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="px-3 py-3 font-normal text-meta">Perfil</th><td class="px-3 py-3">Plano</td><td class="px-3 py-3">Agresivo</td><td class="px-3 py-3">Agresivo</td><td class="px-3 py-3">Moderado</td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="px-3 py-3 font-normal text-meta">Rigidez</th><td class="px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-20" role="img" aria-label="4 de 5"><span style="width:80%"></span></span><span>Rígido</span></span></td><td class="px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-20" role="img" aria-label="3 de 5"><span style="width:60%"></span></span><span>Medio</span></span></td><td class="px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-20" role="img" aria-label="2 de 5"><span style="width:40%"></span></span><span>Blando</span></span></td><td class="px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-20" role="img" aria-label="2 de 5"><span style="width:40%"></span></span><span>Blando</span></span></td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="px-3 py-3 font-normal">Precio</th><td class="px-3 py-3 font-mono  text-accent whitespace-nowrap">80–95 €</td><td class="px-3 py-3 font-mono  text-accent whitespace-nowrap">150–175 €</td><td class="px-3 py-3 font-mono  text-accent whitespace-nowrap">145–170 €</td><td class="px-3 py-3 font-mono  text-accent whitespace-nowrap">95–115 €</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+        <ul class="space-y-3 num md:hidden" aria-label="Pies de gato de un vistazo">
+            <li class="card relative rounded-md border-[0.5px] border-line-strong bg-board p-3">
+              <div class="flex gap-3">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md size-[88px] shrink-0" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-1.5" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg"></span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-caption text-meta">La Sportiva</p>
+                  <h3 class="text-lg font-medium leading-tight"><a href="#" class="overlay-link">Tarantulace</a></h3>
+                  <p class="mt-0.5 font-mono text-accent">80–95 €</p>
+                  <div class="relative z-[2] mt-1.5 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></div>
+                </div>
+              </div>
+              <dl class="mt-3 grid grid-cols-3 gap-2 border-t-[0.5px] border-line pt-3 text-caption">
+                <div><dt class="text-meta">Cierre</dt><dd>Cordones</dd></div>
+                <div><dt class="text-meta">Perfil</dt><dd>Plano</dd></div>
+                <div><dt class="text-meta">Rigidez</dt><dd>Rígido</dd><dd class="mt-1"><span class="bar w-full" role="img" aria-label="4 de 5"><span style="width:80%"></span></span></dd></div>
+              </dl>
+            </li><li class="card relative rounded-md border-[0.5px] border-line-strong bg-board p-3">
+              <div class="flex gap-3">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md size-[88px] shrink-0" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-1.5" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/0fa13ccc-d282-42e8-a64a-08f3e2953a47/1-solution.jpg"></span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-caption text-meta">La Sportiva</p>
+                  <h3 class="text-lg font-medium leading-tight"><a href="#" class="overlay-link">Solution</a></h3>
+                  <p class="mt-0.5 font-mono text-accent">150–175 €</p>
+                  <div class="relative z-[2] mt-1.5 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></div>
+                </div>
+              </div>
+              <dl class="mt-3 grid grid-cols-3 gap-2 border-t-[0.5px] border-line pt-3 text-caption">
+                <div><dt class="text-meta">Cierre</dt><dd>Velcro</dd></div>
+                <div><dt class="text-meta">Perfil</dt><dd>Agresivo</dd></div>
+                <div><dt class="text-meta">Rigidez</dt><dd>Medio</dd><dd class="mt-1"><span class="bar w-full" role="img" aria-label="3 de 5"><span style="width:60%"></span></span></dd></div>
+              </dl>
+            </li><li class="card relative rounded-md border-[0.5px] border-line-strong bg-board p-3">
+              <div class="flex gap-3">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md size-[88px] shrink-0" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-1.5" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg"></span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-caption text-meta">La Sportiva</p>
+                  <h3 class="text-lg font-medium leading-tight"><a href="#" class="overlay-link">Skwama</a></h3>
+                  <p class="mt-0.5 font-mono text-accent">145–170 €</p>
+                  <div class="relative z-[2] mt-1.5 flex flex-wrap gap-1"><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></div>
+                </div>
+              </div>
+              <dl class="mt-3 grid grid-cols-3 gap-2 border-t-[0.5px] border-line pt-3 text-caption">
+                <div><dt class="text-meta">Cierre</dt><dd>Velcro</dd></div>
+                <div><dt class="text-meta">Perfil</dt><dd>Agresivo</dd></div>
+                <div><dt class="text-meta">Rigidez</dt><dd>Blando</dd><dd class="mt-1"><span class="bar w-full" role="img" aria-label="2 de 5"><span style="width:40%"></span></span></dd></div>
+              </dl>
+            </li><li class="card relative rounded-md border-[0.5px] border-line-strong bg-board p-3">
+              <div class="flex gap-3">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md size-[88px] shrink-0" aria-hidden="true"><span class="text-hint"><svg class="size-8 md:size-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg></span></span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-caption text-meta">Scarpa</p>
+                  <h3 class="text-lg font-medium leading-tight"><a href="#" class="overlay-link">Veloce</a></h3>
+                  <p class="mt-0.5 font-mono text-accent">95–115 €</p>
+                  <div class="relative z-[2] mt-1.5 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></div>
+                </div>
+              </div>
+              <dl class="mt-3 grid grid-cols-3 gap-2 border-t-[0.5px] border-line pt-3 text-caption">
+                <div><dt class="text-meta">Cierre</dt><dd>Velcro</dd></div>
+                <div><dt class="text-meta">Perfil</dt><dd>Moderado</dd></div>
+                <div><dt class="text-meta">Rigidez</dt><dd>Blando</dd><dd class="mt-1"><span class="bar w-full" role="img" aria-label="2 de 5"><span style="width:40%"></span></span></dd></div>
+              </dl>
+            </li>
+        </ul>
+        </div>
+        <div class="order-3 max-w-[60ch] lg:order-2 lg:col-span-5 lg:self-end">
+          <div class="border-l-2 border-accent pl-4">
+            <p class="font-hand text-[26px] leading-tight text-accent">Lo que aprendí</p>
+            <p class="mt-1 text-[17px] leading-[1.7] text-prose">Con unos Tarantulace de cordones aprendí a pisar antes de pensar en desplomes. Para empezar, comodidad antes que agresividad.</p>
+          </div>
+        </div>
+        <div class="order-4 lg:col-span-12">
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a href="#" class="inline-flex min-h-[44px] items-center gap-2 rounded-md px-1 text-[15px] font-medium hover:text-accent">Abrir el comparador <span aria-hidden="true">→</span></a>
+            <span class="inline-flex items-center gap-1.5 rounded-sm bg-accent-muted px-2 py-[5px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>Contiene enlaces de afiliado</span>
+          </div>
+        </div>
+      </div>
+    </section>
+</div>
+
+<!-- ESTADO SIN FOTO -->
+<div id="sin-foto" class="scroll-mt-4 border-t-[0.5px] border-line pt-12 mt-12">
+  <div class="max-w-page mx-auto px-4 md:px-6 pb-4">
+    <p class="label-mini">Estado · datos reales de hoy (A)</p>
+    <p class="text-xl font-medium mt-2">Sin portada: bandeja vacía con icono</p>
+    <p class="text-meta text-[15px] mt-1 max-w-[70ch]">Lo que vería hoy el lector con la opción A y los modelos de iniciación reales. La bandeja mantiene el tamaño (la rejilla no salta) y lleva un icono lineal en <code class="font-mono text-note">hint</code>, decorativo. Funciona, pero el escaparate pierde sentido con 2 de 3 vacías: subir portadas es requisito para publicar el cambio.</p>
+  </div>
+  <section class="border-y-[0.5px] border-line" aria-labelledby="a2-title">
+      <div class="mx-auto grid max-w-page gap-8 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-10">
+        <div class="order-1 lg:col-span-7 lg:self-end">
+          <p class="label-mini">Pies de gato</p>
+          <h2 id="a2-title" class="display mt-3 text-[1.75rem] md:text-[2.25rem]">Pies de gato de un vistazo</h2>
+        </div>
+        <div class="order-2 lg:col-span-12 lg:order-3">
+        <div class="overflow-hidden rounded-lg border-[0.5px] border-line-strong bg-board px-1.5 md:px-3">
+          <table class="w-full table-fixed text-left num text-[14px] md:text-body-sm">
+            <caption class="sr-only">Comparativa rápida de pies de gato</caption>
+            <thead>
+              <tr>
+                <th scope="col" class="w-[19%] md:w-[160px] align-bottom font-normal"><span class="sr-only">Modelo</span></th>
+                <th scope="col" class="px-1 pt-2 pb-3 md:px-3 md:pt-3 md:pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-square md:aspect-[3/2]" aria-hidden="true"><img class="zoom absolute inset-0 size-full object-contain mix-blend-multiply p-1.5 md:p-3" alt="" loading="lazy" width="650" height="650" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg"></span>
+                <span class="mt-2.5 block truncate text-micro md:text-caption text-meta">La Sportiva</span>
+                <span class="block text-[14px] md:text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Tarantulace</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th><th scope="col" class="px-1 pt-2 pb-3 md:px-3 md:pt-3 md:pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-square md:aspect-[3/2]" aria-hidden="true"><span class="text-hint"><svg class="size-8 md:size-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg></span></span>
+                <span class="mt-2.5 block truncate text-micro md:text-caption text-meta">Scarpa</span>
+                <span class="block text-[14px] md:text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Veloce</span></span>
+              </a><span class="mt-2 flex flex-wrap gap-1"><span class="inline-flex items-center rounded-sm bg-elevated px-1.5 py-[3px] font-mono text-micro text-meta">los uso</span><span class="inline-flex items-center gap-1 rounded-sm bg-accent-muted px-1.5 py-[3px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>afiliado</span></span>
+            </th><th scope="col" class="px-1 pt-2 pb-3 md:px-3 md:pt-3 md:pb-4 align-top font-normal">
+              <a href="#" class="colhead group block rounded-md">
+                <span class="tile relative grid place-items-center overflow-hidden rounded-md aspect-square md:aspect-[3/2]" aria-hidden="true"><span class="text-hint"><svg class="size-8 md:size-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg></span></span>
+                <span class="mt-2.5 block truncate text-micro md:text-caption text-meta">Scarpa</span>
+                <span class="block text-[14px] md:text-lg font-medium leading-tight [overflow-wrap:anywhere]"><span class="t-under">Force V</span></span>
+              </a>
+            </th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal text-meta">Cierre</th><td class="px-1 md:px-3 py-3">Cordones</td><td class="px-1 md:px-3 py-3">Velcro</td><td class="px-1 md:px-3 py-3">Velcro</td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal text-meta">Perfil</th><td class="px-1 md:px-3 py-3">Plano</td><td class="px-1 md:px-3 py-3">Moderado</td><td class="px-1 md:px-3 py-3">Plano</td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal text-meta">Rigidez</th><td class="px-1 md:px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-14 md:w-24" role="img" aria-label="4 de 5"><span style="width:80%"></span></span><span class="hidden md:inline">Rígido</span></span></td><td class="px-1 md:px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-14 md:w-24" role="img" aria-label="2 de 5"><span style="width:40%"></span></span><span class="hidden md:inline">Blando</span></span></td><td class="px-1 md:px-3 py-3"><span class="flex items-center gap-2.5"><span class="bar w-14 md:w-24" role="img" aria-label="4 de 5"><span style="width:80%"></span></span><span class="hidden md:inline">Rígido</span></span></td></tr>
+          <tr class="border-t-[0.5px] border-line"><th scope="row" class="pl-1.5 pr-1 md:px-3 py-3 font-normal">Precio</th><td class="px-1 md:px-3 py-3 font-mono text-[14px] md:text-body text-accent whitespace-nowrap">80–95 €</td><td class="px-1 md:px-3 py-3 font-mono text-[14px] md:text-body text-accent whitespace-nowrap">95–115 €</td><td class="px-1 md:px-3 py-3 font-mono text-[14px] md:text-body text-accent whitespace-nowrap">90–110 €</td></tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+        <div class="order-3 max-w-[60ch] lg:order-2 lg:col-span-5 lg:self-end">
+          <div class="border-l-2 border-accent pl-4">
+            <p class="font-hand text-[26px] leading-tight text-accent">Lo que aprendí</p>
+            <p class="mt-1 text-[17px] leading-[1.7] text-prose">Con unos Tarantulace de cordones aprendí a pisar antes de pensar en desplomes. Para empezar, comodidad antes que agresividad.</p>
+          </div>
+        </div>
+        <div class="order-4 lg:col-span-12">
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a href="#" class="inline-flex min-h-[44px] items-center gap-2 rounded-md px-1 text-[15px] font-medium hover:text-accent">Abrir el comparador <span aria-hidden="true">→</span></a>
+            <span class="inline-flex items-center gap-1.5 rounded-sm bg-accent-muted px-2 py-[5px] font-mono text-micro text-accent"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>Contiene enlaces de afiliado</span>
+          </div>
+        </div>
+      </div>
+    </section>
+</div>
+
+<section id="spec" class="max-w-page mx-auto px-4 md:px-6 py-14 text-[15px]">
+  <h2 class="display text-[1.75rem]">A frente a B</h2>
+  <div class="mt-6 grid gap-6 md:grid-cols-2">
+    <div class="rounded-lg border-[0.5px] border-line-strong bg-board p-5">
+      <p class="font-medium">A · Escaparate de 3 <span class="ml-1 font-mono text-micro px-1.5 py-0.5 rounded-sm bg-accent-muted text-accent">recomendada</span></p>
+      <ul class="mt-3 space-y-1.5 text-meta list-disc pl-5">
+        <li><span class="text-success-text">+</span> Una sola tabla en todos los anchos: en 390 se sigue comparando lado a lado (es donde está la mayoría del tráfico).</li>
+        <li><span class="text-success-text">+</span> Respeta la regla de la casa <code class="font-mono text-note">MAX_COMPARE = 3</code>: la home enseña lo mismo que luego el comparador.</li>
+        <li><span class="text-success-text">+</span> A 1440 las columnas miden ~330 px: fotos grandes que llenan el ancho; «Lo que aprendí» a la derecha del título cierra el hueco de la cabecera.</li>
+        <li><span class="text-success-text">+</span> Menos portadas que subir (3).</li>
+        <li><span class="text-danger-text">−</span> En 390 la foto es pequeña (~80 px): reconoce el modelo, no lo luce.</li>
+      </ul>
+    </div>
+    <div class="rounded-lg border-[0.5px] border-line-strong bg-board p-5">
+      <p class="font-medium">B · Escaparate de 4</p>
+      <ul class="mt-3 space-y-1.5 text-meta list-disc pl-5">
+        <li><span class="text-success-text">+</span> Más catálogo en escritorio; la rejilla de 4 llena el ancho sin ayuda.</li>
+        <li><span class="text-success-text">+</span> En móvil la foto se ve más grande (88 px).</li>
+        <li><span class="text-danger-text">−</span> Dos maquetas (tabla md+ y lista &lt; md) y en móvil deja de ser una comparación: cuatro tarjetas que se leen una a una (~700 px de alto).</li>
+        <li><span class="text-danger-text">−</span> Rompe la regla de máximo 3 lado a lado y se parece más a la tabla de rocódromos en móvil (tarjetas-fila con miniatura).</li>
+        <li><span class="text-danger-text">−</span> Una portada más que subir; con datos de hoy, 3 de 4 vacías.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 class="display text-[1.75rem] mt-12">Spec de A para coneja-lucky</h2>
+  <div class="mt-4 grid gap-x-10 gap-y-6 md:grid-cols-2 text-prose">
+    <div>
+      <p class="label-mini">Página y componentes</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li><code class="font-mono text-note">pages/index.vue</code>: quitar <code class="font-mono text-note">EventsMonthBoard</code> y <code class="font-mono text-note">useMonthEvents(3)</code> del <code class="font-mono text-note">Promise.all</code>; la sección pasa a <code class="font-mono text-note">&lt;UiReveal&gt;&lt;ShoesGlance/&gt;&lt;/UiReveal&gt;</code> y el error a su propio contenedor (como rocódromos). Actualizar el comentario de cabecera.</li>
+        <li><code class="font-mono text-note">ShoesGlance.vue</code> pasa a ser la sección completa (<code class="font-mono text-note">section</code> con <code class="font-mono text-note">aria-labelledby</code>, <code class="font-mono text-note">border-t-[0.5px] border-line</code>, <code class="font-mono text-note">max-w-page px-4 md:px-6 py-16 md:py-24</code>).</li>
+        <li><strong class="font-medium">Nuevo <code class="font-mono text-note">ShoesPhotoTile.vue</code></strong> (prop <code class="font-mono text-note">media: MediaRef | null</code>, <code class="font-mono text-note">sizes</code>): bandeja <code class="font-mono text-note">#efebe3</code> + NuxtImg <code class="font-mono text-note">object-contain mix-blend-multiply</code>; sin media, icono <code class="font-mono text-note">Footprints</code> (lucide) en <code class="font-mono text-note">text-hint</code>. No usar UiPhoto: su <code class="font-mono text-note">object-cover</code> y el placeholder oscuro recortan y ensucian una foto de producto. Añadir el color como token (p. ej. <code class="font-mono text-note">--color-tray</code> / <code class="font-mono text-note">--color-tray-hover: #e6e0d5</code>).</li>
+        <li>Reutiliza: UiBadge (<code class="font-mono text-note">kind="affiliate"</code> y neutral), UiIndexBar, UiHandNote <code class="font-mono text-note">variant="learned"</code>, UiButton ghost, <code class="font-mono text-note">cardTitleUnderline</code>, <code class="font-mono text-note">stiffnessGroup()</code>.</li>
+        <li>Seguimiento (no ahora): <code class="font-mono text-note">ShoesCard</code> del listado usa UiPhoto 16:9 y recorta los pies; debería usar ShoesPhotoTile para ser coherente.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="label-mini">Rejilla y medidas</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li>Contenedor <code class="font-mono text-note">grid lg:grid-cols-12 gap-8 lg:gap-x-6 lg:gap-y-10</code>. Orden &lt; lg: título → tabla → Lo que aprendí → pie. lg+: título (7 col) y Lo que aprendí (5 col, <code class="font-mono text-note">self-end</code>) en la misma fila; tabla y pie a 12 col. Usar <code class="font-mono text-note">order-*</code>.</li>
+        <li>Tabla <code class="font-mono text-note">table-fixed</code> en caja <code class="font-mono text-note">bg-board rounded-lg border-[0.5px] border-line-strong</code>. Columna de rótulos <code class="font-mono text-note">w-[19%] md:w-[160px]</code>; 3 columnas de modelo iguales.</li>
+        <li>Cabecera de columna: bandeja <code class="font-mono text-note">aspect-square p-1.5 md:aspect-[3/2] md:p-4 rounded-md</code>; marca <code class="font-mono text-note">text-micro md:text-caption text-meta truncate</code>; modelo <code class="font-mono text-note">text-[14px] md:text-lg font-medium</code> con <code class="font-mono text-note">[overflow-wrap:anywhere]</code>; badges debajo <code class="font-mono text-note">mt-2 flex-wrap gap-1</code>. <code class="font-mono text-note">sizes="25vw md:33vw lg:330px"</code>.</li>
+        <li>Filas: Cierre, Perfil, Rigidez, Precio (claves <code class="font-mono text-note">shoes.rows.*</code> existentes). Celdas <code class="font-mono text-note">px-1 md:px-3 py-3</code>, rótulo <code class="font-mono text-note">pl-3 pr-1 md:px-5</code>. Rigidez: UiIndexBar <code class="font-mono text-note">w-14 md:w-24</code> + palabra (<code class="font-mono text-note">shoes.stiffnessGroup.*</code>) solo md+. Precio <code class="font-mono text-note">font-mono text-accent whitespace-nowrap</code>.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="label-mini">Lo que aprendí y afiliación</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li>«Lo que aprendí» se queda (voz del autor = valor diferencial) pero sube a la cabecera en lg; en móvil, bajo la tabla como hoy. <code class="font-mono text-note">max-w-[60ch]</code>.</li>
+        <li>Afiliación visible siempre en dos niveles: badge <code class="font-mono text-note">afiliado</code> en cada columna cuyo modelo tiene enlace (dice <em>cuál</em>) + «Contiene enlaces de afiliado» junto al CTA (como hoy). Badge «los uso» (<code class="font-mono text-note">ownedByAuthor</code>) en neutral, antes del de afiliado: la experiencia propia pesa más que la venta.</li>
+        <li>Los badges van fuera del enlace (no se leen como parte del nombre).</li>
+      </ul>
+    </div>
+    <div>
+      <p class="label-mini">Estados, movimiento y a11y</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li>Enlace = foto + marca + modelo dentro del <code class="font-mono text-note">th scope="col"</code> (objetivo ≥ 80 × 120 px en 390). Foto <code class="font-mono text-note">alt=""</code>, bandeja <code class="font-mono text-note">aria-hidden</code>. Foco: anillo del DS en el enlace, <code class="font-mono text-note">rounded-md</code>.</li>
+        <li>Hover (solo <code class="font-mono text-note">hover:hover</code>): bandeja 200 ms a <code class="font-mono text-note">#e6e0d5</code>, subrayado del modelo 300 ms, zoom 1.04 de la foto 600 ms; con <code class="font-mono text-note">prefers-reduced-motion</code> sin zoom.</li>
+        <li><code class="font-mono text-note">caption</code> sr-only y rótulos de fila <code class="font-mono text-note">th scope="row"</code> se mantienen. Barra de rigidez con <code class="font-mono text-note">ratings.outOfValue</code>. Contraste: meta 6,4:1 y acento 6,9:1 sobre board; acento sobre accent-muted 5,6:1.</li>
+        <li>Error: <code class="font-mono text-note">HomeSectionError</code> en el contenedor de la sección. Sin modelos: la sección no se pinta (como hoy).</li>
+        <li><strong class="font-medium">Textos nuevos: ninguno</strong> (Perfil, Blando/Medio/Rígido, los uso, afiliado, Lo que aprendí ya existen). loro-lola solo si se quiere retocar el título.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Agenda de escalada en Barcelona · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="agenda" data-route-es="/agenda" data-route-en="/en/events">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-8 md:pt-10">
+    <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Agenda</span></li></ol></nav>
+    <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5">Agenda</h1>
+    <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">Competiciones, cursos y quedadas en los rocódromos de Barcelona durante los próximos dos meses. Las reviso una a una antes de publicarlas.</p>
+    <div class="mt-8 flex flex-wrap gap-2" role="group" aria-label="Tipo de actividad" id="filters">
+      <button type="button" class="chip" aria-pressed="false" data-chip data-t="competition"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Competiciones</button>
+      <button type="button" class="chip" aria-pressed="false" data-chip data-t="learn"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Cursos y talleres</button>
+      <button type="button" class="chip" aria-pressed="false" data-chip data-t="social"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Quedadas</button>
+      <button type="button" class="chip" aria-pressed="false" data-chip data-t="outing"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Quedadas</button>
+    </div>
+    <p class="mt-4 text-sm text-meta" aria-live="polite" id="count">8 actividades</p>
+  </section>
+
+  <section class="max-w-page mx-auto px-4 md:px-6 py-8 md:py-10 grid lg:grid-cols-2 gap-6" aria-label="Pizarra de actividades" id="boards">
+    <!-- Octubre -->
+    <div class="board-tex border-[0.5px] border-line-strong rounded-xl p-5 md:p-7" data-month data-reveal>
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="font-hand text-[44px] leading-none -rotate-1">Octubre</h2>
+        <span class="label-mini">Pizarra del mes</span>
+      </div>
+      <ol class="mt-6 divide-y divide-[rgba(240,237,232,.08)] num">
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="competition">
+          <span class="font-mono text-[13px] text-meta pt-0.5">SÁB 10</span>
+          <div><p class="leading-snug">Liga interna de bloque · 1.ª jornada</p><p class="text-sm text-meta mt-0.5"><a href="#" class="link">Magnesi Poblenou</a> · <span class="font-mono">19:00 · Gratis para socios</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">competición</span></p></div>
+        </li>
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="learn">
+          <span class="font-mono text-[13px] text-meta pt-0.5">JUE 15</span>
+          <div><p class="leading-snug"><span class="chalk-circle">Curso de iniciación a la cuerda<svg viewBox="0 0 220 60" preserveAspectRatio="none" aria-hidden="true" data-draw style="--len:560"><path d="M30 8 C 90 -2, 200 2, 214 26 C 224 50, 120 60, 50 54 C 6 50, 2 22, 40 10" stroke-width="2"/></svg></span></p><p class="text-sm text-meta mt-0.5"><a href="rocodromo-ficha.html" class="link">La Paret de Gràcia</a> · <span class="font-mono">18:00 · 90 €</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">curso</span></p></div>
+        </li>
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="social">
+          <span class="font-mono text-[13px] text-meta pt-0.5">DOM 18</span>
+          <div><p class="leading-snug">Noche de bloque y cerveza</p><p class="text-sm text-meta mt-0.5"><a href="#" class="link">Presa Badalona</a> · <span class="font-mono">20:00 · 12 €</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">quedada</span></p></div>
+        </li>
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="learn">
+          <span class="font-mono text-[13px] text-meta pt-0.5">VIE 23</span>
+          <div><p class="leading-snug">Taller de técnica de pies</p><p class="text-sm text-meta mt-0.5"><a href="#" class="link">Altura Cornellà</a> · <span class="font-mono">11:00 · 25 €</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">taller</span></p></div>
+        </li>
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="social">
+          <span class="font-mono text-[13px] text-meta pt-0.5">LUN 26</span>
+          <div><p class="leading-snug">Quedada para escalar solo y encontrar compañero</p><p class="text-sm text-meta mt-0.5"><a href="#" class="link">Via Sants</a> · <span class="font-mono">19:00 · precio sin confirmar</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">quedada</span></p></div>
+        </li>
+      </ol>
+      <p class="font-hand text-[24px] text-accent mt-4 -rotate-1">↑ si empiezas, el del 15</p>
+    </div>
+
+    <!-- Noviembre -->
+    <div class="board-tex border-[0.5px] border-line-strong rounded-xl p-5 md:p-7" data-month data-reveal style="--i:1">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="font-hand text-[44px] leading-none -rotate-1">Noviembre</h2>
+        <span class="label-mini">Hasta el 4 de diciembre</span>
+      </div>
+      <ol class="mt-6 divide-y divide-[rgba(240,237,232,.08)] num">
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="competition">
+          <span class="font-mono text-[13px] text-meta pt-0.5">SÁB 7</span>
+          <div><p class="leading-snug">Liga interna de bloque · 2.ª jornada</p><p class="text-sm text-meta mt-0.5"><a href="#" class="link">Magnesi Poblenou</a> · <span class="font-mono">19:00 · Gratis para socios</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">competición</span></p></div>
+        </li>
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="outing">
+          <span class="font-mono text-[13px] text-meta pt-0.5">MAR 10</span>
+          <div><p class="leading-snug">Salida a Montserrat para principiantes</p><p class="text-sm text-meta mt-0.5">Montserrat (Monistrol) · <span class="font-mono">09:00 · 35 €</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">quedada</span></p></div>
+        </li>
+        <li class="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 py-4" data-type="competition">
+          <span class="font-mono text-[13px] text-meta pt-0.5">LUN 16</span>
+          <div><p class="leading-snug">Competición abierta de dificultad</p><p class="text-sm text-meta mt-0.5"><a href="rocodromo-ficha.html" class="link">La Paret de Gràcia</a> · <span class="font-mono">10:00 · 20 €</span></p><p class="mt-2 flex flex-wrap gap-2"><span class="badge">competición</span></p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <div id="empty" class="hidden max-w-page mx-auto px-4 md:px-6 pb-8">
+    <div class="board-tex border-[0.5px] border-line-strong rounded-xl p-8 text-center" role="status">
+      <p class="font-hand text-[32px] text-meta -rotate-1">Pizarra limpia</p>
+      <p class="font-medium mt-2">Ningún resultado con estos filtros</p>
+      <p class="text-sm text-meta mt-1">Prueba a quitar alguno de los filtros.</p>
+      <button type="button" class="btn btn-ghost mt-5" id="clear"><span class="label">Quitar filtros</span></button>
+    </div>
+  </div>
+
+  <section class="max-w-page mx-auto px-4 md:px-6 pb-16 md:pb-24 grid md:grid-cols-2 gap-6 text-sm text-meta">
+    <p>Cada actividad enlaza a la web del organizador; las fechas y precios pueden cambiar. ¿Falta alguna? <a href="#" class="link">Escríbeme</a>.</p>
+    <p class="md:text-right">Meses anteriores: <a href="#" class="link">septiembre de 2026</a></p>
+  </section>
+</main>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$, vt } = window.CG;
+  const chips = $$('#filters [data-chip]'), items = $$('[data-type]'), months = $$('[data-month]');
+  const apply = () => vt(() => {
+    const on = chips.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.t);
+    items.forEach(li => li.hidden = on.length > 0 && !on.includes(li.dataset.type));
+    months.forEach(m => m.hidden = !$$('[data-type]', m).some(li => !li.hidden));
+    const n = items.filter(li => !li.hidden).length;
+    $('#count').textContent = n === 0 ? 'Sin actividades' : n === 1 ? '1 actividad' : n + ' actividades';
+    $('#empty').classList.toggle('hidden', n > 0);
+    $('#boards').classList.toggle('hidden', n === 0);
+  });
+  $('#filters').addEventListener('chip-change', apply);
+  $('#clear').addEventListener('click', () => { chips.forEach(c => c.setAttribute('aria-pressed', 'false')); apply(); chips[0].focus(); });
+})();
+</script>
+</body>
+</html>

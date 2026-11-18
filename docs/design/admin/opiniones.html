@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Opiniones · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .op[aria-current="true"]{background:var(--acc-soft)}
+  .op[aria-current="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--acc)}
+  .op.is-hidden .op-body{opacity:.6}
+  .meter5{display:inline-flex;gap:2px} .meter5 i{width:10px;height:6px;border-radius:2px;background:var(--line-strong)} .meter5 i.on{background:var(--fg)}
+</style>
+</head>
+<body data-page="opiniones" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Opiniones</h1>
+    <span class="chip st-neutral ml-1 hidden sm:inline-flex" title="Ajustes · Opiniones"><i data-lucide="zap"></i>Se publican al momento</span>
+    <div class="ml-auto flex items-center gap-2"><a href="exportar.html?tipo=opiniones" class="btn btn-ghost hidden sm:inline-flex"><i data-lucide="download"></i>Exportar</a></div>
+  </header>
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Vistas" class="flex gap-5 min-w-max">
+      <button role="tab" aria-selected="true" class="tab">Recientes <span class="text-muted">· 7 días</span> <span class="count">7 nuevas</span></button>
+      <button role="tab" aria-selected="false" class="tab">Nota ≤ 2 <span class="num text-muted">2</span></button>
+      <button role="tab" aria-selected="false" class="tab">Ocultas <span class="num text-muted">3</span></button>
+      <button role="tab" aria-selected="false" class="tab">Todas <span class="num text-muted">146</span></button>
+    </div>
+  </div>
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+    <div class="relative w-full sm:w-64"><label for="q" class="sr-only">Buscar en opiniones</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="q" class="input !pl-8" placeholder="Buscar texto o autor"></div>
+    <button class="btn btn-ghost"><i data-lucide="layers"></i>Tipo<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <button class="btn btn-ghost"><i data-lucide="mountain"></i>Ficha<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+    <p class="ml-auto text-xs text-meta hidden lg:flex items-center gap-2"><span class="kbd">J</span><span class="kbd">K</span> moverse · <span class="kbd">V</span> visible y siguiente · <span class="kbd">H</span> ocultar</p>
+  </div>
+
+  <div class="lg:grid lg:grid-cols-[420px_1fr] lg:h-[calc(100vh-32px-48px-41px-57px)]">
+    <!-- lista -->
+    <div class="lg:border-r border-line lg:overflow-y-auto">
+      <p class="px-4 py-2 text-xs text-meta bg-side border-b border-line flex items-center gap-2"><input type="checkbox" class="cb" aria-label="Seleccionar todas las de la vista">Nuevas desde tu última visita (ayer, 22:10)</p>
+      <ul id="list" class="divide-y divide-line" aria-label="Opiniones recientes"></ul>
+    </div>
+    <!-- detalle (≥ 1024) -->
+    <section id="detail" class="hidden lg:block lg:overflow-y-auto" aria-labelledby="d-h" aria-live="polite"></section>
+  </div>
+</main>
+
+<!-- detalle en hoja (< 1024) -->
+<div id="sheet" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="d-h-m"><div class="drawer"><div class="grab"></div><div id="sheetBody" class="flex flex-col min-h-0 flex-1"></div></div></div>
+
+<div id="rgpd" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="rg-h" aria-describedby="rg-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="rg-h">¿Borrar la opinión de Jordi P.?</h2><p id="rg-d" class="text-sm text-meta mt-1">Solo para solicitudes de supresión (RGPD) o contenido ilegal. Se borra el texto y sus notas, y se recalcula la media de la ficha. <b class="text-fg">No se puede deshacer.</b> Para el resto de casos, ocúltala.</p></div>
+  <div class="dialog-b"><label class="lbl" for="rg-r">Motivo <span class="req">*</span></label><select id="rg-r" class="select"><option>Solicitud de supresión del autor</option><option>Contenido ilegal</option></select><p class="help">Queda en Actividad con el motivo.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Opinión borrada" data-action="">Borrar opinión</button></div></div></div>
+
+<script>
+const OPS=[
+ {n:'Marta G.',f:'Magnesi Poblenou',ic:'mountain',t:'Rocódromo',s:5,x:'Muy buen ambiente y bloques renovados cada semana. Por la tarde se llena, pero vale la pena. El café de la entrada es de los mejores de la zona.',d:'hace 25 min',l:'ES',nw:1,c:[['Apertura',5],['Variedad',5],['Afluencia',3],['Para principiantes',4]]},
+ {n:'Jordi P.',f:'Via Sants',ic:'mountain',t:'Rocódromo',s:1,x:'El personal de recepción fue bastante borde y nos cobraron la entrada de adulto a un niño de 10 años. No vuelvo. Además las presas están sucias y nadie las limpia desde hace meses.',d:'hace 2 h',l:'ES',nw:1,c:[['Apertura',2],['Instalaciones',1]]},
+ {n:'Anna R.',f:'Taller Goma Fina',ic:'wrench',t:'Resolador',s:5,x:'Resolaron mis Solution en 6 días y quedaron como nuevas. Te explican qué goma usan y por qué.',d:'hace 5 h',l:'ES',nw:1,c:[['Calidad',5],['Plazo',5]]},
+ {n:'Tom H.',f:'La Paret de Gràcia',ic:'mountain',t:'Rocódromo',s:4,x:'Great rope walls, good auto-belays. Changing rooms are small at peak time.',d:'ayer, 23:40',l:'EN',nw:1,c:[]},
+ {n:'Laia M.',f:'La Sportiva Tarantulace',ic:'footprints',t:'Pie de gato',s:2,x:'Me duraron tres meses de rocódromo. Cómodos, sí, pero la goma se gasta rapidísimo.',d:'ayer, 18:02',l:'ES',nw:1,c:[['Comodidad',4],['Durabilidad',1]]},
+ {n:'Pau M.',f:'Presa Badalona',ic:'mountain',t:'Rocódromo',s:5,x:'La zona de entreno es enorme. Y la cerveza después, en la terraza, no tiene precio.',d:'7 oct',l:'ES',nw:1,c:[]},
+ {n:'Carla S.',f:'Altura Cornellà',ic:'mountain',t:'Rocódromo',s:4,x:'Tranquilo por las mañanas y con parking gratis, ideal si vienes del Baix.',d:'7 oct',l:'ES',nw:1,c:[]},
+ {n:'Usuario B.',f:'Bloc del Besòs',ic:'mountain',t:'Rocódromo',s:1,x:'Enlace a mi canal para ver los bloques…',d:'6 oct',l:'ES',nw:0,hid:1,c:[]},
+];
+const meter=s=>`<span class="meter5" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i class="${i<=s?'on':''}"></i>`).join('')}</span><span class="num text-xs ${s<=2?'text-danger font-medium':''}">${s}<span class="sr-only"> de 5</span></span>`;
+const list=document.getElementById('list');
+list.innerHTML=OPS.map((o,i)=>`<li class="op relative ${o.hid?'is-hidden':''}" data-i="${i}" ${i===1?'aria-current="true"':''}>
+  <div class="flex gap-3 px-4 py-3">
+    <input type="checkbox" class="cb mt-1" aria-label="Seleccionar la opinión de ${o.n}">
+    <button class="op-body flex-1 min-w-0 text-left" data-i="${i}">
+      <span class="flex items-center gap-2 text-sm"><span class="font-medium">${o.n}</span>${meter(o.s)}<span class="ml-auto text-xs text-muted num whitespace-nowrap">${o.d}</span></span>
+      <span class="mt-0.5 flex items-center gap-1.5 text-xs text-meta"><i data-lucide="${o.ic}" class="w-3.5 h-3.5"></i>${o.f}<span class="lang !h-4">${o.l}</span>${o.nw?'<span class="chip st-acc !h-[18px]"><span class="dot"></span>Nueva</span>':''}${o.hid?'<span class="chip st-hidden !h-[18px]"><i data-lucide="eye-off"></i>Oculta</span>':''}</span>
+      <span class="mt-1.5 block text-sm text-fg line-clamp-2">${o.x}</span>
+    </button>
+  </div>
+  <div class="lg:hidden flex gap-2 px-4 pb-3 pl-[44px]">${o.hid?`<button class="btn btn-ghost flex-1" data-toast="Opinión visible de nuevo"><i data-lucide="eye"></i>Mostrar</button>`:`<button class="btn btn-ghost flex-1" data-toast="Revisada"><i data-lucide="check"></i>Bien</button><button class="btn btn-ghost flex-1" data-toast="Opinión oculta"><i data-lucide="eye-off"></i>Ocultar</button>`}</div>
+</li>`).join('');
+
+function detail(o,mobile){const h=mobile?'d-h-m':'d-h';return `
+  <div class="${mobile?'drawer-h':'h-12 px-6 flex items-center gap-2 border-b border-line'}"><h2 id="${h}" class="text-base font-semibold">${o.n}</h2>${meter(o.s)}${mobile?'<button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button>':'<span class="ml-auto flex gap-1"><button class="icon-btn" aria-label="Anterior (K)"><i data-lucide="chevron-up"></i></button><button class="icon-btn" aria-label="Siguiente (J)"><i data-lucide="chevron-down"></i></button><button class="icon-btn" aria-label="Más acciones" data-open="rgpd"><i data-lucide="more-horizontal"></i></button></span>'}</div>
+  <div class="${mobile?'drawer-b':'p-6'} space-y-5 max-w-[720px]">
+    <div class="flex flex-wrap items-center gap-2 text-sm"><i data-lucide="${o.ic}" class="w-4 h-4 text-meta"></i><a href="rocodromo-editor.html" class="font-medium underline underline-offset-2">${o.f}</a><span class="text-meta">· ${o.t} · ${o.d} · escrita en ${o.l==='ES'?'español':'inglés'}</span>${o.nw?'<span class="chip st-acc"><span class="dot"></span>Nueva</span>':''}<span class="chip ${o.hid?'st-hidden':'st-pub'}">${o.hid?'<i data-lucide="eye-off"></i>Oculta':'<span class="dot"></span>Visible en la ficha'}</span></div>
+    <blockquote class="text-[15px] leading-7 border-l-2 border-line-strong pl-4">${o.x}</blockquote>
+    ${o.c.length?`<div><p class="text-xs font-medium text-meta mb-2">Notas por criterio (opcionales)</p><dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">${o.c.map(([k,v])=>`<div class="flex items-center gap-2"><dt class="flex-1 text-meta">${k}</dt><dd class="flex items-center gap-2">${meter(v)}</dd></div>`).join('')}</dl></div>`:'<p class="text-xs text-meta">Sin notas por criterio.</p>'}
+    <div class="rounded-lg bg-side border border-line p-3 text-xs text-meta space-y-1"><p>Media de la ficha: <b class="text-fg num">3,4</b> con 5 opiniones${o.s<=2?' · bajaría a <b class="text-fg num">3,8</b> si la ocultas':''}.</p><p>El autor ha escrito 2 opiniones en total. No se puede editar el texto ni la nota de nadie: solo mostrar u ocultar.</p></div>
+  </div>
+  <div class="${mobile?'drawer-f':'px-6 pb-6 flex flex-wrap gap-2'}">
+    ${o.hid?'<button class="btn btn-primary" data-toast="Opinión visible de nuevo"><i data-lucide="eye"></i>Mostrar de nuevo</button>':`<button class="btn btn-ghost ${mobile?'flex-1':''}" data-toast="Revisada · siguiente"><i data-lucide="check"></i>Está bien, siguiente <span class="kbd hidden lg:inline">V</span></button><button class="btn btn-primary ${mobile?'flex-1':''}" data-toast="Opinión oculta · ya no sale en la ficha"><i data-lucide="eye-off"></i>Ocultar <span class="kbd hidden lg:inline !border-white/30 !text-white/70 !bg-transparent">H</span></button>`}
+  </div>`;}
+const det=document.getElementById('detail');det.innerHTML=detail(OPS[1]);
+list.addEventListener('click',e=>{const b=e.target.closest('.op-body');if(!b)return;const i=+b.dataset.i;
+  list.querySelectorAll('.op').forEach(li=>li.toggleAttribute('aria-current',false));b.closest('.op').setAttribute('aria-current','true');
+  if(matchMedia('(min-width:1024px)').matches){det.innerHTML=detail(OPS[i]);}else{document.getElementById('sheetBody').innerHTML=detail(OPS[i],true);CG.open('sheet',b);}CG.icons();});
+addEventListener('keydown',e=>{if(['input','textarea'].includes((e.target.tagName||'').toLowerCase())||document.querySelector('.overlay.open'))return;
+  const k=e.key.toLowerCase();if(k==='v')CG.toast('Revisada · siguiente');if(k==='h')CG.toast('Opinión oculta · ya no sale en la ficha');
+  if(k==='j'||k==='k'){const items=[...list.querySelectorAll('.op')];let i=items.findIndex(x=>x.hasAttribute('aria-current'));i=Math.max(0,Math.min(items.length-1,i+(k==='j'?1:-1)));items[i].querySelector('.op-body').click();items[i].querySelector('.op-body').focus();}});
+</script>
+</body>
+</html>

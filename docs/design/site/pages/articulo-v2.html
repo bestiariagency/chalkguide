@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Artículo v2 · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_editorial-v2/ev2.js"></script>
+<link rel="stylesheet" href="_editorial-v2/ev2.css">
+</head>
+<body>
+
+<div data-ev2="mockbar" data-title="Artículo v2 · propuesta para Xavi">
+  <span class="flex items-center gap-2">Campo: <button type="button" data-field="ink" aria-pressed="true">Tinta (recomendado)</button> <button type="button" data-field="orange" aria-pressed="false">Naranja</button></span>
+  <a href="#anexo-portadas">Portada según la foto</a>
+  <a href="#anexo-estados">Sin foto y otros estados</a>
+</div>
+
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+<div data-ev2="header" data-active="blog"></div>
+
+<main>
+<article aria-labelledby="article-title">
+
+  <!-- ========== CABECERA EN CAMPO (D49: título en Inter) ========== -->
+  <header class="a-head chrome-dark" id="a-head">
+    <div class="wrap pb-10 md:pb-14">
+      <p class="mock-note">Campo de tinta que continúa la cabecera del sitio: una sola pieza oscura de logo a título. El título es Inter 500 a 64 px (D49), sin etiqueta de categoría encima: la categoría ya está en la miga. Desde 1100 px, la firma va en el eje del índice (240 px) y la entradilla en el eje de la columna de lectura (640 px).</p>
+      <nav class="crumbs has-back" aria-label="Migas de pan">
+        <ol><li><a href="#">Inicio</a></li><li><a href="blog-v2.html">Blog</a></li><li><a href="blog-categoria-v2.html">Costes</a></li></ol>
+        <a href="blog-categoria-v2.html" class="crumb-back"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Costes</a>
+      </nav>
+      <h1 id="article-title" class="a-title mt-4 md:mt-6">Cómo elegir tu primer bono de rocódromo sin pagar de más</h1>
+
+      <div class="mt-6 md:mt-10 min-[1100px]:grid min-[1100px]:grid-cols-[240px_640px] min-[1100px]:gap-x-12">
+        <div class="min-[1100px]:col-start-2">
+          <p class="a-excerpt max-w-[640px]">Entrada suelta, bono o cuota: una forma sencilla de hacer la cuenta con tu semana real, y lo que nunca aparece en la tarifa.</p>
+          <div class="mt-5 flex flex-wrap items-center gap-2">
+            <span class="badge badge-acc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 20V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg>Visita invitada</span>
+            <a href="#" class="inline-flex items-center min-h-11 text-[14px] text-accent ml-1"><span class="link">Qué significa</span></a>
+          </div>
+        </div>
+        <div class="mt-6 min-[1100px]:mt-0 min-[1100px]:col-start-1 min-[1100px]:row-start-1 flex items-center gap-3 min-[1100px]:items-start min-[1100px]:flex-col min-[1100px]:gap-4">
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000008/1-escalador-desde-abajo.jpg" alt="" width="48" height="48" class="w-12 h-12 rounded-full object-cover object-[50%_30%] flex-none">
+          <p class="text-[15px] leading-[1.45]"><a href="sobre-mi-v2.html" class="byline-name link hit">Xavi</a><br><span class="meta"><time datetime="2026-11-03">3 de noviembre de 2026</time><br class="hidden min-[1100px]:inline"><span class="min-[1100px]:hidden"> · </span>9 min de lectura</span></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Portada según el ratio de la foto: apaisada → ancho de página, alto máx. 720 -->
+  <figure class="a-cover" id="a-cover">
+    <div class="wrap">
+      <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg" width="1600" height="1067" style="aspect-ratio:1600/1067" alt="Sala de bloque amplia con muros de colores y colchonetas grises." fetchpriority="high">
+      <figcaption class="min-[1100px]:ml-[288px] max-w-[640px]">Una sala de bloque un martes por la tarde. <span class="text-[13px]">· Foto de ejemplo</span></figcaption>
+    </div>
+  </figure>
+
+  <!-- ========== CUERPO: carril (índice) + columna de 640 ========== -->
+  <div class="a-body pt-10 md:pt-16 pb-16 md:pb-24" id="a-body">
+    <div class="wrap">
+      <aside class="a-rail" aria-label="Índice del artículo">
+        <div class="stick">
+          <p class="toc-k" id="toc-k">En este artículo</p>
+          <nav class="toc mt-3" aria-labelledby="toc-k"><ol id="toc"></ol></nav>
+          <p class="mt-5 mono text-[13px] text-meta" id="toc-left" aria-live="off">Quedan 9 min</p>
+          <a href="#newsletter" class="mt-5 inline-flex items-center gap-2 min-h-11 text-[15px] text-accent link-row"><span class="link">Recibir la carta mensual</span>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </aside>
+
+      <details class="toc-m mb-10 a-axis">
+        <summary><span>En este artículo <span class="text-meta font-normal">· <span id="toc-n">6</span> apartados</span></span><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol id="toc-m"></ol>
+      </details>
+
+      <div class="prose" id="prose">
+        <p class="mock-note">Texto de ejemplo para probar la maqueta (unas 1.700 palabras). Ni las cifras ni los rocódromos son reales: no publicar.</p>
+        <p>Cuando empiezas a escalar, la primera decisión con dinero de por medio no son los pies de gato: es cómo pagas el rocódromo. Y es fácil equivocarse, porque las tarifas se parecen poco entre sí y casi todas están pensadas para que la cuota mensual parezca la opción obvia. A veces lo es. Muchas veces, durante los primeros meses, no.</p>
+        <p>Esta guía no te dice qué rocódromo elegir; para eso están las <a href="#">fichas</a>. Te da una forma de hacer la cuenta con tus números, para que decidas con la tarifa delante y no con la prisa del mostrador, con alguien esperando detrás de ti en la cola.</p>
+
+        <h2 id="semana">Antes de mirar precios, mira tu semana</h2>
+        <p>El precio por visita depende sobre todo de cuántas veces vas a ir de verdad, no de cuántas te gustaría ir. Es la variable que más mueve la cuenta, y la que peor estimamos todos al principio: el primer mes vas con ganas, el segundo aparece una semana de trabajo complicada y el tercero descubres que los jueves no llegas.</p>
+
+        <h3 id="bloque-cuerda">Bloque o cuerda</h3>
+        <p>Si vas a hacer bloque, puedes ir solo y en cualquier momento: una hora libre entre dos compromisos ya es una sesión. Si quieres escalar con cuerda, necesitas compañero de cordada y, en la mayoría de salas, haber demostrado que sabes asegurar. Eso significa que tus visitas dependen también de la agenda de otra persona, y suelen ser menos.</p>
+        <p>No es una decisión para siempre. Mucha gente empieza en bloque, prueba la cuerda con un curso y acaba combinando las dos cosas. Pero para la primera cuenta, piensa en lo que vas a hacer este mes, no dentro de un año.</p>
+        <p>Hay una diferencia más que afecta al dinero: no todas las salas tienen las dos cosas. Algunas son solo de bloque, otras tienen sobre todo vías y unas pocas combinan ambas. Si te tienta la cuerda, aunque sea más adelante, comprueba que la sala la tiene antes de atarte a ella con una cuota.</p>
+
+        <figure>
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000001/1-escaladora-bloque-colores.jpg" width="1600" height="984" loading="lazy" alt="Una escaladora en un bloque desplomado de presas de colores, con las piernas en tensión.">
+          <figcaption>Las primeras semanas casi todo el mundo empieza en bloque: no necesitas compañero ni curso de aseguramiento. <small>Foto de ejemplo</small></figcaption>
+        </figure>
+
+        <h3 id="dias">Cuántos días, siendo honesto</h3>
+        <p>Abre el calendario de las últimas cuatro semanas y cuenta los huecos reales de hora y media, desplazamiento incluido. Ese número, no el ideal, es el que va en la cuenta. Si te salen dos por semana, apunta ocho al mes. Si te salen tres pero uno depende de que no llueva o de que te cuadre con alguien, apunta dos.</p>
+        <p>Parece pesimista, pero es la forma de que la cuenta te salga a favor. Si luego vas más, mejor: habrás pagado menos por cada visita de lo que esperabas. Si vas menos, al menos no habrás pagado por adelantado una cuota pensada para alguien con más tiempo libre que tú.</p>
+
+        <h2 id="formas">Las cuatro formas de pagar</h2>
+        <p>Cada rocódromo las llama de una manera, pero casi todas las tarifas se reducen a estas cuatro. Lo que cambia entre salas es el precio de cada una y la letra pequeña.</p>
+        <ul>
+          <li><strong>Entrada suelta.</strong> Pagas el día que vas. Es la más cara por visita y la única que no te compromete a nada.</li>
+          <li><strong>Bono de varias entradas.</strong> Pagas por adelantado un número de visitas, normalmente diez, con descuento. Suele caducar.</li>
+          <li><strong>Cuota mensual.</strong> Pagas cada mes y entras cuando quieras. Sale a cuenta a partir de cierto número de visitas.</li>
+          <li><strong>Cuota con permanencia.</strong> Más barata al mes, a cambio de comprometerte a varios meses. Revisa qué pasa si te lesionas o te mudas.</li>
+        </ul>
+        <p>A estas cuatro se suman a veces la matrícula, que se paga una vez al darte de alta, y las tarifas reducidas por edad, horario o carné de alguna federación. Las dejamos para después: primero, la cuenta básica.</p>
+
+        <h2 id="cuenta">Haz la cuenta con tus números</h2>
+        <p>La comparación que importa es el precio por visita. Para sacarlo solo necesitas la tarifa y el número de visitas que apuntaste antes.</p>
+        <ol>
+          <li>Divide el precio del bono entre su número de entradas.</li>
+          <li>Divide la cuota mensual entre tus visitas reales al mes.</li>
+          <li>Compara las dos cifras con el precio de la entrada suelta.</li>
+        </ol>
+        <p>Con unas tarifas inventadas, para que se vea el método, quedaría así:</p>
+
+        <div class="t-wrap">
+          <div class="t-scroll" role="region" aria-label="Precio por visita según la forma de pago" tabindex="0">
+            <table>
+              <thead><tr><th scope="col">Forma de pago</th><th scope="col" class="n">Precio</th><th scope="col" class="n">Visitas</th><th scope="col" class="n">Por visita</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Entrada suelta</th><td class="n">14 €</td><td class="n">1</td><td class="n">14,00 €</td></tr>
+                <tr><th scope="row">Bono de 10</th><td class="n">120 €</td><td class="n">10</td><td class="n">12,00 €</td></tr>
+                <tr><th scope="row">Cuota, 4 al mes</th><td class="n">60 €</td><td class="n">4</td><td class="n">15,00 €</td></tr>
+                <tr class="best"><th scope="row">Cuota, 8 al mes</th><td class="n">60 €</td><td class="n">8</td><td class="n">7,50 €</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-3 text-[14px] leading-[1.45] text-meta">Cifras de ejemplo, no de un rocódromo concreto. En las fichas, cada precio lleva la fecha en que lo comprobé.</p>
+        </div>
+
+        <p>Fíjate en la tercera fila: con cuatro visitas al mes, la cuota sale más cara que la entrada suelta. Con esas cifras, la cuota empieza a compensar frente al bono a partir de la quinta visita del mes. Por debajo, el bono gana, siempre que lo gastes antes de que caduque.</p>
+
+        <aside class="note" aria-label="Nota del autor">
+          <span class="note-k" aria-hidden="true">Nota de Xavi</span>
+          <p>Si dudas entre bono y cuota, empieza por el bono. Al terminarlo sabrás cuántas veces vas de verdad y cuánto tardas en gastar diez entradas, que es justo el dato que te faltaba para decidir.</p>
+          <p><span class="marker">XAVI: tu experiencia con el primer bono, en dos frases</span></p>
+        </aside>
+
+        <h2 id="letra">Lo que no sale en la tarifa</h2>
+        <p>La tarifa cuenta una parte. La otra la descubres en la primera semana, y casi siempre suma. Antes de pagar, pregunta por estas cinco cosas:</p>
+        <ul>
+          <li><strong>Matrícula.</strong> Algunas salas la cobran al darte de alta y la perdonan en promociones. Si piensas quedarte, pregunta cuándo hay una.</li>
+          <li><strong>Alquiler de material.</strong> Pies de gato, arnés y magnesio se pagan aparte en casi todas. Si vas a alquilar cada vez, súmalo al precio por visita.</li>
+          <li><strong>Horario valle.</strong> Muchas cuotas tienen una versión más barata para mañanas o mediodías. Solo merece la pena si de verdad puedes ir a esas horas.</li>
+          <li><strong>Caducidad del bono.</strong> Seis meses no es lo mismo que doce. Un bono caducado es dinero regalado.</li>
+          <li><strong>Pausar la cuota.</strong> Pregunta si puedes congelarla por lesión o vacaciones, y con cuánto preaviso.</li>
+        </ul>
+
+        <figure class="fig-wide">
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg" width="1600" height="1067" loading="lazy" alt="Desplome de una sala de bloque cubierto de presas rojas y verdes, visto desde abajo.">
+          <figcaption>Imagen ancha: ocupa los 1.152 px de la página y pasa por encima del índice. El pie sigue en el eje de la columna. <small>Foto de ejemplo</small></figcaption>
+        </figure>
+
+        <p>El alquiler de material es lo que más desvía la cuenta. Si alquilas pies de gato en cada visita durante tres o cuatro meses, ese dinero se acerca bastante a lo que cuesta un par sencillo. No hace falta comprarlos el primer día, pero sí tenerlo en la cabeza cuando veas que vas a seguir.</p>
+        <p>Con el horario valle pasa algo parecido, pero al revés: parece un ahorro claro y solo lo es si encaja en tu semana. Si trabajas de nueve a seis, una cuota de mañanas es una cuota que no vas a usar.</p>
+
+        <h2 id="visita">La primera visita: qué mirar</h2>
+        <p>Antes de comprometerte con un bono o una cuota, paga una entrada suelta y ve a la hora a la que piensas ir normalmente. Una sala vacía a las once de la mañana no se parece en nada a la misma sala un martes a las siete de la tarde.</p>
+
+        <h3 id="sala">En la sala</h3>
+        <ul>
+          <li>Cuántos bloques o vías hay en tu nivel, no en el nivel de la gente que mejor escala.</li>
+          <li>Cada cuánto cambian los bloques. Si no lo pone en ningún sitio, pregunta.</li>
+          <li>Si hay una zona para calentar y estirar que no esté en medio del paso.</li>
+          <li>Cuánta gente espera turno en los bloques fáciles a la hora punta.</li>
+        </ul>
+
+        <h3 id="mostrador">En el mostrador</h3>
+        <p>Pide la tarifa completa por escrito o en la web, con las condiciones de cada opción. Si algo no está claro, pregunta en ese momento: es más fácil resolverlo antes de pagar que después.</p>
+
+        <blockquote>
+          <p>La tarifa más barata es la que usas. Un bono que caduca en el cajón sale más caro que cualquier cuota.</p>
+          <footer>Xavi · texto de ejemplo</footer>
+        </blockquote>
+
+        <figure>
+          <a href="#" class="video" aria-label="Reproducir vídeo de ejemplo: cómo leer la tarifa de un rocódromo. Se carga desde YouTube.">
+            <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000002/1-pared-roja-desplomada.jpg" alt="" loading="lazy">
+            <span class="play"><span><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1a0a00"/><path d="M10 8.5v7l5.5-3.5z" fill="#e8923a"/></svg>Ver el vídeo</span></span>
+            <span class="dur mono">4:12</span>
+          </a>
+          <figcaption>Vídeo de ejemplo. Al pulsar se carga desde YouTube (sin cookies hasta entonces). <small>Fachada de D26</small></figcaption>
+        </figure>
+
+        <p>Si después de esa primera visita la sala no te convence, no pasa nada: has gastado una entrada, no una cuota. Prueba otra. En Barcelona hay donde elegir, y conviene que la primera cuenta la hagas con dos o tres opciones delante.</p>
+
+        <h2 id="cambiar">Cuándo cambiar de forma de pago</h2>
+        <p>La forma de pago que te conviene hoy no es la que te convendrá dentro de seis meses. Vuelve a hacer la cuenta cuando cambie alguna de estas tres cosas: el número de días que vas, el rocódromo al que vas o lo que haces allí.</p>
+        <p>La señal más clara para pasar de bono a cuota es que gastas el bono antes de lo previsto. La señal para hacer lo contrario es que pasan semanas sin que vayas y la cuota se sigue cobrando igual.</p>
+
+        <figure class="fig-bleed">
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000004/1-techo-roca-mar.jpg" width="1600" height="1156" loading="lazy" alt="Un escalador en un techo de roca junto al mar, colgado de las manos.">
+          <figcaption>Imagen a sangre: de borde a borde, sin radio. Solo para fotos apaisadas; el editor no la ofrece si la foto es vertical. <small>Foto de ejemplo</small></figcaption>
+        </figure>
+
+        <p>Y si empiezas a salir a roca los fines de semana, la cuenta cambia otra vez: probablemente vayas menos al rocódromo entre semana, y una cuota que antes compensaba deje de hacerlo. No es un fracaso de la cuota; es que tu semana ya es otra.</p>
+
+        <h2 id="resumen">En resumen</h2>
+        <p>Antes de pagar, haz tres cosas y en este orden:</p>
+        <ol>
+          <li>Cuenta tus visitas reales al mes, no las ideales.</li>
+          <li>Saca el precio por visita de cada opción, con el material incluido.</li>
+          <li>Paga una entrada suelta a tu hora habitual antes de comprometerte.</li>
+        </ol>
+        <p>Si quieres comparar con datos reales, en cada ficha de rocódromo tienes las tarifas con la fecha en que las comprobé y lo que me pareció la sala.</p>
+
+        <a href="#" class="embed" data-item-card="gym:ejemplo">
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg" alt="" loading="lazy">
+          <span class="min-w-0"><span class="k">Rocódromo · ficha de ejemplo</span><span class="t">Rocódromo de ejemplo</span><span class="d">Bloque · cuota desde <span class="mono">00 €</span> al mes</span></span>
+          <span class="s"><b>4,2</b><i>Mi nota, de 5</i></span>
+        </a>
+
+        <p>Y si te has quedado con dudas, escríbeme: lo que me preguntéis acaba en el siguiente artículo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FINAL ORDENADO: firma → fichas → relacionados → bloque naranja ========== -->
+  <footer class="pb-16 md:pb-24">
+    <div class="wrap">
+      <div class="a-axis border-t border-foreground pt-8">
+        <p class="mock-note">Firma reutilizable (`AuthorSignature`, variante completa). Sale de los datos del autor en Ajustes. Sin foto: desaparece el círculo, no hay inicial «X».</p>
+        <div class="grid grid-cols-[72px_minmax(0,1fr)] md:grid-cols-[96px_minmax(0,1fr)] gap-x-5 gap-y-3 items-start">
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000008/1-escalador-desde-abajo.jpg" alt="Xavi (foto provisional de ejemplo)" width="96" height="96" class="w-[72px] h-[72px] md:w-24 md:h-24 rounded-full object-cover object-[50%_30%]" loading="lazy">
+          <div>
+            <p class="text-[22px] leading-tight font-medium">Xavi</p>
+            <p class="mt-1 text-[15px] text-meta">Escribe ChalkGuide</p>
+            <p class="mt-3 text-[17px] leading-[1.55] text-prose max-w-[52ch]">Escalo en Barcelona desde hace <span class="marker">XAVI: años</span>. Pago mi entrada en los rocódromos; si una visita es invitada, lo digo.</p>
+            <p class="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-[15px]"><a href="sobre-mi-v2.html" class="inline-flex items-center min-h-11"><span class="link">Sobre mí</span></a><a href="#" class="inline-flex items-center min-h-11"><span class="link">Cómo trabajo</span></a></p>
+          </div>
+        </div>
+      </div>
+
+      <section class="mt-16 md:mt-20" aria-labelledby="t-fichas">
+        <h2 id="t-fichas" class="text-[22px] md:text-[26px] font-medium tracking-[-.015em]">Fichas de este artículo</h2>
+        <ul class="mt-6 grid sm:grid-cols-2 gap-4 md:gap-6">
+          <li><a href="#" class="group flex gap-4 items-center p-3 pr-5 rounded-[6px] bg-board slab hover:bg-white transition-colors duration-150">
+            <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg" alt="" class="w-24 h-24 rounded-[4px] object-cover flex-none" loading="lazy">
+            <span class="min-w-0 flex-1"><span class="block text-[13px] font-medium text-meta">Rocódromo</span><span class="block mt-0.5 text-[19px] leading-tight font-medium"><span class="uline">Rocódromo de ejemplo</span></span><span class="block mt-1 text-[14px] text-meta">Cuota desde <span class="mono">00 €</span> · <span class="badge badge-acc !py-0.5">Visita invitada</span></span></span>
+            <span class="text-right flex-none"><b class="block mono font-medium text-[24px] leading-none">4,2</b><span class="block mt-1 text-[12px] text-meta">de 5</span></span></a></li>
+          <li><a href="#" class="group flex gap-4 items-center p-3 pr-5 rounded-[6px] bg-board slab hover:bg-white transition-colors duration-150">
+            <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000003/1-bloque-granito-bosque.jpg" alt="" class="w-24 h-24 rounded-[4px] object-cover flex-none" loading="lazy">
+            <span class="min-w-0 flex-1"><span class="block text-[13px] font-medium text-meta">Rocódromo</span><span class="block mt-0.5 text-[19px] leading-tight font-medium"><span class="uline">Otra sala de ejemplo</span></span><span class="block mt-1 text-[14px] text-meta">Cuota desde <span class="mono">00 €</span></span></span>
+            <span class="text-right flex-none"><b class="block mono font-medium text-[24px] leading-none">3,8</b><span class="block mt-1 text-[12px] text-meta">de 5</span></span></a></li>
+        </ul>
+      </section>
+
+      <section class="mt-16 md:mt-20" aria-labelledby="t-rel">
+        <div class="flex items-end justify-between gap-4">
+          <h2 id="t-rel" class="text-[22px] md:text-[26px] font-medium tracking-[-.015em]">Sigue leyendo</h2>
+          <a href="blog-v2.html" class="hidden sm:inline-flex items-center gap-2 min-h-11 text-[15px]"><span class="link">Todo el blog</span></a>
+        </div>
+        <ul class="mt-6 grid md:grid-cols-3 gap-x-6 gap-y-8">
+          <li><a href="#" class="group block"><span class="block aspect-[4/3] rounded-[6px] overflow-hidden slab"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000003/1-bloque-granito-bosque.jpg" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy"></span><span class="block mt-4 text-[14px] font-medium text-meta">Comunidad</span><span class="block mt-1 text-[20px] leading-[1.25] font-medium tracking-[-.01em]"><span class="uline">Rocódromos para ir solo y encontrar compañero</span></span><span class="block mt-2 mono text-[13px] text-meta">6 min</span></a></li>
+          <li><a href="#" class="group block"><span class="block aspect-[4/3] rounded-[6px] overflow-hidden slab"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000004/1-techo-roca-mar.jpg" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy"></span><span class="block mt-4 text-[14px] font-medium text-meta">Material</span><span class="block mt-1 text-[20px] leading-[1.25] font-medium tracking-[-.01em]"><span class="uline">Mi primer resolado: errores que cometí y qué revisar</span></span><span class="block mt-2 mono text-[13px] text-meta">7 min</span></a></li>
+          <li><a href="#" class="group block"><span class="block aspect-[4/3] rounded-[6px] overflow-hidden slab"><img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000002/1-pared-roja-desplomada.jpg" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy"></span><span class="block mt-4 text-[14px] font-medium text-meta">Dónde escalar</span><span class="block mt-1 text-[20px] leading-[1.25] font-medium tracking-[-.01em]"><span class="uline">Dónde escalar en Barcelona cuando llueve</span></span><span class="block mt-2 mono text-[13px] text-meta">5 min</span></a></li>
+        </ul>
+      </section>
+    </div>
+  </footer>
+</article>
+</main>
+
+<div data-ev2="newsletter"></div>
+<div data-ev2="footer"></div>
+
+<!-- ==================== ANEXOS (no forman parte de la página) ==================== -->
+<section id="anexo-portadas" class="annex">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2>Anexo 1 · La portada según la foto</h2>
+    <p class="sub mt-2">La composición sale de <code>media.width / height</code>, que ya existen. Nunca se recorta a 21:9. Apaisada (ratio ≥ 1,3): ancho de página, alto máximo 720 px (82 svh). Cuadrada o vertical (&lt; 1,3): cabecera partida, la foto a la derecha con su ratio y 640 px de alto como máximo. Sin portada: solo campo.</p>
+  </div>
+</section>
+<!-- Vertical: cabecera partida -->
+<header class="a-head chrome-dark">
+  <div class="wrap pb-0">
+    <div class="grid lg:grid-cols-12 gap-x-6 gap-y-8 items-end">
+      <div class="lg:col-span-7 pb-0 lg:pb-14">
+        <nav class="crumbs has-back" aria-label="Migas de pan (ejemplo)"><ol><li><a href="#">Inicio</a></li><li><a href="#">Blog</a></li><li><a href="#">Material</a></li></ol><a href="#" class="crumb-back"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Material</a></nav>
+        <p class="a-title mt-4 md:mt-6" role="heading" aria-level="2">Pies de gato para tu primer año</p>
+        <p class="a-excerpt mt-6 max-w-[34ch]">Portada vertical: no se recorta. La foto se queda con su ratio a la derecha.</p>
+        <p class="mt-6 text-[15px] meta">Xavi · 12 de octubre de 2026 · 6 min de lectura</p>
+      </div>
+      <div class="lg:col-span-5 -mx-4 md:mx-0 lg:translate-y-14">
+        <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000002/1-pared-roja-desplomada.jpg" width="1600" height="2000" alt="Pared roja desplomada (ejemplo de foto vertical)." class="block w-full max-h-[72svh] lg:max-h-[640px] object-cover md:rounded-[6px] md:slab" loading="lazy">
+      </div>
+    </div>
+  </div>
+</header>
+<div class="bg-background h-24 lg:h-28"></div>
+<!-- Sin portada -->
+<header class="a-head chrome-dark">
+  <div class="wrap pb-12 md:pb-16">
+    <nav class="crumbs has-back" aria-label="Migas de pan (ejemplo 2)"><ol><li><a href="#">Inicio</a></li><li><a href="#">Blog</a></li><li><a href="#">Comunidad</a></li></ol><a href="#" class="crumb-back"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Comunidad</a></nav>
+    <p class="a-title mt-4 md:mt-6" role="heading" aria-level="2">Sin portada: el campo basta</p>
+    <p class="a-excerpt mt-6 max-w-[640px]">Sin foto no hay marco vacío ni degradado de relleno: el campo cierra con 64 px de aire y el cuerpo empieza en papel. Sin foto de autor, la firma pierde el círculo y no muestra ninguna inicial.</p>
+    <p class="mt-6 text-[15px] meta">Xavi · 2 de septiembre de 2026 · 3 min de lectura</p>
+  </div>
+</header>
+
+<section id="anexo-estados" class="annex">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2>Anexo 2 · Reglas de estado</h2>
+    <ul class="sub mt-3 list-disc pl-5 space-y-1.5">
+      <li><b>Menos de 800 palabras o menos de 3 H2:</b> sin índice (ni carril ni plegable) ni progreso. La columna se centra en el eje de 640 igualmente.</li>
+      <li><b>Sin fichas citadas:</b> desaparece «Fichas de este artículo». <b>Sin relacionados:</b> desaparece «Sigue leyendo». Nunca un título sin contenido.</li>
+      <li><b>Visita invitada o afiliado:</b> insignia en la cabecera y en la ficha citada. Si no hay, no se reserva hueco.</li>
+      <li><b>Fecha:</b> la de publicación, en palabras. <code>updated_at</code> no es editorial y no se muestra.</li>
+      <li><b>Email:</b> solo el bloque naranja común (D48) y una línea en el carril, «Recibir la carta mensual», visible desde 1100 px.</li>
+    </ul>
+  </div>
+</section>
+
+<script>
+window.EV2_READY = () => {
+  // Campo: tinta o naranja (decisión de Xavi)
+  const head = document.getElementById('a-head'), cover = document.getElementById('a-cover')
+  document.querySelectorAll('[data-field]').forEach((b) => b.addEventListener('click', () => {
+    const orange = b.dataset.field === 'orange'
+    head.classList.toggle('chrome-dark', !orange); head.classList.toggle('field-orange', orange); head.classList.toggle('dust', orange)
+    cover.classList.toggle('on-orange', orange)
+    document.querySelectorAll('[data-field]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
+  }))
+  // Índice desde los H2
+  const hs = [...document.querySelectorAll('#prose > h2')]
+  const toc = document.getElementById('toc'), tocM = document.getElementById('toc-m')
+  hs.forEach((h) => {
+    toc.insertAdjacentHTML('beforeend', `<li><a href="#${h.id}">${h.textContent}</a></li>`)
+    tocM.insertAdjacentHTML('beforeend', `<li><a href="#${h.id}">${h.textContent}</a></li>`)
+    h.insertAdjacentHTML('beforeend', `<a class="anchor" href="#${h.id}" aria-label="Enlace a esta sección">#</a>`)
+  })
+  document.getElementById('toc-n').textContent = hs.length
+  const links = [...toc.querySelectorAll('a')]
+  const body = document.getElementById('prose'), left = document.getElementById('toc-left'), prog = document.getElementById('prog')
+  const words = body.innerText.trim().split(/\s+/).length, mins = Math.max(1, Math.round(words / 200))
+  const tick = () => {
+    const r = body.getBoundingClientRect(), vh = innerHeight
+    const p = Math.min(1, Math.max(0, (vh * .35 - r.top) / (r.height - vh * .35)))
+    prog.style.transform = `scaleX(${p})`
+        left.textContent = p >= .98 ? 'Has llegado al final' : `Quedan ${Math.max(1, Math.round(mins * (1 - p)))} min`
+    let cur = 0; hs.forEach((h, i) => { if (h.getBoundingClientRect().top < vh * .3) cur = i })
+    links.forEach((a, i) => a.toggleAttribute('aria-current', false) || (i === cur && a.setAttribute('aria-current', 'true')))
+  }
+  addEventListener('scroll', tick, { passive: true }); tick()
+  window.EV2_WORDS = words
+}
+</script>
+</body>
+</html>

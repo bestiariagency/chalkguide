@@ -1,0 +1,104 @@
+[
+  {
+    "name": "Resolargrip",
+    "slug": "resolargrip",
+    "summary_es": "Taller de Terrassa que resuela pies de gato, botas de montaña y calzado de trail. Recogen y devuelven por mensajero, o puedes enviarlo tú o pasar por el taller.",
+    "summary_en": "Workshop in Terrassa that resoles climbing shoes, mountain boots and trail shoes. They collect and return by courier, or you can post it yourself or drop it in at the workshop.",
+    "verified_at": "2026-11-06",
+    "source": "Web oficial; OpenStreetMap",
+    "source_url": "https://resolargrip.com/pages/reparar-calzado-online",
+    "address": "Raval de Montserrat, 41",
+    "city": "Terrassa",
+    "district": "Terrassa",
+    "postal_code": "08221",
+    "lat": 41.563247,
+    "lng": 2.008931,
+    "website_url": "https://resolargrip.com/",
+    "instagram_url": "https://www.instagram.com/resolargrip/",
+    "phone": "635 932 236 / 651 465 630",
+    "services": [
+      "Otros"
+    ],
+    "turnaround_days_min": 20,
+    "turnaround_days_max": 25,
+    "rubber_brands": [
+      "Vibram",
+      "Andes",
+      "Michelin",
+      "Alba"
+    ],
+    "accepts_mail": "Sí",
+    "mail_notes_es": "Mensajero a domicilio (recogida en 24 h si pides antes de las 16:00), envío por tu cuenta tras pedir cuenta bancaria, o entrega en el taller. El coste del envío aparece al final del carrito.",
+    "mail_notes_en": "Courier collection at home (pick-up within 24 h if you order before 16:00), posting it yourself after asking for a bank account, or dropping it at the workshop. Shipping cost shows at the end of the basket."
+  },
+  {
+    "name": "Goma2",
+    "slug": "goma2",
+    "summary_es": "Taller de Cornudella de Montsant que repara pies de gato y botas de montaña, y es resolador oficial de La Sportiva y Scarpa. Recoge por mensajero, admite envío por correo y tiene puntos de recogida.",
+    "summary_en": "Workshop in Cornudella de Montsant that repairs climbing shoes and mountain boots, and is an official La Sportiva and Scarpa resoler. It offers courier collection, postal drop-off and collection points.",
+    "verified_at": "2026-11-06",
+    "source": "Web oficial; OpenStreetMap",
+    "source_url": "https://goma2.net/ca/content/10-preus-reparacio-peus-de-gat",
+    "address": "Carrer del Comte de Rius, 3",
+    "city": "Cornudella de Montsant",
+    "district": "Cornudella de Montsant",
+    "postal_code": "43360",
+    "lat": 41.263965,
+    "lng": 0.90422,
+    "website_url": "https://goma2.net/",
+    "instagram_url": "https://www.instagram.com/goma2_siurana",
+    "phone": "977 82 12 32",
+    "services": [
+      "Media suela",
+      "Suela completa",
+      "Parche de puntera"
+    ],
+    "accepts_mail": "Sí",
+    "mail_notes_es": "Envío a C/ Comte de Rius 3, 43360 Cornudella de Montsant, con teléfono o email y el tipo de goma o reparación. Te mandan el precio más el transporte antes de pagar. También hay recogida a domicilio por mensajero y puntos de recogida.",
+    "mail_notes_en": "Post to C/ Comte de Rius 3, 43360 Cornudella de Montsant, with a phone number or email and the rubber or repair you want. They send you the repair price plus transport before you pay. Courier collection and drop-off points are also available.",
+    "price_per_pair_eur": 34,
+    "prices_verified_at": "2026-11-06",
+    "rubber_brands": [
+      "Boreal",
+      "Davos",
+      "Unparallel",
+      "Vibram"
+    ]
+  },
+  {
+    "name": "Climber Up",
+    "slug": "climber-up",
+    "summary_es": "Red de talleres de resolado de pies de gato presente en toda España. En Cataluña tiene taller en Caldes de Malavella (Girona) y en La Seu d'Urgell (Lleida), además de puntos de recogida.",
+    "summary_en": "Network of climbing shoe resoling workshops across Spain. In Catalonia it has workshops in Caldes de Malavella (Girona) and La Seu d'Urgell (Lleida), plus drop-off points.",
+    "verified_at": "2026-11-06",
+    "source": "Web oficial; OpenStreetMap",
+    "source_url": "https://climberup.com/pies-de-gato/",
+    "address": "Països Catalans, 46",
+    "city": "Caldes de Malavella",
+    "district": "Caldes de Malavella",
+    "postal_code": "17455",
+    "lat": 41.83629,
+    "lng": 2.801603,
+    "website_url": "https://climberup.com/",
+    "instagram_url": "https://www.instagram.com/climberup_resolados/",
+    "phone": "649 170 277",
+    "services": [
+      "Media suela",
+      "Suela completa",
+      "Parche de puntera",
+      "Costuras",
+      "Otros"
+    ],
+    "price_per_pair_eur": 34,
+    "rubber_brands": [
+      "Vibram XS Edge",
+      "Vibram XS Grip 2",
+      "Unparallel RH",
+      "Davos Technostick",
+      "Boreal FS Quattro"
+    ],
+    "prices_verified_at": "2026-11-06",
+    "mail_notes_es": "La web no describe envío por correo. Entrega en un taller o punto de recogida; consulta antes la forma de entrega. Taller de Lleida: C/ Sant Joan Baptista La Salle 50, La Seu d'Urgell, 669 918 744.",
+    "mail_notes_en": "The website does not describe postal shipping. Hand shoes in at a workshop or drop-off point and ask about delivery first. Lleida workshop: C/ Sant Joan Baptista La Salle 50, La Seu d'Urgell, 669 918 744."
+  }
+]

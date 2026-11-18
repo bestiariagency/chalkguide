@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Actividad · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+</head>
+<body data-page="actividad" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm"><h1 class="font-medium">Actividad</h1><span class="text-xs text-muted hidden sm:inline">· se guarda 24 meses</span></header>
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Filtro" class="flex gap-5 min-w-max" id="views">
+      <button role="tab" aria-selected="true" class="tab" data-v="all">Todo</button>
+      <button role="tab" aria-selected="false" class="tab" data-v="content">Contenido</button>
+      <button role="tab" aria-selected="false" class="tab" data-v="pub">Publicaciones</button>
+      <button role="tab" aria-selected="false" class="tab" data-v="mod">Moderación</button>
+      <button role="tab" aria-selected="false" class="tab" data-v="exp"><i data-lucide="download" class="w-3.5 h-3.5"></i>Exportaciones <span class="num text-muted">3</span></button>
+      <button role="tab" aria-selected="false" class="tab" data-v="sys">Sistema</button>
+    </div>
+  </div>
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line">
+    <div class="relative w-full sm:w-72"><label for="q" class="sr-only">Buscar en la actividad</label><i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"></i><input id="q" class="input !pl-8" placeholder="Buscar por título, archivo o email"></div>
+    <button class="btn btn-ghost"><i data-lucide="calendar"></i>Últimos 30 días<i data-lucide="chevron-down" class="!w-3.5 !h-3.5 text-muted"></i></button>
+  </div>
+  <div class="max-w-[960px] px-4 md:px-6 py-4" id="feed"></div>
+</main>
+
+<div id="row" class="overlay drawer-wrap" role="dialog" aria-modal="true" aria-labelledby="rw-h"><div class="drawer"><div class="grab"></div>
+  <div class="drawer-h"><h2 id="rw-h" class="text-base font-semibold">Exportación de suscriptores</h2><button class="icon-btn ml-auto" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="drawer-b text-sm space-y-4">
+    <dl class="grid grid-cols-[120px_1fr] gap-y-2"><dt class="text-meta">Quién</dt><dd>Xavi (superadmin)</dd><dt class="text-meta">Cuándo</dt><dd class="num">9 oct 2026, 08:55:12</dd><dt class="text-meta">Qué</dt><dd>Suscriptores</dd><dt class="text-meta">Filtros</dt><dd>Estado: activos · alta: todas</dd><dt class="text-meta">Columnas</dt><dd>email, estado, idioma, origen, fechas de consentimiento</dd><dt class="text-meta">Filas</dt><dd class="num">1.284</dd><dt class="text-meta">Formato</dt><dd>CSV · <span class="mono text-xs">chalkguide-suscriptores-2026-10-09.csv</span></dd></dl>
+    <div class="banner banner-info"><i data-lucide="info"></i><span>El registro guarda la consulta, no el archivo. Para RGPD: demuestra quién accedió a qué datos personales y cuándo.</span></div>
+  </div></div></div>
+
+<script>
+const F=[
+ ['Hoy',[
+  ['09:12','rev','git-compare-arrows','text-st-rev','Guardaste un <b>borrador de cambios</b> en <a href="articulo-editor.html" class="underline underline-offset-2">Rocódromos para ir solo…</a>','Título, portada y cuerpo ES','content'],
+  ['08:55','exp','download','text-fg','<b>Exportaste suscriptores</b> · activos · <span class="num">1.284 filas</span> · CSV','<span class="chip st-warn !h-[18px] !text-[11px]"><i data-lucide="shield-alert"></i>Datos personales</span>','exp',1],
+  ['08:40','mod','eye-off','text-meta','Ocultaste una opinión de <b>Usuario B.</b> en Bloc del Besòs','Motivo: spam','mod'],
+  ['08:00','pub','send','text-ok','<b>Publicado automáticamente</b>: Cuánto cuesta realmente escalar en Barcelona al mes','Estaba programado para hoy 08:00','pub'],
+ ]],
+ ['Ayer',[
+  ['19:05','media','replace','text-meta','Reemplazaste <span class="mono text-xs">sala-bloque-poblenou.jpg</span> (v1 → v2)','En uso en 3 sitios · color #4a3b2a','content'],
+  ['18:30','sys','sparkles','text-meta','El agente de novedades añadió <b>3 eventos</b> como borrador','Fuente: webs de 3 rocódromos','sys'],
+  ['11:20','pub','upload','text-st-rev','Publicaste <b>2 cambios</b> en <a href="rocodromo-editor.html" class="underline underline-offset-2">Magnesi Poblenou</a>','Precio de entrada de día, horario del domingo','pub'],
+ ]],
+ ['2 oct',[
+  ['17:48','exp','download','text-fg','<b>Exportaste fichas</b> · rocódromos · <span class="num">7 filas</span> · JSON','','exp'],
+  ['10:02','del','trash-2','text-danger','Eliminaste el borrador <b>Pruebas de portada</b>','<button class="underline underline-offset-2">Recuperar</button> · disponible 24 meses','content'],
+ ]],
+ ['28 sep',[
+  ['09:30','exp','download','text-fg','<b>Exportaste opiniones</b> · todas · <span class="num">131 filas</span> · CSV','<span class="chip st-warn !h-[18px] !text-[11px]"><i data-lucide="shield-alert"></i>Datos personales</span>','exp'],
+ ]],
+];
+function render(v){document.getElementById('feed').innerHTML=F.map(([day,items])=>{const it=items.filter(x=>v==='all'||x[6]===v);if(!it.length)return'';return `<section class="mb-6"><h2 class="grp-label mb-2">${day}</h2><ol class="card divide-y divide-line">${it.map(([h,k,ic,col,txt,meta,cat,clk])=>`<li class="flex gap-3 px-4 py-3 ${cat==='exp'?'bg-side':''}"><span class="w-7 h-7 rounded-md border border-line bg-elev grid place-items-center flex-none ${col}"><i data-lucide="${ic}" class="w-4 h-4"></i></span><div class="flex-1 min-w-0 text-sm"><p>${txt}</p>${meta?`<p class="mt-0.5 text-xs text-meta flex flex-wrap items-center gap-2">${meta}</p>`:''}</div><div class="text-right flex-none"><p class="text-xs text-muted num">${h}</p>${cat==='exp'?'<button class="text-xs text-meta underline underline-offset-2 hover:text-fg mt-1" data-open="row">Detalle</button>':''}</div></li>`).join('')}</ol></section>`;}).join('')||'<div class="empty"><span class="ico"><i data-lucide="history"></i></span><h3>Nada en este periodo</h3></div>';CG.icons&&lucide.createIcons({attrs:{'stroke-width':1.75}});}
+render('all');
+document.querySelectorAll('#views [role=tab]').forEach(t=>t.onclick=()=>{document.querySelectorAll('#views [role=tab]').forEach(x=>x.setAttribute('aria-selected',x===t));render(t.dataset.v);});
+if(location.hash==='#exportaciones')document.querySelector('[data-v=exp]').click();
+</script>
+</body>
+</html>

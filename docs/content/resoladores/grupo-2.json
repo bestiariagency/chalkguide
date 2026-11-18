@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Garra",
+    "slug": "garra",
+    "summary_es": "Resolado de pies de gato de cualquier marca desde su taller de San Fernando de Henares (Madrid). Trabajan por envío: recogida con MRW y devolución por mensajería urgente sin coste en la España peninsular.",
+    "summary_en": "Resoling of climbing shoes of any brand from its workshop in San Fernando de Henares (Madrid). It works by post: MRW collection, and free express return delivery within mainland Spain.",
+    "verified_at": "2026-11-06",
+    "source": "Web oficial; OpenStreetMap",
+    "source_url": "https://garraclimb.com/producto/resolado/reparar-pies-de-gato/",
+    "address": "Calle Montes de Toledo, 38",
+    "city": "San Fernando de Henares",
+    "district": "San Fernando de Henares",
+    "postal_code": "28830",
+    "lat": 40.452222,
+    "lng": -3.498621,
+    "website_url": "https://garraclimb.com/",
+    "phone": "916 767 088 / 650 223 420",
+    "services": [
+      "Media suela",
+      "Parche de puntera"
+    ],
+    "price_per_pair_eur": 30,
+    "turnaround_days_min": 2,
+    "turnaround_days_max": 3,
+    "rubber_brands": [
+      "Vibram XS Grip2",
+      "Vibram XS Edge",
+      "Goma Garra"
+    ],
+    "prices_verified_at": "2026-11-06",
+    "accepts_mail": "Sí",
+    "mail_notes_es": "Recogida a domicilio 4,99 EUR, entrega en oficina MRW 2,99 EUR. Devolución sin coste (solo península). Reparan en 48-72 h desde que reciben el calzado.",
+    "mail_notes_en": "Home collection 4.99 EUR, drop-off at an MRW office 2.99 EUR. Free return (mainland Spain only). Repairs take 48-72 hours from receipt."
+  },
+  {
+    "name": "Re-Rubber",
+    "slug": "re-rubber",
+    "summary_es": "Resolado de pies de gato en Granada con gomas Vibram y Davos. Trabajan por envío a España y Portugal con recogida de MRW, o con puntos de recogida en Granada.",
+    "summary_en": "Climbing shoe resoling in Granada using Vibram and Davos rubber. It works by post to Spain and Portugal with MRW collection, or via drop-off points in Granada.",
+    "verified_at": "2026-11-06",
+    "source": "Web oficial",
+    "source_url": "https://resoladosrerubber.com/",
+    "city": "Granada",
+    "district": "Granada",
+    "website_url": "https://resoladosrerubber.com/",
+    "instagram_url": "https://instagram.com/resoladosrerubber",
+    "phone": "+34 637 377 822",
+    "turnaround_days_min": 7,
+    "turnaround_days_max": 7,
+    "rubber_brands": [
+      "Vibram",
+      "Davos"
+    ],
+    "accepts_mail": "Sí",
+    "mail_notes_es": "Recogida con MRW o entrega en un punto de recogida de Granada. Plazo habitual de una semana; admiten un número limitado de pares por semana.",
+    "mail_notes_en": "MRW collection or drop-off at a collection point in Granada. Usual turnaround is one week; only a limited number of pairs is accepted each week."
+  },
+  {
+    "name": "El de los Gatos",
+    "slug": "el-de-los-gatos",
+    "summary_es": "Taller de resolado de pies de gato en Etxauri (Navarra) con más de 10 años de experiencia. Trabajan por envío: puedes mandar el calzado por correo o transporte, o dejarlo en un punto de recogida.",
+    "summary_en": "Climbing shoe resoling workshop in Etxauri (Navarre) with over 10 years of experience. It works by post: you can send shoes by mail or courier, or leave them at a collection point.",
+    "verified_at": "2026-11-06",
+    "source": "Web oficial; OpenStreetMap",
+    "source_url": "https://eldelosgatos.com/tarifas",
+    "address": "C/El Soto, 8",
+    "city": "Etxauri",
+    "district": "Etxauri",
+    "postal_code": "31174",
+    "lat": 42.793726,
+    "lng": -1.788778,
+    "website_url": "https://eldelosgatos.com/",
+    "phone": "610 56 14 33",
+    "services": [
+      "Media suela",
+      "Suela completa",
+      "Parche de puntera"
+    ],
+    "price_per_pair_eur": 32,
+    "rubber_brands": [
+      "Vibram",
+      "XS Grip",
+      "XS Edge",
+      "XS Grip 2"
+    ],
+    "prices_verified_at": "2026-11-06",
+    "accepts_mail": "Sí",
+    "mail_notes_es": "Envío por correo o transporte a C/El Soto 8, 31174 Etxauri, indicando teléfono y goma. Devolución gratuita con más de 5 pares.",
+    "mail_notes_en": "Send by mail or courier to C/El Soto 8, 31174 Etxauri, stating your phone number and preferred rubber. Free return with more than 5 pairs."
+  }
+]

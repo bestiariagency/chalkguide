@@ -1,0 +1,206 @@
+/*
+ * Panel /administrador · tokens (docs/design/admin/README.md §4.1, assets/admin.css).
+ * Scope propio: las variables viven en `.admin` (claro, v1) y `.admin.dark` (preparado, sin
+ * conmutador). `@theme inline` las expone con prefijo `adm-` para no chocar con el tema del sitio.
+ */
+
+/* CSS fallback: Tailwind v4 compiles one stylesheet per root. The panel is its own root: it re-imports
+   the site theme (tokens, @utility, base) and scans every source, so `bg-adm-*` and the panel
+   utilities exist only here. site.css (public) excludes the panel sources; this file loads from
+   layouts/admin.vue only, so the public site never downloads it. */
+@import './main.css';
+
+@theme inline {
+  --color-adm-bg: var(--adm-bg);
+  --color-adm-side: var(--adm-side);
+  --color-adm-subtle: var(--adm-subtle);
+  --color-adm-elev: var(--adm-elev);
+  --color-adm-line: var(--adm-line);
+  --color-adm-line-strong: var(--adm-line-strong);
+  --color-adm-control: var(--adm-control);
+  --color-adm-fg: var(--adm-fg);
+  --color-adm-meta: var(--adm-meta);
+  --color-adm-muted: var(--adm-muted);
+  --color-adm-acc: var(--adm-acc);
+  --color-adm-acc-soft: var(--adm-acc-soft);
+  --color-adm-primary: var(--adm-primary);
+  --color-adm-on-primary: var(--adm-on-primary);
+  --color-adm-primary-hover: var(--adm-primary-hover);
+  --color-adm-st-draft: var(--adm-st-draft);
+  --color-adm-st-draft-bg: var(--adm-st-draft-bg);
+  --color-adm-st-sched: var(--adm-st-sched);
+  --color-adm-st-sched-bg: var(--adm-st-sched-bg);
+  --color-adm-st-pub: var(--adm-st-pub);
+  --color-adm-st-pub-bg: var(--adm-st-pub-bg);
+  --color-adm-st-rev: var(--adm-st-rev);
+  --color-adm-st-rev-bg: var(--adm-st-rev-bg);
+  --color-adm-st-rev-line: var(--adm-st-rev-line);
+  --color-adm-st-rev-hover: var(--adm-st-rev-hover);
+  --color-adm-st-hidden: var(--adm-st-hidden);
+  --color-adm-st-hidden-line: var(--adm-st-hidden-line);
+  --color-adm-danger: var(--adm-danger);
+  --color-adm-on-danger: var(--adm-on-danger);
+  --color-adm-on-rev: var(--adm-on-rev);
+  --color-adm-danger-soft: var(--adm-danger-soft);
+  --color-adm-danger-hover: var(--adm-danger-hover);
+  --color-adm-scrim: var(--adm-scrim);
+  --color-adm-warn: var(--adm-warn);
+  --color-adm-warn-soft: var(--adm-warn-soft);
+  --color-adm-warn-icon: var(--adm-warn-icon);
+  --color-adm-info: var(--adm-info);
+  --color-adm-ok: var(--adm-ok);
+  --color-adm-ok-soft: var(--adm-ok-soft);
+  --color-adm-diff-add: var(--adm-diff-add);
+  --color-adm-diff-del: var(--adm-diff-del);
+  --shadow-adm-pop: var(--adm-shadow-pop);
+  --shadow-adm-drag: var(--adm-shadow-drag);
+}
+
+.admin {
+  --adm-bg: #ffffff;
+  --adm-side: #fafafa;
+  --adm-subtle: #f4f4f5;
+  --adm-elev: #ffffff;
+  --adm-line: #e4e4e7;
+  --adm-line-strong: #d4d4d8;
+  --adm-control: #8b8b94;
+  --adm-fg: #18181b;
+  --adm-meta: #52525b;
+  --adm-muted: #71717a;
+  --adm-acc: #c2410c;
+  --adm-acc-soft: #fff1e8;
+  --adm-primary: #18181b;
+  --adm-on-primary: #ffffff;
+  --adm-primary-hover: #3f3f46;
+  --adm-st-draft: #3f3f46;
+  --adm-st-draft-bg: #f4f4f5;
+  --adm-st-sched: #1d4ed8;
+  --adm-st-sched-bg: #dbeafe;
+  --adm-st-pub: #166534;
+  --adm-st-pub-bg: #dcfce7;
+  --adm-st-rev: #6d28d9;
+  --adm-st-rev-bg: #ede9fe;
+  --adm-st-rev-line: #c4b5fd;
+  --adm-st-rev-hover: #5b21b6;
+  --adm-st-hidden: #52525b;
+  --adm-st-hidden-line: #8b8b94;
+  --adm-danger: #b91c1c;
+  --adm-on-danger: #ffffff;
+  --adm-on-rev: #ffffff;
+  --adm-danger-soft: #fee2e2;
+  --adm-danger-hover: #991b1b;
+  --adm-scrim: rgb(9 9 11 / 0.5);
+  --adm-warn: #92400e;
+  --adm-warn-soft: #fef3c7;
+  --adm-warn-icon: #b45309;
+  --adm-info: #1d4ed8;
+  --adm-ok: #166534;
+  --adm-ok-soft: #dcfce7;
+  --adm-diff-add: #dcfce7;
+  --adm-diff-del: #fee2e2;
+  --adm-shadow-pop: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -6px rgb(0 0 0 / 0.14);
+  --adm-shadow-drag: 0 2px 4px rgb(0 0 0 / 0.08), 0 16px 32px -8px rgb(0 0 0 / 0.22);
+  --adm-shadow-edge: rgb(0 0 0 / 0.18);
+  color-scheme: light;
+}
+
+/* Oscuro preparado (mismos nombres de token); ningún conmutador en v1. */
+.admin.dark {
+  --adm-bg: #0e0e10;
+  --adm-side: #0a0a0b;
+  --adm-subtle: #1a1a1d;
+  --adm-elev: #131316;
+  --adm-line: #26262b;
+  --adm-line-strong: #34343a;
+  --adm-control: #6e6e78;
+  --adm-fg: #ededef;
+  --adm-meta: #a1a1aa;
+  --adm-muted: #8b8b94;
+  --adm-acc: #f59a52;
+  --adm-acc-soft: #2a1709;
+  --adm-primary: #ededef;
+  --adm-on-primary: #0e0e10;
+  --adm-primary-hover: #d4d4d8;
+  --adm-st-draft: #d4d4d8;
+  --adm-st-draft-bg: #232327;
+  --adm-st-sched: #93c5fd;
+  --adm-st-sched-bg: #172554;
+  --adm-st-pub: #86efac;
+  --adm-st-pub-bg: #052e16;
+  --adm-st-rev: #c4b5fd;
+  --adm-st-rev-bg: #2e1065;
+  --adm-st-rev-line: #6d28d9;
+  --adm-st-rev-hover: #ddd6fe;
+  --adm-st-hidden: #a1a1aa;
+  --adm-st-hidden-line: #6e6e78;
+  --adm-danger: #f87171;
+  --adm-on-danger: #0e0e10;
+  --adm-on-rev: #0e0e10;
+  --adm-danger-soft: #2a0e0e;
+  --adm-danger-hover: #ef4444;
+  --adm-scrim: rgb(0 0 0 / 0.6);
+  --adm-warn: #fcd34d;
+  --adm-warn-soft: #2a1f05;
+  --adm-warn-icon: #fcd34d;
+  --adm-info: #93c5fd;
+  --adm-ok: #86efac;
+  --adm-ok-soft: #052e16;
+  --adm-diff-add: #052e16;
+  --adm-diff-del: #2a0e0e;
+  --adm-shadow-pop: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -8px rgb(0 0 0 / 0.7);
+  --adm-shadow-drag: 0 2px 4px rgb(0 0 0 / 0.4), 0 16px 32px -8px rgb(0 0 0 / 0.8);
+  --adm-shadow-edge: rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+/* CSS fallback: el foco global del sitio es un anillo con box-shadow; el panel usa contorno de
+   acento (design system del panel) y debe ganar a la capa base. */
+@layer base {
+  .admin :focus-visible {
+    box-shadow: none;
+    outline: 2px solid var(--adm-acc);
+    outline-offset: 2px;
+  }
+}
+
+/* CSS fallback: inner input of a prefixed/suffixed field: the wrapper draws the focus ring
+   (focus-within) and the global outline above would duplicate it. */
+.admin [data-adm-inner]:focus-visible {
+  outline: none;
+}
+
+/* CSS fallback: Tailwind has no utility for custom keyframes; registered as animate-adm-* tokens. */
+@theme {
+  --animate-adm-fade: adm-fade 150ms ease-out;
+  --animate-adm-rise: adm-rise 200ms ease-out;
+  --animate-adm-slide: adm-slide 200ms ease-out;
+  --animate-adm-sheet: adm-sheet 200ms ease-out;
+  --animate-adm-spin: adm-spin 800ms linear infinite;
+
+  @keyframes adm-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes adm-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.99);
+    }
+  }
+  @keyframes adm-slide {
+    from {
+      transform: translateX(24px);
+    }
+  }
+  @keyframes adm-sheet {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes adm-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

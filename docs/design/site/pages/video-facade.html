@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es" class="js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fachada de vídeo (D26) · ChalkGuide</title>
+<!-- Este mockup NO contacta con Google: sin fuentes de Google, sin i.ytimg.com, sin iframe real.
+     El "reproductor cargado" es un bloque simulado. Spec: ../video-facade.md -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      colors: {
+        background: 'var(--background)', board: 'var(--board)', elevated: 'var(--elevated)',
+        line: 'var(--line)', 'line-strong': 'var(--line-strong)', control: 'var(--control)',
+        accent: 'var(--accent)', 'accent-fill': 'var(--accent-fill)', 'accent-hover': 'var(--accent-hover)',
+        'on-accent': 'var(--on-accent)', foreground: 'var(--foreground)', prose: 'var(--prose)', meta: 'var(--meta)'
+      },
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'] },
+      maxWidth: { read: '680px' }
+    } }
+  }
+</script>
+<style>
+  :root {
+    --background:#f4f1ea; --board:#fbf9f5; --elevated:#ebe6dc; --line:#dcd5c8; --line-strong:#c2b9a9; --control:#827a6d;
+    --accent:#9a4a16; --accent-fill:#e8923a; --accent-hover:#c4721f; --on-accent:#1a0a00;
+    --foreground:#1c1a17; --prose:#34302a; --meta:#5e584e;
+    --photo-a:#3a2f27; --photo-b:#1f1b18; --photo-c:#121212; --photo-dust:.18; --photo-edge:rgb(0 0 0 / .12);
+  }
+  .chrome-dark {
+    --background:#0f0f0f; --board:#1a1a1a; --elevated:#242424; --line:#2a2a2a; --line-strong:#333; --control:#75716a;
+    --accent:#e8923a; --foreground:#f0ede8; --prose:#dcd8d1; --meta:#a19d94; --photo-dust:.35; --photo-edge:transparent;
+    color: var(--foreground); color-scheme: dark;
+  }
+  body { background: var(--background); color: var(--foreground); }
+  /* = utilidad photo-placeholder de main.css */
+  .photo-placeholder { position:relative; overflow:hidden; box-shadow: inset 0 0 0 .5px var(--photo-edge);
+    background: linear-gradient(150deg, var(--photo-a) 0%, var(--photo-b) 55%, var(--photo-c) 100%); }
+  .photo-placeholder::after { content:''; position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:var(--photo-dust);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.94 0 0 0 0 0.93 0 0 0 0 0.91 0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .label-mini { font-family: ui-monospace, monospace; font-size:.75rem; line-height:1; letter-spacing:.14em; text-transform:uppercase; }
+  /* Sin JS: se oculta el botón y se ve el enlace (regla real en main.css, ver spec §6) */
+  [data-video-play] { display:none; } .js [data-video-play] { display:flex; }
+  .js [data-video-nojs] { display:none; }
+  /* Forzar estados para el tablero */
+  .is-hover .vf-pill { background: var(--accent-hover); }
+  .is-focus { outline:2px solid var(--accent); outline-offset:2px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .vf-spin { animation: spin .8s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .vf-spin { animation:none; } * { transition:none !important; } }
+</style>
+</head>
+<body class="font-sans antialiased">
+
+<header class="chrome-dark" style="background:#0f0f0f">
+  <div class="mx-auto flex h-16 max-w-[1200px] items-center px-5 md:px-8">
+    <span class="text-[15px] font-medium">ChalkGuide</span>
+    <span class="ml-auto label-mini" style="color:var(--meta)">Mockup · D26 · fachada de vídeo</span>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1200px] px-5 py-10 md:px-8 md:py-14">
+
+  <!-- ============ 1 · En contexto ============ -->
+  <p class="label-mini text-meta">1 · En el artículo (estado en reposo)</p>
+  <article class="mt-6 max-w-read text-[1.125rem] leading-[1.7] text-prose [&>*+*]:mt-[1.1em]">
+    <p>Llevo dos temporadas probando el bloque de pies con talón en la sala de entrenamiento. La diferencia entre engancharlo bien y mal es casi toda técnica, y se ve mucho mejor en movimiento que en texto.</p>
+
+    <!-- FACHADA · marcado exacto que genera renderVideoFacades() (spec §3) -->
+    <figure data-video-facade="dQw4w9WgXcQ" class="not-prose">
+      <div data-video-frame class="relative aspect-video w-full rounded-[12px]">
+        <button type="button" data-video-play aria-describedby="cg-video-note-1"
+          class="photo-placeholder group absolute inset-0 rounded-[12px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
+          <span class="chrome-dark absolute inset-0 flex items-center justify-center" style="background:transparent">
+            <span class="label-mini absolute left-4 top-4 text-meta md:left-5 md:top-5">Vídeo · YouTube</span>
+            <span class="vf-pill inline-flex min-h-12 items-center gap-2.5 rounded-lg bg-accent-fill px-5 text-[0.9375rem] font-medium text-on-accent transition-[background-color,transform] duration-150 group-hover:bg-accent-hover group-active:scale-[.98] motion-reduce:transition-none motion-reduce:group-active:scale-100">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>
+              Reproducir vídeo
+            </span>
+          </span>
+        </button>
+        <a data-video-nojs href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" rel="noopener"
+          class="photo-placeholder absolute inset-0 rounded-[12px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
+          <span class="chrome-dark absolute inset-0 flex items-center justify-center" style="background:transparent">
+            <span class="label-mini absolute left-4 top-4 text-meta md:left-5 md:top-5">Vídeo · YouTube</span>
+            <span class="inline-flex min-h-12 items-center gap-2 rounded-lg border px-5 text-[0.9375rem] font-medium text-foreground" style="border-color:var(--control)">Ver en YouTube
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>
+          </span>
+        </a>
+      </div>
+      <figcaption id="cg-video-note-1" class="mt-2 flex gap-2 text-[0.8125rem] leading-[1.45] text-meta">
+        <svg class="mt-[2px] flex-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Se carga desde YouTube (Google) solo si le das a reproducir; YouTube recibirá tu IP. <a href="#" class="text-foreground underline decoration-[var(--accent)] underline-offset-4">Cookies</a> · <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" rel="noopener" class="text-foreground underline decoration-[var(--accent)] underline-offset-4">Ver en YouTube<span class="sr-only"> (abre youtube.com)</span></a></span>
+      </figcaption>
+    </figure>
+
+    <p>Fíjate en la cadera: antes de cargar el talón la acerco a la pared. Si la dejas atrás, el talón trabaja solo y se sale en cuanto tiras.</p>
+  </article>
+
+  <!-- ============ 2 · Estados ============ -->
+  <p class="mt-16 label-mini text-meta">2 · Estados (forzados)</p>
+  <div class="mt-6 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+
+
+    <!-- Hover -->
+    <section>
+      <h2 class="text-[0.9375rem] font-medium">Hover <span class="font-normal text-meta">· pastilla a accent-hover, 150 ms</span></h2>
+      <div class="photo-placeholder chrome-dark is-hover relative mt-3 flex aspect-video items-center justify-center" style="border-radius:12px">
+        <span class="label-mini absolute left-4 top-4 text-meta">Vídeo · YouTube</span>
+        <span class="vf-pill inline-flex min-h-12 items-center gap-2.5 rounded-lg px-5 text-[0.9375rem] font-medium text-on-accent"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>Reproducir vídeo</span>
+      </div>
+    </section>
+
+    <!-- Focus -->
+    <section>
+      <h2 class="text-[0.9375rem] font-medium">Foco de teclado <span class="font-normal text-meta">· contorno 2 px accent, separación 2 px</span></h2>
+      <div class="photo-placeholder is-focus relative mt-3 aspect-video" style="border-radius:12px"><div class="chrome-dark absolute inset-0 flex items-center justify-center" style="background:transparent">
+        <span class="label-mini absolute left-4 top-4 text-meta">Vídeo · YouTube</span>
+        <span class="vf-pill inline-flex min-h-12 items-center gap-2.5 rounded-lg bg-accent-fill px-5 text-[0.9375rem] font-medium text-on-accent"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>Reproducir vídeo</span>
+      </div></div>
+    </section>
+
+    <!-- Cargando -->
+    <section>
+      <h2 class="text-[0.9375rem] font-medium">Cargando <span class="font-normal text-meta">· tras el clic, debajo del iframe</span></h2>
+      <div class="photo-placeholder chrome-dark relative mt-3 flex aspect-video flex-col items-center justify-center gap-3" style="border-radius:12px" aria-busy="true">
+        <svg class="vf-spin text-[var(--accent)]" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        <span class="text-[0.8125rem] text-meta">Cargando vídeo…</span>
+      </div>
+      <p class="mt-2 text-[0.8125rem] text-meta">Con reduced-motion el icono no gira; el texto queda.</p>
+    </section>
+
+    <!-- Cargado -->
+    <section>
+      <h2 class="text-[0.9375rem] font-medium">Cargado <span class="font-normal text-meta">· iframe canónico (simulado)</span></h2>
+      <div class="relative mt-3 aspect-video overflow-hidden bg-black" style="border-radius:12px">
+        <div class="absolute inset-0 flex items-center justify-center text-[0.8125rem] text-white/60">[ reproductor de youtube-nocookie.com ]</div>
+      </div>
+      <p class="mt-2 text-[0.8125rem] text-meta">El pie se queda igual (sigue siendo cierto). El foco pasa al iframe.</p>
+    </section>
+
+    <!-- Sin JS -->
+    <section>
+      <h2 class="text-[0.9375rem] font-medium">Sin JS <span class="font-normal text-meta">· enlace a youtube.com</span></h2>
+      <div class="photo-placeholder chrome-dark relative mt-3 flex aspect-video items-center justify-center" style="border-radius:12px">
+        <span class="label-mini absolute left-4 top-4 text-meta">Vídeo · YouTube</span>
+        <span class="inline-flex min-h-12 items-center gap-2 rounded-lg border px-5 text-[0.9375rem] font-medium" style="border-color:var(--control)">Ver en YouTube
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>
+      </div>
+    </section>
+
+    <!-- Ámbito oscuro -->
+    <section class="chrome-dark rounded-xl p-4" style="background:#0f0f0f">
+      <h2 class="text-[0.9375rem] font-medium">Dentro de <code>.chrome-dark</code> <span class="font-normal text-meta">· sin cambios</span></h2>
+      <div class="photo-placeholder relative mt-3 flex aspect-video items-center justify-center" style="border-radius:12px">
+        <span class="label-mini absolute left-4 top-4 text-meta">Vídeo · YouTube</span>
+        <span class="vf-pill inline-flex min-h-12 items-center gap-2.5 rounded-lg bg-accent-fill px-5 text-[0.9375rem] font-medium text-on-accent"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>Reproducir vídeo</span>
+      </div>
+      <p class="mt-2 text-[0.8125rem] leading-[1.45] text-meta">Se carga desde YouTube (Google) solo si le das a reproducir; YouTube recibirá tu IP. <a href="#" class="text-foreground underline underline-offset-4" style="text-decoration-color:var(--accent)">Cookies</a></p>
+    </section>
+  </div>
+
+  <!-- ============ 3 · Móvil 390 ============ -->
+  <p class="mt-16 label-mini text-meta">3 · Móvil (columna de 342 px = 390 − 2 × 24)</p>
+  <div class="mt-6 w-full max-w-[342px] text-[1.125rem] leading-[1.7] text-prose">
+    <figure>
+      <div class="photo-placeholder chrome-dark relative flex aspect-video items-center justify-center" style="border-radius:12px">
+        <span class="label-mini absolute left-4 top-4 text-meta">Vídeo · YouTube</span>
+        <span class="vf-pill inline-flex min-h-12 items-center gap-2.5 rounded-lg bg-accent-fill px-5 text-[0.9375rem] font-medium text-on-accent"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>Reproducir vídeo</span>
+      </div>
+      <figcaption class="mt-2 flex gap-2 text-[0.8125rem] leading-[1.45] text-meta">
+        <svg class="mt-[2px] flex-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Se carga desde YouTube (Google) solo si le das a reproducir; YouTube recibirá tu IP. <a href="#" class="text-foreground underline underline-offset-4" style="text-decoration-color:var(--accent)">Cookies</a> · <a href="#" class="text-foreground underline underline-offset-4" style="text-decoration-color:var(--accent)">Ver en YouTube</a></span>
+      </figcaption>
+    </figure>
+  </div>
+</main>
+
+<script>
+  // Simulación del comportamiento real (spec §5): sin red. Sustituye el botón por el estado "cargando" y luego el reproductor simulado.
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-video-play]')
+    if (!btn) return
+    const frame = btn.closest('[data-video-frame]')
+    frame.querySelectorAll('[data-video-play],[data-video-nojs]').forEach((n) => n.remove())
+    frame.classList.add('photo-placeholder')
+    frame.setAttribute('aria-busy', 'true')
+    frame.insertAdjacentHTML('beforeend', '<span class="chrome-dark absolute inset-0 flex flex-col items-center justify-center gap-3" style="background:transparent"><svg class="vf-spin" style="color:var(--accent)" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span class="text-[0.8125rem] text-meta">Cargando vídeo…</span></span>')
+    setTimeout(() => {
+      frame.insertAdjacentHTML('beforeend', '<div tabindex="-1" class="absolute inset-0 z-20 flex items-center justify-center bg-black text-[0.8125rem] text-white/60" style="border-radius:12px">[ reproductor de youtube-nocookie.com ]</div>')
+      frame.removeAttribute('aria-busy')
+      frame.lastElementChild.focus()
+    }, 900)
+  })
+</script>
+</body>
+</html>

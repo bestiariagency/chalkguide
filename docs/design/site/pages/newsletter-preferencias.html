@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Tus preferencias (D66) · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/consent-tw.js"></script>
+<link rel="stylesheet" href="_shared/consent.css">
+<script src="_shared/consent.js"></script>
+</head>
+<body class="bg-background text-foreground text-base leading-relaxed">
+<div class="mock-bar bg-white text-[#1c1a17] border-b border-[#ddd]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+    <strong class="font-medium mr-1">D66 · 3/3 · /newsletter/preferencias</strong>
+    <span class="text-[#5e584e]">Estado:</span>
+    <span id="mock" class="flex flex-wrap gap-1"></span>
+    <a class="underline ml-auto" href="newsletter-afines.html">1 · Formulario</a>
+    <a class="underline" href="newsletter-confirmada-afines.html">2 · Confirmada</a>
+  </div>
+</div>
+
+<header class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-6">
+    <span class="flex items-end gap-2"><img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-7 w-auto block"><span class="font-mono text-[12px] tracking-[.14em] leading-none pb-[3px] text-meta" aria-hidden="true">BCN</span></span>
+    <nav class="hidden lg:flex items-center gap-10 text-[15px]" aria-label="Principal"><a href="#">Rocódromos</a><a href="#">Pies de gato</a><a href="#">Resolar</a><a href="#">Blog</a><a href="#">Agenda</a><a href="#">Sobre mí</a></nav>
+    <button type="button" class="lg:hidden grid place-items-center size-11" aria-label="Abrir menú"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M8 12h12M4 18h16"/></svg></button>
+  </div>
+</header>
+
+<!-- La URL llega con ?t=…: el cliente lo lee, lo borra con history.replaceState y lo guarda solo en memoria
+     (y sessionStorage para recargar). El token nunca se pinta ni va en enlaces. SSR off en esta ruta. -->
+<main id="main" class="max-w-page mx-auto px-4 md:px-6 pt-12 md:pt-16 lg:pt-20 pb-20 md:pb-28">
+  <div id="page" class="max-w-[820px]"></div>
+</main>
+
+<footer class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-[13px] text-meta">
+    <img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-6 w-auto block">
+    <p>© 2026 ChalkGuide · pie resumido en el mockup</p>
+  </div>
+</footer>
+
+<script>
+/* get_consent_preferences → { newsletter: active|pending|inactive, related_products: granted|pending|none, can_grant_related, locale } */
+const S = {
+  a: ['Activa · afines sin dar', { newsletter:'active', related_products:'none', can_grant_related:true }],
+  b: ['Activa · afines dados', { newsletter:'active', related_products:'granted', can_grant_related:false }],
+  c: ['Baja · afines dados', { newsletter:'inactive', related_products:'granted', can_grant_related:false }],
+  d: ['Sin confirmar', { newsletter:'pending', related_products:'pending', can_grant_related:false }],
+  invalid: ['Token inválido o caducado'], loading: ['Cargando'], error: ['Error'],
+};
+let key = (location.hash.slice(1) in S) ? location.hash.slice(1) : 'a';
+let P = S[key][1] && { ...S[key][1] };
+let flash = {};  // mensajes tras una acción, por fila
+
+const head = `
+  <h1 class="title-section">Tus preferencias</h1>
+  <p class="mt-6 text-[19px] leading-[1.5] text-meta max-w-[56ch]">Elige qué emails quieres recibir de ChalkGuide. Cada uno va por separado: retirar uno no toca el otro.</p>
+  <p class="mt-3 text-[13px] text-meta">Gestionas la dirección a la que llegó este enlace. No hace falta iniciar sesión.</p>`;
+
+const chip = s => ({
+  active:  `<span class="state state-on">${ICO.dot}La recibes</span>`,
+  granted: `<span class="state state-on">${ICO.dot}Activos</span>`,
+  pending: `<span class="state state-wait">${ICO.clock}Sin confirmar</span>`,
+  inactive:`<span class="state state-off">${ICO.minus}No la recibes</span>`,
+  none:    `<span class="state state-off">${ICO.minus}No los recibes</span>`,
+}[s]);
+const note = (id, tone, text) => `<p id="${id}" role="status" tabindex="-1" class="mt-3 flex items-start gap-1.5 text-[15px] leading-snug ${tone === 'err' ? 'text-danger-text' : 'text-success-text'}">${tone === 'err' ? ICO.err : '<svg width="16" height="16" class="shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>'}<span>${text}</span></p>`;
+
+function rowNewsletter() {
+  const n = P.newsletter;
+  const body = n === 'active' ? 'Una carta al mes con novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.'
+    : n === 'pending' ? 'Te envié un email para confirmar la suscripción. Hasta que lo confirmes no recibes nada.'
+    : 'No recibes la newsletter. Para volver hace falta un alta nueva y confirmarla por email.';
+  const action = n === 'inactive'
+    ? `<a href="#" class="btn btn-ghost w-full md:w-auto">Volver a apuntarme</a>`
+    : `<button type="button" class="btn btn-ghost w-full md:w-auto" data-act="nl-off">${n === 'pending' ? 'Cancelar el alta' : 'Darme de baja'}</button>`;
+  return `
+  <li class="slab bg-board"><section class="pref" aria-labelledby="p-nl">
+    <div class="min-w-0">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2"><h2 id="p-nl" class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">Newsletter</h2>${chip(n)}</div>
+      <p class="mt-2 text-[15px] text-meta max-w-[56ch]">${body}</p>
+      ${flash.nl || ''}
+    </div>
+    <div class="md:pt-1">${action}</div>
+  </section></li>`;
+}
+
+function rowRelated() {
+  const r = P.related_products;
+  let body, action = '', extra = '';
+  if (r === 'granted') {
+    body = 'Emails ocasionales con avisos de Chalk app y de productos de ChalkGuide relacionados con la escalada.';
+    action = `<button type="button" class="btn btn-ghost w-full md:w-auto" data-act="rel-off">Retirar</button>`;
+  } else if (r === 'pending') {
+    body = 'Los marcaste al apuntarte. Se activan cuando confirmes tu email; hasta entonces no recibes nada.';
+    action = `<button type="button" class="btn btn-ghost w-full md:w-auto" data-act="rel-off">Retirar</button>`;
+  } else if (P.can_grant_related) {
+    body = 'Si quieres recibirlos, este es el texto que aceptas:';
+    extra = `<p id="rel-text" class="mt-3 text-[17px] leading-[1.5] max-w-[60ch]">«${RELATED_TEXT_V1}»</p>`;
+    action = `<button type="button" class="btn btn-ghost w-full md:w-auto" data-act="rel-on" aria-describedby="rel-text">Sí, avísame</button>`;
+  } else {
+    /* Email sin confirmar: no se puede dar afines (set_related_consent → 'unconfirmed'). */
+    body = 'Podrás activarlos cuando confirmes tu email.';
+    action = `<button type="button" class="btn btn-ghost w-full md:w-auto !text-muted !border-line-strong" disabled aria-describedby="rel-why">Sí, avísame</button>`;
+    extra = `<p id="rel-why" class="mt-3 flex items-start gap-1.5 text-[15px] leading-snug text-meta"><svg width="16" height="16" class="shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Antes tienes que confirmar tu email con el enlace que te envié. Así sé que la dirección es tuya.</span></p>`;
+  }
+  if (P.newsletter === 'pending' && r === 'none') { body = 'Podrás activarlos cuando confirmes tu email.'; }
+  return `
+  <li class="slab bg-board"><section class="pref" aria-labelledby="p-rel">
+    <div class="min-w-0">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2"><h2 id="p-rel" class="text-[20px] md:text-[22px] leading-tight font-medium tracking-[-.01em]">Avisos de Chalk app y productos afines</h2>${chip(r === 'pending' ? 'pending' : r)}</div>
+      <p class="mt-2 text-[15px] text-meta max-w-[56ch]">${body}</p>
+      ${extra}
+      ${moreBtn()}
+      ${flash.rel || ''}
+    </div>
+    <div class="md:pt-1">${action}</div>
+  </section></li>`;
+}
+
+function render(focusId) {
+  document.querySelectorAll('#mock button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === key));
+  const page = document.getElementById('page');
+  if (key === 'invalid') {
+    page.innerHTML = `<div role="status">
+      <svg width="40" height="40" fill="none" stroke="#b02a25" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <h1 class="title-section mt-6">Este enlace no funciona</h1>
+      <p class="mt-6 text-[19px] leading-[1.5] text-meta max-w-[56ch]">Puede que esté incompleto o que sea de un email antiguo. Abre el último email que te envié y pulsa «Preferencias» en el pie: ese enlace siempre funciona.</p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row"><a href="#" class="btn btn-ghost">Ir a la newsletter</a><a href="#" class="btn btn-ghost">Volver al inicio</a></div>
+    </div>`; return;
+  }
+  if (key === 'loading') {
+    page.innerHTML = `${head}<ul class="mt-10 space-y-5" aria-busy="true" aria-label="Cargando tus preferencias">${[1,2].map(() => `<li class="slab bg-board pref"><div><span class="sk h-6 w-48"></span><span class="sk h-4 w-full max-w-[420px] mt-3"></span><span class="sk h-4 w-2/3 max-w-[300px] mt-2"></span></div><span class="sk h-11 w-full md:w-36"></span></li>`).join('')}</ul>`; return;
+  }
+  if (key === 'error') {
+    page.innerHTML = `${head}<div role="alert" class="mt-10 slab bg-board p-5 md:p-7"><p class="flex items-start gap-1.5 text-[17px] text-danger-text">${ICO.err}<span>No he podido cargar tus preferencias. Ha fallado algo por mi parte o por la conexión; el enlace puede estar bien.</span></p><button type="button" class="btn btn-ghost mt-5" data-mock="a">Reintentar</button></div>`; return;
+  }
+  page.innerHTML = `${head}<ul class="mt-10 space-y-5">${rowNewsletter()}${rowRelated()}</ul>
+    <p class="mt-8 text-[13px] text-meta max-w-[60ch]">Lo que cambies aquí queda registrado con la fecha. No guardo IP ni navegador. <a href="#" class="link">Política de privacidad</a>.</p>`;
+  if (focusId) document.getElementById(focusId)?.focus();
+}
+
+function busy(btn, label) { btn.setAttribute('aria-busy', 'true'); btn.disabled = true; btn.innerHTML = `<span class="spin"></span><span>${label}</span>`; }
+document.addEventListener('click', e => {
+  const m = e.target.closest('[data-s],[data-mock]');
+  if (m) { key = m.dataset.s || m.dataset.mock; location.hash = key; P = S[key][1] && { ...S[key][1] }; flash = {}; render(); return; }
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act;
+  busy(b, a === 'rel-on' ? 'Guardando…' : a === 'nl-off' ? 'Dando de baja…' : 'Retirando…');
+  setTimeout(() => {
+    flash = {};
+    if (a === 'nl-off') { P.newsletter = 'inactive'; flash.nl = note('f-nl', 'ok', 'Hecho: ya no recibirás la newsletter. Los avisos de Chalk app no cambian.'); }
+    if (a === 'rel-off') { P.related_products = 'none'; P.can_grant_related = P.newsletter !== 'pending'; flash.rel = note('f-rel', 'ok', 'Hecho: ya no recibirás estos avisos. La newsletter no cambia.'); }
+    if (a === 'rel-on') { P.related_products = 'granted'; P.can_grant_related = false; flash.rel = note('f-rel', 'ok', 'Hecho: te avisaré de Chalk app. Puedes retirarlo aquí cuando quieras.'); }
+    render(a === 'nl-off' ? 'f-nl' : 'f-rel');
+  }, 800);
+});
+document.getElementById('mock').innerHTML = Object.entries(S).map(([k, [l]]) => `<button type="button" class="mock-sel px-2 rounded border border-[#ccc]" data-s="${k}">${l}</button>`).join('');
+render();
+</script>
+</body>
+</html>

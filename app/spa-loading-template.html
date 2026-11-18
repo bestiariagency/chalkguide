@@ -1,0 +1,27 @@
+<!-- Panel SPA shell (/administrador): the real chrome (sidebar, top bar) in panel colours instead of a blank page
+     while the app loads. Only the panel is a SPA (ssr: false), so the public site never shows it.
+     Login and password reset get the plain background (no menu there). Removed on mount. -->
+<script>if(/^\/administrador\/(entrar|restablecer)/.test(location.pathname))document.documentElement.className+=' adm-bare'</script>
+<style>
+html,body{background:#fff;margin:0}
+.adm-boot{position:fixed;inset:0;display:flex;background:#fff}
+.adm-bare .adm-boot{display:none}
+.adm-boot-side{display:none;flex:none;width:56px;border-right:1px solid #e4e4e7;background:#fafafa}
+.adm-boot-main{flex:1;min-width:0}
+.adm-boot-bar{height:48px;border-bottom:1px solid #e4e4e7}
+.adm-boot-blk{height:12px;border-radius:4px;background:#f4f4f5;margin:24px 24px 0}
+@media (min-width:768px){.adm-boot-side{display:block}}
+@media (min-width:1280px){.adm-boot-side{width:240px}}
+@media (max-width:767px){.adm-boot-bar{height:56px}}
+@media (prefers-reduced-motion:no-preference){.adm-boot-blk{animation:adm-boot 1.4s ease-in-out infinite}}
+@keyframes adm-boot{50%{opacity:.5}}
+</style>
+<div class="adm-boot" aria-hidden="true">
+  <div class="adm-boot-side"><div class="adm-boot-bar"></div></div>
+  <div class="adm-boot-main">
+    <div class="adm-boot-bar"></div>
+    <div class="adm-boot-blk" style="width:180px;height:20px"></div>
+    <div class="adm-boot-blk" style="width:60%"></div>
+    <div class="adm-boot-blk" style="width:45%"></div>
+  </div>
+</div>

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Blog · buscador (3.19) · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="_shared/lectura.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw-vars.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+<link rel="stylesheet" href="_shared/lectura.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="blog" data-route-es="/blog" data-route-en="/en/blog">
+<script>document.documentElement.classList.add('js');</script>
+
+<!-- Solo mockup -->
+<div class="max-w-page mx-auto px-4 md:px-6 pt-3">
+  <div class="border border-dashed border-line-strong rounded-md px-3 py-2 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[12px] text-meta" aria-label="Estados del mockup">
+    <span>Estado (mockup):</span>
+    <span class="flex items-center gap-2">Página <a class="kbd" href="buscador-blog.html" id="v-index">índice</a><a class="kbd" href="buscador-blog.html?cat=donde-escalar" id="v-cat">categoría</a></span>
+    <label class="flex items-center gap-2 min-h-[32px] cursor-pointer"><input type="checkbox" id="sim-error" class="accent-[#E8923A]"> simular error de red</label>
+    <span>Prueba: <button type="button" class="kbd" data-try="rocodromo">rocodromo</button> <button type="button" class="kbd" data-try="niños">niños</button> <button type="button" class="kbd" data-try="resolar">resolar</button> <button type="button" class="kbd" data-try="boulder">boulder</button> <button type="button" class="kbd" data-try="r">r</button></span>
+  </div>
+</div>
+
+<main id="main">
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-8 md:pt-10">
+    <nav class="crumbs" aria-label="Migas de pan"><ol id="crumbs"><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Blog</span></li></ol></nav>
+    <div class="grid lg:grid-cols-12 gap-6 lg:gap-10 items-end">
+      <div class="lg:col-span-7">
+        <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5" id="h1">Blog</h1>
+        <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read" id="lead">Guías prácticas y lo que voy aprendiendo. Sin relleno.</p>
+      </div>
+      <form role="search" class="lg:col-span-5" onsubmit="event.preventDefault(); run(true)">
+        <label for="q" class="label-mini block mb-3" id="q-label">Buscar en el blog</label>
+        <div class="search" id="qwrap">
+          <svg class="ico s-ico !w-[18px] !h-[18px]" aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="q" type="search" name="q" autocomplete="off" enterkeyhint="search" placeholder="Rocódromos, precios, material…" aria-describedby="q-help" aria-controls="search-results">
+          <span class="s-kbd" aria-hidden="true">/</span>
+          <button type="button" class="s-clear" id="q-clear" aria-label="Borrar búsqueda" hidden><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+        <p id="q-help" class="mt-2 text-[13px] text-meta min-h-[20px]"><span id="q-hint"></span></p>
+      </form>
+    </div>
+    <nav aria-label="Categorías" class="mt-6 -mx-4 px-4 overflow-x-auto" id="cats">
+      <ul class="flex gap-2 whitespace-nowrap">
+        <li><a href="buscador-blog.html" data-cat="" class="chip">Todo <span class="font-mono text-[13px] text-meta">5</span></a></li>
+        <li><a href="buscador-blog.html?cat=donde-escalar" data-cat="donde-escalar" class="chip">Dónde escalar <span class="font-mono text-[13px] text-meta">2</span></a></li>
+        <li><a href="#" class="chip">Material <span class="font-mono text-[13px] text-meta">1</span></a></li>
+        <li><a href="#" class="chip">Costes <span class="font-mono text-[13px] text-meta">1</span></a></li>
+        <li><a href="#" class="chip">Comunidad <span class="font-mono text-[13px] text-meta">1</span></a></li>
+      </ul>
+    </nav>
+  </section>
+
+  <!-- Resultados de búsqueda -->
+  <section id="search-results" class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-12" aria-labelledby="h-res" hidden>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 id="h-res" class="text-xl md:text-2xl font-medium tracking-[-.01em]" tabindex="-1"></h2>
+      <div class="seg" role="group" aria-label="Dónde buscar" data-seg id="scope" hidden>
+        <span class="ind" aria-hidden="true"></span>
+        <button type="button" aria-pressed="true" data-scope="cat">En Dónde escalar <span class="font-mono text-[13px] text-meta" id="sc-cat"></span></button>
+        <button type="button" aria-pressed="false" data-scope="all">En todo el blog <span class="font-mono text-[13px] text-meta" id="sc-all"></span></button>
+      </div>
+    </div>
+    <p class="sr-only" aria-live="polite" aria-atomic="true" id="live"></p>
+    <ul id="res-list" class="mt-4 border-t-[0.5px] border-line" aria-busy="false"></ul>
+
+    <!-- Sin resultados -->
+    <div id="res-empty" class="hidden mt-4 border-[0.5px] border-line-strong rounded-lg bg-board p-6 md:p-10">
+      <p class="font-hand text-[28px] leading-tight text-accent -rotate-1" aria-hidden="true" id="empty-hand">Esto aún no lo he escrito</p>
+      <p class="font-medium mt-3" id="empty-title"></p>
+      <p class="text-sm text-meta mt-1">Revisa cómo está escrito o prueba con otra palabra:</p>
+      <ul class="mt-4 flex flex-wrap gap-2" id="suggest"></ul>
+      <p class="text-sm text-meta mt-6">¿Quieres que escriba sobre ello? <a href="#" class="link">Cuéntamelo</a>.</p>
+    </div>
+
+    <!-- Error -->
+    <div id="res-error" class="hidden mt-4 border-[0.5px] border-line-strong rounded-lg bg-board p-6 md:p-8 flex gap-3 items-start" role="alert">
+      <svg class="ico text-danger-text mt-0.5" aria-hidden="true"><use href="#i-alert"/></svg>
+      <div><p class="font-medium">No he podido buscar ahora mismo</p><p class="text-sm text-meta mt-1">Puede ser la conexión. Tu búsqueda sigue ahí.</p><button type="button" class="btn btn-ghost mt-4" id="retry"><span class="spinner" aria-hidden="true"></span><span class="label">Reintentar</span></button></div>
+    </div>
+  </section>
+
+  <!-- Navegación normal (sin búsqueda) -->
+  <div id="browse">
+    <section class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-12" aria-labelledby="h-feat" id="featured">
+      <h2 id="h-feat" class="sr-only">Destacados</h2>
+      <div class="grid md:grid-cols-3 gap-3">
+        <article class="card md:col-span-2 flex flex-col">
+          <div class="photo aspect-[16/9]"><div class="zoom" style="background:linear-gradient(160deg,#3a2f27,#141210)"></div><span class="tag">foto · taquilla de un rocódromo</span></div>
+          <div class="p-6"><p class="label-mini">Costes</p><h3 class="display text-2xl md:text-[1.9rem] mt-3"><a href="lectura-articulo.html" class="stretch t-link">Cuánto cuesta realmente escalar en Barcelona al mes</a></h3><p class="text-meta mt-2">Cuotas, bonos, matrícula y material: el número real a dos visitas por semana.</p></div>
+        </article>
+        <article class="card flex flex-col">
+          <div class="photo aspect-[16/9]"><div class="zoom" style="background:linear-gradient(160deg,#262c33,#121417)"></div></div>
+          <div class="p-6"><p class="label-mini">Dónde escalar</p><h3 class="text-xl font-medium leading-snug mt-3"><a href="#" class="stretch t-link">Dónde escalar en Barcelona cuando llueve</a></h3><p class="text-meta text-[15px] mt-2">Plan B para los días de lluvia: rocódromos con más metros, menos colas y buen ambiente.</p></div>
+        </article>
+      </div>
+    </section>
+    <section class="max-w-page mx-auto px-4 md:px-6 pb-16 md:pb-24" aria-labelledby="h-last">
+      <h2 id="h-last" class="label-mini">Últimos</h2>
+      <ul class="mt-4 border-t-[0.5px] border-line" id="latest"></ul>
+    </section>
+  </div>
+</main>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+const A = [
+  { cat:'Costes', ck:'costes', date:'21.09.26', min:8, href:'lectura-articulo.html', title:'Cuánto cuesta realmente escalar en Barcelona al mes', ex:'Cuotas, bonos, matrícula y material: el número real a dos visitas por semana.', body:'Cuando empecé a escalar pagaba entradas sueltas sin hacer cuentas. A dos visitas por semana son unas 8,7 entradas al mes: la cuota mensual sale a cuenta en todos los rocódromos de la lista. El primer año también gastas en material: unos pies de gato de inicio rondan los 80–95 € y te tocará resolarlos al cabo de unos 8–10 meses.' },
+  { cat:'Dónde escalar', ck:'donde-escalar', date:'01.10.26', min:6, href:'#', title:'Dónde escalar en Barcelona cuando llueve', ex:'Plan B para los días de lluvia: rocódromos con más metros, menos colas y buen ambiente.', body:'Cuando llueve, medio Barcelona se mete en el rocódromo. Estos son los que tienen más metros de vía y menos colas entre semana, y a qué hora conviene ir para no esperar cuerda. La Paret de Gràcia abre a las 7:00 y Altura Cornellà tiene la sala de bloque más grande.' },
+  { cat:'Comunidad', ck:'comunidad', date:'28.09.26', min:5, href:'#', title:'Rocódromos para ir solo y encontrar compañero', ex:'Dónde es más fácil llegar solo y acabar escalando con alguien.', body:'Llegar solo a un rocódromo de cuerda da pereza: necesitas a alguien que te asegure. En los de bloque es más fácil empezar a hablar con la gente. Te cuento dónde hay pizarra de compañeros y cómo usar Chalk app para encontrar con quién escalar.' },
+  { cat:'Material', ck:'material', date:'14.09.26', min:7, href:'#', title:'Mi primer resolado: errores que cometí y qué revisar', ex:'Lo que aprendí la primera vez que llevé mis pies de gato a resolar.', body:'La primera vez que llevé mis pies de gato a resolar esperé demasiado y el rand ya estaba tocado. Qué revisar antes de llevarlos al taller, cuánto cuesta un resolado (unos 38 € el par) y cuánto tardan los talleres de Barcelona.' },
+  { cat:'Dónde escalar', ck:'donde-escalar', date:'05.09.26', min:6, href:'#', title:'Rocódromos con zona infantil para ir con hijos', ex:'Dónde escalar con niños en Barcelona sin que la sesión sea una carrera de obstáculos.', body:'Dónde escalar con niños en Barcelona sin que la sesión sea una carrera de obstáculos: rocódromos con zona infantil, edad mínima, precio de la entrada para menores y si hay cursos para familias. Presa Badalona y Magnesi Poblenou tienen zona infantil.' },
+];
+const { $, $$ } = window.CG;
+const params = new URLSearchParams(location.search);
+const CAT = params.get('cat') === 'donde-escalar' ? 'donde-escalar' : '';
+let scope = CAT ? 'cat' : 'all', timer, req = 0;
+const input = $('#q');
+
+/* --- Estado de página: índice o categoría --- */
+if (CAT) {
+  document.body.dataset.routeEs = '/blog/categoria/donde-escalar';
+  $('#crumbs').innerHTML = '<li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><a href="buscador-blog.html">Blog</a></li><li><span aria-current="page">Dónde escalar</span></li>';
+  $('#h1').textContent = 'Dónde escalar'; $('#lead').textContent = 'Rocódromos y planes según el día, la compañía y el bolsillo.';
+  $('#q-label').textContent = 'Buscar en el blog'; input.placeholder = 'Buscar en Dónde escalar…';
+  $('#featured').hidden = true; $('#scope').hidden = false;
+}
+$$('#cats [data-cat]').forEach(a => { const on = a.dataset.cat === CAT; if (on) { a.setAttribute('aria-current', 'page'); a.style.cssText = 'background:var(--accent-muted);border-color:var(--accent);color:var(--accent)'; } });
+(CAT ? $('#v-cat') : $('#v-index')).setAttribute('aria-current', 'true');
+(CAT ? $('#v-cat') : $('#v-index')).style.color = 'var(--foreground)';
+
+const latest = (CAT ? A.filter(a => a.ck === CAT) : A.slice(2));
+$('#latest').innerHTML = latest.map(a => `<li class="border-b-[0.5px] border-line"><article class="relative grid md:grid-cols-[140px_minmax(0,1fr)_120px] gap-x-6 gap-y-1 py-6 group"><p class="label-mini md:pt-1.5">${a.cat}</p><div><h3 class="text-xl font-medium leading-snug"><a href="${a.href}" class="t-link group-hover:bg-[length:100%_1.5px] after:absolute after:inset-0">${a.title}</a></h3><p class="text-meta text-[15px] mt-1">${a.ex}</p></div><p class="font-mono text-[13px] text-meta md:text-right md:pt-1.5">${a.date}</p></article></li>`).join('');
+
+/* --- Búsqueda (simula el full-text de la BD: sin acentos, todas las palabras, título pesa más) --- */
+const n1 = (c) => c.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const norm = (s) => [...s].map(n1).join('');
+const esc = (s) => s.replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+const toks = (q) => norm(q).trim().split(/\s+/).filter(Boolean);
+const stem = (t) => t.replace(/(es|s)$/, '');            // "rocódromos" ≈ "rocódromo" (el servidor usa el diccionario spanish)
+const hl = (text, t) => {
+  const nt = norm(text), m = new Array(text.length).fill(false);
+  t.map(stem).forEach(tok => { let i = nt.indexOf(tok); while (i >= 0 && tok) { let k = i; while (k < i + tok.length || (k < nt.length && /[a-z0-9]/.test(nt[k]))) m[k++] = true; i = nt.indexOf(tok, i + 1); } });
+  let out = '', open = false;
+  [...text].forEach((c, i) => { if (m[i] && !open) { out += '<mark class="hl">'; open = true; } if (!m[i] && open) { out += '</mark>'; open = false; } out += esc(c); });
+  return out + (open ? '</mark>' : '');
+};
+const snippet = (a, t) => {  // como ts_headline: ~160 caracteres alrededor de la primera coincidencia
+  const nb = norm(a.body); let i = -1; t.map(stem).some(tok => (i = nb.indexOf(tok)) >= 0);
+  if (i < 0) return hl(a.ex, t);
+  const s = Math.max(0, nb.lastIndexOf(' ', Math.max(0, i - 60)) + 1), e = Math.min(a.body.length, s + 170);
+  return (s > 0 ? '… ' : '') + hl(a.body.slice(s, e).replace(/\s\S*$/, ''), t) + ' …';
+};
+const search = (q, sc) => {
+  const t = toks(q).map(stem);
+  return A.filter(a => (sc === 'all' || a.ck === CAT) && t.every(tok => norm(a.title + ' ' + a.ex + ' ' + a.body + ' ' + a.cat).includes(tok)))
+          .map(a => ({ a, w: t.filter(tok => norm(a.title).includes(tok)).length })).sort((x, y) => y.w - x.w).map(x => x.a);
+};
+
+const show = (id) => ['#res-list', '#res-empty', '#res-error'].forEach(s => $(s).classList.toggle('hidden', s !== id));
+const skeleton = () => Array.from({ length: 3 }, () => `<li class="result" aria-hidden="true"><span class="sk h-3 w-24 block"></span><div><span class="sk h-5 w-3/4 block"></span><span class="sk h-3 w-full block mt-3"></span><span class="sk h-3 w-2/3 block mt-2"></span></div><span class="sk h-3 w-12 block md:ml-auto"></span></li>`).join('');
+const item = (a, t) => `<li class="result">
+  <p class="label-mini md:pt-1.5">${a.cat}<span class="md:hidden normal-case tracking-normal"> · <span class="font-mono">${a.date}</span> · ${a.min} min</span></p>
+  <div><h3 class="text-lg md:text-xl font-medium leading-snug"><a href="${a.href}" class="t-link after:absolute after:inset-0">${hl(a.title, t)}</a></h3><p class="text-[15px] leading-[1.6] text-meta mt-1">${snippet(a, t)}</p></div>
+  <p class="hidden md:block font-mono text-[13px] text-meta text-right pt-1.5">${a.date}<span class="block">${a.min} min</span></p></li>`;
+
+function run(now) {
+  const q = input.value, t = toks(q), id = ++req;
+  $('#qwrap').classList.toggle('has-value', !!q); $('#q-clear').hidden = !q;
+  const u = new URL(location.href); q.trim() ? u.searchParams.set('q', q.trim()) : u.searchParams.delete('q'); history.replaceState(null, '', u);
+  const mb = document.querySelector('.mock-bar span .text-foreground'); if (mb) mb.textContent = (CAT ? '/blog/categoria/donde-escalar' : '/blog') + (q.trim() ? '?q=' + encodeURIComponent(q.trim()) : '');
+  clearTimeout(timer);
+  if (!q.trim()) { $('#search-results').hidden = true; $('#browse').hidden = false; $('#q-hint').textContent = ''; $('#live').textContent = ''; return; }
+  if (q.trim().length < 2) { $('#q-hint').textContent = 'Escribe al menos 2 letras.'; return; }
+  $('#q-hint').textContent = '';
+  timer = setTimeout(() => {
+    $('#browse').hidden = true; $('#search-results').hidden = false;
+    $('#h-res').textContent = `Buscando «${q.trim()}»…`; show('#res-list');
+    $('#res-list').innerHTML = skeleton(); $('#res-list').setAttribute('aria-busy', 'true');
+    setTimeout(() => {
+      if (id !== req) return;  // llegó otra búsqueda: se descarta esta respuesta
+      $('#res-list').setAttribute('aria-busy', 'false');
+      if ($('#sim-error').checked) { show('#res-error'); $('#h-res').textContent = `«${q.trim()}»`; return; }
+      const r = search(q, scope);
+      if (CAT) { $('#sc-cat').textContent = search(q, 'cat').length; $('#sc-all').textContent = search(q, 'all').length; window.CG.place($('#scope')); }
+      const label = r.length === 0 ? `Sin resultados para «${q.trim()}»` : `${r.length} ${r.length === 1 ? 'artículo' : 'artículos'} con «${q.trim()}»`;
+      $('#h-res').textContent = label; $('#live').textContent = label;
+      if (!r.length) {
+        show('#res-empty');
+        $('#empty-hand').hidden = !!(CAT && scope === 'cat' && search(q, 'all').length);
+        $('#empty-title').textContent = CAT && scope === 'cat' && search(q, 'all').length ? `En Dónde escalar no hay nada sobre «${q.trim()}», pero sí en el resto del blog.` : `Nada sobre «${q.trim()}» todavía.`;
+        $('#suggest').innerHTML = (CAT && scope === 'cat' && search(q, 'all').length ? `<li><button type="button" class="btn btn-ghost" data-scope-all><span class="label">Buscar en todo el blog</span></button></li>` : '') + ['rocódromo', 'precio', 'resolar', 'niños'].map(s => `<li><button type="button" class="chip" data-try="${s}">${s}</button></li>`).join('');
+      } else { show('#res-list'); $('#res-list').innerHTML = r.map(a => item(a, t)).join(''); }
+    }, now ? 200 : 450);
+  }, now ? 0 : 250);
+}
+window.run = run;
+input.addEventListener('input', () => run(false));
+$('#q-clear').addEventListener('click', () => { input.value = ''; run(); input.focus(); });
+$('#retry').addEventListener('click', async (e) => { $('#sim-error').checked = false; await window.CG.busy(e.currentTarget, 400); run(true); });
+document.addEventListener('click', (e) => {
+  const tr = e.target.closest('[data-try]'); if (tr) { input.value = tr.dataset.try; run(true); input.focus(); }
+  if (e.target.closest('[data-scope-all]')) { $('[data-scope="all"]').click(); }
+});
+$$('#scope button').forEach(b => b.addEventListener('click', () => { scope = b.dataset.scope; $$('#scope button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); window.CG.place($('#scope')); run(true); }));
+addEventListener('keydown', (e) => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  if (e.key === '/' && !typing && !e.metaKey && !e.ctrlKey) { e.preventDefault(); input.focus(); }
+  if (e.key === 'Escape' && document.activeElement === input) { if (input.value) { input.value = ''; run(); } else input.blur(); }
+});
+const q0 = params.get('q'); if (q0) { input.value = q0; run(true); }
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Sobre mí · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="sobre" data-route-es="/sobre-mi" data-route-en="/en/about">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="board-tex border-b-[0.5px] border-line">
+    <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-12 md:pt-10 md:pb-16 grid md:grid-cols-12 gap-10 items-end">
+      <div class="md:col-span-8">
+        <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Sobre mí</span></li></ol></nav>
+        <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5">Sobre mí</h1>
+        <p class="font-hand text-[30px] md:text-[34px] leading-[1.15] mt-5 -rotate-1">«Empecé sin nadie a quien preguntar. Esto es lo que me habría gustado leer.»</p>
+      </div>
+      <div class="md:col-span-4">
+        <div class="photo aspect-square rounded-xl max-w-[280px] md:ml-auto"><span class="tag">foto · Xavi en el muro</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-page mx-auto px-4 md:px-6 py-12 md:py-16 grid lg:grid-cols-12 gap-12">
+    <div class="lg:col-span-8 min-w-0">
+      <div class="prose-cg">
+        <p>Me llamo Xavi y escalo en Barcelona desde hace seis años. A los 41 encadené mi primer 7b. <span class="inline-block align-middle text-[13px] font-mono text-meta border border-dashed border-control rounded-sm px-2 py-0.5">XAVI: una frase sobre cómo empezaste</span></p>
+        <h2>Por qué existe ChalkGuide</h2>
+        <p>Cuando empecé no tenía a quién preguntar dónde escalar, qué pies de gato comprar ni cuánto me iba a costar. Los datos estaban repartidos entre webs de rocódromos, foros y conversaciones de vestuario. ChalkGuide los pone en un solo sitio, comparables, y con mi opinión al lado.</p>
+        <h2>Cómo trabajo</h2>
+        <ul>
+          <li>Visito cada rocódromo y pago la entrada; si alguna visita es invitada, lo digo.</li>
+          <li>Los precios llevan fecha de verificación.</li>
+          <li>Ningún rocódromo ni marca paga por una reseña.</li>
+          <li>Los enlaces de afiliado se marcan siempre, y los modelos sin enlace se comparan igual.</li>
+        </ul>
+        <p>Si ves un dato que ha cambiado o quieres proponerme un rocódromo, escríbeme. Contesto todo.</p>
+      </div>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#" class="btn btn-ghost"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-mail"/></svg><span class="label">Escríbeme</span></a>
+        <a href="#" class="link self-center">Cómo valoro y qué se marca</a>
+      </div>
+    </div>
+    <aside class="lg:col-span-4">
+      <div class="card p-5 num lg:sticky lg:top-20">
+        <p class="label-mini">En números</p>
+        <dl class="dl-data mt-3">
+          <div><dt>Escalando en Barcelona</dt><dd>6 años</dd></div>
+          <div><dt>Grado máximo</dt><dd>7b</dd></div>
+          <div><dt>Rocódromos visitados</dt><dd>5</dd></div>
+          <div><dt>Pies de gato propios</dt><dd>3</dd></div>
+          <div><dt>Reseñas pagadas</dt><dd class="text-accent">0</dd></div>
+        </dl>
+      </div>
+    </aside>
+  </section>
+
+  <section class="board-tex border-t-[0.5px] border-line" aria-labelledby="h-news">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-12 md:py-16 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div><p class="label-mini !text-accent">Newsletter mensual</p><h2 id="h-news" class="display text-[1.75rem] md:text-[2.25rem] mt-3">Una carta al mes. Nada más.</h2></div>
+      <a href="../direccion-e-pizarra.html#newsletter" class="btn btn-primary shrink-0"><span class="label">Suscribirme</span><svg class="ico arrow !w-4 !h-4" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+    </div>
+  </section>
+</main>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+</body>
+</html>

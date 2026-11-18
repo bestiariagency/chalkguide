@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>ChalkGuide · Semana 47</title>
+<!--
+  ChalkGuide · Plantilla de la newsletter semanal (F8, D75) · propuesta de buho-pixel
+  - Maquetación con tablas (role="presentation"), ancho 600, estilos en línea. El <style> solo lleva
+    mejoras progresivas (móvil, enlaces de iOS); si un cliente lo quita, la carta sigue leyéndose.
+  - Sin web fonts ni SVG: logo en PNG 2x alojado (aquí el SVG del repo solo para el mockup).
+  - Variables de la Edge Function (8.13) entre {{ }}: se sustituyen por campaña e idioma.
+  - Spec: docs/design/site/README.md §15.
+-->
+<style>
+  body{margin:0;padding:0;width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+  table{border-collapse:collapse} img{border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic}
+  a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important}
+  @media (max-width:620px){
+    .w-full{width:100%!important} .px{padding-left:20px!important;padding-right:20px!important}
+    .h1{font-size:26px!important;line-height:32px!important} .stack{display:block!important;width:100%!important}
+    .date{width:56px!important} .img-full{width:100%!important;height:auto!important}
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f1ea;">
+<!-- preheader: texto de vista previa, oculto -->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#f4f1ea;opacity:0;">Lo que ha pasado esta semana en la escalada de Barcelona, con cada fuente enlazada.&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f4f1ea" style="background-color:#f4f1ea;">
+<tr><td align="center" style="padding:24px 12px;">
+
+  <!-- Ver en el navegador -->
+  <table role="presentation" class="w-full" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+    <tr><td align="right" style="padding:0 4px 10px;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#5e584e;">
+      <a href="{{ mirror_url }}" style="color:#5e584e;text-decoration:underline;">Ver en el navegador</a>
+    </td></tr>
+  </table>
+
+  <table role="presentation" class="w-full" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:600px;max-width:600px;background-color:#ffffff;border-radius:6px;overflow:hidden;">
+    <!-- Cabecera en tinta -->
+    <tr><td class="px" bgcolor="#0f0f0f" style="background-color:#0f0f0f;padding:28px 40px 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td valign="bottom"><a href="https://chalkguide.example/" style="text-decoration:none;"><img src="../../../../public/brand/logo-white.svg" width="148" height="26" alt="ChalkGuide" style="display:block;width:148px;height:auto;color:#f0ede8;font-family:Helvetica,Arial,sans-serif;font-size:20px;font-weight:bold;"></a></td>
+        <td valign="bottom" align="right" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:12px;line-height:16px;letter-spacing:1px;text-transform:uppercase;color:#a19d94;">Semana 47<br>16–22 nov</td>
+      </tr></table>
+    </td></tr>
+    <tr><td height="4" bgcolor="#e8923a" style="background-color:#e8923a;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+    <!-- Intro con la voz de Xavi -->
+    <tr><td class="px" style="padding:36px 40px 8px;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#1c1a17;">
+      <h1 class="h1" style="margin:0;font-size:30px;line-height:36px;font-weight:600;letter-spacing:-0.5px;color:#1c1a17;">Inscripciones abiertas, Montserrat y un nuevo bloque</h1>
+      <p style="margin:20px 0 0;font-size:17px;line-height:27px;color:#34302a;">Hola. Semana de calendario: la FEEC abre las inscripciones del Campeonato de Cataluña de bloque y la IFSC ya tiene fechas para 2027. Si vas a Montserrat, mira antes los sectores cerrados por nidificación. Y en Sabadell abre en enero una sala nueva de bloque.</p>
+      <p style="margin:16px 0 0;font-size:17px;line-height:27px;color:#34302a;">Abajo, la agenda de las próximas dos semanas.</p>
+      <p style="margin:16px 0 0;font-size:17px;line-height:27px;color:#1c1a17;font-weight:600;">Xavi</p>
+    </td></tr>
+
+    <!-- Del blog -->
+    <tr><td class="px" style="padding:36px 40px 0;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;">
+      <h2 style="margin:0 0 16px;padding-top:28px;border-top:1px solid #1c1a17;font-size:13px;line-height:18px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5e584e;">Del blog</h2>
+      <a href="{{ article_url }}" style="text-decoration:none;"><img class="img-full" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000001/1-escaladora-bloque-colores.jpg" width="520" height="292" alt="Escaladora en un bloque de presas de colores" style="display:block;width:520px;max-width:100%;height:auto;border-radius:6px;background-color:#ebe6dc;"></a>
+      <p style="margin:16px 0 0;font-size:14px;line-height:20px;font-weight:600;color:#9a4a16;">Costes · 8 min</p>
+      <h3 style="margin:4px 0 0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.3px;"><a href="{{ article_url }}" style="color:#1c1a17;text-decoration:none;">Cuánto cuesta realmente escalar en Barcelona al mes</a></h3>
+      <p style="margin:8px 0 0;font-size:16px;line-height:25px;color:#34302a;">Cuotas, bonos, matrícula y material: el número real a dos visitas por semana.</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:20px;"><tr>
+        <td bgcolor="#1c1a17" style="background-color:#1c1a17;border-radius:8px;"><a href="{{ article_url }}" style="display:inline-block;padding:14px 22px;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:20px;font-weight:600;color:#fbf9f5;text-decoration:none;border-radius:8px;">Leer el artículo &rarr;</a></td>
+      </tr></table>
+    </td></tr>
+
+    <!-- Noticias -->
+    <tr><td class="px" style="padding:40px 40px 0;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;">
+      <h2 style="margin:0;padding-top:28px;border-top:1px solid #1c1a17;font-size:13px;line-height:18px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5e584e;">Noticias de la semana</h2>
+      <p style="margin:8px 0 0;font-size:14px;line-height:21px;color:#5e584e;">Resúmenes de ChalkGuide. Cada uno enlaza a su fuente.</p>
+
+      <!-- noticia con nota de Xavi -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><tr><td style="padding:20px 0;border-bottom:1px solid #dcd5c8;">
+        <p style="margin:0;font-size:14px;line-height:20px;color:#5e584e;">Roca y acceso · Cataluña</p>
+        <h3 style="margin:4px 0 0;font-size:19px;line-height:26px;font-weight:600;"><a href="{{ news_url_1 }}" style="color:#1c1a17;text-decoration:none;">Montserrat actualiza las restricciones por nidificación en seis sectores</a></h3>
+        <p style="margin:8px 0 0;font-size:16px;line-height:25px;color:#34302a;">Antes de ir, mira qué sectores están cerrados hasta junio: tres de la cara norte siguen cerrados.</p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;"><tr><td bgcolor="#f7e4d0" style="background-color:#f7e4d0;border-radius:6px;padding:12px 16px;font-size:15px;line-height:23px;color:#1c1a17;"><strong style="color:#9a4a16;">Nota de Xavi:</strong> si empiezas en roca, quédate en los sectores de una tirada. Para multilargos, Sant Llorenç hasta junio.</td></tr></table>
+        <p style="margin:12px 0 0;font-size:14px;line-height:20px;color:#5e584e;">Fuente: <a href="https://parcsnaturals.gencat.cat/" style="color:#9a4a16;text-decoration:underline;">Parcs Naturals de Catalunya</a></p>
+      </td></tr></table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:20px 0;border-bottom:1px solid #dcd5c8;">
+        <p style="margin:0;font-size:14px;line-height:20px;color:#5e584e;">Competición · Cataluña</p>
+        <h3 style="margin:4px 0 0;font-size:19px;line-height:26px;font-weight:600;"><a href="{{ news_url_2 }}" style="color:#1c1a17;text-decoration:none;">La FEEC abre inscripciones para el Campeonato de Cataluña de bloque</a></h3>
+        <p style="margin:8px 0 0;font-size:16px;line-height:25px;color:#34302a;">Hasta el 25 de enero; plazas limitadas a 60 por categoría.</p>
+        <p style="margin:12px 0 0;font-size:14px;line-height:20px;color:#5e584e;">Fuente: <a href="https://www.feec.cat/" style="color:#9a4a16;text-decoration:underline;">FEEC</a></p>
+      </td></tr></table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:20px 0;border-bottom:1px solid #dcd5c8;">
+        <p style="margin:0;font-size:14px;line-height:20px;color:#5e584e;">Rocódromos · Cataluña</p>
+        <h3 style="margin:4px 0 0;font-size:19px;line-height:26px;font-weight:600;"><a href="{{ news_url_3 }}" style="color:#1c1a17;text-decoration:none;">Un nuevo rocódromo de bloque abrirá en Sabadell en enero</a></h3>
+        <p style="margin:8px 0 0;font-size:16px;line-height:25px;color:#34302a;">900 m² de bloque y zona infantil.</p>
+        <p style="margin:12px 0 0;font-size:14px;line-height:20px;color:#5e584e;">Fuente: <a href="https://example.org/" style="color:#9a4a16;text-decoration:underline;">Diari de Sabadell</a></p>
+      </td></tr></table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:20px 0;">
+        <p style="margin:0;font-size:14px;line-height:20px;color:#5e584e;">Competición · Internacional</p>
+        <h3 style="margin:4px 0 0;font-size:19px;line-height:26px;font-weight:600;"><a href="{{ news_url_4 }}" style="color:#1c1a17;text-decoration:none;">La IFSC publica el calendario de la Copa del Mundo 2027</a></h3>
+        <p style="margin:8px 0 0;font-size:16px;line-height:25px;color:#34302a;">Primera prueba en abril; sin parada en España.</p>
+        <p style="margin:12px 0 0;font-size:14px;line-height:20px;color:#5e584e;">Fuente: <a href="https://www.ifsc-climbing.org/" style="color:#9a4a16;text-decoration:underline;">IFSC</a></p>
+      </td></tr></table>
+      <p style="margin:4px 0 0;font-size:15px;line-height:22px;"><a href="{{ news_index_url }}" style="color:#1c1a17;font-weight:600;text-decoration:underline;">Todas las noticias &rarr;</a></p>
+    </td></tr>
+
+    <!-- Agenda -->
+    <tr><td class="px" style="padding:40px 40px 0;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;">
+      <h2 style="margin:0 0 8px;padding-top:28px;border-top:1px solid #1c1a17;font-size:13px;line-height:18px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5e584e;">Agenda · próximos 14 días</h2>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="date" width="64" valign="top" style="padding:16px 0;"><table role="presentation" width="64" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#efebe3" style="background-color:#efebe3;border-radius:6px;padding:8px 0;font-family:'JetBrains Mono',Menlo,Consolas,monospace;color:#1c1a17;"><span style="display:block;font-size:11px;line-height:14px;letter-spacing:1px;color:#5e584e;">SÁB</span><span style="display:block;font-size:24px;line-height:28px;font-weight:700;">21</span><span style="display:block;font-size:11px;line-height:14px;letter-spacing:1px;color:#5e584e;">NOV</span></td></tr></table></td>
+        <td valign="top" style="padding:16px 0 16px 16px;border-bottom:1px solid #dcd5c8;">
+          <p style="margin:0;font-size:17px;line-height:24px;font-weight:600;"><a href="{{ event_url_1 }}" style="color:#1c1a17;text-decoration:none;">Open de bloque de otoño</a></p>
+          <p style="margin:4px 0 0;font-size:15px;line-height:22px;color:#5e584e;">Competición en Sharma Climbing BCN · <span style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;">10:00 · 25 €</span></p>
+        </td></tr></table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="date" width="64" valign="top" style="padding:16px 0;"><table role="presentation" width="64" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#efebe3" style="background-color:#efebe3;border-radius:6px;padding:8px 0;font-family:'JetBrains Mono',Menlo,Consolas,monospace;color:#1c1a17;"><span style="display:block;font-size:11px;line-height:14px;letter-spacing:1px;color:#5e584e;">DOM</span><span style="display:block;font-size:24px;line-height:28px;font-weight:700;">22</span><span style="display:block;font-size:11px;line-height:14px;letter-spacing:1px;color:#5e584e;">NOV</span></td></tr></table></td>
+        <td valign="top" style="padding:16px 0 16px 16px;border-bottom:1px solid #dcd5c8;">
+          <p style="margin:0;font-size:17px;line-height:24px;font-weight:600;"><a href="{{ event_url_2 }}" style="color:#1c1a17;text-decoration:none;">Taller de iniciación a la cuerda</a></p>
+          <p style="margin:4px 0 0;font-size:15px;line-height:22px;color:#5e584e;">Curso en La Foixarda · <span style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;">17:00 · 40 €</span></p>
+        </td></tr></table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="date" width="64" valign="top" style="padding:16px 0;"><table role="presentation" width="64" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#efebe3" style="background-color:#efebe3;border-radius:6px;padding:8px 0;font-family:'JetBrains Mono',Menlo,Consolas,monospace;color:#1c1a17;"><span style="display:block;font-size:11px;line-height:14px;letter-spacing:1px;color:#5e584e;">SÁB</span><span style="display:block;font-size:24px;line-height:28px;font-weight:700;">28</span><span style="display:block;font-size:11px;line-height:14px;letter-spacing:1px;color:#5e584e;">NOV</span></td></tr></table></td>
+        <td valign="top" style="padding:16px 0 16px 16px;">
+          <p style="margin:0;font-size:17px;line-height:24px;font-weight:600;"><a href="{{ event_url_3 }}" style="color:#1c1a17;text-decoration:none;">Quedada en Sant Llorenç del Munt</a></p>
+          <p style="margin:4px 0 0;font-size:15px;line-height:22px;color:#5e584e;">Quedada · <span style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;">Todo el día · gratis</span></p>
+        </td></tr></table>
+      <p style="margin:8px 0 0;font-size:15px;line-height:22px;"><a href="{{ agenda_url }}" style="color:#1c1a17;font-weight:600;text-decoration:underline;">Toda la agenda &rarr;</a></p>
+    </td></tr>
+
+    <!-- Cierre -->
+    <tr><td class="px" style="padding:40px 40px 36px;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#f4f1ea" style="background-color:#f4f1ea;border-radius:6px;padding:20px 24px;font-size:15px;line-height:23px;color:#34302a;">
+        ¿Te ha servido? Reenvíala a quien escale contigo. Y si ves algo mal en una noticia, responde a este email: lo leo yo.
+      </td></tr></table>
+    </td></tr>
+  </table>
+
+  <!-- Pie: baja, preferencias, transparencia e identidad -->
+  <table role="presentation" class="w-full" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+    <tr><td class="px" style="padding:24px 40px 8px;font-family:Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#5e584e;">
+      <p style="margin:0;">Ninguna mención es pagada. Lo pagado o con afiliado se marca siempre.</p>
+      <p style="margin:12px 0 0;">Recibes esta carta porque te suscribiste en ChalkGuide y confirmaste tu email.</p>
+      <p style="margin:12px 0 0;"><a href="{{ unsubscribe_url }}" style="color:#1c1a17;text-decoration:underline;font-weight:600;">Darte de baja</a> &nbsp;·&nbsp; <a href="{{ preferences_url }}" style="color:#1c1a17;text-decoration:underline;">Preferencias</a> &nbsp;·&nbsp; <a href="{{ privacy_url }}" style="color:#1c1a17;text-decoration:underline;">Privacidad</a></p>
+      <p style="margin:12px 0 0;">ChalkGuide · Barcelona · [PENDIENTE: titular y dirección (LSSI), antes de F7]</p>
+    </td></tr>
+  </table>
+
+</td></tr>
+</table>
+</body>
+</html>

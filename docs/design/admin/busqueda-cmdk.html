@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Búsqueda en ⌘K · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=10"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* D53 · 6.22 · paleta ⌘K con búsqueda de contenido */
+  #pal.overlay{align-items:flex-start;padding-top:12vh}
+  .pal{width:100%;max-width:640px;background:var(--elev);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-pop);display:flex;flex-direction:column;max-height:min(640px,76vh);overflow:hidden;animation:rise .16s var(--ease)}
+  .pal-in{display:flex;align-items:center;gap:8px;min-height:52px;padding:8px 16px;border-bottom:1px solid var(--line);flex:none}
+  .pal-in input{flex:1;min-width:0;background:transparent;outline:none;font-size:15px}
+  .pal-in input::placeholder{color:var(--muted)}
+  .scopes{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--line);overflow-x:auto;flex:none;scrollbar-width:none}
+  .scope{height:28px;padding:0 10px;border-radius:6px;font-size:12.5px;color:var(--meta);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;border:1px solid transparent}
+  .scope:hover{background:var(--subtle);color:var(--fg)}
+  .scope[aria-pressed="true"]{background:var(--fg);color:var(--bg);font-weight:500}
+  .scope .n{font-variant-numeric:tabular-nums;opacity:.7;font-size:11.5px}
+  .scope:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+  .res{overflow-y:auto;padding:4px 8px 8px;flex:1;min-height:0;transition:opacity .15s var(--ease)}
+  .res[aria-busy="true"].stale{opacity:.55}
+  .gl{display:flex;align-items:center;gap:6px;padding:12px 8px 4px;font-size:12px;font-weight:600;color:var(--meta)}
+  .gl .n{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+  .opt{display:flex;align-items:center;gap:10px;min-height:48px;padding:6px 8px;border-radius:6px;cursor:pointer;color:var(--fg)}
+  .opt.one{min-height:36px}
+  .opt[aria-selected="true"]{background:var(--subtle)}
+  .opt .ic{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;flex:none;background:var(--subtle);color:var(--meta)}
+  .opt[aria-selected="true"] .ic{background:var(--elev);box-shadow:inset 0 0 0 1px var(--line)}
+  .opt .ic svg{width:16px;height:16px}
+  .opt .th{width:36px;height:28px;border-radius:4px;flex:none;position:relative}
+  .opt .th::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgb(0 0 0/.08)}
+  .opt .t1{font-size:13.5px;line-height:20px;font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .opt .t2{font-size:12px;line-height:16px;color:var(--meta);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .opt mark{background:var(--acc-soft);color:inherit;border-radius:2px;padding:0 1px;box-shadow:inset 0 -1px 0 var(--acc)}
+  .opt .ent{visibility:hidden} .opt[aria-selected="true"] .ent{visibility:visible}
+  .opt.more{min-height:36px;color:var(--meta);font-size:12.5px}
+  .opt.more svg{width:14px;height:14px}
+  .pal-f{display:flex;align-items:center;gap:14px;min-height:40px;padding:8px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--meta);flex:none;background:var(--side)}
+  .pal-f span{display:inline-flex;align-items:center;gap:5px}
+  .spin{width:16px;height:16px;border-radius:99px;border:2px solid var(--line-strong);border-top-color:var(--fg);animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .cancel{display:none}
+  /* atajos con función: mínimo 11 px (auditoría); en el design system, .kbd sigue a 10.5 */
+  .kbd{font-size:11px}
+  .mocknote a{text-decoration:underline;text-underline-offset:2px}
+  .mocknote a[aria-current]{font-weight:600;text-decoration:none;background:var(--fg);color:var(--bg);padding:1px 6px;border-radius:4px}
+  @media (max-width:767.98px){
+    #pal.overlay{padding:0;align-items:stretch}
+    .pal{max-width:none;max-height:none;height:100dvh;border-radius:0;border:0}
+    .pal-in{min-height:56px;padding:6px 4px 6px 16px}
+    .pal-in input{font-size:16px}
+    .pal-in .kbd{display:none}
+    .cancel{display:inline-flex;align-items:center;height:44px;padding:0 12px;font-size:14px;color:var(--fg);font-weight:500}
+    .scope{height:36px;padding:0 12px;font-size:13px}
+    .opt{min-height:56px} .opt.one,.opt.more{min-height:44px}
+    .opt .ent{display:none}
+    .pal-f{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){.pal{animation:none}.res{transition:none}.spin{animation-duration:2s}}
+</style>
+</head>
+<body data-page="inicio" class="bg-bg text-fg font-sans antialiased text-base">
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 hidden md:flex items-center gap-2 border-b border-line text-sm"><span class="font-medium">Inicio</span></header>
+  <div class="px-4 md:px-6 py-6 max-w-[960px]">
+    <p class="mocknote text-xs text-meta border border-dashed border-line-strong rounded-md px-3 py-2">Mockup D53 · tarea 6.22 · paleta ⌘K con búsqueda de contenido. Escribe en la paleta (los datos son de ejemplo y la latencia es simulada). Estados:
+      <a href="#resultados">resultados</a> · <a href="#vacio">sin escribir</a> · <a href="#cargando">cargando</a> · <a href="#sin-resultados">sin resultados</a> · <a href="#error">error</a> · <a href="#ambito">ámbito Artículos</a></p>
+    <p class="mt-4"><button type="button" class="btn t" id="reopen"><i data-lucide="search"></i>Abrir la paleta <span class="kbd ml-1">⌘K</span></button></p>
+  </div>
+</main>
+
+<div id="pal" class="overlay" role="dialog" aria-modal="true" aria-label="Buscar o ir a">
+  <div class="pal">
+    <div class="pal-in">
+      <i data-lucide="search" class="w-4 h-4 text-muted flex-none" aria-hidden="true"></i>
+      <label for="q" class="sr-only">Buscar contenido o ir a una sección</label>
+      <input id="q" type="text" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="lb" aria-autocomplete="list" aria-activedescendant="" placeholder="Busca artículos, fichas, eventos, fotos o ve a una sección…">
+      <span id="busy" class="spin hidden" role="status" aria-label="Buscando"></span>
+      <span class="kbd">esc</span>
+      <button type="button" class="cancel" data-close>Cancelar</button>
+    </div>
+    <div class="scopes" role="group" aria-label="Buscar en" id="scopes"></div>
+    <div class="res" id="res"><div id="lb" role="listbox" aria-label="Resultados"></div></div>
+    <p class="sr-only" id="live" aria-live="polite"></p>
+    <div class="pal-f">
+      <span><span class="kbd">↑</span><span class="kbd">↓</span>moverse</span>
+      <span><span class="kbd">↵</span>abrir</span>
+      <span><span class="kbd">⌘↵</span>en pestaña nueva</span>
+      <span class="ml-auto" id="fhint"><span class="kbd">⌫</span>volver a Todo</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- datos de ejemplo ---------- */
+const SW = ['#B9A88F','#7C8A6E','#C9B7A6','#5E6B7A','#D8C3A5','#8F7A66'];
+const DATA = [
+  /* tipo, título, línea 2, estado [clase, texto], destino, campo que coincide (si no es el título) */
+  ['art','Escalar en La Paret de Gràcia: primera sesión','Dónde escalar · actualizado 28 oct',['st-pub','Publicado'],'articulo-editor.html'],
+  ['art','Paret o bloque: por dónde empezar','Primeros pasos · 14 nov, 08:00',['st-sched','Programado'],'articulo-editor.html'],
+  ['art','Cuánto cuesta escalar en Barcelona','Dónde escalar · actualizado 2 nov',['st-pub','Publicado'],'articulo-editor.html','paret','en el texto: «…la cuota de La Paret incluye…»'],
+  ['art','Rocódromos para ir solo','Dónde escalar · 3 cambios sin publicar',['st-rev','Con cambios'],'articulo-editor.html'],
+  ['art','Cuándo resolar: señales de que tus pies de gato lo necesitan','Material · editado hace 2 días',['st-draft','Borrador'],'articulo-editor.html'],
+  ['art','Mi primer resolado','Material · 28 oct',['st-pub','Publicado'],'articulo-editor.html'],
+  ['art','Rocódromos con zona infantil para ir con hijos','Dónde escalar · editado hace 5 días',['st-draft','Borrador'],'articulo-editor.html'],
+  ['gym','La Paret de Gràcia','Rocódromo · Gràcia · verificado 12 sept',['st-pub','Publicada'],'rocodromo-editor.html'],
+  ['gym','La Paret Poblenou','Rocódromo · Sant Martí · importada 4 nov',['st-draft','Sin publicar'],'rocodromo-editor.html'],
+  ['gym','Bloc del Besòs','Rocódromo · Sant Adrià',['st-pub','Publicada'],'rocodromo-editor.html'],
+  ['gym','Climb Sants','Rocódromo · Sants-Montjuïc · sin verificar desde marzo',['st-warn','Sin verificar'],'rocodromo-editor.html'],
+  ['res','Resoles Gràcia','Resolador · Gràcia · 7–10 días',['st-pub','Publicada'],'resolador-editor.html'],
+  ['res','El Taller del Pie','Resolador · envíos por correo',['st-pub','Publicada'],'resolador-editor.html'],
+  ['shoe','La Sportiva Solution','Pie de gato · La Sportiva · 135–169 €',['st-pub','Publicada'],'pie-de-gato-editor.html'],
+  ['shoe','Scarpa Instinct VS','Pie de gato · Scarpa · afiliado',['st-pub','Publicada'],'pie-de-gato-editor.html'],
+  ['shoe','Five Ten Hiangle','Pie de gato · Five Ten · importada 4 nov',['st-draft','Sin publicar'],'pie-de-gato-editor.html'],
+  ['page','Sobre mí','/sobre-mi · revisada 20 oct',['st-pub','Publicada'],'paginas.html'],
+  ['page','Cómo puntúo','/como-puntuo',['st-pub','Publicada'],'paginas.html'],
+  ['page','Aviso legal','/aviso-legal · texto provisional',['st-warn','Provisional'],'paginas.html'],
+  ['ev','Taller de nudos y aseguramiento','sáb 14 nov · La Paret de Gràcia',['st-pub','Aprobado'],'agenda.html'],
+  ['ev','Open de bloque de otoño','sáb 7 nov · Bloc del Besòs · del agente',['st-warn','Por aprobar'],'agenda.html'],
+  ['ev','Noche de bloque en La Paret','vie 20 nov · La Paret Poblenou · del agente',['st-warn','Por aprobar'],'agenda.html'],
+  ['med','la-paret-gracia-sala.jpg','«Sala de bloque de La Paret de Gràcia» · en uso en 3 sitios',null,'medios.html'],
+  ['med','paret-gracia-fachada.jpg','Sin texto alternativo · sin usar',['st-warn','Sin alt'],'medios.html'],
+  ['med','solution-lateral.jpg','«La Sportiva Solution, vista lateral»',null,'medios.html']
+];
+const TYPES = {
+  art:['Artículos','file-text','articulos.html'], gym:['Rocódromos','mountain','rocodromo-editor.html'], res:['Resoladores','wrench','resolador-editor.html'],
+  shoe:['Pies de gato','footprints','pie-de-gato-editor.html'], page:['Páginas','file','paginas.html'], ev:['Agenda','calendar-days','agenda.html'], med:['Medios','image','medios.html']
+};
+const ONE = { art:'Artículo', gym:'Rocódromo', res:'Resolador', shoe:'Pie de gato', page:'Página', ev:'Evento', med:'Foto' };
+const ORDER = ['art','gym','res','shoe','page','ev','med'];
+const SCOPES = [['all','Todo'],['art','Artículos'],['items','Fichas'],['page','Páginas'],['ev','Agenda'],['med','Medios']];
+const NAV = [['Inicio','layout-dashboard','inicio.html','G I'],['Artículos','file-text','articulos.html','G A'],['Categorías','folder-tree','categorias.html'],['Páginas','file','paginas.html'],['Rocódromos','mountain','rocodromo-editor.html'],['Resoladores','wrench','resolador-editor.html'],['Pies de gato','footprints','pie-de-gato-editor.html'],['Criterios de nota','list-checks','criterios.html'],['Opiniones','message-square','opiniones.html','G O'],['Agenda','calendar-days','agenda.html'],['Suscriptores','mail','suscriptores.html'],['Medios','image','medios.html','G M'],['Actividad','history','actividad.html'],['Ajustes','settings','ajustes.html']];
+const CREATE = [['Nuevo artículo','plus','articulo-editor.html','C A'],['Nuevo rocódromo','plus','rocodromo-editor.html'],['Nuevo evento','plus','agenda.html#nuevo'],['Subir fotos','upload','medios.html#subir']];
+const RECENT = [['art',4],['gym',7],['shoe',13],['page',16]];
+const PER_GROUP = 4, PER_SCOPE = 20, MIN = 2;
+
+/* ---------- estado ---------- */
+const st = { q:'', scope:'all', mode:'ok', sel:0, opts:[], timer:null, slow:null };
+const $ = id => document.getElementById(id);
+const fold = t => t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function hl(text, q) {
+  const i = fold(text).indexOf(fold(q));
+  if (!q || i < 0) return esc(text);
+  return esc(text.slice(0,i)) + '<mark>' + esc(text.slice(i,i+q.length)) + '</mark>' + esc(text.slice(i+q.length));
+}
+function search(q) {
+  const f = fold(q);
+  return DATA.map((r,i) => ({ r, i, rank: fold(r[1]).startsWith(f) ? 0 : fold(r[1]).includes(f) ? 1 : fold(r[2]).includes(f) ? 2 : (r[5] && f.startsWith(r[5].slice(0,f.length)) && f.length >= 3) ? 3 : 9 }))
+    .filter(x => x.rank < 9).sort((a,b) => a.rank - b.rank || a.i - b.i);
+}
+const inScope = (t) => st.scope === 'all' || st.scope === t || (st.scope === 'items' && ['gym','res','shoe'].includes(t));
+
+/* ---------- pintar ---------- */
+let n = 0;
+const optId = () => 'o' + (n++);
+function row({ ic, th, title, sub, chip, href, kind, one, more, q }) {
+  const id = optId(); st.opts.push({ id, href, more });
+  const lead = th ? `<span class="th" style="background:${th}" aria-hidden="true"></span>` : `<span class="ic" aria-hidden="true"><i data-lucide="${ic}"></i></span>`;
+  if (more) return `<div id="${id}" role="option" aria-selected="false" class="opt more" data-i="${st.opts.length-1}"><i data-lucide="corner-down-right" class="ml-2.5" aria-hidden="true"></i>${more}</div>`;
+  return `<div id="${id}" role="option" aria-selected="false" class="opt ${one?'one':''}" data-i="${st.opts.length-1}">${lead}
+    <span class="flex-1 min-w-0"><span class="t1">${hl(title, q||'')}</span>${sub?`<span class="t2">${sub}</span>`:''}</span>
+    ${chip?`<span class="chip ${chip[0]} hidden sm:inline-flex">${chip[0]==='st-warn'?'':'<span class="dot"></span>'}${chip[1]}</span>`:''}
+    ${kind?`<span class="kbd hidden sm:inline">${kind}</span>`:''}<span class="kbd ent hidden sm:inline">↵</span></div>`;
+}
+const group = (label, count, inner, id) => `<div role="group" aria-labelledby="${id}"><p class="gl" id="${id}" role="presentation">${label}${count!=null?` <span class="n">${count}</span>`:''}</p>${inner}</div>`;
+const skel = () => `<div class="px-2 py-2 space-y-3" aria-hidden="true">${[0,1,2].map(()=>`<div class="flex items-center gap-2.5"><span class="sk w-7 h-7 rounded-md"></span><span class="flex-1 space-y-1.5"><span class="sk block h-3 w-3/5"></span><span class="sk block h-2.5 w-2/5"></span></span></div>`).join('')}</div>`;
+
+function render() {
+  st.opts = []; n = 0;
+  const q = st.q.trim(), lb = $('lb'); let html = '';
+  const navHits = q ? NAV.filter(x => fold(x[0]).includes(fold(q))) : [];
+  const navTop = navHits.filter(x => fold(x[0]).startsWith(fold(q)));
+  const goRows = list => list.map(([t,ic,h,k]) => row({ ic, title:t, href:h, kind:k, one:true, q })).join('');
+
+  if (!q) {
+    if (st.scope === 'all') {
+      html += group('Recientes', null, RECENT.map(([t,i]) => { const r = DATA[i]; return row({ ic:TYPES[t][1], title:r[1], sub:ONE[t]+' · abierto '+['hace 5 min','hoy, 09:40','ayer','lun 2 nov'][RECENT.findIndex(x=>x[1]===i)], href:r[4] }); }).join(''), 'g-rec');
+      html += group('Ir a', null, goRows(NAV), 'g-nav');
+      html += group('Crear', null, goRows(CREATE), 'g-new');
+    } else html += `<p class="px-2 py-8 text-center text-sm text-meta">Escribe para buscar en ${SCOPES.find(s=>s[0]===st.scope)[1]}.</p>`;
+  } else {
+    if (st.scope === 'all' && navTop.length) html += group('Ir a', null, goRows(navTop.slice(0,3)), 'g-nav');
+    if (q.length < MIN) {
+      if (!navTop.length) html += `<p class="px-2 py-6 text-center text-sm text-meta">Escribe al menos 2 letras para buscar contenido.</p>`;
+    } else if (st.mode === 'loading' && !st.stale) {
+      html += skel();
+    } else if (st.mode === 'error') {
+      html += `<div class="m-2 px-3 py-3 rounded-md flex items-start gap-2.5 text-sm" style="background:var(--danger-soft)" role="alert">
+        <i data-lucide="circle-alert" class="w-4 h-4 mt-0.5 flex-none text-danger" aria-hidden="true"></i>
+        <span class="flex-1"><span class="font-medium text-danger">No se ha podido buscar el contenido.</span> <span class="text-meta">Las secciones siguen funcionando.</span></span>
+        <button type="button" class="btn btn-sm t" id="retry">Reintentar</button></div>`;
+    } else {
+      const hits = search(q).filter(x => inScope(x.r[0]));
+      let total = 0;
+      for (const t of ORDER) {
+        const list = hits.filter(x => x.r[0] === t); if (!list.length) continue;
+        const lim = st.scope === 'all' ? PER_GROUP : PER_SCOPE; total += list.length;
+        let inner = list.slice(0, lim).map(({ r }) => row({
+          ic:TYPES[t][1], th: t==='med' ? SW[r[1].length % SW.length] : null, title:r[1],
+          sub: r[6] ? `<span class="italic">${esc(r[6])}</span>` : esc(r[2]), chip:r[3], href:r[4], q })).join('');
+        if (st.scope === 'all' && list.length > lim) inner += row({ more:`Ver los ${list.length} de ${TYPES[t][0]}` , href:'scope:'+t });
+        if (st.scope !== 'all' && list.length > lim) inner += row({ more:`Abrir «${esc(q)}» en ${TYPES[t][0]}`, href:TYPES[t][2] });
+        html += group(TYPES[t][0], list.length, inner, 'g-'+t);
+      }
+      const navRest = st.scope === 'all' ? navHits.filter(x => !navTop.includes(x)) : [];
+      if (navRest.length) html += group('Ir a', null, goRows(navRest), 'g-nav2');
+      if (!total && !(st.scope==='all' && navHits.length)) {
+        html += `<div class="px-4 pt-8 pb-4 text-center"><p class="text-sm font-medium">Nada coincide con «${esc(q)}»</p>
+          <p class="mt-1 text-xs text-meta">Se busca en títulos, nombres, entradillas, lugares y textos alternativos${st.scope!=='all'?`, solo en ${SCOPES.find(s=>s[0]===st.scope)[1]}`:''}.</p></div>`;
+        if (st.scope !== 'all') html += group('', null, row({ ic:'search', title:'Buscar en todo', href:'scope:all', one:true }), 'g-x');
+        html += group('', null, row({ ic:'plus', title:`Crear un artículo titulado «${q}»`, href:'articulo-editor.html', one:true }), 'g-c');
+      }
+      $('live').textContent = total ? `${total} ${total===1?'resultado':'resultados'}` : `Nada coincide con ${q}`;
+    }
+  }
+  lb.innerHTML = html;
+  $('res').setAttribute('aria-busy', st.mode === 'loading');
+  $('res').classList.toggle('stale', !!st.stale && st.mode === 'loading');
+  $('busy').classList.toggle('hidden', st.mode !== 'loading');
+  renderScopes();
+  st.sel = Math.min(st.sel, Math.max(0, st.opts.length - 1)); select(st.sel, false);
+  $('fhint').style.visibility = st.scope === 'all' ? 'hidden' : 'visible';
+  CG.icons();
+}
+function renderScopes() {
+  const q = st.q.trim(), hits = q.length >= MIN && st.mode === 'ok' ? search(q) : null;
+  const count = s => !hits ? '' : s === 'all' ? hits.length : hits.filter(x => s === 'items' ? ['gym','res','shoe'].includes(x.r[0]) : x.r[0] === s).length;
+  $('scopes').innerHTML = SCOPES.map(([k,l]) => `<button type="button" class="scope t" data-scope="${k}" aria-pressed="${st.scope===k}">${l}${hits?` <span class="n">${count(k)}</span>`:''}</button>`).join('');
+}
+function select(i, scroll = true) {
+  const opts = [...document.querySelectorAll('#lb [role=option]')];
+  opts.forEach((o, j) => o.setAttribute('aria-selected', j === i));
+  st.sel = i; $('q').setAttribute('aria-activedescendant', opts[i] ? opts[i].id : '');
+  if (scroll && opts[i]) opts[i].scrollIntoView({ block:'nearest' });
+}
+function activate(i, newTab) {
+  const o = st.opts[i]; if (!o) return;
+  if (o.href.startsWith('scope:')) { st.scope = o.href.slice(6) === 'all' ? 'all' : o.href.slice(6); if (['gym','res','shoe'].includes(st.scope)) st.scope = 'items'; st.sel = 0; render(); return; }
+  CG.toast(newTab ? 'Se abriría en una pestaña nueva.' : 'Se abriría el resultado.', { type:'info', action:null });
+}
+function query(v, mode) {
+  st.q = v; clearTimeout(st.timer); clearTimeout(st.slow);
+  if (mode) { st.mode = mode; st.stale = false; render(); return; }
+  if (v.trim().length < MIN) { st.mode = 'ok'; render(); return; }
+  /* debounce 150 ms; el esqueleto solo si tarda más de 150 ms; mientras, resultados anteriores atenuados */
+  st.stale = $('lb').querySelector('.opt:not(.one)') ? true : false;
+  st.timer = setTimeout(() => { st.mode = 'loading'; st.slow = setTimeout(render, 150); setTimeout(() => { clearTimeout(st.slow); st.mode = 'ok'; st.stale = false; st.sel = 0; render(); }, 380); }, 150);
+}
+
+/* ---------- eventos ---------- */
+$('q').addEventListener('input', e => query(e.target.value));
+$('q').addEventListener('keydown', e => {
+  const len = st.opts.length;
+  if (e.key === 'ArrowDown') { e.preventDefault(); select((st.sel + 1) % len); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); select((st.sel - 1 + len) % len); }
+  else if (e.key === 'Home' && e.ctrlKey) { e.preventDefault(); select(0); }
+  else if (e.key === 'Enter') { e.preventDefault(); activate(st.sel, e.metaKey || e.ctrlKey); }
+  else if (e.key === 'Backspace' && !st.q && st.scope !== 'all') { st.scope = 'all'; render(); }
+  else if (e.key === 'Escape' && st.q) { e.preventDefault(); e.stopPropagation(); $('q').value = ''; query(''); }
+});
+$('lb').addEventListener('mousemove', e => { const o = e.target.closest('[role=option]'); if (o && +o.dataset.i !== st.sel) select(+o.dataset.i, false); });
+$('lb').addEventListener('click', e => { const o = e.target.closest('[role=option]'); if (o) activate(+o.dataset.i, e.metaKey || e.ctrlKey); if (e.target.id === 'retry') query(st.q); });
+$('scopes').addEventListener('click', e => { const b = e.target.closest('[data-scope]'); if (!b) return; st.scope = b.dataset.scope; st.sel = 0; render(); $('q').focus(); });
+$('reopen').onclick = () => CG.open('pal');
+/* en este mockup, la búsqueda del menú y ⌘K abren la paleta nueva en lugar de la del shell */
+document.addEventListener('click', e => { if (e.target.closest('[data-open="cmdk"]')) { e.preventDefault(); e.stopImmediatePropagation(); CG.open('pal'); } }, true);
+addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); e.stopImmediatePropagation(); document.getElementById('pal').classList.contains('open') ? CG.close('pal') : CG.open('pal'); } }, true);
+
+const PRESETS = { resultados:['paret','all','ok'], vacio:['','all','ok'], cargando:['paret','all','loading'], 'sin-resultados':['quickdraw','all','ok'], error:['sant','all','error'], ambito:['roc','art','ok'] };
+function fromHash() {
+  const h = location.hash.slice(1) || 'resultados', [q, scope, mode] = PRESETS[h] || PRESETS.resultados;
+  document.querySelectorAll('.mocknote a').forEach(a => a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + h));
+  st.scope = scope; st.sel = 0; $('q').value = q; query(q, mode);
+  CG.open('pal');
+}
+addEventListener('hashchange', fromHash);
+addEventListener('DOMContentLoaded', () => setTimeout(fromHash, 0));
+</script>
+</body>
+</html>

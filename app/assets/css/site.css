@@ -1,0 +1,19 @@
+/*
+ * Public stylesheet root (loaded on every page). Tailwind scans the whole app by default, which
+ * pulled the panel utilities (~half of the CSS) into the blocking public CSS. The panel files are
+ * excluded here and compiled in admin.css (loaded by layouts/admin.vue only).
+ * Keep only files that are panel-only: anything shared with the site stays scanned.
+ */
+@import './main.css';
+
+@source not "../../components/admin";
+@source not "../../pages/administrador";
+@source not "../../layouts/admin.vue";
+@source not "../../utils/admin*.ts";
+@source not "../../utils/editor-classes.ts";
+@source not "../../utils/page-provisional.ts";
+@source not "../../utils/article-editor*.ts";
+@source not "../../utils/article-embed-nodes.ts";
+@source not "../../utils/article-blocks.ts";
+@source not "../../composables/useAdmin*.ts";
+@source not "../../services/admin";

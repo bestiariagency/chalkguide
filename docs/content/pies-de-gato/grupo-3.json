@@ -1,0 +1,198 @@
+[
+  {
+    "name": "Scarpa Instinct VSR",
+    "slug": "scarpa-instinct-vsr",
+    "brand": "Scarpa",
+    "model": "Instinct VSR",
+    "summary_es": "Pie de gato de velcro para escaladores exigentes, pensado para bloque y vías deportivas duras. Horma ligeramente asimétrica, versión más flexible del Instinct VS, con goma Vibram Grip2.",
+    "summary_en": "Hook-and-loop shoe for demanding climbers, built for bouldering and hard sport routes. Slightly asymmetric last, a more flexible version of the Instinct VS, with Vibram Grip2 rubber.",
+    "asymmetry": "Ligera",
+    "closure": "Velcro",
+    "rubber": "Vibram Grip2",
+    "recommended_use": [
+      "Bloque",
+      "Deportiva"
+    ],
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 138.99,
+    "price_max_eur": 179,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/scarpa-instinct-vsr/product-32144",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Drago",
+    "slug": "scarpa-drago",
+    "brand": "Scarpa",
+    "model": "Drago",
+    "summary_es": "Pie de gato de rendimiento con goma extendida en puntera y talón, pensado para el gancheo. Forma asimétrica con puntera curvada, una tira de velcro y suela Vibram XS Grip2 de 3,5 mm.",
+    "summary_en": "Performance shoe with extended rubber over the toe and heel, made for hooking. Asymmetric, downturned shape, a single hook-and-loop strap and a 3.5 mm XS Grip2 sole.",
+    "closure": "Velcro",
+    "rubber": "XS Grip2",
+    "rubber_thickness_mm": 3.5,
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 139.9,
+    "price_max_eur": 174,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/scarpa-drago-yellow/product-22448",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Drago LV",
+    "slug": "scarpa-drago-lv",
+    "brand": "Scarpa",
+    "model": "Drago LV",
+    "summary_es": "Versión actualizada del Drago con sensación de segunda piel y perfil muy curvado y muy asimétrico. Incluye el sistema de talón PAF y goma Vibram XS Grip2.",
+    "summary_en": "Updated version of the Drago with a second-skin feel and a highly downturned, highly asymmetric profile. It has the PAF heel system and Vibram XS Grip2 rubber.",
+    "fit": "Hombre",
+    "profile": "Agresivo",
+    "asymmetry": "Fuerte",
+    "rubber": "Vibram XS Grip2",
+    "price_min_eur": 138.9,
+    "price_max_eur": 174,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/scarpa-drago-lv/product-59177",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Veloce",
+    "slug": "scarpa-veloce",
+    "brand": "Scarpa",
+    "model": "Veloce",
+    "summary_es": "Pie de gato de velcro con forma ligeramente curvada y puntera amplia, pensado para rocódromo. Suela Vision de 4 mm, equilibrio entre fricción y durabilidad.",
+    "summary_en": "Hook-and-loop shoe with a slightly downturned shape and a roomy toe box, made for indoor climbing. 4 mm Vision sole for a balance of friction and durability.",
+    "profile": "Moderado",
+    "closure": "Velcro",
+    "rubber": "Vision",
+    "rubber_thickness_mm": 4,
+    "recommended_use": [
+      "Rocódromo"
+    ],
+    "price_min_eur": 116.25,
+    "price_max_eur": 159,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/scarpa-veloce/product-59189",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Scarpa Boostic",
+    "slug": "scarpa-boostic",
+    "brand": "Scarpa",
+    "model": "Boostic",
+    "summary_es": "Pie de gato de perfil curvo y asimétrico con mediasuela curvada y buen apoyo en micropresas. Cierre de velcro con dos tiras y suela Vibram XS Edge, para escalada técnica deportiva y de varios largos.",
+    "summary_en": "Curved, asymmetric shoe with a curved midsole and strong support on micro-edges. Two hook-and-loop straps and a Vibram XS Edge sole, for technical sport and multi-pitch climbing.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Edge",
+    "recommended_use": [
+      "Deportiva",
+      "Vías largas"
+    ],
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 142.83,
+    "price_max_eur": 189,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/scarpa-boostic/product-86782",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Tenaya Tanta",
+    "slug": "tenaya-tanta",
+    "brand": "Tenaya",
+    "model": "Tanta",
+    "summary_es": "Pie de gato de velcro para vías verticales o ligeramente desplomadas y para rocódromo. Ligera curvatura, microfibra y suela de goma cocida de 4 mm.",
+    "summary_en": "Hook-and-loop shoe for vertical and slightly overhanging routes and for climbing gyms. Slight downturn, microfibre upper and a 4 mm cooked rubber sole.",
+    "profile": "Moderado",
+    "closure": "Velcro",
+    "rubber_thickness_mm": 4,
+    "recommended_use": [
+      "Rocódromo"
+    ],
+    "price_min_eur": 82.99,
+    "price_max_eur": 87.4,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/tenaya-tanta/product-25393",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Tenaya Ra",
+    "slug": "tenaya-ra",
+    "brand": "Tenaya",
+    "model": "Ra",
+    "summary_es": "Pie de gato de alto rendimiento sobre horma asimétrica, con velcro y suela Vibram XS Grip de 4 mm. Para vías deportivas exigentes, con buena respuesta en cantos y presas diminutas.",
+    "summary_en": "High-performance shoe on an asymmetric last, with hook-and-loop closure and a 4 mm Vibram XS Grip sole. For demanding sport routes, with good response on edges and tiny holds.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Grip",
+    "rubber_thickness_mm": 4,
+    "recommended_use": [
+      "Deportiva"
+    ],
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 119.9,
+    "price_max_eur": 143.95,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/tenaya-ra/product-936",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Tenaya Oasi",
+    "slug": "tenaya-oasi",
+    "brand": "Tenaya",
+    "model": "Oasi",
+    "summary_es": "Pie de gato de alto rendimiento con velcro y sistema Draxtor, doble mediasuela y suela Vibram XS Grip de 3,5 mm. Cubre desde bloque en cantos pequeños hasta largas tiradas en desplome.",
+    "summary_en": "High-performance shoe with hook-and-loop closure and the Draxtor system, a double midsole and a 3.5 mm Vibram XS Grip sole. It covers everything from bouldering on tiny edges to long overhanging pitches.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Grip",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Bloque",
+      "Deportiva"
+    ],
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 142.9,
+    "price_max_eur": 161.1,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/tenaya-oasi/product-5454",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Tenaya Iati",
+    "slug": "tenaya-iati",
+    "brand": "Tenaya",
+    "model": "Iati",
+    "summary_es": "Pie de gato para deportiva difícil que mantiene las bases del Oasi, con horma algo más ancha y perfil algo más curvado. Velcro Draxtor, empeine de piel y microfibra y suela Vibram XS Grip de 3,5 mm.",
+    "summary_en": "Shoe for hard sport climbing that keeps the basics of the Oasi, with a slightly wider last and a slightly more curved profile. Draxtor hook-and-loop closure, leather and microfibre upper and a 3.5 mm Vibram XS Grip sole.",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Grip",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Deportiva"
+    ],
+    "levels": [
+      "Avanzado"
+    ],
+    "price_min_eur": 146.9,
+    "price_max_eur": 165.85,
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "source_url": "https://www.barrabes.com/en/tenaya-iati/product-23307",
+    "verified_at": "2026-11-06"
+  }
+]

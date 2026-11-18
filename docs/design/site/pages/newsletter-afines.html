@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Newsletter + afines (D66) · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/consent-tw.js"></script>
+<link rel="stylesheet" href="_shared/consent.css">
+<script src="_shared/consent.js"></script>
+</head>
+<body class="bg-background text-foreground text-base leading-relaxed">
+<div class="mock-bar bg-white text-[#1c1a17] border-b border-[#ddd]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+    <strong class="font-medium">D66 · 1/3 · Formulario de newsletter con la casilla de afines</strong>
+    <a class="underline" href="#estados">Estados</a>
+    <a class="underline" href="newsletter-confirmada-afines.html">2 · Confirmada</a>
+    <a class="underline" href="newsletter-preferencias.html">3 · Preferencias</a>
+    <a class="underline" href="../README.md">Spec §14</a>
+  </div>
+</div>
+
+<header class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-6">
+    <span class="flex items-end gap-2"><img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-7 w-auto block"><span class="font-mono text-[12px] tracking-[.14em] leading-none pb-[3px] text-meta" aria-hidden="true">BCN</span></span>
+    <nav class="hidden lg:flex items-center gap-10 text-[15px]" aria-label="Principal"><a href="#">Rocódromos</a><a href="#">Pies de gato</a><a href="#">Resolar</a><a href="#">Blog</a><a href="#">Agenda</a><a href="#">Sobre mí</a></nav>
+    <button type="button" class="lg:hidden grid place-items-center size-11" aria-label="Abrir menú"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M8 12h12M4 18h16"/></svg></button>
+  </div>
+</header>
+
+<main id="main">
+<!-- El bloque que cierra todas las páginas (#newsletter) y /newsletter: mismo componente (NewsletterSignup). -->
+<section id="newsletter" class="field-orange dust" aria-labelledby="t-news">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-20 md:py-28 lg:py-[120px]">
+    <h2 id="t-news" class="title-section-lg">Una carta al mes.<br>Nada más.</h2>
+    <div class="mt-10 lg:mt-14 grid lg:grid-cols-12 gap-x-6 gap-y-8 items-start">
+      <div class="lg:col-span-5">
+        <p class="text-[20px] md:text-[24px] leading-[1.35] tracking-[-.01em] font-medium max-w-[26ch]">Novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.</p>
+        <p class="mt-4 text-[15px] text-meta">Sin spam. Baja en un clic.</p>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <div class="on-paper slab-dark bg-paper p-5 md:p-7" id="nl-box">
+          <form id="nl-form" method="post" novalidate aria-label="Suscripción a la newsletter"
+                class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:gap-x-3">
+            <!-- Orden del DOM = orden de tabulación: email, newsletter, afines (+ Más información), botón. -->
+            <div class="min-w-0 lg:col-start-1 lg:row-start-1">
+              <label for="nl-email" class="block text-[15px] font-medium mb-2">Tu email</label>
+              <input id="nl-email" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" class="field-input">
+              <p id="nl-email-err" class="mt-2 hidden items-start gap-1.5 text-[15px] leading-snug text-danger-text"><span data-ico="err"></span><span>Escribe un email válido, por ejemplo nombre@correo.com.</span></p>
+            </div>
+
+            <div class="lg:col-span-2 lg:row-start-2 mt-1">
+              <div class="consent-row">
+                <label><input id="nl-consent" name="consent" type="checkbox" class="check">
+                  <span class="consent-text"><span id="nl-consent-t"></span> <a href="#" class="link text-accent">Política de privacidad</a>.</span></label>
+              </div>
+              <p id="nl-consent-err" class="mt-1 ml-[34px] hidden items-start gap-1.5 text-[15px] leading-snug text-danger-text"><span data-ico="err"></span><span>Marca la casilla para confirmar que quieres recibirla.</span></p>
+            </div>
+
+            <!-- D66: segunda casilla, mismo tamaño, estilo y peso. Desmarcada, opcional, sin «recomendado». -->
+            <div class="lg:col-span-2 lg:row-start-3 mt-1">
+              <div class="consent-row">
+                <label><input id="nl-related" name="related" type="checkbox" class="check">
+                  <span class="consent-text"><span id="nl-related-t"></span> <span class="opt">(Opcional)</span></span></label>
+                <span class="consent-more" data-more></span>
+              </div>
+            </div>
+
+            <button id="nl-submit" type="submit" class="btn btn-ink w-full lg:col-start-2 lg:row-start-1 lg:mt-[32px] lg:w-auto"><span>Suscribirme</span><span data-ico="arrow"></span></button>
+          </form>
+          <div id="nl-ok" role="status" tabindex="-1" class="hidden py-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-[13px] text-meta">
+    <span class="flex items-end gap-2"><img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-6 w-auto block"></span>
+    <p>© 2026 ChalkGuide · pie resumido en el mockup</p>
+  </div>
+</footer>
+
+<!-- ===== Estados (no forman parte de la página) ===== -->
+<div id="estados" class="bg-white text-[#1c1a17] border-t-4 border-[#1c1a17]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2 class="text-[22px] font-medium">Anexo · Estados del formulario con dos casillas</h2>
+    <p class="mt-2 max-w-[72ch] text-[15px] text-[#5e584e]">Mismo componente en el bloque de todas las páginas y en <code>/newsletter</code>. Solo la casilla de la newsletter es obligatoria; la de afines nunca da error. Valida al enviar y el foco va al primer error. Si falta el texto de afines en la BD, la segunda casilla no se pinta y el alta funciona igual.</p>
+  </div>
+</div>
+<div class="field-orange dust">
+  <div id="states" class="max-w-page mx-auto px-4 md:px-6 py-12 grid lg:grid-cols-2 gap-8 items-start"></div>
+</div>
+
+<script>
+document.querySelectorAll('[data-ico]').forEach(n => n.outerHTML = ICO[n.dataset.ico]);
+document.querySelectorAll('[data-more]').forEach(n => n.outerHTML = moreBtn());
+document.getElementById('nl-consent-t').textContent = NEWSLETTER_TEXT;
+document.getElementById('nl-related-t').textContent = RELATED_TEXT_V1;
+
+const okHtml = related => `${ICO.check}
+  <p class="mt-3 text-[20px] font-medium">¡Casi está!</p>
+  <p class="mt-1 text-meta">Te he enviado un email para confirmar la suscripción. Revisa también la carpeta de spam.</p>
+  ${related ? `<p class="mt-3 text-[15px] text-meta">Al confirmarlo se activan la newsletter y los avisos de Chalk app. Si ya estabas suscrito, no cambia nada: los avisos se activan desde «Preferencias», al pie de cualquier email.</p>` : ''}`;
+
+function state(title, o = {}) {
+  const id = title.replace(/\W/g, '');
+  const body = o.success ? `<div role="status" class="py-3">${okHtml(o.related)}</div>` : `
+  <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:gap-x-3">
+    <div class="min-w-0"><label for="e-${id}" class="block text-[15px] font-medium mb-2">Tu email</label>
+      <input id="e-${id}" type="email" class="field-input" value="${o.email || ''}" placeholder="nombre@correo.com" ${o.loading ? 'readonly' : ''}>
+    </div>
+    <button type="button" class="btn btn-ink w-full lg:w-auto lg:mt-[32px]" ${o.loading ? 'aria-busy="true"' : ''}>${o.loading ? '<span class="spin !border-t-[#fbf9f5] !border-[rgb(251_249_245/.35)]"></span><span>Enviando…</span>' : '<span>Suscribirme</span>' + ICO.arrow}</button>
+    <div class="lg:col-span-2 mt-1"><div class="consent-row"><label><input type="checkbox" class="check" ${o.nl ? 'checked' : ''} ${o.nlErr ? 'aria-invalid="true"' : ''}><span class="consent-text">${NEWSLETTER_TEXT} <a href="#" class="link text-accent">Política de privacidad</a>.</span></label></div>
+      ${o.nlErr ? `<p class="mt-1 ml-[34px] flex items-start gap-1.5 text-[15px] leading-snug text-danger-text">${ICO.err}<span>Marca la casilla para confirmar que quieres recibirla.</span></p>` : ''}</div>
+    ${o.noRelated ? '' : `<div class="lg:col-span-2 mt-1"><div class="consent-row"><label><input type="checkbox" class="check" ${o.rel ? 'checked' : ''}><span class="consent-text">${RELATED_TEXT_V1} <span class="opt">(Opcional)</span></span></label>${moreBtn()}</div></div>`}
+    ${o.server ? `<p role="alert" class="lg:col-span-2 flex items-start gap-1.5 text-[15px] leading-snug text-danger-text">${ICO.err}<span>No se pudo completar la suscripción. Inténtalo de nuevo en un rato.</span></p>` : ''}
+  </div>`;
+  return `<div><p class="text-[15px] font-medium mb-3">${title}</p><div class="on-paper slab-dark bg-paper p-5 md:p-7">${body}</div></div>`;
+}
+document.getElementById('states').innerHTML = [
+  state('Reposo: las dos casillas desmarcadas'),
+  state('Afines marcada, falta la newsletter: solo esa da error', { email:'marta@correo.com', rel:true, nlErr:true }),
+  state('Solo newsletter: válido, afines no hace falta', { email:'marta@correo.com', nl:true }),
+  state('Enviando (conserva las dos casillas)', { email:'marta@correo.com', nl:true, rel:true, loading:true }),
+  state('Error del servidor: conserva los datos', { email:'marta@correo.com', nl:true, rel:true, server:true }),
+  state('Sin texto de afines en la BD: la casilla no sale', { noRelated:true }),
+  state('Éxito sin afines (como hoy)', { success:true }),
+  state('Éxito con afines: nombra las dos y remite a Preferencias (O7)', { success:true, related:true }),
+].join('');
+
+/* Interactivo: misma lógica que useNewsletterForm + p_related_consent */
+const form = document.getElementById('nl-form'), emailEl = document.getElementById('nl-email'), consentEl = document.getElementById('nl-consent');
+const emailErr = document.getElementById('nl-email-err'), consentErr = document.getElementById('nl-consent-err');
+function setErr(input, box, on, id) {
+  input.setAttribute('aria-invalid', on ? 'true' : 'false');
+  on ? input.setAttribute('aria-describedby', id) : input.removeAttribute('aria-describedby');
+  box.classList.toggle('hidden', !on); box.classList.toggle('flex', on);
+}
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const badEmail = !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailEl.value.trim()), badConsent = !consentEl.checked;
+  setErr(emailEl, emailErr, badEmail, 'nl-email-err'); setErr(consentEl, consentErr, badConsent, 'nl-consent-err');
+  if (badEmail) return emailEl.focus();
+  if (badConsent) return consentEl.focus();
+  const btn = document.getElementById('nl-submit');
+  btn.setAttribute('aria-busy', 'true'); btn.innerHTML = '<span class="spin !border-t-[#fbf9f5] !border-[rgb(251_249_245/.35)]"></span><span>Enviando…</span>';
+  setTimeout(() => {
+    const box = document.getElementById('nl-box'); box.style.minHeight = box.offsetHeight + 'px';
+    form.classList.add('hidden');
+    const ok = document.getElementById('nl-ok'); ok.innerHTML = okHtml(document.getElementById('nl-related').checked); ok.classList.remove('hidden'); ok.focus();
+  }, 900);
+});
+consentEl.addEventListener('change', () => { if (consentEl.checked) setErr(consentEl, consentErr, false, 'nl-consent-err'); });
+</script>
+</body>
+</html>

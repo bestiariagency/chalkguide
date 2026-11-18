@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Agenda · ajuste F8 · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=9"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .dblock{width:44px;flex:none;text-align:center;line-height:1}
+  .dblock .dw{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--meta)}
+  .dblock .dn{display:block;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:3px}
+  .dblock .dm{display:block;font-size:11px;color:var(--meta);margin-top:2px}
+  .conf{display:inline-flex;gap:2px} .conf i{width:8px;height:6px;border-radius:2px;background:var(--line-strong)} .conf i.on{background:var(--fg)}
+  .q[aria-current="true"]{background:var(--acc-soft);position:relative}
+  .q[aria-current="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--acc)}
+  .srcl{display:inline-flex;align-items:center;gap:4px;min-height:24px;font-size:12px;color:var(--meta);text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--line-strong)}
+  .srcl:hover{color:var(--fg);text-decoration-color:currentColor} .srcl svg{width:12px;height:12px}
+  .new{box-shadow:inset 0 0 0 2px var(--acc);border-radius:4px}
+  @media (pointer:coarse),(max-width:767px){.srcl{min-height:44px}}
+</style>
+</head>
+<body data-page="agenda-f8" class="bg-bg text-fg font-sans antialiased text-base">
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium whitespace-nowrap">Agenda · ajuste F8</h1>
+    <span class="chip st-acc ml-1 hidden md:inline-flex">Cambio sobre la Agenda implementada</span>
+    <a href="agenda.html" class="btn btn-ghost ml-auto">F6.12<span class="hidden sm:inline">&nbsp;completo</span></a>
+  </header>
+
+  <div class="px-4 md:px-6 py-5 space-y-8 max-w-[1180px]">
+    <p class="text-sm text-meta max-w-[60ch] [text-wrap:pretty]">Solo cambia lo marcado con <span class="new px-1">contorno naranja</span>. El chip «Agente» ya existe (F6.12): se mantiene. Lo nuevo es que <b class="font-medium text-fg">la fuente se ve y se abre sin entrar al detalle</b>, que cada borrador dice de qué recogida viene, y el texto de la frecuencia.</p>
+
+    <!-- 1 · Fila de la bandeja -->
+    <section aria-labelledby="h1">
+      <h2 id="h1" class="text-sm font-semibold">1 · Fila de «Por aprobar»</h2>
+      <div class="mt-3 grid lg:grid-cols-2 gap-6">
+        <figure class="min-w-0"><figcaption class="text-xs text-meta mb-2">Hoy</figcaption>
+          <ul class="border border-line rounded-lg divide-y divide-line max-w-[420px]">
+            <li class="q"><div class="flex gap-3 px-4 py-3"><input type="checkbox" class="cb mt-1" aria-label="Seleccionar"><div class="flex gap-3 min-w-0 flex-1">
+              <span class="dblock"><span class="dw">sáb</span><span class="dn">21</span><span class="dm">nov</span></span>
+              <span class="min-w-0"><span class="block text-sm font-medium leading-5">Open de bloque de otoño</span><span class="block text-xs text-meta mt-0.5">Sharma Climbing BCN · 10:00</span>
+              <span class="mt-1.5 flex flex-wrap gap-1.5"><span class="chip st-neutral"><i data-lucide="sparkles"></i>Agente</span><span class="conf"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><span class="lang lang-ok">EN</span></span></span></div></div></li>
+          </ul>
+        </figure>
+        <figure class="min-w-0"><figcaption class="text-xs text-meta mb-2">Propuesta</figcaption>
+          <ul class="border border-line rounded-lg divide-y divide-line max-w-[420px]">
+            <li class="q" aria-current="true"><div class="flex gap-3 px-4 py-3"><input type="checkbox" class="cb mt-1" aria-label="Seleccionar «Open de bloque de otoño»"><div class="min-w-0 flex-1">
+              <button type="button" class="flex gap-3 text-left w-full">
+                <span class="dblock"><span class="dw">sáb</span><span class="dn">21</span><span class="dm">nov</span></span>
+                <span class="min-w-0"><span class="block text-sm font-medium leading-5">Open de bloque de otoño</span><span class="block text-xs text-meta mt-0.5">Sharma Climbing BCN · 10:00</span>
+                <span class="mt-1.5 flex flex-wrap gap-1.5"><span class="chip st-neutral"><i data-lucide="sparkles"></i>Agente</span><span class="conf"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><span class="lang lang-ok">EN</span></span></span>
+              </button>
+              <p class="pl-[56px] mt-1 flex flex-wrap items-center gap-x-3 new px-1 -mx-1">
+                <a class="srcl" href="#">sharmaclimbingbcn.com<i data-lucide="external-link"></i><span class="sr-only">Fuente de «Open de bloque de otoño», se abre en otra pestaña</span></a>
+                <span class="text-xs text-meta">Recogida lun 16 nov</span>
+              </p></div></div></li>
+          </ul>
+          <p class="mt-2 text-xs text-meta max-w-[420px]">El enlace va <b class="font-medium text-fg">fuera</b> del botón de la fila (no hay interactivos anidados). Solo el dominio, sin <span class="mono">www.</span>; el enlace completo, en el detalle. Sin <span class="mono">source_url</span> (manual), la línea no se pinta.</p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2 · Tabla -->
+    <section aria-labelledby="h2">
+      <h2 id="h2" class="text-sm font-semibold">2 · Tabla de Próximos, Pasados y Todos: columna Origen (≥ 1280)</h2>
+      <div class="mt-3 overflow-x-auto border border-line rounded-lg">
+        <table class="tbl">
+          <thead><tr><th>Fecha</th><th>Evento</th><th>Tipo</th><th>Origen</th><th>EN</th></tr></thead>
+          <tbody>
+            <tr><td class="num">21 nov <span class="text-meta">sáb</span></td><td class="font-medium">Open de bloque de otoño</td><td>Competición</td>
+              <td><span class="inline-flex items-center gap-2 new px-1"><span class="chip st-neutral"><i data-lucide="sparkles"></i>Agente</span><a class="srcl" href="#">sharmaclimbingbcn.com<i data-lucide="external-link"></i><span class="sr-only">(se abre en otra pestaña)</span></a></span></td><td><span class="lang lang-ok">EN</span></td></tr>
+            <tr><td class="num">22 nov <span class="text-meta">dom</span></td><td class="font-medium">Taller de iniciación a la cuerda</td><td>Curso</td><td><span class="chip st-neutral"><i data-lucide="user-pen"></i>Manual</span></td><td><span class="lang lang-miss">EN</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-2 text-xs text-meta">Por debajo de 1280 la columna Origen no se ve (como hoy). En tarjetas (&lt; 768), la línea de fuente va bajo el lugar, igual que en la bandeja.</p>
+    </section>
+
+    <!-- 3 · Detalle -->
+    <section aria-labelledby="h3">
+      <h2 id="h3" class="text-sm font-semibold">3 · Detalle: la fuente sube arriba</h2>
+      <div class="mt-3 max-w-[640px] space-y-3">
+        <div class="flex flex-wrap gap-1.5"><span class="chip st-warn"><i data-lucide="circle-dashed"></i>Por aprobar</span><span class="chip st-neutral"><i data-lucide="sparkles"></i>Propuesto por el agente</span></div>
+        <div class="border border-line-strong rounded-lg p-3 flex items-start gap-3 new">
+          <span class="w-8 h-8 rounded-md bg-subtle grid place-items-center mono text-[11px] text-meta flex-none" aria-hidden="true">SC</span>
+          <div class="min-w-0 flex-1"><p class="text-sm font-medium">Fuente · Sharma Climbing BCN</p><a href="#" class="block text-xs text-meta underline underline-offset-2 break-all">https://www.sharmaclimbingbcn.com/es/eventos/open-otono-2026</a><p class="mt-1 text-xs text-meta">Recogida del lun 16 nov, 06:12 · <a href="ingesta.html" class="underline underline-offset-2">recogida #41</a></p></div>
+          <a href="#" class="btn btn-ghost btn-sm">Abrir<i data-lucide="external-link"></i><span class="sr-only">(se abre en otra pestaña)</span></a>
+        </div>
+        <p class="text-xs text-meta">Mismo bloque «Fuente» que en Noticias. «Qué encontró el agente» se queda debajo con la cita y la confianza, sin la fila de fuente (no se repite).</p>
+      </div>
+    </section>
+
+    <!-- 4 · Textos -->
+    <section aria-labelledby="h4">
+      <h2 id="h4" class="text-sm font-semibold">4 · Textos que cambian (loro-lola)</h2>
+      <ul class="mt-2 text-sm space-y-1.5 list-disc pl-5 max-w-[72ch] [text-wrap:pretty]">
+        <li>Pie de la bandeja: «El agente revisa las webs de los rocódromos una vez por semana» → <span class="new px-1">«El agente recoge lunes y jueves. Lo que descartas no vuelve a proponerlo.»</span></li>
+        <li>Vacío «Nada por aprobar»: añadir la fecha de la próxima recogida, como en Noticias.</li>
+        <li>Filtro Origen: se añade «Recogida» (lista de las recogidas de los últimos 30 días), para revisar lo de una recogida concreta desde Ingesta.</li>
+      </ul>
+    </section>
+  </div>
+</main>
+<script>document.addEventListener('DOMContentLoaded',()=>CG.icons());</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Newsletter · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=9"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* F8 · Newsletter semanal (D75). Editor con vista previa del email real. */
+  .it{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:start;padding:10px 8px 10px 4px}
+  .typ{font-size:12px;font-weight:500;color:var(--meta)}
+  .inf{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--meta);font-weight:400} .inf svg{width:12px;height:12px}
+  .pvwrap{background:var(--subtle);border:1px solid var(--line);border-radius:12px;padding:16px;overflow:hidden}
+  .pvwrap iframe{display:block;margin:0 auto;background:#fff;border:0;border-radius:6px;box-shadow:var(--shadow-pop);transition:width .2s var(--ease)}
+  .clock{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:30px;line-height:36px;font-weight:500;letter-spacing:-.01em}
+  [data-only]:not(.on){display:none!important}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
+  .kv dt{color:var(--meta)} .kv dd{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body data-page="newsletter" data-st="draft" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Newsletter</h1>
+    <span class="chip st-neutral ml-1 hidden md:inline-flex"><i data-lucide="calendar-clock"></i>Semanal · sale 1 h después de aprobarla</span>
+    <span class="ml-auto hidden xl:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · estado de la carta:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup"><option value="draft">Borrador</option><option value="scheduled">Programada</option><option value="sending">Enviando</option><option value="sent">Enviada</option><option value="nobrevo">Sin Brevo (antes de F4.6)</option><option value="empty">Sin borrador</option></select></span>
+    <a href="suscriptores.html" class="btn btn-ghost ml-auto xl:ml-0 hidden sm:inline-flex"><i data-lucide="users"></i>Suscriptores</a>
+  </header>
+
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto">
+    <div role="tablist" aria-label="Vistas de la newsletter" class="flex gap-5 min-w-max" data-tabs>
+      <button role="tab" class="tab t" aria-controls="p-week" aria-selected="true">Esta semana</button>
+      <button role="tab" class="tab t" aria-controls="p-hist">Historial <span class="num text-muted">23</span></button>
+    </div>
+  </div>
+
+  <!-- ===================== ESTA SEMANA ===================== -->
+  <div id="p-week" role="tabpanel">
+    <!-- Antes de F4.6 -->
+    <div data-only="nobrevo" class="px-4 md:px-6 pt-4"><div class="banner banner-warn"><i data-lucide="plug-zap"></i><div><b class="font-medium">Brevo aún no está conectado (F4.6).</b> Puedes preparar y revisar la carta, pero no aprobarla. El botón se activa cuando el envío esté configurado.</div></div></div>
+
+    <!-- Vacío: aún no hay borrador -->
+    <section data-only="empty" class="empty">
+      <span class="ico"><i data-lucide="mail"></i></span>
+      <h2 class="text-sm font-semibold mt-1">La carta de esta semana aún no está compuesta</h2>
+      <p>El agente la compone el lunes después de recoger: noticias aprobadas de los últimos 7 días, eventos de los próximos 14 y el último artículo. Puedes componerla ahora con lo que haya.</p>
+      <button class="btn btn-primary mt-2" data-toast="Borrador compuesto con 5 noticias, 3 eventos y 1 artículo" data-action=""><i data-lucide="wand-sparkles"></i>Componer ahora</button>
+    </section>
+
+    <!-- Barra de estado de la carta -->
+    <section data-only="draft scheduled sending sent nobrevo" class="px-4 md:px-6 py-4 border-b border-line flex flex-wrap items-center gap-x-4 gap-y-3" aria-labelledby="iss-h">
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <h2 id="iss-h" class="text-lg font-semibold tracking-tight">Semana 47 · 16–22 nov</h2>
+          <span data-only="draft nobrevo" class="chip st-draft"><span class="dot"></span>Borrador</span>
+          <span data-only="scheduled" class="chip st-sched"><i data-lucide="clock"></i>Programada</span>
+          <span data-only="sending" class="chip st-acc"><i data-lucide="loader-circle" class="spin"></i>Enviando</span>
+          <span data-only="sent" class="chip st-pub"><i data-lucide="check"></i>Enviada</span>
+        </div>
+        <p class="mt-1 text-xs text-meta"><span class="inline-flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3"></i>Compuesta por el agente el lun 16 nov, 07:12</span> · <span data-only="draft nobrevo">Guardado · hace 1 min</span><span data-only="scheduled">Aprobada por ti a las 18:42</span><span data-only="sending sent">Aprobada el jue 19 nov, 18:42</span></p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 sm:ml-auto w-full sm:w-auto">
+        <button data-only="draft nobrevo" type="button" class="btn btn-ghost xl:hidden flex-1 sm:flex-none" data-open="preview"><i data-lucide="eye"></i>Vista previa</button>
+        <button data-only="draft nobrevo" type="button" class="btn btn-ghost flex-1 sm:flex-none" data-toast="Prueba enviada a tu email" data-action=""><i data-lucide="send"></i>Enviarme una prueba</button>
+        <button data-only="draft" type="button" class="btn btn-primary w-full sm:w-auto" data-open="aprobar"><i data-lucide="check"></i>Aprobar y programar</button>
+        <button data-only="nobrevo" type="button" class="btn btn-primary w-full sm:w-auto" disabled aria-describedby="nb-why"><i data-lucide="check"></i>Aprobar y programar</button>
+        <span data-only="nobrevo" id="nb-why" class="sr-only">Desactivado: falta conectar Brevo.</span>
+        <a data-only="sent" href="#" class="btn btn-ghost">Ver en Brevo<i data-lucide="external-link"></i><span class="sr-only">(se abre en otra pestaña)</span></a>
+      </div>
+    </section>
+
+    <!-- Programada: cuenta atrás -->
+    <section data-only="scheduled" class="px-4 md:px-6 pt-4" aria-labelledby="cd-h">
+      <div class="card p-4 md:p-5 flex flex-wrap items-center gap-x-6 gap-y-4 border-[color:var(--st-sched)]/40" style="border-color:color-mix(in srgb,var(--st-sched) 35%,transparent);background:color-mix(in srgb,var(--st-sched-bg) 45%,#fff)">
+        <div>
+          <h3 id="cd-h" class="text-xs font-medium text-meta">Sale a las 19:42 · hoy, jue 19 nov</h3>
+          <p class="clock mt-1" aria-live="off"><span id="clock">52:14</span></p>
+          <p class="sr-only" aria-live="polite" id="clock-sr">Quedan 52 minutos.</p>
+        </div>
+        <div class="flex-1 min-w-[200px]">
+          <div class="bar" aria-hidden="true"><span id="cdbar" style="width:13%;background:var(--st-sched)"></span></div>
+          <p class="mt-2 text-xs text-meta">Mientras tanto puedes cancelar o volver a borrador para cambiar algo. A las 19:42 deja de poder tocarse.</p>
+        </div>
+        <div class="flex gap-2 w-full sm:w-auto">
+          <button type="button" class="btn btn-ghost flex-1 sm:flex-none" data-open="editar"><i data-lucide="pencil"></i>Editar</button>
+          <button type="button" class="btn btn-danger-ghost flex-1 sm:flex-none" data-open="cancelar"><i data-lucide="circle-slash"></i>Cancelar envío</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enviando -->
+    <section data-only="sending" class="px-4 md:px-6 pt-4">
+      <div class="card p-4 md:p-5">
+        <div class="flex items-baseline gap-2"><h3 class="text-sm font-semibold">Enviando</h3><span class="ml-auto text-sm num">140 de 243</span></div>
+        <div class="bar mt-2" role="progressbar" aria-valuemin="0" aria-valuemax="243" aria-valuenow="140" aria-label="Progreso del envío"><span style="width:58%"></span></div>
+        <p class="mt-2 text-xs text-meta">Campaña ES enviada (212). Campaña EN en curso. Ya no se puede cancelar: Brevo está entregando.</p>
+      </div>
+    </section>
+
+    <!-- Enviada -->
+    <section data-only="sent" class="px-4 md:px-6 pt-4">
+      <div class="card p-4 md:p-5 grid sm:grid-cols-3 gap-4">
+        <div><p class="text-xs text-meta">Enviada</p><p class="mt-1 font-medium">jue 19 nov, 19:42</p></div>
+        <div><p class="text-xs text-meta">Destinatarios</p><p class="mt-1 font-medium num">243 <span class="text-xs text-meta font-normal">· ES 212 · EN 31</span></p></div>
+        <div><p class="text-xs text-meta">Aperturas y clics</p><p class="mt-1 text-sm">En Brevo (sin píxel propio)</p></div>
+      </div>
+    </section>
+
+    <!-- Editor + vista previa -->
+    <div data-only="draft scheduled sending sent nobrevo" class="grid xl:grid-cols-[minmax(0,1fr)_652px] gap-6 px-4 md:px-6 py-5">
+      <div class="min-w-0 space-y-6" id="form">
+        <div data-only="scheduled sending sent" class="banner banner-info"><i data-lucide="lock"></i><div>Solo lectura. <span data-only="scheduled">Para cambiar algo, pulsa «Editar»: la carta vuelve a borrador y, al aprobarla otra vez, cuenta otra hora.</span><span data-only="sending sent">Esta carta ya ha salido.</span></div></div>
+
+        <!-- Idioma -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="border-b border-line" role="tablist" aria-label="Versión" data-tabs>
+            <button role="tab" class="tab t !h-9" aria-controls="v-es" aria-selected="true">Español <span class="num text-muted text-xs">212</span></button>
+            <button role="tab" class="tab t !h-9 ml-4" aria-controls="v-en">Inglés <span class="num text-muted text-xs">31</span><span class="w-1.5 h-1.5 rounded-full bg-warn-icon" title="Incompleta"></span><span class="sr-only">(incompleta)</span></button>
+          </div>
+          <p class="text-xs text-meta">Dos campañas: cada suscriptor recibe la de su idioma.</p>
+        </div>
+
+        <div id="v-es" role="tabpanel" class="space-y-6">
+          <!-- Cabecera del email -->
+          <section aria-labelledby="h-head" class="space-y-4">
+            <h3 id="h-head" class="text-sm font-semibold">Asunto e introducción</h3>
+            <div><label class="lbl" for="subj">Asunto <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span><span class="counter">46 / 80</span></label>
+              <input id="subj" class="input" value="Inscripciones abiertas, Montserrat y un nuevo bloque">
+              <div class="meter"><span style="width:58%"></span></div><p class="help">Ideal entre 30 y 55 caracteres: en móvil se corta hacia los 40.</p></div>
+            <div><label class="lbl" for="pre">Preheader <span class="opt">(texto de vista previa)</span><span class="counter">88 / 110</span></label>
+              <input id="pre" class="input" value="Lo que ha pasado esta semana en la escalada de Barcelona, con cada fuente enlazada."></div>
+            <div><label class="lbl" for="intro">Introducción <span class="inf ml-1"><i data-lucide="sparkles"></i>la escribió el agente</span><span class="counter">318 / 600</span></label>
+              <textarea id="intro" class="input" rows="5">Hola. Semana de calendario: la FEEC abre las inscripciones del Campeonato de Cataluña de bloque y la IFSC ya tiene fechas para 2027. Si vas a Montserrat, mira antes los sectores cerrados por nidificación. Y en Sabadell abre en enero una sala nueva de bloque. Abajo, la agenda de las próximas dos semanas.</textarea>
+              <p class="help">Va firmada como Xavi. Revísala con tu voz: la marca del agente se quita al editarla.</p></div>
+          </section>
+
+          <!-- Ítems -->
+          <section aria-labelledby="h-items" class="space-y-5">
+            <div class="flex items-center gap-2"><h3 id="h-items" class="text-sm font-semibold">Contenido</h3><span class="text-xs text-meta">1 artículo · 5 noticias · 3 eventos</span>
+              <button type="button" class="btn btn-ghost btn-sm ml-auto" data-open="add"><i data-lucide="plus"></i>Añadir</button></div>
+
+            <div>
+              <p class="grp-label mb-1.5">Del blog</p>
+              <ul class="border border-line rounded-lg">
+                <li class="it"><span class="w-6"></span>
+                  <div class="min-w-0"><p class="typ">Artículo · el último publicado</p><p class="text-sm font-medium leading-5">Cuánto cuesta realmente escalar en Barcelona al mes</p>
+                    <label class="sr-only" for="b-art">Texto del artículo en la carta</label><textarea id="b-art" class="input mt-2" rows="2">Cuotas, bonos, matrícula y material: el número real a dos visitas por semana.</textarea></div>
+                  <button type="button" class="btn btn-quiet btn-sm">Cambiar</button></li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="grp-label mb-1.5">Noticias · últimos 7 días</p>
+              <ul class="sortable border border-line rounded-lg divide-y divide-line" id="news"></ul>
+              <p class="mt-1.5 text-xs text-meta">Cada noticia lleva su fuente en la carta. El texto corto es solo para la carta (máx. 200); la ficha no cambia.</p>
+            </div>
+
+            <div>
+              <p class="grp-label mb-1.5">Agenda · próximos 14 días</p>
+              <ul class="sortable border border-line rounded-lg divide-y divide-line" id="evs"></ul>
+            </div>
+          </section>
+        </div>
+
+        <div id="v-en" role="tabpanel" hidden class="space-y-4" lang="en">
+          <div class="banner banner-warn"><i data-lucide="triangle-alert"></i><div lang="es"><b class="font-medium">Versión inglesa incompleta.</b> Falta la introducción y 3 noticias no tienen inglés. Si no la completas, los 31 suscriptores en inglés reciben la española con una línea en inglés arriba («This week only in Spanish»). Decisión pendiente de Xavi (D75). <button class="underline underline-offset-2">Ver qué falta</button></div></div>
+          <div><label class="lbl" for="subj-en">Subject <span class="counter">41 / 80</span></label><input id="subj-en" class="input" value="Entries open, Montserrat and a new boulder gym"></div>
+          <div><label class="lbl" for="intro-en">Intro <span class="counter">0 / 600</span></label><textarea id="intro-en" class="input" rows="4" aria-invalid="true" aria-describedby="intro-en-e"></textarea><p id="intro-en-e" class="err" lang="es"><i data-lucide="circle-alert"></i>Falta la introducción en inglés.</p></div>
+          <p class="text-xs text-meta" lang="es">Los ítems siguen el orden del español. Los que no tienen inglés se omiten en esta versión.</p>
+        </div>
+
+        <!-- Envío y cupo -->
+        <section aria-labelledby="h-send" class="card">
+          <div class="card-h"><h3 id="h-send">Envío</h3></div>
+          <div class="p-4 grid sm:grid-cols-2 gap-x-6 gap-y-4">
+            <dl class="kv"><dt>Destinatarios</dt><dd><b class="font-medium">243</b> activos · ES 212 · EN 31</dd><dt>Sale</dt><dd>1 h después de aprobarla</dd><dt>Remitente</dt><dd>Xavi · ChalkGuide</dd></dl>
+            <div>
+              <div class="flex items-baseline text-xs"><span class="text-meta">Cupo de Brevo hoy</span><span class="ml-auto num"><b class="font-medium">261</b> de 300</span></div>
+              <div class="bar mt-1.5" aria-hidden="true"><span style="width:87%;background:var(--warn-icon)"></span></div>
+              <p class="mt-1.5 text-xs text-meta num">18 confirmaciones de alta ya hoy + 243 de esta carta. Margen: 39.</p>
+            </div>
+            <div class="sm:col-span-2 banner banner-warn"><i data-lucide="triangle-alert"></i><div>El cupo gratuito (300 al día) se comparte con los emails de confirmación de alta. <b class="font-medium">Con más de ~250 activos</b> habrá que repartir el envío en dos días o subir de plan. Hoy cabe.</div></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Vista previa (≥ 1280). Por debajo, modal -->
+      <aside class="hidden xl:block min-w-0" aria-labelledby="h-pv">
+        <div class="sticky top-4">
+          <div class="flex items-center gap-2 mb-2"><h3 id="h-pv" class="text-sm font-semibold">Vista previa</h3>
+            <div class="seg ml-auto" role="radiogroup" aria-label="Ancho"><button role="radio" aria-checked="true" data-w="600">Escritorio</button><button role="radio" aria-checked="false" data-w="375">Móvil</button></div></div>
+          <div class="pvwrap"><iframe id="pvf" src="../site/pages/email-newsletter.html" title="Vista previa del email" width="600" height="760" loading="lazy"></iframe></div>
+          <p class="mt-2 text-xs text-meta">Es la plantilla real con estos datos. «Enviarme una prueba» la manda a tu email para verla en tu cliente.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ===================== HISTORIAL ===================== -->
+  <div id="p-hist" role="tabpanel" hidden>
+    <div class="overflow-x-auto hidden md:block">
+      <table class="tbl">
+        <thead><tr><th>Semana</th><th>Asunto</th><th>Estado</th><th class="text-right">Destinatarios</th><th class="hidden lg:table-cell">Salió</th><th class="w-10"><span class="sr-only">Acciones</span></th></tr></thead>
+        <tbody id="hist"></tbody>
+      </table>
+    </div>
+    <ul id="histc" class="md:hidden divide-y divide-line"></ul>
+  </div>
+</main>
+
+<!-- Aprobar -->
+<div id="aprobar" class="overlay" role="dialog" aria-modal="true" aria-labelledby="ap-h">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="ap-h">Aprobar la carta de la semana 47</h2></div>
+    <div class="dialog-b space-y-4 text-sm">
+      <dl class="kv"><dt>Asunto</dt><dd class="!font-sans">Inscripciones abiertas, Montserrat y un nuevo bloque</dd><dt>Para</dt><dd>243 · ES 212 · EN 31</dd><dt>Sale</dt><dd><b class="font-medium">hoy a las 19:42</b> (dentro de 1 h)</dd></dl>
+      <ul class="space-y-1.5 text-sm">
+        <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Las 5 noticias llevan fuente y enlace.</li>
+        <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Enlace de baja y de preferencias en el pie.</li>
+        <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Cabe en el cupo de hoy (margen 39).</li>
+        <li class="flex gap-2"><i data-lucide="triangle-alert" class="w-4 h-4 text-warn-icon flex-none mt-0.5"></i><span>Inglés incompleto: los 31 en inglés recibirán la española. <button class="underline underline-offset-2" data-close>Completar</button></span></li>
+      </ul>
+      <p class="text-xs text-meta">Durante esa hora puedes cancelarla o volver a borrador.</p>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close>Seguir editando</button><button type="button" class="btn btn-primary" id="do-approve">Aprobar y programar</button></div>
+  </div>
+</div>
+
+<!-- Editar una programada -->
+<div id="editar" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="ed-h" aria-describedby="ed-d">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="ed-h">¿Volver a borrador?</h2></div>
+    <div class="dialog-b text-sm" id="ed-d">La carta deja de estar programada. Cuando la apruebes otra vez, saldrá 1 h después de ese momento.</div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close autofocus>Mantener programada</button><button type="button" class="btn btn-primary" data-close id="to-draft">Volver a borrador</button></div>
+  </div>
+</div>
+
+<!-- Cancelar -->
+<div id="cancelar" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="ca-h" aria-describedby="ca-d">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="ca-h">¿Cancelar el envío de esta semana?</h2></div>
+    <div class="dialog-b text-sm space-y-2" id="ca-d"><p>No se enviará a nadie. La carta queda como «Cancelada» en el historial y puedes duplicarla como borrador.</p></div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close autofocus>No cancelar</button><button type="button" class="btn btn-danger" data-close data-toast="Envío cancelado" data-action="Deshacer">Cancelar envío</button></div>
+  </div>
+</div>
+
+<!-- Añadir ítem -->
+<div id="add" class="overlay" role="dialog" aria-modal="true" aria-labelledby="add-h">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h flex items-center"><h2 id="add-h">Añadir a la carta</h2><button type="button" class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+    <div class="dialog-b space-y-3">
+      <div class="seg" role="radiogroup" aria-label="Tipo"><button role="radio" aria-checked="true">Noticias</button><button role="radio" aria-checked="false">Eventos</button><button role="radio" aria-checked="false">Artículos</button></div>
+      <label class="input affix" for="add-q"><span class="pl-2.5 text-muted"><i data-lucide="search" class="w-4 h-4"></i></span><input id="add-q" type="search" placeholder="Buscar publicadas" class="placeholder:text-muted"></label>
+      <ul class="divide-y divide-line border border-line rounded-lg text-sm">
+        <li><label class="flex items-start gap-3 p-3"><input type="checkbox" class="cb mt-0.5"><span><span class="block font-medium">Desnivel repasa las novedades de pies de gato para 2027</span><span class="block text-xs text-meta">Publicada el 17 nov · Fuente: Desnivel</span></span></label></li>
+        <li><label class="flex items-start gap-3 p-3"><input type="checkbox" class="cb mt-0.5"><span><span class="block font-medium">Siurana reequipa cuarenta vías del sector El Pati</span><span class="block text-xs text-meta">Publicada el 16 nov · Fuente: Club Muntanyenc</span></span></label></li>
+      </ul>
+      <p class="text-xs text-meta">Solo aparece lo publicado: un borrador no puede entrar en la carta.</p>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close>Cancelar</button><button type="button" class="btn btn-primary" data-close data-toast="Añadida a la carta">Añadir</button></div>
+  </div>
+</div>
+
+<!-- Vista previa (< 1280) -->
+<div id="preview" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pv-h">
+  <div class="dialog xl"><div class="grab"></div>
+    <div class="dialog-h flex items-center"><h2 id="pv-h">Vista previa</h2><button type="button" class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+    <div class="dialog-b"><div class="pvwrap !p-2 sm:!p-4"><iframe src="../site/pages/email-newsletter.html" title="Vista previa del email" style="width:100%;max-width:600px" height="680" loading="lazy"></iframe></div></div>
+  </div>
+</div>
+
+<script>
+const NEWS=[
+ ['La FEEC abre inscripciones para el Campeonato de Cataluña de bloque','FEEC','Hasta el 25 de enero; plazas limitadas a 60 por categoría.',1],
+ ['Montserrat actualiza las restricciones por nidificación en seis sectores','Parcs Naturals','Antes de ir, mira qué sectores están cerrados hasta junio.',1],
+ ['Un nuevo rocódromo de bloque abrirá en Sabadell en enero','Diari de Sabadell','900 m² de bloque y zona infantil.',0],
+ ['La IFSC publica el calendario de la Copa del Mundo 2027','IFSC','Primera prueba en abril; sin parada en España.',0],
+ ['Abre en Gràcia una sala de bloque con zona infantil','betevé','Horario de mañana entre semana.',0],
+];
+const EVS=[['sáb 21 nov','Open de bloque de otoño','Sharma Climbing BCN'],['dom 22 nov','Taller de iniciación a la cuerda','La Foixarda'],['sáb 28 nov','Quedada en Sant Llorenç del Munt','Otro lugar']];
+const g='<button type="button" class="handle" aria-label="Mover"><i data-lucide="grip-vertical"></i></button>';
+document.getElementById('news').innerHTML=NEWS.map((n,i)=>`<li class="it" data-label="${n[0]}">${g.replace('Mover','Mover «'+n[0]+'»')}
+  <div class="min-w-0"><p class="typ">Noticia · Fuente: ${n[1]}</p><p class="text-sm font-medium leading-5 [text-wrap:pretty]">${n[0]}</p>
+  ${n[3]?`<label class="sr-only" for="nb${i}">Texto corto en la carta</label><textarea id="nb${i}" class="input mt-2" rows="2">${n[2]}</textarea>`:`<p class="mt-1 text-xs text-meta line-clamp-1">${n[2]} <button class="underline underline-offset-2 text-fg">Editar texto</button></p>`}</div>
+  <button type="button" class="icon-btn" aria-label="Quitar «${n[0]}» de la carta" data-toast="Quitada de la carta"><i data-lucide="x"></i></button></li>`).join('');
+document.getElementById('evs').innerHTML=EVS.map(e=>`<li class="it" data-label="${e[1]}">${g.replace('Mover','Mover «'+e[1]+'»')}
+  <div class="min-w-0"><p class="typ num">Evento · ${e[0]}</p><p class="text-sm font-medium leading-5">${e[1]}</p><p class="text-xs text-meta">${e[2]}</p></div>
+  <button type="button" class="icon-btn" aria-label="Quitar «${e[1]}» de la carta" data-toast="Quitado de la carta"><i data-lucide="x"></i></button></li>`).join('');
+const H=[
+ ['47 · 16–22 nov','Inscripciones abiertas, Montserrat y un nuevo bloque','draft','—','—'],
+ ['46 · 9–15 nov','La Foixarda reabre la vía larga y dos competiciones','sent','238','jue 12 nov, 20:05'],
+ ['45 · 2–8 nov','Siurana, la IFSC y el bloque de otoño','sent','231','lun 2 nov, 19:30'],
+ ['44 · 26 oct–1 nov','Semana tranquila: tres planes para el puente','cancelled','—','—'],
+ ['43 · 19–25 oct','Montserrat, precios de rocódromos y una charla','failed','118 de 226','jue 22 oct, 19:12'],
+ ['42 · 12–18 oct','Temporada de competición y pies de gato','sent','220','jue 15 oct, 19:00'],
+];
+const ST={draft:'<span class="chip st-draft"><span class="dot"></span>Borrador</span>',scheduled:'<span class="chip st-sched"><i data-lucide="clock"></i>Programada</span>',sending:'<span class="chip st-acc"><i data-lucide="loader-circle"></i>Enviando</span>',sent:'<span class="chip st-pub"><i data-lucide="check"></i>Enviada</span>',cancelled:'<span class="chip st-hidden">Cancelada</span>',failed:'<span class="chip st-danger"><i data-lucide="circle-alert"></i>Fallida · parcial</span>'};
+document.getElementById('hist').innerHTML=H.map(h=>`<tr><td class="num text-meta">${h[0]}</td><td class="max-w-[420px] truncate"><a href="#" class="row-link font-medium">${h[1]}</a></td><td>${ST[h[2]]}</td><td class="text-right num">${h[3]}</td><td class="hidden lg:table-cell text-meta">${h[4]}</td><td><button class="icon-btn" aria-label="Acciones de la semana ${h[0]}"><i data-lucide="more-horizontal"></i></button></td></tr>`).join('');
+document.getElementById('histc').innerHTML=H.map(h=>`<li class="px-4 py-3 flex gap-3"><div class="flex-1 min-w-0"><p class="text-xs text-meta num">Semana ${h[0]}</p><p class="mt-0.5 text-sm font-medium leading-5">${h[1]}</p><p class="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-meta">${ST[h[2]]}<span class="num">${h[3]!=='—'?h[3]+' destinatarios':''}</span></p></div><button class="icon-btn" aria-label="Acciones de la semana ${h[0]}"><i data-lucide="more-horizontal"></i></button></li>`).join('');
+
+function setState(s){document.body.dataset.st=s;document.querySelectorAll('[data-only]').forEach(el=>el.classList.toggle('on',el.dataset.only.split(' ').includes(s)));
+  const ro=['scheduled','sending','sent'].includes(s);document.querySelectorAll('#form input,#form textarea,#form .handle,#form .icon-btn,#form .btn-sm').forEach(el=>el.disabled=ro);
+  document.getElementById('demoState').value=s;}
+document.addEventListener('DOMContentLoaded',()=>{
+  CG.icons();
+  const h=location.hash.slice(1);setState(['scheduled','sending','sent','nobrevo','empty'].includes(h)?h:'draft');
+  if(h==='historial')document.querySelector('[aria-controls=p-hist]').click();
+  if(h==='aprobar')CG.open('aprobar');
+  document.getElementById('demoState').onchange=e=>setState(e.target.value);
+  document.getElementById('do-approve').onclick=()=>{CG.close('aprobar');setState('scheduled');CG.toast('Programada para las 19:42',{action:'Deshacer'});};
+  document.getElementById('to-draft').onclick=()=>{setState('draft');CG.toast('De vuelta a borrador',{action:null});};
+  document.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{document.getElementById('pvf').width=b.dataset.w;}));
+  let t=52*60+14;setInterval(()=>{if(document.body.dataset.st!=='scheduled')return;t=Math.max(0,t-1);const m=String(Math.floor(t/60)).padStart(2,'0'),s=String(t%60).padStart(2,'0');document.getElementById('clock').textContent=m+':'+s;document.getElementById('cdbar').style.width=(100-t/36)+'%';if(t%300===0)document.getElementById('clock-sr').textContent='Quedan '+Math.round(t/60)+' minutos.';},1000);
+});
+</script>
+</body>
+</html>

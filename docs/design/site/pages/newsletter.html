@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Newsletter · propuesta · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: {
+      background:'var(--color-background)', board:'var(--color-board)', elevated:'var(--color-elevated)', tray:'var(--color-tray)',
+      line:'var(--color-line)', 'line-strong':'var(--color-line-strong)', control:'var(--color-control)',
+      accent:'var(--color-accent)', 'accent-fill':'var(--color-accent-fill)', 'accent-muted':'var(--color-accent-muted)', 'on-accent':'var(--color-on-accent)', chalk:'var(--color-chalk)',
+      foreground:'var(--color-foreground)', prose:'var(--color-prose)', meta:'var(--color-meta)', muted:'var(--color-muted)',
+      paper:'#f4f1ea', ink:'#1c1a17', 'meta-ink':'#5e584e', 'accent-ink':'#9a4a16',
+      'success-text':'var(--color-success-text)', 'danger-text':'var(--color-danger-text)',
+    },
+    fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['"JetBrains Mono"','ui-monospace','monospace'], hand:['Caveat','cursive'] },
+    maxWidth: { page:'1200px', read:'680px' },
+  } } }
+</script>
+<style>
+  /* ===== Tokens existentes (main.css) ===== */
+  :root {
+    --color-background:#f4f1ea; --color-board:#fbf9f5; --color-elevated:#ebe6dc; --color-tray:#efebe3;
+    --color-line:#dcd5c8; --color-line-strong:#c2b9a9; --color-control:#827a6d;
+    --color-accent:#9a4a16; --color-accent-fill:#e8923a; --color-accent-muted:#f7e4d0; --color-on-accent:#1a0a00; --color-chalk:#d2702a;
+    --color-foreground:#1c1a17; --color-prose:#34302a; --color-meta:#5e584e; --color-muted:#6b6559;
+    --color-success-text:#1a6e4e; --color-danger-text:#b02a25;
+    --bar-track:#e3ddd1;
+    --ring:0 0 0 2px var(--color-background),0 0 0 4px var(--color-accent);
+
+    /* ===== Tokens NUEVOS de esta propuesta ===== */
+    --text-section:clamp(2rem,1.55rem + 2.4vw,3.75rem);      /* 32-34 px en móvil, 60 px en 1440 */
+    --text-section-lg:clamp(2.375rem,1.6rem + 3.6vw,4.5rem); /* 38-40 px en móvil, 72 px en 1440 (solo la carta) */
+    --radius-slab:6px;
+    --shadow-slab:0 1px 0 #d6cfc1,0 2px 0 #c9c1b1,0 3px 0 #b8afa0,0 22px 34px -22px rgb(28 26 23 / .5);
+    --shadow-slab-dark:0 1px 0 #c8c0b1,0 2px 0 #8e8678,0 3px 0 #5c564b,0 28px 44px -22px #000;
+    --shadow-slab-ink:0 1px 0 #2a2a2a,0 2px 0 #3a3733,0 3px 0 #4d4942,0 18px 26px -20px rgb(28 26 23 / .55);
+    --dust:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  /* Ámbitos: igual que .chrome-dark en main.css, redeclaran la paleta. */
+  .chrome-dark {
+    --color-background:#0f0f0f; --color-board:#1a1a1a; --color-elevated:#242424; --color-tray:#242424;
+    --color-line:#2a2a2a; --color-line-strong:#333; --color-control:#75716a;
+    --color-accent:#e8923a; --color-accent-muted:#3a2010; --color-chalk:#e8923a;
+    --color-foreground:#f0ede8; --color-prose:#dcd8d1; --color-meta:#a19d94; --color-muted:#888880;
+    --color-success-text:#3dbe93; --color-danger-text:#f06a68;
+    --bar-track:#242424; --ring:0 0 0 2px #0f0f0f,0 0 0 4px #e8923a;
+    background-color:var(--color-background); color:var(--color-foreground);
+  }
+  /* NUEVO: el campo naranja. Texto #1a0a00 (7,91:1) y secundario #3d2008 (6,11:1). */
+  .field-orange {
+    --color-foreground:#1a0a00; --color-meta:#3d2008; --color-accent:#1a0a00;
+    --ring:0 0 0 2px #e8923a,0 0 0 4px #1a0a00;
+    background-color:#e8923a; color:#1a0a00;
+  }
+  /* Lo que va dentro de la placa de papel vuelve a la paleta clara. */
+  .on-paper {
+    --color-background:#f4f1ea; --color-foreground:#1c1a17; --color-meta:#5e584e; --color-accent:#9a4a16;
+    --ring:0 0 0 2px #f4f1ea,0 0 0 4px #9a4a16; color:#1c1a17;
+  }
+
+  html { scroll-behavior:smooth; background:#f4f1ea; }
+  body { font-family:Inter,system-ui,sans-serif; font-feature-settings:'cv11','ss01'; -webkit-font-smoothing:antialiased; }
+  :focus { outline:none; }
+  :focus-visible { box-shadow:var(--ring); border-radius:4px; }
+
+  /* ===== Título de sección (el token) ===== */
+  .title-section, .title-section-lg {
+    font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%;
+    text-transform:uppercase; letter-spacing:-.02em; line-height:1.04; text-wrap:balance;
+  }
+  .title-section { font-size:var(--text-section); }
+  .title-section-lg { font-size:var(--text-section-lg); }
+
+  /* ===== Materia ===== */
+  .slab { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab); }
+  .slab-dark { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab-dark); }
+  .slab-ink { border-radius:var(--radius-slab); box-shadow:var(--shadow-slab-ink); }
+  .field-orange .slab-dark { box-shadow:0 1px 0 #d6cfc1,0 2px 0 #b8afa0,0 3px 0 #8e8678,0 24px 36px -24px rgb(26 10 0 / .6); }
+  .dust { position:relative; isolation:isolate; }
+  .dust::before { content:''; position:absolute; inset:0; z-index:-1; opacity:.26; pointer-events:none; background-image:var(--dust); }
+  .field-orange.dust::before { opacity:.34; }
+
+  /* ===== Segmentado (el componente actual, sin cambios) ===== */
+  .seg { display:inline-grid; grid-auto-flow:column; grid-auto-columns:1fr; padding:4px; border-radius:8px; background:var(--color-background); border:.5px solid var(--color-line-strong); }
+  .seg button { min-height:44px; padding:6px 16px; border-radius:6px; font-size:15px; line-height:1.2; font-weight:500; color:var(--color-meta); transition:color 200ms; border:.5px solid transparent; }
+  .seg button:hover { color:var(--color-foreground); }
+  .seg button[aria-selected=true], .seg button[aria-pressed=true] { color:var(--color-foreground); background:var(--color-elevated); border-color:var(--color-accent); }
+
+  /* ===== Botones ===== */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 18px; border-radius:8px; font-size:15px; font-weight:500; transition:background-color 200ms,border-color 200ms,color 200ms,transform 150ms; white-space:nowrap; }
+  .btn:active { transform:scale(.98); }
+  .btn .arr { transition:transform 200ms; }
+  .btn:hover .arr { transform:translateX(3px); }
+  .btn-ghost { border:1px solid var(--color-control); color:var(--color-foreground); }
+  .btn-ghost:hover { background:var(--color-elevated); border-color:var(--color-meta); }
+  .btn-ink { background:#1c1a17; color:#fbf9f5; min-height:52px; }
+  .btn-ink:hover { background:#000; }
+
+  /* ===== Etiquetas de transparencia: mismas reglas, ya no en mono ===== */
+  .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:4px; font-size:12px; line-height:1.35; font-weight:500; white-space:nowrap; }
+  .badge-acc { background:var(--color-accent-muted); color:var(--color-accent); }
+  .badge-stale { border:1px dashed var(--color-control); color:var(--color-meta); }
+  .badge-ok { background:var(--color-elevated); color:var(--color-meta); }
+  .badge svg { width:14px; height:14px; flex-shrink:0; }
+
+  /* ===== Filas con flecha ===== */
+  .uline { background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat; transition:background-size 300ms cubic-bezier(.2,.8,.2,1); padding-bottom:2px; }
+  a:hover > * .uline, a:hover .uline, .group:hover .uline { background-size:100% 1.5px; }
+  .path-row .arr { transition:transform 200ms cubic-bezier(.2,.8,.2,1); }
+  .path-row:hover .arr { transform:translateX(4px); }
+  .link { background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat; padding-bottom:2px; }
+  .link:hover { background-size:100% 1.5px; color:var(--color-foreground); }
+
+  .bar { display:block; height:4px; border-radius:99px; background:var(--bar-track); overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:99px; background:var(--color-chalk); }
+  th.sortable button { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:13px; font-weight:500; color:var(--color-meta); transition:color 150ms; }
+  th.sortable button:hover { color:var(--color-foreground); }
+  th[aria-sort] button { color:var(--color-foreground); }
+  th.sortable svg { opacity:.45; transition:opacity 150ms; }
+  th[aria-sort] svg, th.sortable button:hover svg { opacity:1; }
+  .gym-row { transition:background-color 150ms; }
+  .gym-row:hover { background:color-mix(in oklab,var(--color-elevated) 45%,transparent); }
+
+  /* ===== Póster tipográfico (spec en pies-de-gato-poster.html) ===== */
+  .poster { position:relative; display:block; overflow:hidden; background:var(--color-tray-fixed,#efebe3); color:#1c1a17; container-type:size; }
+  .poster__txt { position:absolute; inset:auto 5.5cqw 5cqw 5.5cqw; }
+  .poster__txt--top { inset:6cqw 5.5cqw auto 5.5cqw; }
+  .poster__brand { display:block; font-size:clamp(12px,4.4cqw,14px); line-height:1.2; font-weight:500; color:#5e584e; margin-bottom:.5em; }
+  .poster__name { display:block; font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%; text-transform:uppercase; letter-spacing:-.03em; line-height:.92;
+    font-size:min(31cqw,calc(89cqw / (var(--n) * .84)),calc(58cqh / var(--l))); }
+  .poster__name span { display:block; white-space:nowrap; }
+  .poster__mono { display:none; }
+  @container (max-width:119px) {
+    .poster__brand { display:none; }
+    .poster[data-long] .poster__name { display:none; }
+    .poster[data-long] .poster__mono { display:block; font-family:Archivo,Inter,sans-serif; font-weight:700; font-stretch:125%; line-height:.9; letter-spacing:-.03em; font-size:44cqw; }
+  }
+  .sheen { position:relative; }
+  .sheen::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(118deg,rgb(255 255 255 / 0) 30%,rgb(255 255 255 / .28) 46%,rgb(255 255 255 / 0) 62%); }
+  .sheen > * { z-index:1; }
+  .photo-empty { background:linear-gradient(150deg,#3a2f27 0%,#1f1b18 55%,#121212 100%); }
+  .ring-chalk { position:relative; display:inline-block; padding:.28em .5em; }
+  .ring-chalk svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; fill:none; stroke:var(--color-chalk); stroke-linecap:round; }
+
+  /* ===== Formulario sobre placa ===== */
+  .field-input { width:100%; min-height:52px; padding:0 14px; border-radius:8px; border:1px solid #827a6d; background:#fbf9f5; color:#1c1a17; font-size:16px; transition:border-color 150ms; }
+  .field-input::placeholder { color:#6b6559; }
+  .field-input:hover { border-color:#5e584e; }
+  .field-input:focus-visible { border-radius:8px; }
+  .field-input[aria-invalid=true] { border-color:#b02a25; }
+  .check { appearance:none; width:22px; height:22px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #827a6d; background:#fbf9f5; display:grid; place-items:center; transition:background-color 200ms,border-color 200ms; cursor:pointer; }
+  .check:checked { background:#e8923a; border-color:#e8923a; }
+  .check:checked::after { content:''; width:6px; height:11px; border:solid #1a0a00; border-width:0 2px 2px 0; transform:translateY(-1px) rotate(45deg); }
+  .check[aria-invalid=true] { border-color:#b02a25; }
+  .success-check circle { stroke-dasharray:152; stroke-dashoffset:152; animation:draw 600ms cubic-bezier(.2,.8,.2,1) forwards; }
+  .success-check path { stroke-dasharray:40; stroke-dashoffset:40; animation:draw 300ms cubic-bezier(.2,.8,.2,1) 450ms forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .spin { width:16px; height:16px; border-radius:50%; border:2px solid rgb(251 249 245 / .35); border-top-color:#fbf9f5; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ===== Dock: comportamiento propuesto (ver README §12.8) ===== */
+  .dock { position:fixed; top:8px; z-index:40; left:50%; transform:translate(-50%,0); display:flex; align-items:center; height:40px; padding-right:16px; border-radius:11px; background:#e8923a; color:#1a0a00; box-shadow:0 8px 24px -10px rgb(0 0 0 / .55); font-size:15px; font-weight:500; transition:opacity 220ms,visibility 0s; }
+  .dock[hidden-state] { opacity:0; visibility:hidden; transition:opacity 220ms,visibility 0s linear 220ms; }
+  .dock img { width:40px; height:40px; display:block; }
+  @media (max-width:1023px) { .dock { left:16px; transform:none; padding-right:0; } .dock span { display:none; } }
+
+  /* ===== Solo mockup ===== */
+  .mock-bar { font-size:13px; }
+  .mock-note { display:none; }
+  body.notes .mock-note { display:block; max-width:760px; margin-bottom:32px; padding:12px 14px; border:1px dashed currentColor; border-radius:6px; font-size:14px; line-height:1.5; color:inherit; }
+
+  @media (prefers-reduced-motion:reduce) {
+    *,*::before,*::after { animation-duration:0s !important; animation-iteration-count:1 !important; transition-duration:0s !important; transition-delay:0s !important; scroll-behavior:auto !important; }
+    .success-check circle,.success-check path { stroke-dashoffset:0; }
+  }
+</style>
+</head>
+<body class="bg-background text-foreground text-base leading-relaxed">
+<div class="mock-bar bg-white text-[#1c1a17] border-b border-[#ddd]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+    <strong class="font-medium">/newsletter · propuesta para Xavi</strong>
+    <a class="underline" href="#estados">Estados del formulario</a>
+    <a class="underline" href="home-v2.html#newsletter">Bloque de la home</a>
+  </div>
+</div>
+
+<!-- Cabecera actual: contexto, no se toca -->
+<header class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-6">
+    <span class="flex items-end gap-2"><img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-7 w-auto block"><span class="font-mono text-[12px] tracking-[.14em] leading-none pb-[3px] text-meta" aria-hidden="true">BCN</span></span>
+    <nav class="hidden lg:flex items-center gap-10 text-[15px]" aria-label="Principal"><a href="#">Rocódromos</a><a href="#">Pies de gato</a><a href="#">Resolar</a><a href="#">Blog</a><a href="#">Agenda</a><a href="#">Sobre mí</a></nav>
+    <button type="button" class="lg:hidden grid place-items-center size-11" aria-label="Abrir menú"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M8 12h12M4 18h16"/></svg></button>
+    <span class="hidden lg:flex font-mono text-[12px] tracking-[.14em] gap-4 text-meta"><span class="text-foreground">ES</span><span>EN</span></span>
+  </div>
+</header>
+
+<main id="main">
+<section class="field-orange dust" aria-labelledby="t-news">
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-14 pb-20 md:pt-20 md:pb-28 lg:pt-[88px] lg:pb-[120px]">
+    <h1 id="t-news" class="title-section-lg">Una carta al mes.<br>Nada más.</h1>
+    <div class="mt-10 lg:mt-14 grid lg:grid-cols-12 gap-x-6 gap-y-8 items-start">
+      <div class="lg:col-span-5">
+        <p class="text-[20px] md:text-[24px] leading-[1.35] tracking-[-.01em] font-medium max-w-[26ch]">Novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.</p>
+        <p class="mt-4 text-[15px] text-meta">Sin spam. Baja en un clic.</p>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <div class="on-paper slab-dark bg-paper p-5 md:p-7" id="nl-box">
+          <form id="nl-form" method="post" novalidate>
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-start">
+              <div class="flex-1 min-w-0">
+                <label for="nl-email" class="block text-[15px] font-medium mb-2">Tu email</label>
+                <input id="nl-email" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" class="field-input">
+                <p id="nl-email-err" class="mt-2 hidden items-center gap-1.5 text-[15px] leading-snug text-danger-text"><svg width="16" height="16" class="shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>Escribe un email válido, por ejemplo nombre@correo.com.</span></p>
+              </div>
+              <button id="nl-submit" type="submit" class="btn btn-ink w-full lg:w-auto lg:mt-[32px]"><span id="nl-label">Suscribirme</span><svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </div>
+            <label class="mt-4 flex items-start gap-3 min-h-11 cursor-pointer text-[15px] leading-[1.45]">
+              <input id="nl-consent" name="consent" type="checkbox" class="check">
+              <span>Quiero recibir novedades de ChalkGuide por email. Puedo darme de baja cuando quiera. <a href="#" class="link text-accent">Política de privacidad</a>.</span>
+            </label>
+            <p id="nl-consent-err" class="mt-1 hidden items-center gap-1.5 text-[15px] leading-snug text-danger-text"><svg width="16" height="16" class="shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>Marca la casilla para confirmar que quieres recibirla.</span></p>
+          </form>
+          <div id="nl-ok" role="status" tabindex="-1" class="hidden">
+            <svg class="success-check" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" fill="none" stroke="#1a6e4e" stroke-width="2.5"/><path d="M17 29l7 7 15-16" fill="none" stroke="#1a6e4e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="mt-3 text-[20px] font-medium">¡Casi está!</p>
+            <p class="mt-1 text-meta">Te he enviado un email para confirmar la suscripción. Revisa también la carpeta de spam.</p>
+            <a href="#" class="btn btn-ghost mt-5">Mientras tanto, leer el blog <svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-background" aria-label="Qué esperar">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24 grid lg:grid-cols-12 gap-x-6 gap-y-14">
+    <div class="lg:col-span-5">
+      <h2 class="text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium">Qué te llega</h2>
+      <ul class="mt-6 border-t border-foreground text-[17px]">
+        <li class="py-4 border-b border-line-strong">Novedades de los rocódromos</li>
+        <li class="py-4 border-b border-line-strong">El artículo nuevo</li>
+        <li class="py-4 border-b border-line-strong">Un pie de gato que merece la pena</li>
+      </ul>
+      <p class="mt-6 text-[15px] text-meta">Ninguna reseña se compra. Lo pagado se marca. <a href="#" class="link">Cómo funciona la transparencia</a>.</p>
+    </div>
+    <div class="lg:col-span-6 lg:col-start-7">
+      <h2 class="text-[22px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium">Cómo funciona</h2>
+      <ol class="mt-6 border-t border-foreground text-[17px]">
+        <li class="flex gap-4 py-4 border-b border-line-strong"><span class="font-mono text-sm text-accent w-7 shrink-0 pt-1">01</span><span>Escribes tu email y marcas la casilla.</span></li>
+        <li class="flex gap-4 py-4 border-b border-line-strong"><span class="font-mono text-sm text-accent w-7 shrink-0 pt-1">02</span><span>Te envío un email para confirmar. Sin confirmar, no hay suscripción.</span></li>
+        <li class="flex gap-4 py-4 border-b border-line-strong"><span class="font-mono text-sm text-accent w-7 shrink-0 pt-1">03</span><span>La próxima carta llega a final de mes.</span></li>
+      </ol>
+      <p class="mt-6 font-hand text-[28px] leading-[1.15] -rotate-1 origin-left">Te escribo una vez al mes. <a href="#" class="link">Xavi</a></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ========== 7 · FOOTER ========== -->
+<footer class="chrome-dark">
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-16 md:pt-20 pb-8">
+    
+    <div class="grid lg:grid-cols-12 gap-x-6 gap-y-12">
+      <div class="lg:col-span-5">
+        <span class="flex items-end gap-2"><img src="../../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-7 w-auto block"><span class="font-mono text-[12px] tracking-[.14em] leading-none pb-[3px] text-meta" aria-hidden="true">BCN</span></span>
+        <p class="mt-8 text-[24px] md:text-[28px] leading-[1.2] tracking-[-.015em] font-medium max-w-[20ch]">Ninguna reseña se compra. Lo pagado se marca.</p>
+      </div>
+      <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10 text-[15px]">
+        <nav aria-label="Guías">
+          <p class="text-[13px] font-medium text-meta">Guías</p>
+          <ul class="mt-2">
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Rocódromos</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Pies de gato</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Resolar pies de gato</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Medio">
+          <p class="text-[13px] font-medium text-meta">Medio</p>
+          <ul class="mt-2">
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Blog</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Agenda</a></li>
+            <li><a href="#" aria-current="page" class="flex items-center min-h-11 text-accent">Newsletter</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Sobre mí</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Chalk app</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Cuentas claras">
+          <p class="text-[13px] font-medium text-meta">Cuentas claras</p>
+          <ul class="mt-2">
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Transparencia</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Privacidad</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Cookies</a></li>
+            <li><a href="#" class="flex items-center min-h-11 hover:text-accent transition-colors duration-150">Aviso legal</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="mt-12 pt-5 border-t border-line-strong flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-[13px] text-meta">
+      <p>© 2026 ChalkGuide</p>
+      <a href="#" lang="en" hreflang="en" class="flex items-center min-h-11 hover:text-foreground transition-colors duration-150">English</a>
+    </div>
+  </div>
+</footer>
+
+
+
+<!-- ===== Estados (no forman parte de la página) ===== -->
+<div id="estados" class="bg-white text-[#1c1a17] border-t-4 border-[#1c1a17]">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2 class="text-[22px] font-medium">Anexo · Estados del formulario</h2>
+    <p class="mt-2 max-w-[70ch] text-[15px] text-[#5e584e]">El mismo componente en la página y en el bloque de la home. Valida al enviar, no al escribir; el foco va al primer campo con error. El éxito sustituye al formulario sin cambiar el alto de la placa.</p>
+  </div>
+</div>
+<div class="field-orange dust">
+  <div id="states" class="max-w-page mx-auto px-4 md:px-6 py-12 grid lg:grid-cols-2 gap-8 items-start"></div>
+</div>
+
+<script>
+  const errIco = `<svg width="16" height="16" class="shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>`, arrow = `<svg class="arr" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+  const check = `<svg class="success-check" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" fill="none" stroke="#1a6e4e" stroke-width="2.5"/><path d="M17 29l7 7 15-16" fill="none" stroke="#1a6e4e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const consent = 'Quiero recibir novedades de ChalkGuide por email. Puedo darme de baja cuando quiera.';
+  function state(title, o = {}) {
+    const id = title.replace(/\W/g, '');
+    const body = o.success ? `<div role="status">${check}<p class="mt-3 text-[20px] font-medium">¡Casi está!</p><p class="mt-1 text-meta">Te he enviado un email para confirmar la suscripción. Revisa también la carpeta de spam.</p></div>` : `
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-start">
+        <div class="flex-1 min-w-0"><label for="e-${id}" class="block text-[15px] font-medium mb-2">Tu email</label>
+          <input id="e-${id}" type="email" class="field-input" value="${o.email || ''}" placeholder="nombre@correo.com" ${o.emailErr ? 'aria-invalid="true"' : ''} ${o.loading ? 'readonly' : ''}>
+          ${o.emailErr ? `<p class="mt-2 flex items-center gap-1.5 text-[15px] leading-snug text-danger-text">${errIco}<span>Escribe un email válido, por ejemplo nombre@correo.com.</span></p>` : ''}</div>
+        <button type="button" class="btn btn-ink w-full lg:w-auto lg:mt-[32px] ${o.disabled ? '!bg-[#ebe6dc] !text-[#6b6559] cursor-not-allowed' : ''}" ${o.disabled ? 'disabled' : ''} ${o.loading ? 'aria-busy="true"' : ''}>${o.loading ? '<span class="spin"></span><span>Enviando…</span>' : '<span>Suscribirme</span>' + (o.disabled ? '' : arrow)}</button>
+      </div>
+      ${o.noConsent ? '' : `<label class="mt-4 flex items-start gap-3 min-h-11 cursor-pointer text-[15px] leading-[1.45]"><input type="checkbox" class="check" ${o.checked ? 'checked' : ''} ${o.consentErr ? 'aria-invalid="true"' : ''}><span>${consent} <a href="#" class="link text-accent">Política de privacidad</a>.</span></label>`}
+      ${o.consentErr ? `<p class="mt-1 flex items-center gap-1.5 text-[15px] leading-snug text-danger-text">${errIco}<span>Marca la casilla para confirmar que quieres recibirla.</span></p>` : ''}
+      ${o.server ? `<p role="alert" class="mt-3 flex items-start gap-1.5 text-[15px] leading-snug text-danger-text">${errIco}<span>No se pudo completar la suscripción. Inténtalo de nuevo en un rato.</span></p>` : ''}`;
+    return `<div><p class="text-[15px] font-medium mb-3">${title}</p><div class="on-paper slab-dark bg-paper p-5 md:p-7">${body}</div></div>`;
+  }
+  document.getElementById('states').innerHTML = [
+    state('Reposo: casilla desmarcada'),
+    state('Email no válido', { email:'marta@correo', emailErr:true }),
+    state('Falta la casilla', { email:'marta@correo.com', consentErr:true }),
+    state('Enviando', { email:'marta@correo.com', checked:true, loading:true }),
+    state('Error del servidor: conserva los datos', { email:'marta@correo.com', checked:true, server:true }),
+    state('Sin texto de consentimiento: no se puede enviar', { noConsent:true, disabled:true, server:true }),
+    state('Éxito: pendiente de confirmar', { success:true }),
+  ].join('');
+
+  /* Interactivo: misma lógica que useNewsletterForm */
+  const form = document.getElementById('nl-form'), emailEl = document.getElementById('nl-email'), consentEl = document.getElementById('nl-consent');
+  const emailErr = document.getElementById('nl-email-err'), consentErr = document.getElementById('nl-consent-err');
+  function setErr(input, box, on, id) {
+    input.setAttribute('aria-invalid', on ? 'true' : 'false');
+    on ? input.setAttribute('aria-describedby', id) : input.removeAttribute('aria-describedby');
+    box.classList.toggle('hidden', !on); box.classList.toggle('flex', on);
+  }
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const badEmail = !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailEl.value.trim()), badConsent = !consentEl.checked;
+    setErr(emailEl, emailErr, badEmail, 'nl-email-err'); setErr(consentEl, consentErr, badConsent, 'nl-consent-err');
+    if (badEmail) return emailEl.focus();
+    if (badConsent) return consentEl.focus();
+    const btn = document.getElementById('nl-submit');
+    btn.setAttribute('aria-busy', 'true'); btn.innerHTML = '<span class="spin"></span><span>Enviando…</span>';
+    setTimeout(() => {
+      const box = document.getElementById('nl-box'); box.style.minHeight = box.offsetHeight + 'px';
+      form.classList.add('hidden');
+      const ok = document.getElementById('nl-ok'); ok.classList.remove('hidden'); ok.focus();
+    }, 900);
+  });
+  consentEl.addEventListener('change', () => { if (consentEl.checked) setErr(consentEl, consentErr, false, 'nl-consent-err'); });
+</script>
+</body>
+</html>

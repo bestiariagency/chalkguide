@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menú de escritorio · ChalkGuide</title>
+<meta name="description" content="Propuesta de hero de la home: entrada con las barras del logo y carrusel cilíndrico manual con lo más relevante del sitio.">
+<!--
+  Propuesta para Xavi (2026-10-30). No es código de producción.
+  Referencia pedida por Xavi: dg-cinema.com (entrada y carrusel cóncavo). Contenido real de guide.*.
+  Propuesta de menú de escritorio. Pruebas: ?intro=0 quita la entrada · ?lang=en · ?page=2 marca la sección 2 (0-5) como actual.
+-->
+<script>
+  document.documentElement.classList.add('js')
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && new URLSearchParams(location.search).get('intro') !== '0') {
+    document.documentElement.classList.add('has-intro')
+  }
+</script>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wall: #0b0b0b;
+    --paper: #f4f1ea;
+    --chalk: #f0ede8;
+    --meta: #a19d94;
+    --ink: #1c1a17;
+    --accent: #e8923a;
+    --accent-hover: #c4721f;
+    --on-accent: #1a0a00;
+    --head-h: 76px;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--wall); scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.6 Inter, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus { outline: none; }
+  :focus-visible { box-shadow: 0 0 0 2px var(--wall), 0 0 0 4px var(--accent); border-radius: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* ===== Entrada: las cuatro barras del logo crecen, tapan la pantalla y suben ===== */
+  .intro { display: none; }
+  .has-intro .intro { display: block; position: fixed; inset: 0; z-index: 50; background: var(--wall); overflow: hidden; cursor: pointer; }
+  .intro.is-open { background: transparent; }
+  .intro-mark { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--chalk); transition: opacity .15s; }
+  .intro-mark img { width: 56px; height: 56px; display: block; }
+  .intro-count { font: 700 22px/1 Archivo, sans-serif; font-stretch: 125%; font-variant-numeric: tabular-nums; min-width: 3ch; text-align: center; }
+  .intro-bars { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .intro-bars i { display: block; height: 130%; margin-inline: -1px; background: var(--accent); border-radius: 12.5vw 12.5vw 0 0; transform: translateY(100%); transition: transform .5s var(--ease); }
+  .intro-bars i:nth-child(1) { transition-delay: .05s; }
+  .intro-bars i:nth-child(2) { transition-delay: 0s; }
+  .intro-bars i:nth-child(3) { transition-delay: .08s; }
+  .intro-bars i:nth-child(4) { transition-delay: .13s; }
+  .intro.is-up .intro-bars i { transform: translateY(-12%); }
+  .intro.is-up .intro-mark { opacity: 0; }
+  .intro.is-open .intro-bars i { transform: translateY(-115%); border-radius: 0 0 12.5vw 12.5vw; transition: transform .62s cubic-bezier(.7, 0, .2, 1); }
+
+  /* ===== Cabecera ===== */
+  .site-head { position: relative; z-index: 3; height: var(--head-h); display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-inline: clamp(16px, 5.8vw, 84px); color: var(--chalk); }
+  .site-head img { display: block; height: 26px; width: auto; }
+  .site-nav { display: flex; gap: clamp(24px, 4vw, 56px); font-size: 15px; }
+  .lang { display: flex; gap: 2px; font-size: 14px; }
+  .lang button { min-width: 44px; min-height: 44px; border-radius: 8px; color: var(--meta); transition: color .15s; }
+  .lang button:hover { color: #fff; }
+  .lang button[aria-pressed='true'] { color: var(--chalk); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--accent); }
+
+  /* ===== Hero ===== */
+  .hero { position: relative; isolation: isolate; overflow-x: clip; overflow-y: visible; min-height: 100svh; display: flex; flex-direction: column; background: var(--wall); color: var(--chalk); }
+  /* Polvo de magnesio sobre la pizarra */
+  .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .26; pointer-events: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  /* Bandas laterales: el acento de marca donde la referencia tiene su telón rojo */
+  .edge { position: absolute; z-index: 2; top: 0; bottom: 0; width: clamp(24px, 11vw, 190px); pointer-events: none; opacity: .7; transition: opacity .5s var(--ease); }
+  .edge--l { left: 0; background: linear-gradient(90deg, rgb(232 146 58 / .15), rgb(232 146 58 / 0) 62%), linear-gradient(90deg, #0b0b0b 4%, rgb(11 11 11 / 0) 100%); }
+  .edge--r { right: 0; background: linear-gradient(270deg, rgb(232 146 58 / .15), rgb(232 146 58 / 0) 62%), linear-gradient(270deg, #0b0b0b 4%, rgb(11 11 11 / 0) 100%); }
+  .hero.is-moving .edge { opacity: 1; }
+
+  .title { position: relative; z-index: 1; margin: clamp(4px, 2.2svh, 28px) 0 0; padding-inline: 16px; text-align: center; font: 700 clamp(44px, 5.05vw, 92px)/1 Archivo, Inter, sans-serif; white-space: nowrap; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; color: #fff; }
+  .title span { display: inline-block; }
+
+  /* Escena cilíndrica: vemos el interior de la pared curva */
+  .ring { position: relative; z-index: 1; flex: 1 1 auto; min-height: 320px; margin: clamp(4px, 1.5svh, 18px) 0 clamp(64px, 11svh, 108px); perspective: var(--p, 1000px); perspective-origin: 50% 50%; touch-action: pan-y; cursor: grab; user-select: none; }
+  .ring.is-drag { cursor: grabbing; }
+  .ring-scene { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .cardx { position: absolute; left: 50%; top: 50%; width: var(--w); height: var(--h); margin: calc(var(--h) / -2) 0 0 calc(var(--w) / -2); display: block; border-radius: 6px; color: var(--chalk); text-decoration: none; backface-visibility: hidden; will-change: transform; -webkit-user-drag: none; }
+  .cardx img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+  .cardx:focus-visible { box-shadow: none; }
+  .cardx:focus-visible .face { box-shadow: 0 0 0 2px var(--wall), 0 0 0 4px var(--accent); }
+  .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 72px 16px 14px; background: linear-gradient(180deg, rgb(11 11 11 / 0), rgb(11 11 11 / .88) 62%); opacity: var(--cap, 1); }
+  .kind { display: block; font: 400 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .cap strong { display: block; margin-top: 8px; font-size: 19px; line-height: 1.3; font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
+  .cap small { display: block; margin-top: 5px; font-size: 14px; line-height: 1.35; color: #d5d1c9; }
+  /* Todas las tarjetas: el grosor son copias redondeadas apiladas hacia atrás */
+  .slab { position: absolute; inset: 0; border-radius: inherit; transform-style: preserve-3d; transform: rotateX(var(--rx, -4deg)) rotateY(var(--ry, 9deg)); transition: transform .5s var(--ease); }
+  .ply { position: absolute; inset: 0; display: block; border-radius: inherit; transform: translateZ(calc(var(--i) * -1.25px)); background: color-mix(in srgb, #1f1f21 calc(100% - var(--i) * 3%), #111112); }
+  .face { position: absolute; inset: 0; overflow: hidden; container-type: inline-size; border-radius: inherit; background: #1a1a1c; }
+  .face img { left: -9%; width: 118%; max-width: none; transform: translateX(var(--par, 0%)); transition: none; }
+  /* Capas de la foto: gradación con su propio color, reflejo que sigue el giro y filo de luz */
+  .grade { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / 0) 66%, rgb(20 20 22 / .85) 118%); }
+  .sheen { position: absolute; inset: -20% -60%; background: linear-gradient(112deg, rgb(255 255 255 / 0) 38%, rgb(255 255 255 / .11) 49%, rgb(255 255 255 / .03) 54%, rgb(255 255 255 / 0) 62%); mix-blend-mode: screen; transform: translateX(var(--sheen, 0%)); transition: transform .5s var(--ease); }
+  .face::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 1px 0 rgb(255 255 255 / .13), inset 0 -1px 0 rgb(0 0 0 / .3), inset 1px 0 0 rgb(255 255 255 / .045), inset -1px 0 0 rgb(255 255 255 / .045); }
+
+  /* Rocódromos y artículos: base casi negra, para que el texto mande sobre cualquier foto */
+  .cardx--strong .cap { padding-top: 104px; background: linear-gradient(180deg, rgb(0 0 0 / 0), rgb(0 0 0 / .84) 46%, rgb(0 0 0 / .97) 100%); }
+
+  /* Pie de gato sobre el naranja de marca: la foto de producto se funde con multiply */
+  .cardx--shoe { color: var(--on-accent); }
+  .cardx--shoe .face { background: var(--accent); }
+  .cardx--shoe .face img { inset: 4% 4% auto; width: 92%; height: auto; aspect-ratio: 1; object-fit: contain; mix-blend-mode: multiply; }
+  .cardx--shoe .cap { background: none; }
+  .cardx--shoe .kind, .cardx--shoe small { color: var(--on-accent); }
+  /* Agenda: cartel tipográfico, los eventos no tienen foto */
+  .cardx--event { color: var(--ink); }
+  .cardx--event .face { background: var(--paper); }
+  .cardx--event .sheen { mix-blend-mode: multiply; background: linear-gradient(112deg, rgb(0 0 0 / 0) 38%, rgb(0 0 0 / .07) 49%, rgb(0 0 0 / .02) 54%, rgb(0 0 0 / 0) 62%); }
+  .date { position: absolute; left: 16px; top: 14px; font: 700 31cqw/.92 Archivo, sans-serif; font-stretch: 125%; letter-spacing: -.03em; text-transform: uppercase; }
+  .date em { display: block; font-style: normal; }
+  .cardx--event .cap { background: none; }
+  .cardx--event .kind { color: #9a4a16; }
+  .cardx--event small { color: #5e584e; }
+
+  /* Cuerda: sale de debajo de la tarjeta central y al hacer scroll baja a la sección siguiente */
+  .rope { position: absolute; z-index: 0; left: 50%; bottom: calc(14px - var(--drop, 0px)); height: calc(var(--rest, 120px) - 14px + var(--drop, 0px)); width: 0; pointer-events: none; transform-origin: 50% 0; }
+  .rope-cord { position: absolute; top: 0; bottom: 56px; left: -2.5px; width: 5px; border-radius: 3px; background: repeating-linear-gradient(-58deg, #e8923a 0 3px, #8f5013 3px 5px); }
+  .rope-end { position: absolute; left: -22px; bottom: 0; display: block; width: 44px; height: 64px; color: var(--accent); pointer-events: auto; }
+  .rope-end svg { display: block; width: 44px; height: 64px; transform-origin: 50% 8%; transition: transform .3s var(--ease); }
+  .rope-end:hover svg { transform: translateY(5px) rotate(-6deg); }
+  .rope-end:active svg { transform: translateY(2px); }
+
+  .next { scroll-margin-top: 24px; max-width: 1200px; margin: 0 auto; padding: 72px 24px 96px; }
+  .next h2 { margin: 0; font-size: clamp(28px, 2.6vw, 36px); line-height: 1.12; font-weight: 500; letter-spacing: -.025em; }
+  .next ul { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .next a { display: block; height: 100%; padding: 24px; background: #fbf9f5; border-radius: 12px; font-size: 20px; line-height: 1.35; font-weight: 500; text-decoration: none; transition: background-color .2s; }
+  .next a:hover { background: #ebe6dc; }
+
+  /* Entrada de los contenidos, en cuanto suben las barras */
+  @media (prefers-reduced-motion: no-preference) {
+    .has-intro .title { clip-path: inset(0 100% 0 0); }
+    .has-intro .rope { opacity: 0; translate: 0 -48px; }
+    .has-intro.is-in .title { clip-path: inset(-10% -2% -10% -2%); transition: clip-path .85s var(--ease) .05s; }
+    .has-intro.is-in .rope { opacity: 1; translate: 0 0; transition: opacity .4s var(--ease) .75s, translate .9s var(--ease) .75s; }
+    .rope { animation: sway 3.8s ease-in-out infinite alternate; }
+    @keyframes sway { from { rotate: -.7deg; } to { rotate: .7deg; } }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: 0s !important; transition-delay: 0s !important; }
+  }
+
+  /* ===== Menú de escritorio: tarjeta pequeña que corre bajo los enlaces, con el dato que importa ===== */
+  .bcn { font: 400 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .14em; color: var(--meta); align-self: flex-end; padding-bottom: 3px; }
+  .brand { display: flex; align-items: flex-end; gap: 14px; text-decoration: none; }
+  .site-nav { position: relative; display: flex; gap: clamp(18px, 2.5vw, 42px); font-size: 15px; }
+  .site-nav > a { position: relative; display: block; padding: 10px 2px 12px; color: #d5d1c9; text-decoration: none; transition: color .18s; }
+  .site-nav > a:hover, .site-nav > a.is-near { color: #fff; }
+  .site-nav > a[aria-current='page'] { color: var(--accent); }
+  .nav-ind { position: absolute; left: 0; bottom: 4px; width: 100px; height: 2px; border-radius: 1px; background: var(--accent); transform-origin: 0 50%; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .nav-ind.is-on { opacity: 1; }
+  .nav-card { position: absolute; z-index: 2; left: 0; top: calc(100% + 6px); width: 292px; height: 104px; border-radius: 8px; perspective: 800px; opacity: 0; visibility: hidden; pointer-events: none; transform-origin: 50% 0; transition: opacity .18s, visibility 0s linear .18s; }
+  .nav-card.is-on { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity .22s var(--ease), visibility 0s; }
+  .nav-card .slab { --ry: 0deg; --rx: -5deg; }
+  .nav-card .ply { transform: translateZ(calc(var(--i) * -.6px)); }
+  .nav-card .face { background: #1c1c1e; }
+  .nf { display: flex; align-items: center; gap: 12px; padding: 10px; opacity: 0; pointer-events: none; text-decoration: none; color: #fff; transition: opacity .16s; }
+  .nf.is-on { opacity: 1; pointer-events: auto; }
+  .nt { position: relative; flex: none; width: 84px; height: 84px; overflow: hidden; border-radius: 4px; }
+  .nt img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .nt--shoe { background: var(--accent); }
+  .nt--shoe img { inset: 5%; width: 90%; height: 90%; object-fit: contain; mix-blend-mode: multiply; }
+  .nt--num, .nt--date { display: grid; place-content: center; text-align: center; font: 700 34px/.95 Archivo, sans-serif; font-stretch: 125%; letter-spacing: -.03em; }
+  .nt--num { background: #2c2c2f; color: #fff; }
+  .nt--date { background: var(--paper); color: var(--ink); text-transform: uppercase; }
+  .nt--date em { display: block; font-style: normal; font-size: 17px; letter-spacing: -.01em; margin-top: 2px; }
+  .nv { min-width: 0; display: block; }
+  .nv strong { display: block; font-size: 17px; line-height: 1.22; font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
+  .nv strong.tight { font-size: 15px; line-height: 1.3; }
+  .nv small { display: block; margin-top: 4px; font-size: 14px; line-height: 1.32; color: #c4c0b8; text-wrap: balance; }
+  /* Barra al hacer scroll: se aparta al bajar, vuelve al subir; el isotipo original queda siempre a la vista */
+  .nav-bar { position: fixed; z-index: 30; left: 0; right: 0; top: 0; height: 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; padding-inline: clamp(16px, 5.8vw, 84px); background: #0f0f0f; color: var(--chalk); visibility: hidden; transform: translateY(-104%); transition: transform .32s cubic-bezier(.5, 0, .9, .4), visibility 0s linear .32s; }
+  .nav-bar.is-on { visibility: visible; transform: none; transition: transform .42s var(--ease), visibility 0s; }
+  .nav-bar .site-nav { justify-self: center; }
+  .nav-bar .site-nav > a { padding-block: 6px 9px; }
+  .nav-bar .site-nav > a.is-spy { color: #fff; }
+  .nav-bar .nav-ind { bottom: 1px; }
+  .nav-bar .lang { justify-self: end; }
+  .nav-bar .burger { justify-self: end; }
+.dock { position: fixed; z-index: 31; top: 8px; left: 50%; display: flex; align-items: center; height: 40px; padding-right: 16px; border-radius: 11px; background: #e8923a; color: var(--on-accent); box-shadow: 0 8px 24px -10px rgb(0 0 0 / .55); opacity: 0; visibility: hidden; transform: translateX(-50%) translateY(-18px) scale(.92); transition: left .62s cubic-bezier(.3, 1.28, .5, 1), transform .62s cubic-bezier(.3, 1.28, .5, 1), box-shadow .3s, opacity .22s, visibility 0s linear .22s; }
+  .dock.is-on { opacity: 1; visibility: visible; transform: translateX(-50%); transition: left .62s cubic-bezier(.3, 1.28, .5, 1), transform .62s cubic-bezier(.3, 1.28, .5, 1), box-shadow .3s, opacity .22s, visibility 0s; }
+  /* Con la barra visible, la pieza vuelve a su sitio a la izquierda */
+  .nav-bar.is-on ~ .dock { left: clamp(16px, 5.8vw, 84px); transform: translateX(0); box-shadow: none; }
+  .dock-iso { display: block; flex: none; width: 40px; height: 40px; border-radius: 11px; }
+  .dock-iso img { display: block; width: 100%; height: 100%; }
+  .dock-news { display: flex; align-items: center; height: 40px; padding-left: 2px; font-size: 15px; font-weight: 500; color: inherit; text-decoration: none; white-space: nowrap; }
+  .dock:hover { background: #dd8630; }
+  .dock-news:hover { text-decoration: underline; text-underline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .dock, .dock.is-on { transition: opacity .1s, visibility 0s; } }
+  @media (max-width: 899px) { .nav-bar { grid-template-columns: 1fr auto; } .nav-bar .site-nav, .nav-bar .lang { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .nav-bar, .nav-bar.is-on { transition: visibility 0s; } }
+  @media (hover: none) { .nav-card { display: none; } }
+
+  /* ===== Menú móvil: las barras del logo suben, el título manda y el mosquetón marca la sección ===== */
+  .burger { display: none; place-items: center; width: 44px; height: 44px; margin-right: -10px; border-radius: 8px; color: #fff; }
+  .burger-bars { display: grid; justify-items: end; gap: 5px; width: 24px; }
+  .burger-bars i { display: block; height: 3px; border-radius: 2px; background: currentColor; transition: transform .35s var(--ease), width .35s var(--ease), opacity .2s; }
+  .burger-bars i:nth-child(1) { width: 24px; }
+  .burger-bars i:nth-child(2) { width: 15px; }
+  .burger-bars i:nth-child(3) { width: 20px; }
+  .burger:active .burger-bars { transform: scale(.92); }
+  .menu.is-open .burger-bars i:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .menu.is-open .burger-bars i:nth-child(2) { opacity: 0; }
+  .menu.is-open .burger-bars i:nth-child(3) { width: 24px; transform: translateY(-8px) rotate(-45deg); }
+  .menu { position: fixed; inset: 0; z-index: 40; visibility: hidden; overflow: hidden; color: #fff; transition: visibility 0s linear .32s; }
+  .menu.is-open { visibility: visible; transition-delay: 0s; }
+  .menu-wall { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); pointer-events: none; }
+  .menu-wall i { display: block; height: 128%; margin-inline: -1px; background: var(--wall); border-radius: 12.5vw 12.5vw 0 0; transform: translateY(100%); transition: transform .3s cubic-bezier(.5, 0, .9, .4); }
+  .menu.is-open .menu-wall i { transform: translateY(-14%); transition: transform .52s var(--ease); }
+  .menu.is-open .menu-wall i:nth-child(1) { transition-delay: .04s; }
+  .menu.is-open .menu-wall i:nth-child(3) { transition-delay: .07s; }
+  .menu.is-open .menu-wall i:nth-child(4) { transition-delay: .11s; }
+  .menu-inner { position: relative; height: 100%; display: flex; flex-direction: column; }
+  .menu-head { flex: none; height: var(--head-h); display: flex; align-items: center; justify-content: space-between; padding-inline: clamp(16px, 5.8vw, 84px); opacity: 0; transition: opacity .15s; }
+  .menu.is-open .menu-head { opacity: 1; transition: opacity .25s .18s; }
+  .menu-head img { display: block; height: 26px; width: auto; }
+  .menu-head .burger { display: grid; }
+  .menu-nav { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; padding: 8px clamp(16px, 5.8vw, 84px) 8px 52px; overscroll-behavior: contain; }
+  .menu-list { list-style: none; margin: auto 0; padding: 0; width: 100%; display: grid; gap: clamp(8px, 2.1svh, 20px); }
+  .menu-link { display: block; text-decoration: none; padding-block: 4px; border-radius: 4px; }
+  .menu-link b { display: block; font: 700 clamp(25px, 8vw, 46px)/1.04 Archivo, Inter, sans-serif; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; transition: color .2s; }
+  .menu-link span { display: block; margin-top: 3px; font-size: 15px; line-height: 1.35; color: var(--meta); }
+  .menu-link:is(:hover, :active, [aria-current='page'], .is-clipped) b { color: var(--accent); }
+  .menu-item { clip-path: inset(0 0 100% 0); transform: translateY(14px); }
+  .menu.is-open .menu-item { clip-path: inset(-4px -4px -8px -4px); transform: none; transition: clip-path .5s var(--ease) calc(.2s + var(--i) * 45ms), transform .5s var(--ease) calc(.2s + var(--i) * 45ms); }
+  /* La misma cuerda del hero, bajando por el margen hasta la sección activa */
+  .menu-rope { position: absolute; left: 26px; top: 0; width: 0; height: var(--y, 0px); pointer-events: none; transition: height .5s var(--ease); }
+  .menu-rope i { position: absolute; left: -2px; top: 0; bottom: 18px; width: 4px; border-radius: 2px; background: repeating-linear-gradient(-58deg, #e8923a 0 3px, #8f5013 3px 5px); transform-origin: 50% 0; transform: scaleY(0); }
+  .menu.is-open .menu-rope i { transform: none; transition: transform .55s var(--ease) .14s; }
+  .menu-rope svg { position: absolute; left: -15px; bottom: -22px; width: 30px; height: 44px; color: var(--accent); opacity: 0; }
+  .menu.is-open .menu-rope svg { opacity: 1; transition: opacity .2s .4s; }
+  .menu-foot { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px clamp(16px, 5.8vw, 84px) calc(14px + env(safe-area-inset-bottom)); opacity: 0; transition: opacity .12s; }
+  .menu.is-open .menu-foot { opacity: 1; transition: opacity .3s .5s; }
+  .menu-foot .link { color: #fff; font-size: 16px; }
+  .menu-foot .lang { flex: none; }
+  html.menu-lock { overflow: hidden; }
+  @media (prefers-reduced-motion: reduce) {
+    .menu-wall i, .menu.is-open .menu-wall i { transition: none; }
+    .menu-item { clip-path: none; transform: none; }
+    .menu-rope i { transform: none; }
+  }
+
+  /* Sin JS: fila con scroll nativo, todo visible y enlazable */
+  html:not(.js) .ring { display: flex; align-items: center; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 16px; perspective: none; }
+  html:not(.js) .ring-scene { position: static; display: flex; gap: 12px; }
+  html:not(.js) .slab { transform: none; }
+  html:not(.js) .rope-cord { top: -40px; }
+  html:not(.js) .ply { display: none; }
+  html:not(.js) .cardx { position: relative; left: auto; top: auto; margin: 0; flex: none; scroll-snap-align: center; width: min(68vw, 280px); height: min(88vw, 360px); }
+
+  @media (max-width: 899px) {
+    :root { --head-h: 64px; }
+    .site-nav { display: none; }
+    .site-head .lang { display: none; }
+    .burger { display: grid; }
+    .ring { min-height: 300px; margin-bottom: 76px; }
+    .next { padding: 48px 16px 72px; }
+    .next ul { grid-template-columns: 1fr; }
+    .title { font-size: clamp(30px, 10vw, 76px); line-height: 1.04; }
+    .title span { display: block; }
+  }
+  @media (max-width: 599px) {
+    .cap { padding: 56px 14px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-mark">
+    <img src="../../../../public/brand/iso-chalk-white.svg" alt="" width="56" height="56">
+    <span class="intro-count" id="count">4a</span>
+  </div>
+  <div class="intro-bars"><i></i><i></i><i></i><i></i></div>
+</div>
+
+<main>
+<section class="hero" id="hero" aria-labelledby="hero-title">
+  <i class="edge edge--l"></i><i class="edge edge--r"></i>
+
+  <header class="site-head">
+    <a class="brand" href="#" aria-label="ChalkGuide"><img src="../../../../public/brand/logo-white.svg" alt="chalkguide" width="140" height="26"><span class="bcn" aria-hidden="true">BCN</span></a>
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a href="#" data-t="mGyms" data-card="0">Rocódromos</a><a href="#" data-t="mShoes" data-card="1">Pies de gato</a><a href="#" data-t="mResole" data-card="2">Resolar</a><a href="#" data-t="mBlog" data-card="3">Blog</a><a href="#" data-t="mEvents" data-card="4">Agenda</a><a href="#" data-t="mAbout">Sobre mí</a>
+      <i class="nav-ind" aria-hidden="true"></i>
+      <div class="nav-card" aria-hidden="true"><div class="slab">
+        <a class="face nf" data-card="0" href="#" tabindex="-1"><span class="nt"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000008/1-escalador-desde-abajo.jpg" alt=""></span><span class="nv"><strong data-t="nt0">De 52 a 69 €/mes</strong><small data-t="ns0">5 rocódromos. Via Sants, el más barato</small></span><i class="sheen"></i></a>
+        <a class="face nf" data-card="1" href="#" tabindex="-1"><span class="nt nt--shoe"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg" alt=""></span><span class="nv"><strong data-t="nt1">Para empezar, desde 40 €</strong><small data-t="ns1">15 modelos para comparar lado a lado</small></span><i class="sheen"></i></a>
+        <a class="face nf" data-card="2" href="#" tabindex="-1"><span class="nt nt--num">3</span><span class="nv"><strong data-t="nt2">De 34 a 42 € el par</strong><small data-t="ns2">3 talleres. Entre 5 y 15 días</small></span><i class="sheen"></i></a>
+        <a class="face nf" data-card="3" href="#" tabindex="-1"><span class="nt"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg" alt=""></span><span class="nv"><strong class="tight" data-t="nt3">Cómo elegir pies de gato según tu nivel y estilo</strong><small data-t="ns3">Último artículo</small></span><i class="sheen"></i></a>
+        <a class="face nf" data-card="4" href="#" tabindex="-1"><span class="nt nt--date">7<em data-t="month">nov</em></span><span class="nv"><strong class="tight" data-t="nt4">Liga interna de bloque · 2.ª jornada</strong><small data-t="ns4">Sábado, 20:00</small></span><i class="sheen"></i></a>
+      </div></div>
+    </nav>
+    <div class="lang" role="group" aria-label="Idioma">
+      <button type="button" data-lang="es" aria-pressed="true">ES</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button type="button" class="burger" id="menu-open" aria-label="Abrir el menú" aria-controls="menu" aria-expanded="false"><span class="burger-bars" aria-hidden="true"><i></i><i></i><i></i></span></button>
+  </header>
+
+  <h1 class="title" id="hero-title"><span data-t="h1a">Escalar en</span> <span data-t="h1b">Barcelona</span></h1>
+
+  <div class="ring" id="ring" role="group" aria-roledescription="carrusel" aria-label="Destacados" tabindex="-1">
+    <div class="ring-scene" id="scene">
+
+      <div class="cardx cardx--photo" data-label="Escalador en una pared de roca roja desplomada">
+        <div class="slab">
+          <div class="face"><img fetchpriority="high" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000002/1-pared-roja-desplomada.jpg" alt="Escalador en una pared de roca roja desplomada" width="1600" height="2000" draggable="false"><i class="grade"></i><i class="sheen"></i></div>
+        </div>
+      </div>
+
+      <a class="cardx cardx--shoe" href="/pies-de-gato/la-sportiva-tarantulace" draggable="false" data-label="La Sportiva Tarantulace">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg" alt="" width="650" height="650" draggable="false">
+            <div class="cap"><span class="kind" data-t="kReview">Reseña</span><strong>La Sportiva Tarantulace</strong><small data-t="shoeNote">«Justos pero sin dolor en sesiones de dos horas.»</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--event" href="/agenda" draggable="false" data-label="Liga interna de bloque · 2.ª jornada">
+        <div class="slab"><div class="face">
+            <div class="date"><em>7</em><em data-t="month">nov</em></div>
+            <div class="cap"><span class="kind" data-t="kEvent">Agenda</span><strong data-t="evt1">Liga interna de bloque · 2.ª jornada</strong><small data-t="evtNote">Sábado, 20:00</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--strong" href="/rocodromos/magnesi-poblenou" draggable="false" data-label="Magnesi Poblenou">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg" alt="" width="1600" height="1067" draggable="false">
+            <div class="cap"><span class="kind" data-t="kGym">Rocódromo</span><strong>Magnesi Poblenou</strong><small data-t="gymNote2">Poblenou · 62 €/mes · bloque</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <div class="cardx cardx--photo" data-label="Techo de roca sobre el mar">
+        <div class="slab">
+          <div class="face"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000004/1-techo-roca-mar.jpg" alt="Techo de roca sobre el mar" width="1600" height="1156" draggable="false"><i class="grade"></i><i class="sheen"></i></div>
+        </div>
+      </div>
+
+      <a class="cardx cardx--shoe" href="/pies-de-gato/la-sportiva-skwama" draggable="false" data-label="La Sportiva Skwama">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg" alt="" width="550" height="550" draggable="false">
+            <div class="cap"><span class="kind" data-t="kShoe">Pies de gato</span><strong>La Sportiva Skwama</strong><small>145–170 €</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--strong" href="/rocodromos/la-paret-de-gracia" draggable="false" data-label="La Paret de Gràcia">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000008/1-escalador-desde-abajo.jpg" alt="" width="1600" height="2400" draggable="false">
+            <div class="cap"><span class="kind" data-t="kGym">Rocódromo</span><strong>La Paret de Gràcia</strong><small data-t="gymNote">Gràcia · 69 €/mes · hasta 15 m</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--strong" href="/blog/como-elegir-pies-de-gato" draggable="false" data-label="Cómo elegir pies de gato según tu nivel y estilo">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg" alt="" width="1600" height="1067" draggable="false">
+            <div class="cap"><span class="kind" data-t="kArticle">Artículo</span><strong data-t="art2">Cómo elegir pies de gato según tu nivel y estilo</strong></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="rope" id="rope">
+    <i class="rope-cord"></i>
+    <a class="rope-end" href="#paths" id="rope-link" aria-label="Ir a la sección siguiente">
+      <svg viewBox="0 0 44 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path stroke="currentColor" stroke-width="3.6" d="M18 6h7c9 0 14 7 13 15l-3 28c-1 6-6 10-12 10h-3c-6 0-11-5-11-11V15c0-5 4-9 9-9Z"/>
+        <path stroke="#8f5013" stroke-width="3.6" d="m38 21-3 28"/>
+        <path fill="currentColor" stroke="currentColor" stroke-width="1" d="m34.6 33 4.6.5-1.2 11.6-4.6-.5z"/>
+      </svg>
+    </a>
+  </div>
+  <p class="sr" id="live" aria-live="polite"></p>
+</section>
+
+<section class="next" id="paths" aria-labelledby="next-title">
+  <h2 id="next-title" data-t="nextTitle">¿Por dónde empiezas?</h2>
+  <ul>
+    <li><a href="#" data-t="next1">Qué rocódromo me conviene si estoy empezando</a></li>
+    <li><a href="#" data-t="next2">Bono o cuota mensual: qué conviene</a></li>
+    <li><a href="#" data-t="next3">Cómo elegir tus primeros pies de gato</a></li>
+  </ul>
+</section>
+<section class="next" id="s0" data-spy="0" aria-labelledby="s0-t">
+  <h2 id="s0-t" data-t="mGyms">Rocódromos</h2>
+  <ul><li><a href="#">Via Sants · 52 €/mes</a></li><li><a href="#">Presa Badalona · 55 €/mes</a></li><li><a href="#">Magnesi Poblenou · 62 €/mes</a></li><li><a href="#">La Paret de Gràcia · 69 €/mes</a></li><li><a href="#">Altura Cornellà · 58 €/mes</a></li></ul>
+</section>
+<section class="next" id="s1" data-spy="1" aria-labelledby="s1-t">
+  <h2 id="s1-t" data-t="mShoes">Pies de gato</h2>
+  <ul><li><a href="#">Simond Rock+ · 40–55 €</a></li><li><a href="#">Evolv Defy · 75–90 €</a></li><li><a href="#">La Sportiva Tarantulace · 80–95 €</a></li><li><a href="#">La Sportiva Skwama · 145–170 €</a></li><li><a href="#">La Sportiva Solution · 150–175 €</a></li></ul>
+</section>
+<section class="next" id="s2" data-spy="2" aria-labelledby="s2-t">
+  <h2 id="s2-t" data-t="mResole">Resolar</h2>
+  <ul><li><a href="#">Resoles Montjuïc · 34 € el par</a></li><li><a href="#">Taller Goma Fina · 38 € el par</a></li><li><a href="#">Peu de Gat Repair · 42 € el par</a></li></ul>
+</section>
+<section class="next" id="s3" data-spy="3" aria-labelledby="s3-t">
+  <h2 id="s3-t" data-t="mBlog">Blog</h2>
+  <ul><li><a href="#">Cómo elegir pies de gato según tu nivel y estilo</a></li><li><a href="#">Rocódromos para ir solo y encontrar compañero</a></li><li><a href="#">Cuánto cuesta realmente escalar en Barcelona al mes</a></li><li><a href="#">Mi primer resolado: errores que cometí y qué revisar</a></li></ul>
+</section>
+<section class="next" id="s4" data-spy="4" aria-labelledby="s4-t">
+  <h2 id="s4-t" data-t="mEvents">Agenda</h2>
+  <ul><li><a href="#">7 nov · Liga interna de bloque</a></li><li><a href="#">10 nov · Salida a Montserrat para principiantes</a></li><li><a href="#">16 nov · Competición abierta de dificultad</a></li><li><a href="#">21 nov · Clínic de entrenamiento en tabla</a></li></ul>
+</section>
+</main>
+
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menú">
+  <div class="menu-wall" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="menu-inner">
+    <div class="menu-head">
+      <a href="#" aria-label="ChalkGuide"><img src="../../../../public/brand/logo-white.svg" alt="chalkguide" width="140" height="26"></a>
+      <button type="button" class="burger" id="menu-close" aria-label="Cerrar el menú"><span class="burger-bars" aria-hidden="true"><i></i><i></i><i></i></span></button>
+    </div>
+    <nav class="menu-nav" id="menu-nav" aria-label="Navegación del menú móvil">
+      <div class="menu-rope" id="menu-rope" aria-hidden="true">
+        <i></i>
+        <svg viewBox="0 0 44 64" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="currentColor" stroke-width="3.8" d="M18 6h7c9 0 14 7 13 15l-3 28c-1 6-6 10-12 10h-3c-6 0-11-5-11-11V15c0-5 4-9 9-9Z"/><path stroke="#8f5013" stroke-width="3.8" d="m38 21-3 28"/></svg>
+      </div>
+      <ul class="menu-list">
+        <li class="menu-item" style="--i:0"><a class="menu-link" href="#"><b data-t="mGyms">Rocódromos</b><span data-t="mGymsD">Fichas con precios y mi reseña</span></a></li>
+        <li class="menu-item" style="--i:1"><a class="menu-link" href="#"><b data-t="mShoes">Pies de gato</b><span data-t="mShoesD">Comparador lado a lado</span></a></li>
+        <li class="menu-item" style="--i:2"><a class="menu-link" href="#"><b data-t="mResole">Resolar</b><span data-t="mResoleD">Precio por par, plazo y calidad</span></a></li>
+        <li class="menu-item" style="--i:3"><a class="menu-link" href="#"><b data-t="mBlog">Blog</b><span data-t="mBlogD">Lo que he aprendido escalando</span></a></li>
+        <li class="menu-item" style="--i:4"><a class="menu-link" href="#"><b data-t="mEvents">Agenda</b><span data-t="mEventsD">Qué pasa este mes en los rocódromos</span></a></li>
+        <li class="menu-item" style="--i:5"><a class="menu-link" href="#"><b data-t="mAbout">Sobre mí</b><span data-t="mAboutD">Quién escribe esto y por qué</span></a></li>
+      </ul>
+    </nav>
+    <div class="menu-foot">
+      <a class="link" href="#newsletter" id="menu-news" data-t="mNews">Newsletter</a>
+      <div class="lang" role="group" aria-label="Idioma">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const stickyBar = document.createElement('div')
+  stickyBar.className = 'nav-bar'
+  const headNav = document.querySelector('.site-head .site-nav')
+  // Una sola pieza: el isotipo original y Newsletter, sobre el mismo naranja del icono
+  const dock = document.createElement('div')
+  dock.className = 'dock'
+  dock.innerHTML = '<a class="dock-iso" href="#" aria-label="ChalkGuide"><img src="../../../../public/brand/iso-chalk-white.svg" alt="" width="40" height="40"></a><a class="dock-news" href="#newsletter" data-t="mNews">Newsletter</a>'
+  const barNav = headNav.cloneNode(true)
+  barNav.setAttribute('aria-label', 'Navegación principal compacta')
+  const barLang = document.querySelector('.site-head .lang').cloneNode(true)
+  const barBurger = document.getElementById('menu-open').cloneNode(true)
+  barBurger.removeAttribute('id')
+  stickyBar.append(document.createElement('span'), barNav, barLang, barBurger)
+  document.body.append(stickyBar, dock)
+  const params = new URLSearchParams(location.search)
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  /* ---------- Textos ---------- */
+  const en = {
+    nt0: '€52 to €69 a month', ns0: '5 gyms. Via Sants is the cheapest',
+    nt1: 'For beginners, from €40', ns1: '15 models to compare side by side',
+    nt2: '€34 to €42 a pair', ns2: '3 workshops. Between 5 and 15 days',
+    nt3: 'How to choose climbing shoes for your level and style', ns3: 'Latest article',
+    nt4: 'Bouldering league · round 2', ns4: 'Saturday, 8 pm',
+    h1a: 'Climbing in', h1b: 'Barcelona',
+    kReview: 'Review', kGym: 'Climbing gym', kArticle: 'Article', kEvent: 'Events', kShoe: 'Climbing shoes',
+    shoeNote: '“Snug but painless over two-hour sessions.”',
+    gymNote: 'Gràcia · €69 a month · up to 15 m',
+    gymNote2: 'Poblenou · €62 a month · bouldering',
+    art2: 'How to choose climbing shoes for your level and style',
+    evt1: 'Bouldering league · round 2', evtNote: 'Saturday, 8 pm', month: 'nov',
+    mGyms: 'Climbing gyms', mGymsD: 'Profiles with prices and my review',
+    mShoes: 'Climbing shoes', mShoesD: 'Side-by-side comparison',
+    mResole: 'Resoling', mResoleD: 'Price per pair, turnaround and quality',
+    mBlog: 'Blog', mBlogD: 'What climbing has taught me',
+    mEvents: 'Events', mEventsD: 'What is on at the gyms this month',
+    mAbout: 'About', mAboutD: 'Who writes this and why',
+    mNews: 'Newsletter',
+    nextTitle: 'Where do you start?', next1: 'Which gym suits me if I am just starting out',
+    next2: 'Pass or monthly membership: which makes sense', next3: 'How to choose your first climbing shoes',
+  }
+  const nodes = [...document.querySelectorAll('[data-t]')]
+  const es = Object.fromEntries(nodes.map((n) => [n.dataset.t, n.textContent]))
+  const ui = { es: { region: 'Destacados', rope: 'Ir a la sección siguiente', open: 'Abrir el menú', close: 'Cerrar el menú', menu: 'Menú' }, en: { region: 'Highlights', rope: 'Go to the next section', open: 'Open the menu', close: 'Close the menu', menu: 'Menu' } }
+
+  /* ---------- Carrusel: interior de un cilindro. Solo se mueve si lo mueve el usuario ---------- */
+  const ring = document.getElementById('ring')
+  const scene = document.getElementById('scene')
+  const cards = [...scene.children]
+  const n = cards.length
+  // Grosor: copias redondeadas hacia atrás, así el canto sigue la forma de la tarjeta
+  document.querySelectorAll('.slab').forEach((slab) => {
+    for (let i = 18; i >= 1; i--) {
+      const ply = document.createElement('i')
+      ply.className = 'ply'
+      ply.style.setProperty('--i', i)
+      slab.prepend(ply)
+    }
+  })
+  const hero = document.getElementById('hero')
+  const rope = document.getElementById('rope')
+  const live = document.getElementById('live')
+  let pos = 0, target = 0, step = .3, radius = 1000, cardW = 280, raf = 0, lang = 'es'
+
+  function wrap(v) { return ((v % n) + n) % n }
+  function offset(i) { let d = wrap(i - pos); if (d > n / 2) d -= n; return d }
+
+  function measure() {
+    const W = ring.clientWidth, H = ring.clientHeight
+    const phone = W < 900
+    cardW = Math.round(phone ? Math.min(W * (W < 600 ? .74 : .46), H * .94 * .76) : Math.min(W * .21, H * .96 * .74))
+    const h = cardW / (phone ? .76 : .74)
+    const gap = cardW * (phone ? .1 : .09)
+    radius = Math.max(W * (phone ? 1.05 : .85), cardW * 2.4)
+    step = (cardW + gap) / radius
+    ring.style.setProperty('--w', cardW + 'px')
+    ring.style.setProperty('--h', Math.round(h) + 'px')
+    ring.style.setProperty('--p', Math.round(radius * (phone ? 1.05 : .95)) + 'px')
+    const heroBox = hero.getBoundingClientRect(), ringBox = ring.getBoundingClientRect()
+    rope.style.setProperty('--rest', Math.round(heroBox.bottom - (ringBox.top + H / 2 + h / 2) + 28) + 'px')
+    maxDrop = phone ? 30 : 92
+    pay()
+    render()
+  }
+
+  let tiltCard = null, tiltXY = [0, 0], vel = 0
+  // La cuerda se suelta con el scroll y entra en la sección siguiente
+  let maxDrop = 92
+  function pay() {
+    const y = scrollY
+    rope.style.setProperty('--drop', Math.min(y * .35, maxDrop).toFixed(1) + 'px')
+  }
+  addEventListener('scroll', pay, { passive: true })
+
+  function render() {
+    cards.forEach((card, i) => {
+      const d = offset(i)
+      const a = d * step
+      if (Math.abs(a) > 1.05) { card.style.visibility = 'hidden'; return }
+      card.style.visibility = 'visible'
+      card.style.transform = `translateZ(${radius}px) rotateY(${-a}rad) translateZ(${-radius}px)`
+      card.style.setProperty('--cap', Math.max(0, Math.min(1, 2.2 - Math.abs(d))).toFixed(2))
+      if (!reduced) {
+        const kick = Math.max(-8, Math.min(8, vel * 5))
+        const tilt = card === tiltCard ? tiltXY : [0, 0]
+        const ry = 9 - d * 7 + kick + tilt[0] * 8
+        card.style.setProperty('--ry', ry.toFixed(2) + 'deg')
+        card.style.setProperty('--rx', (-4 - tilt[1] * 6).toFixed(2) + 'deg')
+        card.style.setProperty('--par', (-d * 6).toFixed(2) + '%')
+        card.style.setProperty('--sheen', (ry * 2.6 - 16).toFixed(1) + '%')
+      }
+    })
+  }
+
+  function tickLoop() {
+    const diff = target - pos
+    if (Math.abs(diff) < .001) { pos = target; render(); raf = 0; hero.classList.remove('is-moving'); return }
+    pos += diff * (reduced ? 1 : .11)
+    render()
+    raf = requestAnimationFrame(tickLoop)
+  }
+  function moveTo(value, announce = true) {
+    target = value
+    hero.classList.add('is-moving')
+    if (!raf) raf = requestAnimationFrame(tickLoop)
+    if (announce) live.textContent = cards[wrap(Math.round(value))].dataset.label
+  }
+  // Ir a la tarjeta i por el camino corto
+  function goTo(i) {
+    let d = wrap(i - target); if (d > n / 2) d -= n
+    moveTo(Math.round(target) + d)
+  }
+
+  cards.forEach((card, i) => {
+    card.addEventListener('focus', () => { if (card.matches(':focus-visible')) goTo(i) })
+    // Una tarjeta lateral primero se centra; la central ya navega
+    card.addEventListener('click', (e) => {
+      if (moved) { e.preventDefault(); return }
+      if (Math.abs(offset(i)) > .5) { e.preventDefault(); goTo(i) }
+    })
+    if (!reduced) {
+      card.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse' || dragging) return
+        const box = card.getBoundingClientRect()
+        tiltCard = card
+        tiltXY = [(e.clientX - box.left) / box.width * 2 - 1, (e.clientY - box.top) / box.height * 2 - 1]
+        render()
+      })
+      card.addEventListener('pointerleave', () => { tiltCard = null; render() })
+    }
+  })
+
+  // Arrastre con ratón o dedo, con inercia y parada en una tarjeta
+  let dragging = false, moved = false, startX = 0, startPos = 0, lastX = 0, lastT = 0
+  ring.addEventListener('pointerdown', (e) => {
+    if (e.button) return
+    dragging = true; moved = false
+    startX = lastX = e.clientX; startPos = pos; lastT = e.timeStamp; vel = 0
+    if (raf) { cancelAnimationFrame(raf); raf = 0 }
+  })
+  addEventListener('pointermove', (e) => {
+    if (!dragging) return
+    const dx = e.clientX - startX
+    if (!moved && Math.abs(dx) > 6) { moved = true; ring.classList.add('is-drag'); hero.classList.add('is-moving') }
+    if (!moved) return
+    const dt = Math.max(1, e.timeStamp - lastT)
+    vel = (e.clientX - lastX) / dt; lastX = e.clientX; lastT = e.timeStamp
+    pos = startPos - dx / (cardW * 1.16)
+    target = pos
+    render()
+  })
+  function endDrag() {
+    if (!dragging) return
+    dragging = false
+    ring.classList.remove('is-drag')
+    const throwBy = vel * 180 / (cardW * 1.16)
+    vel = 0
+    if (moved) moveTo(Math.round(pos - throwBy))
+    else moveTo(Math.round(pos), false)
+    setTimeout(() => { moved = false }, 60)
+  }
+  addEventListener('pointerup', endDrag)
+  addEventListener('pointercancel', endDrag)
+
+  // Trackpad horizontal; el scroll vertical de la página no se toca
+  let wheelTimer = 0
+  ring.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+    e.preventDefault()
+    pos += e.deltaX / (cardW * 1.16); target = pos; render()
+    clearTimeout(wheelTimer)
+    wheelTimer = setTimeout(() => moveTo(Math.round(pos)), 120)
+  }, { passive: false })
+
+  hero.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') moveTo(Math.round(target) + 1)
+    if (e.key === 'ArrowLeft') moveTo(Math.round(target) - 1)
+  })
+  addEventListener('resize', measure)
+
+  /* ---------- Idioma ---------- */
+  function setLang(value) {
+    lang = value
+    document.documentElement.lang = value === 'en' ? 'en-GB' : 'es'
+    nodes.forEach((node) => { node.textContent = (value === 'en' ? en : es)[node.dataset.t] ?? es[node.dataset.t] })
+    document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === value)))
+    ring.setAttribute('aria-label', ui[value].region)
+    document.getElementById('rope-link').setAttribute('aria-label', ui[value].rope)
+    document.getElementById('menu-open').setAttribute('aria-label', ui[value].open)
+    document.getElementById('menu-close').setAttribute('aria-label', ui[value].close)
+    document.getElementById('menu').setAttribute('aria-label', ui[value].menu)
+  }
+  document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.lang)))
+
+  /* ---------- Menú móvil ---------- */
+  const menu = document.getElementById('menu')
+  const menuOpenBtn = document.getElementById('menu-open')
+  const menuCloseBtn = document.getElementById('menu-close')
+  const menuRope = document.getElementById('menu-rope')
+  const menuNav = document.getElementById('menu-nav')
+  const menuLinks = [...menu.querySelectorAll('.menu-link')]
+  const mainEl = document.querySelector('main')
+  // El mosquetón baja hasta el enlace; la sección actual es su sitio de partida
+  function clipTo(link) {
+    const nav = menuNav.getBoundingClientRect()
+    const box = link.getBoundingClientRect()
+    menuRope.style.setProperty('--y', Math.round(box.top - nav.top + menuNav.scrollTop + box.height / 2 + 22) + 'px')
+    menuLinks.forEach((l) => l.classList.toggle('is-clipped', l === link))
+  }
+  function homeLink() { return menu.querySelector('.menu-link[aria-current="page"]') || menuLinks[0] }
+  function openMenu() {
+    menu.classList.add('is-open')
+    document.documentElement.classList.add('menu-lock')
+    mainEl.inert = true
+    menuOpenBtn.setAttribute('aria-expanded', 'true')
+    clipTo(homeLink())
+    menuCloseBtn.focus({ preventScroll: true })
+  }
+  function closeMenu() {
+    if (!menu.classList.contains('is-open')) return
+    menu.classList.remove('is-open')
+    document.documentElement.classList.remove('menu-lock')
+    mainEl.inert = false
+    menuOpenBtn.setAttribute('aria-expanded', 'false')
+    menuOpenBtn.focus({ preventScroll: true })
+  }
+  menuOpenBtn.addEventListener('click', openMenu)
+  menuCloseBtn.addEventListener('click', closeMenu)
+  menuLinks.forEach((link) => {
+    link.addEventListener('pointerenter', () => clipTo(link))
+    link.addEventListener('focus', () => clipTo(link))
+    link.addEventListener('click', (e) => { e.preventDefault(); clipTo(link); setTimeout(closeMenu, 420) })
+  })
+  document.getElementById('menu-news').addEventListener('click', () => closeMenu())
+  menuNav.addEventListener('pointerleave', () => { if (menu.classList.contains('is-open')) clipTo(homeLink()) })
+  addEventListener('resize', () => { if (menu.classList.contains('is-open')) clipTo(homeLink()) })
+  addEventListener('keydown', (e) => {
+    if (!menu.classList.contains('is-open')) return
+    if (e.key === 'Escape') { closeMenu(); return }
+    if (e.key !== 'Tab') return
+    const focusable = [...menu.querySelectorAll('a[href], button')]
+    const first = focusable[0], last = focusable[focusable.length - 1]
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+  })
+
+  /* ---------- Menú de escritorio: la tarjeta sigue al ratón con inercia; se abre sin retardo perceptible ---------- */
+  const canHover = matchMedia('(hover: hover)').matches
+  function initNav(nav, interactive) {
+    const links = [...nav.querySelectorAll(':scope > a')]
+    const ind = nav.querySelector('.nav-ind')
+    const card = nav.querySelector('.nav-card')
+    const faces = [...nav.querySelectorAll('.nf')]
+    let x = 0, vx = 0, tx = 0, ix = 0, iw = 40, vix = 0, viw = 0, tix = 0, tiw = 40, frame = 0, leaveTimer = 0, cardTimer = 0, active = null, spy = null
+    const cur = params.get('page')
+    if (cur !== null && links[cur]) links[cur].setAttribute('aria-current', 'page')
+    const current = () => nav.querySelector(':scope > a[aria-current="page"]')
+    const centre = (a) => a.offsetLeft + a.offsetWidth / 2
+    function draw() {
+      const box = nav.getBoundingClientRect()
+      const min = 16 - box.left, max = innerWidth - box.left - 16 - 292
+      const cx = Math.max(min, Math.min(max, x - 146))
+      const lean = reduced ? 0 : Math.max(-4, Math.min(4, -vx * .18))
+      card.style.transform = `translateX(${cx.toFixed(1)}px) rotate(${lean.toFixed(2)}deg)`
+      if (!reduced) card.style.setProperty('--ry', Math.max(-14, Math.min(14, vx * .55)).toFixed(1) + 'deg')
+      ind.style.transform = `translateX(${ix.toFixed(1)}px) scaleX(${(iw / 100).toFixed(3)})`
+    }
+    function step() {
+      vx = (vx + (tx - x) * .1) * .74; x += vx
+      vix = (vix + (tix - ix) * .16) * .68; ix += vix
+      viw = (viw + (tiw - iw) * .16) * .68; iw += viw
+      draw()
+      if (Math.abs(tx - x) + Math.abs(vx) + Math.abs(tix - ix) + Math.abs(vix) + Math.abs(tiw - iw) < .06) { x = tx; ix = tix; iw = tiw; vx = vix = viw = 0; draw(); frame = 0; return }
+      frame = requestAnimationFrame(step)
+    }
+    function go() { if (reduced) { x = tx; ix = tix; iw = tiw; draw(); return } if (!frame) frame = requestAnimationFrame(step) }
+    function rest() {
+      const c = current() || spy
+      links.forEach((l) => l.classList.remove('is-near'))
+      card.classList.remove('is-on')
+      ind.classList.toggle('is-on', !!c)
+      if (c) { tix = c.offsetLeft; tiw = c.offsetWidth }
+      active = null
+      go()
+    }
+    function near(a) {
+      clearTimeout(leaveTimer); clearTimeout(cardTimer)
+      active = a
+      links.forEach((l) => l.classList.toggle('is-near', l === a))
+      ind.classList.add('is-on')
+      tix = a.offsetLeft; tiw = a.offsetWidth; tx = centre(a)
+      const i = a.dataset.card
+      if (!i) { card.classList.remove('is-on'); go(); return }
+      const open = card.classList.contains('is-on')
+      const show = () => { faces.forEach((f) => f.classList.toggle('is-on', f.dataset.card === i)); card.classList.add('is-on') }
+      if (open) { show(); go(); return }
+      x = tx; vx = 0; draw(); go()
+      cardTimer = setTimeout(show, 90)
+    }
+    function away() { clearTimeout(cardTimer); clearTimeout(leaveTimer); leaveTimer = setTimeout(rest, 150) }
+    if (interactive && canHover) {
+      links.forEach((a) => {
+        a.addEventListener('pointerenter', () => near(a))
+        a.addEventListener('focus', () => near(a))
+        a.addEventListener('blur', away)
+      })
+      nav.addEventListener('pointerleave', away)
+      card.addEventListener('pointerenter', () => clearTimeout(leaveTimer))
+      card.addEventListener('pointerleave', away)
+      addEventListener('keydown', (e) => { if (e.key === 'Escape' && active) rest() })
+    }
+    addEventListener('resize', rest)
+    const c0 = current()
+    if (c0) { ix = tix = c0.offsetLeft; iw = tiw = c0.offsetWidth }
+    ind.classList.toggle('is-on', !!c0)
+    draw()
+    document.fonts?.ready.then(rest)
+    return {
+      setSpy(i) {
+        const next = i === null ? null : links[i]
+        if (next === spy) return
+        links.forEach((l) => l.classList.toggle('is-spy', l === next))
+        spy = next
+        if (!active) rest()
+      },
+    }
+  }
+  initNav(headNav, true)
+  const barApi = initNav(barNav, true)
+  const heroEl = document.getElementById('hero')
+  const spySections = [...document.querySelectorAll('[data-spy]')]
+  let lastY = scrollY
+  function onScroll() {
+    const y = scrollY
+    const dy = y - lastY
+    lastY = y
+    const busy = stickyBar.matches(':hover, :focus-within')
+    dock.classList.toggle('is-on', y > 76)
+    if (y <= 76) stickyBar.classList.remove('is-on')
+    else if (dy < -3) stickyBar.classList.add('is-on')
+    else if (dy > 3 && !busy) stickyBar.classList.remove('is-on')
+    // La sección en pantalla se marca en el menú
+    const line = innerHeight * .4
+    const inView = spySections.find((sec) => { const r = sec.getBoundingClientRect(); return r.top <= line && r.bottom > line })
+    barApi.setSpy(inView ? Number(inView.dataset.spy) : null)
+  }
+  addEventListener('scroll', onScroll, { passive: true })
+  stickyBar.addEventListener('focusin', () => { if (scrollY > 76) stickyBar.classList.add('is-on') })
+  barBurger.addEventListener('click', openMenu)
+  onScroll()
+
+  /* ---------- Arranque ---------- */
+  if (params.get('lang') === 'en') setLang('en')
+  const start = Number(params.get('at') || 0)
+  pos = target = start
+  measure()
+  // Las fuentes cambian el alto del título y, con él, el de la escena
+  document.fonts?.ready.then(measure)
+
+  /* ---------- Entrada: grados hasta 7b, barras del logo arriba y la pared ya girando ---------- */
+  const root = document.documentElement
+  const intro = document.getElementById('intro')
+  if (root.classList.contains('has-intro')) {
+    const grades = ['4a', '5a', '5c', '6a', '6b', '6c', '7a', '7b']
+    const count = document.getElementById('count')
+    let g = 0, finished = false
+    const timers = []
+    const later = (fn, ms) => timers.push(setTimeout(fn, ms))
+    const counter = setInterval(() => { if (g < grades.length - 1) count.textContent = grades[++g] }, 80)
+    function reveal() {
+      root.classList.add('is-in')
+      pos = start - 1.7; target = start
+      if (!raf) raf = requestAnimationFrame(tickLoop)
+    }
+    function finish() {
+      if (finished) return
+      finished = true
+      clearInterval(counter); timers.forEach(clearTimeout)
+      intro.classList.add('is-up', 'is-open')
+      if (!root.classList.contains('is-in')) reveal()
+      setTimeout(() => intro.remove(), 700)
+    }
+    later(() => intro.classList.add('is-up'), 660)
+    later(() => { intro.classList.add('is-open'); reveal() }, 1180)
+    later(finish, 1200)
+    intro.addEventListener('pointerdown', finish)
+    addEventListener('keydown', finish, { once: true })
+  }
+</script>
+</body>
+</html>

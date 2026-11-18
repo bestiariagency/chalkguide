@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel · Dirección B · Taller · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'], mono: ['JetBrains Mono','ui-monospace','monospace'], hand:['Caveat','cursive'] },
+  colors: {
+    paper:'#F4F1EA', board:'#FBF9F5', elevated:'#EBE6DC', line:'#DCD5C8', 'line-strong':'#C2B9A9', control:'#827A6D',
+    ink:'#1C1A17', prose:'#34302A', meta:'#5E584E', muted:'#6B6559',
+    accent:'#9A4A16', 'accent-fill':'#E8923A', 'accent-hover':'#C4721F', 'accent-muted':'#F7E4D0', 'on-accent':'#1a0a00', chalk:'#D2702A',
+    ok:'#1A6E4E', 'ok-muted':'#E3F0E8', danger:'#B02A25', 'danger-muted':'#F8E1DE',
+    slate:'#0f0f0f', 'slate-board':'#1a1a1a', 'slate-el':'#242424', 'slate-line':'#2a2a2a', 'slate-fg':'#F0EDE8', 'slate-meta':'#A19D94', 'slate-accent':'#E8923A'
+  },
+  fontSize: { label:['11px',{lineHeight:'14px',letterSpacing:'.14em'}], xs:['12px','16px'], sm:['14px','20px'], base:['15px','24px'], lg:['17px','26px'], xl:['20px','28px'], '2xl':['26px','32px'], '3xl':['32px','38px'] }
+}}}
+</script>
+<style>
+  body{font-feature-settings:"cv11"}
+  .num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+  :focus-visible{outline:none;box-shadow:0 0 0 2px #F4F1EA,0 0 0 4px #9A4A16;border-radius:8px}
+  .chrome :focus-visible{box-shadow:0 0 0 2px #0f0f0f,0 0 0 4px #E8923A}
+  .t{transition:background-color .15s cubic-bezier(.4,0,.2,1),color .15s,border-color .15s,box-shadow .15s,transform .2s cubic-bezier(.2,.8,.2,1),opacity .15s}
+  .board-tex{background-color:#0f0f0f;background-image:linear-gradient(rgb(255 255 255/.025) 1px,transparent 1px),linear-gradient(90deg,rgb(255 255 255/.025) 1px,transparent 1px);background-size:24px 24px}
+  .paper-grid{background-image:linear-gradient(rgb(28 26 23/.035) 1px,transparent 1px),linear-gradient(90deg,rgb(28 26 23/.035) 1px,transparent 1px);background-size:24px 24px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:500;white-space:nowrap}
+  .btn-primary{background:#E8923A;color:#1a0a00;background-image:linear-gradient(#C4721F,#C4721F);background-size:0 100%;background-repeat:no-repeat;transition:background-size .3s cubic-bezier(.2,.8,.2,1)}
+  .btn-primary:hover{background-size:100% 100%}
+  .btn-ghost{border:1px solid #827A6D;color:#1C1A17;background:transparent}
+  .btn-ghost:hover{background:#EBE6DC}
+  .chrome .btn-ghost{border-color:#75716A;color:#F0EDE8}
+  .chrome .btn-ghost:hover{background:#242424}
+  .btn-quiet{color:#5E584E} .btn-quiet:hover{background:#EBE6DC;color:#1C1A17}
+  .icon-btn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:8px;color:#5E584E}
+  .icon-btn:hover{background:#EBE6DC;color:#1C1A17}
+  .chrome .icon-btn{color:#A19D94} .chrome .icon-btn:hover{background:#242424;color:#F0EDE8}
+  .field{height:40px;border:1px solid #827A6D;background:#FBF9F5;border-radius:8px;padding:0 12px;font-size:14px;color:#1C1A17;width:100%}
+  .field::placeholder{color:#6B6559}
+  .field:focus{outline:none;border-color:#9A4A16;box-shadow:0 0 0 3px rgb(232 146 58/.25)}
+  textarea.field{height:auto;padding:10px 12px;line-height:22px}
+  .lbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5E584E;display:block;margin-bottom:8px}
+  .badge{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:4px;font-size:12px;font-weight:500;white-space:nowrap}
+  .b-draft{background:#EBE6DC;color:#5E584E} .b-sched{background:#F7E4D0;color:#9A4A16} .b-pub{background:#E3F0E8;color:#1A6E4E}
+  .chipf{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:999px;border:1px solid #827A6D;font-size:14px;color:#1C1A17;white-space:nowrap}
+  .chipf:hover{background:#EBE6DC}
+  .chipf[aria-pressed="true"]{background:#F7E4D0;border-color:#9A4A16;color:#9A4A16;font-weight:500}
+  .seg{display:inline-flex;padding:3px;border-radius:10px;background:#EBE6DC}
+  .seg button{height:34px;padding:0 14px;border-radius:7px;font-size:14px;color:#5E584E;white-space:nowrap}
+  .seg button[aria-selected="true"]{background:#FBF9F5;color:#1C1A17;font-weight:500;box-shadow:0 1px 2px rgb(28 26 23/.12)}
+  .navb{display:flex;align-items:center;gap:12px;height:40px;padding:0 12px;border-radius:8px;font-size:14px;color:#A19D94;position:relative}
+  .navb:hover{background:#1a1a1a;color:#F0EDE8}
+  .navb[aria-current="page"]{background:#242424;color:#F0EDE8;font-weight:500}
+  .navb[aria-current="page"]::before{content:"";position:absolute;left:-12px;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:#E8923A}
+  .cb{appearance:none;width:18px;height:18px;border:1px solid #827A6D;border-radius:4px;background:#FBF9F5;display:inline-grid;place-items:center;flex:none;cursor:pointer}
+  .cb:checked,.cb:indeterminate{background:#E8923A;border-color:#E8923A}
+  .cb:checked::after{content:"";width:10px;height:5px;border:2px solid #1a0a00;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+  .cb:indeterminate::after{content:"";width:9px;height:2px;background:#1a0a00}
+  .switch{position:relative;width:36px;height:20px;border-radius:99px;background:#827A6D;flex:none}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:99px;background:#FBF9F5;transition:transform .2s}
+  .switch[aria-checked="true"]{background:#E8923A} .switch[aria-checked="true"]::after{transform:translateX(16px)}
+  .photo{background-size:cover;background-position:center;position:relative}
+  .photo::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 .5px rgb(0 0 0/.12)}
+  .card{background:#FBF9F5;border:.5px solid #C2B9A9;border-radius:12px}
+  .rowc{border-radius:10px} .rowc:hover{background:#EBE6DC}
+  .rowc[aria-selected="true"]{background:#F7E4D0}
+  .tabu{height:44px;display:inline-flex;align-items:center;gap:6px;font-size:14px;color:#5E584E;border-bottom:2px solid transparent;margin-bottom:-.5px}
+  .tabu:hover{color:#1C1A17}
+  .tabu[aria-selected="true"]{color:#1C1A17;border-color:#E8923A;font-weight:500}
+  [data-screen]{display:none} [data-screen].on{display:block}
+  .prose-ed h2{font-size:24px;line-height:30px;font-weight:500;letter-spacing:-.02em;margin:32px 0 10px;color:#1C1A17}
+  .prose-ed p{font-size:18px;line-height:30px;margin:0 0 16px;color:#34302A}
+  .prose-ed ul{list-style:disc;padding-left:22px;margin:0 0 16px} .prose-ed li{font-size:18px;line-height:30px;color:#34302A}
+  .prose-ed blockquote{font-family:'Caveat',cursive;font-size:28px;line-height:32px;color:#9A4A16;margin:24px 0;padding-left:16px;border-left:2px solid #D2702A}
+  .prose-ed a{color:#9A4A16;text-decoration:underline;text-underline-offset:3px}
+  .prose-ed:focus{outline:none}
+  .sheet{box-shadow:0 1px 0 rgb(28 26 23/.06),0 18px 40px -24px rgb(28 26 23/.45)}
+  @media (prefers-reduced-motion:reduce){ *,*::after,*::before{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body class="bg-paper text-ink font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+
+<!-- ===== Barra del mockup ===== -->
+<div class="bg-[#3a3631] text-[#F4F1EA] text-xs">
+  <div class="px-3 md:px-4 py-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+    <a href="index.html" class="underline underline-offset-2 opacity-80 hover:opacity-100">← Índice del panel</a>
+    <span class="font-mono uppercase tracking-[.14em] text-[10px] opacity-80">Mockup · Dirección B · Taller</span>
+    <nav aria-label="Pantallas del mockup" class="flex gap-1">
+      <a href="#inicio" class="px-2 py-1 rounded hover:bg-white/10" data-demo="inicio">Inicio</a>
+      <a href="#articulos" class="px-2 py-1 rounded hover:bg-white/10" data-demo="articulos">Artículos</a>
+      <a href="#editor" class="px-2 py-1 rounded hover:bg-white/10" data-demo="editor">Editor</a>
+    </nav>
+  </div>
+</div>
+
+<div class="flex min-h-[calc(100vh-36px)]">
+  <!-- ===== Menú lateral: pizarra ===== -->
+  <div id="scrim" class="fixed inset-0 bg-[rgb(28_26_23/.45)] z-40 hidden" aria-hidden="true"></div>
+  <aside id="sidebar" aria-label="Menú del panel" class="chrome board-tex fixed lg:sticky top-0 z-50 h-screen lg:h-[calc(100vh-36px)] w-[280px] lg:w-64 -translate-x-full lg:translate-x-0 t flex flex-col flex-none text-slate-fg">
+    <div class="h-16 px-5 flex items-end pb-4 gap-3">
+      <img src="../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-5">
+      <span class="font-mono text-[10px] uppercase tracking-[.14em] text-slate-meta pb-[2px]">Panel</span>
+      <button id="closeNav" class="icon-btn ml-auto lg:hidden -mb-2" aria-label="Cerrar menú"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="px-4 pt-2 pb-3 space-y-2">
+      <a href="#editor" class="btn btn-primary t w-full"><i data-lucide="pencil-line" class="w-4 h-4"></i>Escribir artículo</a>
+      <button class="w-full h-10 px-3 rounded-lg border border-[#75716A] text-sm text-slate-meta hover:text-slate-fg flex items-center gap-2 t"><i data-lucide="search" class="w-4 h-4"></i>Buscar<span class="ml-auto font-mono text-[10px] border border-[#444440] rounded px-1">⌘K</span></button>
+    </div>
+    <nav class="flex-1 overflow-y-auto px-4 pb-4" aria-label="Secciones">
+      <a href="#inicio" data-nav="inicio" class="navb t"><i data-lucide="layout-grid" class="w-[18px] h-[18px]"></i>Inicio</a>
+      <p class="mt-5 mb-2 px-3 font-mono text-[10px] uppercase tracking-[.14em] text-slate-meta">Escribir</p>
+      <a href="#articulos" data-nav="articulos" class="navb t"><i data-lucide="notebook-pen" class="w-[18px] h-[18px]"></i>Artículos</a>
+      <a href="#" class="navb t"><i data-lucide="folders" class="w-[18px] h-[18px]"></i>Categorías</a>
+      <a href="#" class="navb t"><i data-lucide="file" class="w-[18px] h-[18px]"></i>Páginas</a>
+      <p class="mt-5 mb-2 px-3 font-mono text-[10px] uppercase tracking-[.14em] text-slate-meta">Guías</p>
+      <a href="#" class="navb t"><i data-lucide="mountain" class="w-[18px] h-[18px]"></i>Rocódromos</a>
+      <a href="#" class="navb t"><i data-lucide="wrench" class="w-[18px] h-[18px]"></i>Resoladores</a>
+      <a href="#" class="navb t"><i data-lucide="footprints" class="w-[18px] h-[18px]"></i>Pies de gato</a>
+      <a href="#" class="navb t"><i data-lucide="list-checks" class="w-[18px] h-[18px]"></i>Criterios de nota</a>
+      <p class="mt-5 mb-2 px-3 font-mono text-[10px] uppercase tracking-[.14em] text-slate-meta">Comunidad</p>
+      <a href="#" class="navb t"><i data-lucide="message-square-quote" class="w-[18px] h-[18px]"></i>Opiniones<span class="ml-auto num text-[11px] bg-slate-accent text-on-accent rounded px-1.5 leading-5"><span class="sr-only">, </span>7<span class="sr-only"> pendientes</span></span></a>
+      <a href="#" class="navb t"><i data-lucide="calendar-days" class="w-[18px] h-[18px]"></i>Agenda<span class="ml-auto num text-[11px] bg-slate-accent text-on-accent rounded px-1.5 leading-5"><span class="sr-only">, </span>4<span class="sr-only"> por aprobar</span></span></a>
+      <a href="#" class="navb t"><i data-lucide="mail" class="w-[18px] h-[18px]"></i>Suscriptores</a>
+      <p class="mt-5 mb-2 px-3 font-mono text-[10px] uppercase tracking-[.14em] text-slate-meta">Biblioteca y datos</p>
+      <a href="#" class="navb t"><i data-lucide="images" class="w-[18px] h-[18px]"></i>Medios</a>
+      <a href="#" class="navb t"><i data-lucide="chart-column" class="w-[18px] h-[18px]"></i>Estadísticas</a>
+      <a href="#" class="navb t"><i data-lucide="download" class="w-[18px] h-[18px]"></i>Exportar</a>
+      <a href="#" class="navb t"><i data-lucide="history" class="w-[18px] h-[18px]"></i>Actividad</a>
+    </nav>
+    <div class="px-4 py-3 border-t border-slate-line space-y-1">
+      <a href="#" class="navb t"><i data-lucide="settings-2" class="w-[18px] h-[18px]"></i>Ajustes</a>
+      <div class="flex items-center gap-3 px-3 h-12">
+        <span class="w-8 h-8 rounded-full bg-slate-el grid place-items-center text-sm" aria-hidden="true">X</span>
+        <span class="leading-4"><span class="block text-sm">Xavi</span><a href="#" class="text-xs text-slate-meta hover:text-slate-fg">Ver sitio ↗</a></span>
+        <button class="icon-btn ml-auto" aria-label="Cerrar sesión"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="flex-1 min-w-0 flex flex-col">
+    <!-- barra superior < lg -->
+    <div class="chrome lg:hidden h-16 px-2 flex items-center gap-1 bg-slate sticky top-0 z-30">
+      <button id="openNav" class="icon-btn !w-11 !h-11" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      <img src="../../../public/brand/logo-white.svg" alt="ChalkGuide" class="h-[18px] ml-1">
+      <span class="font-mono text-[10px] uppercase tracking-[.14em] text-slate-meta ml-2 mt-1">Panel</span>
+      <button class="icon-btn !w-11 !h-11 ml-auto" aria-label="Buscar"><i data-lucide="search" class="w-5 h-5"></i></button>
+    </div>
+
+    <main id="contenido" class="flex-1 min-w-0">
+
+<!-- ================= INICIO ================= -->
+<section data-screen="inicio" aria-labelledby="h-inicio" class="paper-grid min-h-full">
+  <div class="px-4 md:px-8 py-8 md:py-10 max-w-[1240px]">
+    <div class="flex flex-wrap items-end gap-4">
+      <div>
+        <p class="font-mono text-label uppercase text-meta">Viernes 9 de octubre</p>
+        <h1 id="h-inicio" class="text-2xl md:text-3xl font-medium tracking-tight mt-2">Buenos días, Xavi</h1>
+        <p class="font-hand text-[26px] leading-7 text-accent mt-1" aria-hidden="true">Hoy toca moderar y cerrar el de lluvia.</p>
+      </div>
+      <div class="ml-auto flex gap-2">
+        <a href="#" class="btn btn-ghost t hidden sm:inline-flex"><i data-lucide="upload" class="w-4 h-4"></i>Subir fotos</a>
+        <a href="#editor" class="btn btn-primary t"><i data-lucide="pencil-line" class="w-4 h-4"></i>Escribir</a>
+      </div>
+    </div>
+
+    <!-- tareas grandes -->
+    <h2 class="sr-only">Pendiente</h2>
+    <div class="mt-8 grid sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <a href="#" class="card t p-5 hover:-translate-y-0.5 hover:border-accent group">
+        <div class="flex items-center justify-between"><span class="font-mono text-label uppercase text-meta">Opiniones</span><i data-lucide="arrow-up-right" class="w-4 h-4 text-meta group-hover:text-accent"></i></div>
+        <p class="mt-3 num text-[40px] leading-none text-ink">7</p><p class="mt-2 text-sm text-meta">por revisar · la más antigua, hace 2 días</p>
+      </a>
+      <a href="#" class="card t p-5 hover:-translate-y-0.5 hover:border-accent group">
+        <div class="flex items-center justify-between"><span class="font-mono text-label uppercase text-meta">Agenda</span><i data-lucide="arrow-up-right" class="w-4 h-4 text-meta group-hover:text-accent"></i></div>
+        <p class="mt-3 num text-[40px] leading-none text-ink">4</p><p class="mt-2 text-sm text-meta">eventos del agente por aprobar</p>
+      </a>
+      <a href="#" class="card t p-5 hover:-translate-y-0.5 hover:border-accent group">
+        <div class="flex items-center justify-between"><span class="font-mono text-label uppercase text-meta">Fichas</span><i data-lucide="arrow-up-right" class="w-4 h-4 text-meta group-hover:text-accent"></i></div>
+        <p class="mt-3 num text-[40px] leading-none text-ink">5</p><p class="mt-2 text-sm text-meta">sin verificar hace más de 6 meses</p>
+      </a>
+      <a href="#" class="card t p-5 hover:-translate-y-0.5 hover:border-accent group">
+        <div class="flex items-center justify-between"><span class="font-mono text-label uppercase text-meta">Medios</span><i data-lucide="arrow-up-right" class="w-4 h-4 text-meta group-hover:text-accent"></i></div>
+        <p class="mt-3 num text-[40px] leading-none text-ink">9</p><p class="mt-2 text-sm text-meta">fotos sin texto alternativo</p>
+      </a>
+    </div>
+
+    <div class="mt-6 grid lg:grid-cols-[1.35fr_1fr] gap-6">
+      <!-- Pizarra de números (oscura) -->
+      <section aria-labelledby="h-num" class="chrome board-tex rounded-2xl text-slate-fg p-6">
+        <div class="flex items-center gap-3"><h2 id="h-num" class="font-mono text-label uppercase text-slate-meta">Últimos 30 días</h2><span class="text-xs text-slate-meta ml-auto">vs. los 30 anteriores</span></div>
+        <dl class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-y-6">
+          <div><dt class="text-sm text-slate-meta">Suscriptores</dt><dd class="num text-[30px] leading-9 mt-1">1.284</dd><dd class="text-xs num text-[#3DBE93]">+62 · −6 bajas</dd></div>
+          <div><dt class="text-sm text-slate-meta">Visitas</dt><dd class="num text-[30px] leading-9 mt-1">18.420</dd><dd class="text-xs num text-[#3DBE93]">+9 %</dd></div>
+          <div><dt class="text-sm text-slate-meta">Publicados</dt><dd class="num text-[30px] leading-9 mt-1">15</dd><dd class="text-xs num text-slate-meta">2 prog. · 7 borr.</dd></div>
+          <div><dt class="text-sm text-slate-meta">Opiniones</dt><dd class="num text-[30px] leading-9 mt-1">31</dd><dd class="text-xs num text-slate-meta">visibles · 3 ocultas</dd></div>
+        </dl>
+        <figure class="mt-6">
+          <figcaption class="text-sm text-slate-meta">Altas de suscriptores por semana</figcaption>
+          <div class="mt-3 flex items-end gap-2 h-28" role="img" aria-label="Altas semanales de las últimas 12 semanas: 8, 11, 9, 14, 10, 12, 17, 13, 15, 19, 14 y 16.">
+            <script>[8,11,9,14,10,12,17,13,15,19,14,16].forEach((v,i)=>document.write(`<div class="flex-1 flex flex-col items-center gap-1"><span class="num text-[10px] ${i>7?'text-slate-fg':'text-slate-meta'}">${v}</span><div class="w-full rounded-t-sm ${i>7?'bg-slate-accent':'bg-[#444440]'}" style="height:${v*4.6}px"></div></div>`))</script>
+          </div>
+          <div class="mt-2 flex justify-between font-mono text-[10px] text-slate-meta"><span>20 jul</span><span>hoy</span></div>
+        </figure>
+      </section>
+
+      <!-- Calendario editorial -->
+      <section aria-labelledby="h-cal" class="card p-5">
+        <div class="flex items-center"><h2 id="h-cal" class="font-mono text-label uppercase text-meta">Calendario editorial</h2><span class="ml-auto text-sm">Octubre 2026</span></div>
+        <div class="mt-4 grid grid-cols-7 gap-1 text-center text-xs" role="grid" aria-label="Octubre 2026">
+          <script>
+            document.write(['L','M','X','J','V','S','D'].map(d=>`<span class="font-mono text-[10px] text-meta py-1" role="columnheader">${d}</span>`).join(''));
+            const ev={3:'pub',9:'today',14:'sched',21:'sched'};
+            for(let i=0;i<3;i++)document.write('<span></span>');
+            for(let d=1;d<=31;d++){const e=ev[d];let c='h-9 rounded-md grid place-items-center num text-[12px] ';let lab='';
+              if(e==='today')c+='ring-1 ring-ink font-medium';
+              else if(e==='sched'){c+='bg-accent-muted text-accent font-medium';lab=' · programado';}
+              else if(e==='pub'){c+='bg-ok-muted text-ok font-medium';lab=' · publicado';}
+              else c+=d<9?'text-muted':'text-ink';
+              document.write(`<span role="gridcell" class="${c}" aria-label="${d} de octubre${lab}${e==='today'?' · hoy':''}">${d}</span>`);}
+          </script>
+        </div>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li class="flex gap-3 items-start"><span class="badge b-sched num">14 oct</span><a href="#editor" class="hover:underline underline-offset-2">Cuándo resolar: señales de que tus pies de gato lo necesitan</a></li>
+          <li class="flex gap-3 items-start"><span class="badge b-sched num">21 oct</span><a href="#editor" class="hover:underline underline-offset-2">Rocódromos con zona infantil para ir con hijos</a></li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Actividad -->
+    <section aria-labelledby="h-act" class="mt-6 card">
+      <div class="px-5 h-14 flex items-center border-b border-line"><h2 id="h-act" class="font-mono text-label uppercase text-meta">Actividad reciente</h2><a href="#" class="ml-auto text-sm text-accent underline underline-offset-2">Registro completo</a></div>
+      <ol class="divide-y divide-line text-sm">
+        <li class="px-5 py-3 flex flex-wrap gap-x-4"><span class="num text-xs text-meta w-20 pt-0.5">09:12</span><span class="flex-1">Editaste <a href="#editor" class="font-medium underline-offset-2 hover:underline">Dónde escalar en Barcelona cuando llueve</a> <span class="badge b-draft ml-1">Borrador</span></span></li>
+        <li class="px-5 py-3 flex flex-wrap gap-x-4"><span class="num text-xs text-meta w-20 pt-0.5">08:40</span><span class="flex-1">Ocultaste una opinión en <span class="font-medium">Bloc del Besòs</span></span></li>
+        <li class="px-5 py-3 flex flex-wrap gap-x-4"><span class="num text-xs text-meta w-20 pt-0.5">ayer 19:05</span><span class="flex-1">Reemplazaste <span class="num text-xs">sala-bloque-poblenou.jpg</span> (v2) · en uso en 3 sitios</span></li>
+        <li class="px-5 py-3 flex flex-wrap gap-x-4"><span class="num text-xs text-meta w-20 pt-0.5">ayer 18:30</span><span class="flex-1">El agente de novedades añadió <span class="font-medium">3 eventos</span> como borrador</span></li>
+      </ol>
+    </section>
+  </div>
+</section>
+
+<!-- ================= ARTÍCULOS ================= -->
+<section data-screen="articulos" aria-labelledby="h-arts">
+  <div class="px-4 md:px-8 pt-8 max-w-[1240px]">
+    <div class="flex flex-wrap items-end gap-4">
+      <div><p class="font-mono text-label uppercase text-meta">Escribir</p><h1 id="h-arts" class="text-2xl md:text-3xl font-medium tracking-tight mt-2">Artículos</h1></div>
+      <div class="ml-auto flex gap-2"><button class="btn btn-ghost t hidden sm:inline-flex"><i data-lucide="download" class="w-4 h-4"></i>Exportar</button><a href="#editor" class="btn btn-primary t"><i data-lucide="pencil-line" class="w-4 h-4"></i>Escribir</a></div>
+    </div>
+
+    <!-- barra de filtros / lote -->
+    <div class="mt-6 sticky top-16 lg:top-0 z-20 bg-paper pt-2 pb-3">
+      <div id="filters" class="space-y-3">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="max-w-full overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0"><div class="seg" role="tablist" aria-label="Estado" id="seg">
+            <button role="tab" aria-selected="true" data-st="all">Todos <span class="num text-xs text-meta">24</span></button>
+            <button role="tab" aria-selected="false" data-st="pub">Publicados <span class="num text-xs text-meta">15</span></button>
+            <button role="tab" aria-selected="false" data-st="sched">Programados <span class="num text-xs text-meta">2</span></button>
+            <button role="tab" aria-selected="false" data-st="draft">Borradores <span class="num text-xs text-meta">7</span></button>
+          </div></div>
+          <div class="relative flex-1 min-w-[220px] md:max-w-sm md:ml-auto">
+            <label for="q" class="sr-only">Buscar artículos</label>
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-meta pointer-events-none"></i>
+            <input id="q" class="field t !pl-9" placeholder="Buscar por título">
+          </div>
+        </div>
+        <div class="flex gap-2 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 pb-1" role="group" aria-label="Categoría">
+          <button class="chipf t" aria-pressed="false" data-cat="Empezar a escalar"><span class="w-2 h-2 rounded-full" style="background:#E07A5F"></span>Empezar a escalar</button>
+          <button class="chipf t" aria-pressed="false" data-cat="Dónde escalar"><span class="w-2 h-2 rounded-full" style="background:#3D5A80"></span>Dónde escalar</button>
+          <button class="chipf t" aria-pressed="false" data-cat="Material"><span class="w-2 h-2 rounded-full" style="background:#81B29A"></span>Material</button>
+          <button class="chipf t" aria-pressed="false" data-cat="Progresión y cuidado"><span class="w-2 h-2 rounded-full" style="background:#F2CC8F"></span>Progresión y cuidado</button>
+          <button class="chipf t" aria-pressed="false" data-cat="Costes"><span class="w-2 h-2 rounded-full" style="background:#6D597A"></span>Costes</button>
+          <button class="chipf t" aria-pressed="false" data-cat="Comunidad"><span class="w-2 h-2 rounded-full" style="background:#B56576"></span>Comunidad</button>
+          <span class="w-px bg-line mx-1 flex-none"></span>
+          <button class="chipf t" aria-pressed="false"><i data-lucide="languages" class="w-4 h-4"></i>Sin inglés</button>
+        </div>
+      </div>
+      <!-- lote: sustituye a los filtros -->
+      <div id="bulk" class="hidden h-[88px] md:h-[92px] items-center gap-2 rounded-xl bg-ink text-slate-fg px-3 md:px-4 chrome overflow-x-auto" role="region" aria-label="Acciones en lote">
+        <button id="bulkClose" class="icon-btn" aria-label="Quitar selección"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <span id="bulkCount" class="text-sm font-medium whitespace-nowrap" aria-live="polite"></span>
+        <div class="ml-auto flex gap-2">
+          <button class="btn btn-ghost t"><i data-lucide="folder-input" class="w-4 h-4"></i><span class="hidden sm:inline">Cambiar categoría</span></button>
+          <button class="btn btn-ghost t"><i data-lucide="file-pen" class="w-4 h-4"></i><span class="hidden sm:inline">A borrador</span></button>
+          <button class="btn btn-ghost t !border-[#F06A68] !text-[#F06A68]"><i data-lucide="trash-2" class="w-4 h-4"></i><span class="hidden sm:inline">Eliminar…</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- lista -->
+    <div class="card mt-1 mb-10 overflow-hidden">
+      <div class="hidden md:grid grid-cols-[40px_1fr_130px_150px_110px_44px] items-center gap-4 px-4 h-11 border-b border-line font-mono text-label uppercase text-meta">
+        <input type="checkbox" class="cb" id="all" aria-label="Seleccionar todos los visibles">
+        <span>Artículo</span><span>Estado</span><span>Publicación</span><span aria-sort="descending">Editado ↓</span><span class="sr-only">Acciones</span>
+      </div>
+      <ul id="list" class="p-1.5 md:p-2 space-y-0.5"></ul>
+      <p id="empty" class="hidden px-6 py-12 text-center text-meta"><span class="block font-hand text-[26px] text-accent">Nada por aquí.</span>Ningún artículo cumple estos filtros. <button class="underline underline-offset-2 text-ink" id="clearF">Quitar filtros</button></p>
+      <div class="h-14 px-4 flex items-center gap-3 border-t border-line text-sm text-meta"><span class="num text-xs" id="countTxt"></span><div class="ml-auto flex gap-1"><button class="icon-btn" aria-label="Página anterior" disabled style="opacity:.4"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><button class="icon-btn" aria-label="Página siguiente"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EDITOR ================= -->
+<section data-screen="editor" aria-labelledby="h-ed" class="pb-24 lg:pb-0">
+  <!-- cabecera oscura del editor -->
+  <header class="chrome bg-slate text-slate-fg sticky top-16 lg:top-0 z-30">
+    <div class="h-14 px-2 md:px-4 flex items-center gap-2">
+      <a href="#articulos" class="icon-btn" aria-label="Volver a artículos"><i data-lucide="arrow-left" class="w-5 h-5"></i></a>
+      <nav aria-label="Migas" class="hidden md:flex items-center gap-2 text-sm text-slate-meta min-w-0"><a href="#articulos" class="hover:text-slate-fg">Artículos</a><span aria-hidden="true">/</span><span class="text-slate-fg truncate max-w-[300px]" aria-current="page">Dónde escalar en Barcelona cuando llueve</span></nav>
+      <span class="inline-flex items-center gap-1.5 text-xs text-slate-meta ml-1 md:ml-2" aria-live="polite"><span class="w-1.5 h-1.5 rounded-full bg-[#3DBE93]"></span>Guardado hace 2 s</span>
+      <div class="ml-auto flex items-center gap-2">
+        <button class="btn btn-ghost t hidden md:inline-flex !h-9"><i data-lucide="eye" class="w-4 h-4"></i>Vista previa</button>
+        <button id="openPub" class="btn btn-primary t !h-9 hidden lg:inline-flex"><i data-lucide="calendar-clock" class="w-4 h-4"></i>Publicar o programar</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="lg:grid lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px]">
+    <!-- hoja -->
+    <div class="min-w-0 px-3 md:px-8 py-6 md:py-8">
+      <div class="max-w-[760px] mx-auto">
+        <!-- idioma -->
+        <div class="flex items-center gap-3 mb-4">
+          <div class="seg" role="tablist" aria-label="Idioma del contenido">
+            <button role="tab" aria-selected="true">Español</button>
+            <button role="tab" aria-selected="false">Inglés <span class="badge b-sched !h-5 !px-1.5 ml-1">falta</span></button>
+          </div>
+          <span class="badge b-draft ml-auto">Borrador</span>
+        </div>
+
+        <article class="bg-board rounded-2xl sheet border-[.5px] border-line-strong overflow-hidden">
+          <!-- portada en la hoja -->
+          <div class="photo aspect-[21/9] group" style="background-image:linear-gradient(150deg,#5b6b78 0%,#2f3a44 60%,#1c232a 100%)" role="img" aria-label="Portada: escalador visto desde abajo en una pared de rocódromo">
+            <div class="absolute inset-0 bg-[rgb(15_15_15/.0)] group-hover:bg-[rgb(15_15_15/.35)] t z-10"></div>
+            <div class="absolute right-3 bottom-3 z-20 flex gap-2 chrome"><button class="btn btn-ghost t !h-9 bg-slate/70 backdrop-blur" data-tab-go="portada"><i data-lucide="image" class="w-4 h-4"></i>Cambiar portada</button></div>
+          </div>
+          <div class="px-5 md:px-12 pt-8 pb-14">
+            <p class="font-mono text-label uppercase text-accent">Dónde escalar</p>
+            <label for="title" class="sr-only">Título (español)</label>
+            <textarea id="title" rows="1" style="field-sizing:content" class="mt-3 w-full resize-none bg-transparent text-[30px] md:text-[40px] leading-[1.1] font-medium tracking-[-.025em] focus:outline-none">Dónde escalar en Barcelona cuando llueve</textarea>
+            <label for="exc" class="sr-only">Entradilla</label>
+            <textarea id="exc" rows="1" style="field-sizing:content" class="mt-3 w-full resize-none bg-transparent text-[19px] leading-[1.55] text-meta focus:outline-none">Nueve rocódromos a 30 minutos en metro y para qué sirve cada uno cuando la roca está mojada.</textarea>
+
+            <!-- toolbar -->
+            <div role="toolbar" aria-label="Formato" class="sticky top-[136px] lg:top-14 z-10 mt-6 -mx-2 md:-mx-4 px-1 h-12 flex items-center gap-0.5 overflow-x-auto rounded-xl bg-elevated">
+              <button class="btn btn-quiet t !h-10 !px-3 flex-none" aria-haspopup="menu">Párrafo<i data-lucide="chevron-down" class="w-4 h-4"></i></button>
+              <span class="w-px h-6 bg-line-strong mx-1 flex-none"></span>
+              <button class="icon-btn flex-none" aria-label="Negrita"><i data-lucide="bold" class="w-4 h-4"></i></button>
+              <button class="icon-btn flex-none" aria-label="Cursiva"><i data-lucide="italic" class="w-4 h-4"></i></button>
+              <button class="icon-btn flex-none" aria-label="Enlace"><i data-lucide="link" class="w-4 h-4"></i></button>
+              <span class="w-px h-6 bg-line-strong mx-1 flex-none"></span>
+              <button class="icon-btn flex-none" aria-label="Lista"><i data-lucide="list" class="w-4 h-4"></i></button>
+              <button class="icon-btn flex-none" aria-label="Lista numerada"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+              <button class="icon-btn flex-none" aria-label="Nota manuscrita (cita)"><i data-lucide="quote" class="w-4 h-4"></i></button>
+              <span class="w-px h-6 bg-line-strong mx-1 flex-none"></span>
+              <button class="icon-btn flex-none" aria-label="Imagen"><i data-lucide="image-plus" class="w-4 h-4"></i></button>
+              <button class="icon-btn flex-none" aria-label="Vídeo o embed"><i data-lucide="youtube" class="w-4 h-4"></i></button>
+              <button class="icon-btn flex-none" aria-label="Tarjeta de ficha"><i data-lucide="mountain" class="w-4 h-4"></i></button>
+              <span class="ml-auto pr-3 text-xs text-meta num flex-none hidden sm:inline">1.120 palabras · 5 min</span>
+            </div>
+
+            <div class="prose-ed mt-8" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Cuerpo del artículo (español)">
+              <p>En Barcelona llueve poco, pero cuando llueve lo hace de golpe y la roca de Montserrat o Siurana tarda días en secarse. La buena noticia: en un radio de 30 minutos en metro tienes <a href="#">nueve rocódromos</a>, y cada uno sirve para algo distinto.</p>
+              <h2>Si solo tienes una hora</h2>
+              <p>Ve al que te pille más cerca y no lo pienses. Si dudas entre dos, mira la afluencia: los días de lluvia todo el mundo tiene la misma idea.</p>
+              <ul><li>Entre semana, antes de las 18:00, casi todos están tranquilos.</li><li>Domingo por la tarde, evita los de bloque del Poblenou.</li></ul>
+              <figure class="my-8" contenteditable="false">
+                <div class="photo aspect-[16/9] rounded-lg" style="background-image:linear-gradient(135deg,#7f6a4d 0%,#4a3b2a 55%,#2a221a 100%)" role="img" aria-label="Sala de bloque amplia con presas de colores"></div>
+                <figcaption class="mt-2 flex items-start gap-3 text-sm text-meta"><span class="flex-1">Sala de bloque de Magnesi Poblenou un martes a las 19:00.</span><button class="badge bg-danger-muted text-danger flex-none"><i data-lucide="circle-alert" class="w-3.5 h-3.5"></i>Falta el alt</button></figcaption>
+              </figure>
+              <h2>Si quieres cuerda</h2>
+              <blockquote>La Paret de Gràcia merece el viaje en metro.</blockquote>
+              <div contenteditable="false" class="my-6 rounded-xl border-[.5px] border-line-strong bg-paper p-3 flex gap-3 items-center">
+                <div class="photo w-16 h-16 rounded-lg flex-none" style="background-image:linear-gradient(160deg,#9b5a3a,#3d2a22)"></div>
+                <div class="min-w-0"><p class="font-mono text-label uppercase text-meta">Ficha · rocódromo</p><p class="font-medium mt-1">La Paret de Gràcia</p><p class="text-sm text-meta">Gràcia · Fontana (L3) · <span class="num">4,3</span></p></div>
+                <button class="icon-btn ml-auto" aria-label="Opciones de la tarjeta"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
+              </div>
+              <p class="!text-muted">Escribe o pulsa / para insertar…</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- panel lateral con pestañas -->
+    <div id="pscrim" class="fixed inset-0 bg-[rgb(28_26_23/.45)] z-40 hidden lg:hidden" aria-hidden="true"></div>
+    <aside id="panel" aria-label="Ajustes del artículo" class="t fixed lg:sticky inset-x-0 bottom-0 lg:top-14 lg:inset-auto z-50 lg:z-0 max-h-[85vh] lg:max-h-none lg:h-[calc(100vh-56px-36px)] bg-board lg:bg-paper border-t lg:border-t-0 lg:border-l border-line rounded-t-2xl lg:rounded-none overflow-y-auto translate-y-full lg:translate-y-0">
+      <div class="lg:hidden flex justify-center pt-2"><span class="w-10 h-1 rounded-full bg-line-strong"></span></div>
+      <div class="px-5 border-b border-line sticky top-0 bg-inherit z-10 bg-board lg:bg-paper">
+        <div role="tablist" aria-label="Ajustes" class="flex gap-6" id="ptabs">
+          <button role="tab" aria-selected="true" aria-controls="tp-pub" class="tabu t" data-tab="pub">Publicar</button>
+          <button role="tab" aria-selected="false" aria-controls="tp-portada" class="tabu t" data-tab="portada">Portada</button>
+          <button role="tab" aria-selected="false" aria-controls="tp-seo" class="tabu t" data-tab="seo">SEO</button>
+          <button id="closePanel" class="icon-btn ml-auto lg:hidden self-center" aria-label="Cerrar ajustes"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+      </div>
+
+      <!-- Publicar -->
+      <div id="tp-pub" role="tabpanel" class="px-5 py-5 space-y-6" data-panel="pub">
+        <div class="card p-4">
+          <p class="lbl">Cuándo</p>
+          <div class="seg w-full" role="radiogroup" aria-label="Momento de publicación">
+            <button role="radio" aria-checked="false" aria-selected="false" class="flex-1">Ahora</button>
+            <button role="radio" aria-checked="true" aria-selected="true" class="flex-1">Programar</button>
+          </div>
+          <div class="mt-3 grid grid-cols-[1fr_110px] gap-2">
+            <div><label class="sr-only" for="pd">Fecha</label><input id="pd" class="field num" value="vie, 16 oct 2026"></div>
+            <div><label class="sr-only" for="ph">Hora</label><input id="ph" class="field num" value="08:00"></div>
+          </div>
+          <p class="mt-2 text-xs text-meta">Hora de Barcelona. El 14 ya sale «Cuándo resolar»; el 16 queda libre.</p>
+        </div>
+        <div><label class="lbl" for="cat">Categoría</label>
+          <button id="cat" class="field t flex items-center gap-2 text-left" aria-haspopup="listbox"><span class="w-2.5 h-2.5 rounded-full" style="background:#3D5A80"></span>Dónde escalar<i data-lucide="chevron-down" class="w-4 h-4 text-meta ml-auto"></i></button></div>
+        <div><p class="lbl">Fichas relacionadas</p>
+          <div class="flex flex-wrap gap-2"><span class="chipf !h-8 !px-3 !text-sm">La Paret de Gràcia <button aria-label="Quitar La Paret de Gràcia" class="text-meta hover:text-ink">×</button></span><span class="chipf !h-8 !px-3 !text-sm">Magnesi Poblenou <button aria-label="Quitar Magnesi Poblenou" class="text-meta hover:text-ink">×</button></span><button class="chipf !h-8 !px-3 !text-sm border-dashed text-meta">+ Añadir</button></div></div>
+        <div class="flex items-center justify-between"><span id="lf" class="text-sm">Destacar en el blog</span><button role="switch" aria-checked="false" aria-labelledby="lf" class="switch"></button></div>
+        <div class="flex items-center justify-between text-sm"><span>Slug</span><span class="num text-xs text-meta truncate max-w-[220px]">donde-escalar-en-barcelona-cuando-llueve</span></div>
+
+        <div class="rounded-xl border-[.5px] border-line-strong p-4">
+          <p class="lbl">Antes de publicar · 4 de 5</p>
+          <ul class="space-y-2 text-sm">
+            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok mt-0.5"></i>Título, entradilla y categoría</li>
+            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok mt-0.5"></i>Portada con texto alternativo</li>
+            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok mt-0.5"></i>Título y descripción SEO</li>
+            <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok mt-0.5"></i>Al menos una ficha relacionada</li>
+            <li class="flex gap-2 text-danger"><i data-lucide="circle-alert" class="w-4 h-4 mt-0.5"></i><span>Una imagen del cuerpo sin alt · <button class="underline underline-offset-2">ir a la imagen</button></span></li>
+          </ul>
+        </div>
+
+        <button class="btn btn-primary t w-full !h-12" data-toast="Programado para el vie 16 oct, 08:00"><i data-lucide="calendar-check" class="w-4 h-4"></i>Programar para el vie 16 · 08:00</button>
+        <div class="flex gap-2 pt-1"><button class="btn btn-quiet t flex-1"><i data-lucide="copy" class="w-4 h-4"></i>Duplicar</button><button class="btn btn-quiet t flex-1 !text-danger"><i data-lucide="trash-2" class="w-4 h-4"></i>Eliminar…</button></div>
+      </div>
+
+      <!-- Portada -->
+      <div id="tp-portada" role="tabpanel" class="hidden px-5 py-5 space-y-5" data-panel="portada">
+        <div class="photo aspect-[16/9] rounded-xl" style="background-image:linear-gradient(150deg,#5b6b78 0%,#2f3a44 60%,#1c232a 100%)"></div>
+        <div class="flex gap-2"><button class="btn btn-ghost t flex-1"><i data-lucide="images" class="w-4 h-4"></i>Biblioteca</button><button class="btn btn-ghost t flex-1"><i data-lucide="upload" class="w-4 h-4"></i>Subir</button></div>
+        <div class="flex items-center gap-3 text-sm"><span class="w-8 h-8 rounded-md" style="background:#2f3a44"></span><div><p>Color dominante <span class="num text-xs">#2f3a44</span></p><p class="text-xs text-meta">Lo usa el hero de la home si el artículo se destaca.</p></div></div>
+        <div><label class="lbl" for="a1">Texto alternativo · español</label><input id="a1" class="field" value="Escalador visto desde abajo en una pared de rocódromo"></div>
+        <div><label class="lbl" for="a2">Texto alternativo · inglés</label><input id="a2" class="field" placeholder="Opcional hasta traducir"></div>
+        <div><label class="lbl" for="a3">Crédito</label><input id="a3" class="field" value="Nathan Cima · Unsplash"></div>
+        <p class="text-sm text-meta">En uso también en <a href="#" class="underline underline-offset-2 text-ink">La Paret de Gràcia (galería)</a>.</p>
+      </div>
+
+      <!-- SEO -->
+      <div id="tp-seo" role="tabpanel" class="hidden px-5 py-5 space-y-5" data-panel="seo">
+        <div class="rounded-xl bg-board border-[.5px] border-line-strong p-4">
+          <p class="text-xs text-meta">chalkguide.com › blog › donde-escalar…</p>
+          <p class="text-[17px] leading-6 text-[#1a0dab] mt-1">Dónde escalar en Barcelona cuando llueve | ChalkGuide</p>
+          <p class="text-sm text-meta mt-1">Nueve rocódromos a 30 minutos en metro y para qué sirve cada uno cuando la roca está mojada.</p>
+        </div>
+        <div><label class="lbl" for="s1">Título SEO</label><input id="s1" class="field" value="Dónde escalar en Barcelona cuando llueve | ChalkGuide" aria-describedby="s1c"><p id="s1c" class="mt-1.5 text-xs text-meta flex"><span>Bien de largo</span><span class="ml-auto num">54 / 70</span></p></div>
+        <div><label class="lbl" for="s2">Descripción</label><textarea id="s2" rows="3" class="field" aria-describedby="s2c">Nueve rocódromos a 30 minutos en metro y para qué sirve cada uno cuando la roca está mojada.</textarea><p id="s2c" class="mt-1.5 text-xs text-meta text-right num">94 / 160</p></div>
+        <div class="flex items-center justify-between"><span id="ln" class="text-sm">No indexar</span><button role="switch" aria-checked="false" aria-labelledby="ln" class="switch"></button></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- barra inferior < lg -->
+  <div class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-board border-t border-line px-3 py-3 flex gap-2">
+    <button id="openPanel" class="btn btn-ghost t flex-1 !h-12" aria-controls="panel" aria-expanded="false"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i>Ajustes</button>
+    <button class="btn btn-primary t flex-[1.4] !h-12" id="openPanel2"><i data-lucide="calendar-clock" class="w-4 h-4"></i>Publicar</button>
+  </div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="status" aria-live="polite" class="chrome hidden fixed z-[70] bottom-24 lg:bottom-6 left-1/2 lg:left-auto lg:right-6 -translate-x-1/2 lg:translate-x-0 bg-slate text-slate-fg rounded-xl px-4 h-12 items-center gap-3 text-sm sheet">
+  <i data-lucide="calendar-check" class="w-4 h-4 text-slate-accent"></i><span id="toastMsg"></span><button class="underline underline-offset-2 text-slate-accent">Deshacer</button>
+</div>
+
+<script>
+const ARTS=[
+ ['Dónde escalar en Barcelona cuando llueve','draft','Dónde escalar','#3D5A80',0,'—','hace 2 min','linear-gradient(150deg,#5b6b78,#1c232a)'],
+ ['Cuándo resolar: señales de que tus pies de gato lo necesitan','sched','Material','#81B29A',0,'mié 14 oct · 08:00','ayer','linear-gradient(150deg,#8a7a5a,#3b3222)'],
+ ['Rocódromos para ir solo y encontrar compañero','pub','Comunidad','#B56576',0,'3 oct 2026','hace 3 días','linear-gradient(150deg,#a0603e,#3a2418)'],
+ ['Montserrat para principiantes: tres sectores para el primer día','draft','Dónde escalar','#3D5A80',0,'—','hace 4 días','linear-gradient(150deg,#b0835a,#4b3422)'],
+ ['Calentar los dedos sin lesionarte en 10 minutos','draft','Progresión y cuidado','#F2CC8F',0,'—','hace 6 días','linear-gradient(150deg,#6d7a62,#2b3227)'],
+ ['Magnesio líquido o en polvo: lo que uso y por qué','draft','Material','#81B29A',0,'—','hace 8 días',null],
+ ['Mi primer resolado: errores que cometí y qué revisar','pub','Progresión y cuidado','#F2CC8F',1,'30 sep 2026','hace 9 días','linear-gradient(150deg,#7a5a48,#2e211a)'],
+ ['Primer bono o cuota mensual: qué conviene según cuántas veces vas','pub','Costes','#6D597A',1,'18 sep 2026','hace 12 días','linear-gradient(150deg,#5d6a7a,#232a33)'],
+ ['Rocódromos con zona infantil para ir con hijos','sched','Dónde escalar','#3D5A80',1,'mié 21 oct · 08:00','hace 2 días','linear-gradient(150deg,#c9a24a,#5a4417)'],
+ ['Cuánto cuesta realmente escalar en Barcelona al mes','pub','Costes','#6D597A',1,'2 sep 2026','hace 14 días','linear-gradient(150deg,#8b4a3a,#2b1712)',true],
+ ['Mi primer mes escalando: lo que me hubiera gustado saber','pub','Empezar a escalar','#E07A5F',1,'12 ago 2026','hace 3 sem','linear-gradient(150deg,#4f6b5a,#1e2a23)'],
+ ['Cómo elegir pies de gato según tu nivel y estilo','pub','Material','#81B29A',1,'25 sep 2026','hace 3 sem','linear-gradient(150deg,#6a5a8a,#251e33)'],
+];
+const ST={draft:['b-draft','Borrador'],sched:['b-sched','Programado'],pub:['b-pub','Publicado']};
+const list=document.getElementById('list');
+ARTS.forEach((a,i)=>{const [t,st,cat,col,en,pd,ed,ph,feat]=a;
+  const th=ph?`<span class="photo w-12 h-9 rounded-md flex-none" style="background-image:${ph}"></span>`:`<span class="w-12 h-9 rounded-md flex-none border border-dashed border-control grid place-items-center text-meta" title="Sin portada"><i data-lucide="image-off" class="w-4 h-4"></i></span>`;
+  list.insertAdjacentHTML('beforeend',`<li class="rowc t grid grid-cols-[32px_1fr_40px] md:grid-cols-[40px_1fr_130px_150px_110px_44px] items-center gap-x-3 md:gap-x-4 px-2 md:px-2 py-2.5 min-h-[60px]" data-st="${st}" data-cat="${cat}" aria-selected="false">
+    <span class="grid place-items-center md:pl-0.5"><input type="checkbox" class="cb rowcb" aria-label="Seleccionar «${t}»"></span>
+    <a href="#editor" class="flex items-center gap-3 min-w-0 group">${th}<span class="min-w-0"><span class="block font-medium leading-5 group-hover:underline underline-offset-2 md:truncate">${t}${feat?' <i data-lucide="star" class="inline w-3.5 h-3.5 text-accent -mt-0.5" aria-label="Destacado"></i>':''}</span>
+      <span class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-meta"><span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:${col}"></span>${cat}</span><span aria-hidden="true">·</span><span class="${en?'':'line-through'}" ${en?'':'title="Sin versión en inglés"'}>${en?'ES + EN':'EN'}</span>${en?'':'<span class="sr-only">sin versión en inglés</span>'}<span class="md:hidden badge ${ST[st][0]} !h-5">${ST[st][1]}</span></span></span></a>
+    <span class="hidden md:block"><span class="badge ${ST[st][0]}">${ST[st][1]}</span></span>
+    <span class="hidden md:block num text-xs text-meta">${pd}</span>
+    <span class="hidden md:block text-sm text-meta">${ed}</span>
+    <button class="icon-btn justify-self-end" aria-label="Acciones de «${t}»" aria-haspopup="menu"><i data-lucide="more-vertical" class="w-4 h-4"></i></button></li>`);});
+lucide.createIcons({attrs:{'stroke-width':1.75}});
+
+/* filtros */
+let fSt='all', fCat=null;
+function apply(){let n=0;list.querySelectorAll('li').forEach(li=>{const ok=(fSt==='all'||li.dataset.st===fSt)&&(!fCat||li.dataset.cat===fCat);li.classList.toggle('hidden',!ok);if(ok)n++;});
+  document.getElementById('empty').classList.toggle('hidden',!!n);
+  document.getElementById('countTxt').textContent=n?`1–${n} de ${fCat||fSt!=='all'?n:24}${fCat?' · filtrado por '+fCat:''}`:'0 resultados';}
+document.querySelectorAll('#seg [data-st]').forEach(b=>b.onclick=()=>{fSt=b.dataset.st;document.querySelectorAll('#seg [data-st]').forEach(x=>x.setAttribute('aria-selected',x===b));apply();});
+document.querySelectorAll('[data-cat].chipf').forEach(b=>b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';document.querySelectorAll('[data-cat].chipf').forEach(x=>x.setAttribute('aria-pressed','false'));if(on){b.setAttribute('aria-pressed','true');fCat=b.dataset.cat}else fCat=null;apply();});
+document.getElementById('clearF').onclick=()=>{fSt='all';fCat=null;document.querySelectorAll('[data-cat].chipf').forEach(x=>x.setAttribute('aria-pressed','false'));document.querySelectorAll('#seg [data-st]').forEach((x,i)=>x.setAttribute('aria-selected',i===0));apply();};
+apply();
+
+/* selección → la barra de lote sustituye a los filtros */
+const bulk=document.getElementById('bulk'),filters=document.getElementById('filters'),all=document.getElementById('all');
+function sync(){const c=[...list.querySelectorAll('li:not(.hidden) .rowcb')],k=c.filter(x=>x.checked).length;
+  bulk.classList.toggle('hidden',!k);bulk.classList.toggle('flex',!!k);filters.classList.toggle('hidden',!!k);
+  document.getElementById('bulkCount').textContent=k+(k===1?' artículo seleccionado':' artículos seleccionados');
+  all.checked=k&&k===c.length;all.indeterminate=k>0&&k<c.length;list.querySelectorAll('li').forEach(li=>li.setAttribute('aria-selected',li.querySelector('.rowcb').checked));}
+list.addEventListener('change',sync);
+all.onchange=()=>{list.querySelectorAll('li:not(.hidden) .rowcb').forEach(c=>c.checked=all.checked);sync();};
+document.getElementById('bulkClose').onclick=()=>{list.querySelectorAll('.rowcb').forEach(c=>c.checked=false);sync();};
+
+/* pestañas del panel */
+function tab(id){document.querySelectorAll('#ptabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));document.querySelectorAll('[data-panel]').forEach(p=>p.classList.toggle('hidden',p.dataset.panel!==id));}
+document.querySelectorAll('#ptabs [data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+document.querySelectorAll('[data-tab-go]').forEach(b=>b.onclick=()=>{tab(b.dataset.tabGo);openPanel();});
+
+/* panel como hoja inferior en < lg */
+const panel=document.getElementById('panel'),ps=document.getElementById('pscrim'),op=document.getElementById('openPanel');
+function openPanel(){if(matchMedia('(min-width:1024px)').matches)return;panel.classList.remove('translate-y-full');ps.classList.remove('hidden');op.setAttribute('aria-expanded','true');}
+function closePanel(){panel.classList.add('translate-y-full');ps.classList.add('hidden');op.setAttribute('aria-expanded','false');}
+op.onclick=openPanel;document.getElementById('openPanel2').onclick=()=>{tab('pub');openPanel();};document.getElementById('closePanel').onclick=closePanel;ps.onclick=closePanel;
+
+/* menú */
+const sb=document.getElementById('sidebar'),scrim=document.getElementById('scrim'),ob=document.getElementById('openNav');
+function closeNav(){sb.classList.add('-translate-x-full');scrim.classList.add('hidden');ob.setAttribute('aria-expanded','false');}
+ob.onclick=()=>{sb.classList.remove('-translate-x-full');scrim.classList.remove('hidden');ob.setAttribute('aria-expanded','true');};
+document.getElementById('closeNav').onclick=closeNav;scrim.onclick=closeNav;
+document.getElementById('openPub').onclick=()=>{tab('pub');document.getElementById('pd').focus();};
+
+/* toast */
+const ts=document.getElementById('toast');
+document.querySelectorAll('[data-toast]').forEach(b=>b.onclick=()=>{document.getElementById('toastMsg').textContent=b.dataset.toast;ts.classList.remove('hidden');ts.classList.add('flex');closePanel();clearTimeout(window._t);window._t=setTimeout(()=>{ts.classList.add('hidden');ts.classList.remove('flex')},5000);});
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeNav();closePanel();}});
+
+/* pantallas */
+function show(){const h=(location.hash||'#inicio').slice(1);const id=['inicio','articulos','editor'].includes(h)?h:'inicio';
+  document.querySelectorAll('[data-screen]').forEach(s=>s.classList.toggle('on',s.dataset.screen===id));
+  document.querySelectorAll('[data-nav]').forEach(n=>n.dataset.nav===(id==='editor'?'articulos':id)?n.setAttribute('aria-current','page'):n.removeAttribute('aria-current'));
+  document.querySelectorAll('[data-demo]').forEach(n=>n.classList.toggle('bg-white/15',n.dataset.demo===id));
+  closeNav();window.scrollTo(0,0);}
+addEventListener('hashchange',show);show();
+</script>
+</body>
+</html>

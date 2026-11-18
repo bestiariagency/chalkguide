@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChalkGuide · Dirección B · Topo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg: '#FAFAF7',
+        ink: '#121417',
+        ink2: '#1E2126',
+        muted: '#555B66',
+        line: '#D9DBD6',
+        line2: '#8A909A',
+        blue: '#1F4FD1',
+        lime: '#D9F24A',
+        g1: '#2E8B57', g2: '#1F4FD1', g3: '#C2410C'
+      },
+      fontFamily: {
+        sans: ['Archivo', 'system-ui', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
+      },
+      maxWidth: { page: '1280px' }
+    }
+  }
+}
+</script>
+<style>
+  .wide { font-stretch: 118%; }
+  .cond { font-stretch: 82%; }
+  .num { font-variant-numeric: tabular-nums; }
+  .topo {
+    background-color: #1E2126;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><g fill='none' stroke='%23D9F24A' stroke-opacity='.28' stroke-width='1.2'><path d='M-20 240 C 60 200, 120 260, 200 220 S 340 160, 420 200'/><path d='M-20 210 C 70 170, 130 230, 210 190 S 330 130, 420 170'/><path d='M-20 180 C 80 140, 140 200, 220 160 S 320 100, 420 140'/><path d='M-20 150 C 90 110, 150 170, 230 130 S 310 70, 420 110'/><path d='M-20 120 C 100 80, 160 140, 240 100 S 300 40, 420 80'/><path d='M-20 90 C 110 50, 170 110, 250 70 S 290 10, 420 50'/><ellipse cx='300' cy='60' rx='40' ry='18'/><ellipse cx='300' cy='60' rx='22' ry='9'/></g></svg>");
+    background-size: cover; background-position: center;
+  }
+  .grid-paper { background-image: linear-gradient(#ECEDE8 1px, transparent 1px), linear-gradient(90deg, #ECEDE8 1px, transparent 1px); background-size: 24px 24px; }
+  :focus-visible { outline: 2px solid #1F4FD1; outline-offset: 2px; }
+  .on-dark :focus-visible { outline-color: #D9F24A; }
+  details > summary::-webkit-details-marker { display: none; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body class="bg-bg text-ink font-sans text-[16px] leading-relaxed antialiased">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-lime text-ink px-3 py-2 font-mono">Saltar al contenido</a>
+
+<header class="bg-ink text-white on-dark sticky top-0 z-20">
+  <div class="max-w-page mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-6">
+    <a href="#" class="flex items-center gap-2">
+      <span class="w-8 h-8 bg-lime text-ink grid place-items-center font-mono font-semibold text-sm" aria-hidden="true">CG</span>
+      <span class="wide font-extrabold uppercase tracking-tight text-lg">ChalkGuide</span>
+    </a>
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex gap-1 text-[15px] font-medium">
+        <li><a href="#" class="px-3 py-2 hover:bg-ink2">Rocódromos</a></li>
+        <li><a href="#" class="px-3 py-2 hover:bg-ink2">Resoladores</a></li>
+        <li><a href="#" class="px-3 py-2 hover:bg-ink2">Pies de gato</a></li>
+        <li><a href="#" class="px-3 py-2 hover:bg-ink2">Blog</a></li>
+        <li><a href="#" class="px-3 py-2 hover:bg-ink2">Agenda</a></li>
+        <li><a href="#" class="px-3 py-2 hover:bg-ink2">Sobre mí</a></li>
+      </ul>
+    </nav>
+    <div class="flex items-center gap-2">
+      <nav aria-label="Idioma" class="font-mono text-sm flex border border-[#3A3F47]">
+        <a href="#" aria-current="true" class="px-2.5 py-1.5 bg-white text-ink">ES</a>
+        <a href="#" class="px-2.5 py-1.5 text-[#C9CDD3] hover:text-white">EN</a>
+      </nav>
+      <details class="lg:hidden relative">
+        <summary class="list-none cursor-pointer w-11 h-11 grid place-items-center border border-[#3A3F47]" aria-label="Abrir menú">
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg>
+        </summary>
+        <nav aria-label="Principal móvil" class="absolute right-0 mt-3 w-60 bg-ink border border-[#3A3F47]">
+          <ul class="font-medium">
+            <li><a class="block px-4 py-3 border-b border-[#2A2E35]" href="#">Rocódromos</a></li>
+            <li><a class="block px-4 py-3 border-b border-[#2A2E35]" href="#">Resoladores</a></li>
+            <li><a class="block px-4 py-3 border-b border-[#2A2E35]" href="#">Pies de gato</a></li>
+            <li><a class="block px-4 py-3 border-b border-[#2A2E35]" href="#">Blog</a></li>
+            <li><a class="block px-4 py-3 border-b border-[#2A2E35]" href="#">Agenda</a></li>
+            <li><a class="block px-4 py-3" href="#">Sobre mí</a></li>
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Hero: propuesta + panel de datos -->
+  <section class="bg-ink text-white on-dark">
+    <div class="max-w-page mx-auto px-4 md:px-8 pt-10 pb-12 md:pt-16 md:pb-20 grid lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-7">
+        <p class="font-mono text-sm text-lime">// GUÍA DE ESCALADA · BARCELONA</p>
+        <h1 class="wide font-extrabold uppercase tracking-tight leading-[0.98] text-[2.35rem] sm:text-5xl lg:text-[4.25rem] mt-4">Todos los datos para escalar en Barcelona, en un solo sitio.</h1>
+        <p class="text-[#C9CDD3] text-lg mt-5 max-w-[56ch]">Precios, horarios y medidas de cada rocódromo, comparados igual. Y mi opinión después de visitarlos: 6 años escalando aquí, 7b a los 41.</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href="#" class="inline-flex items-center min-h-[48px] px-6 bg-lime text-ink font-semibold hover:bg-white transition-colors">Comparar rocódromos</a>
+          <a href="#" class="inline-flex items-center min-h-[48px] px-6 border border-[#5A606A] font-semibold hover:border-white">Empiezo a escalar →</a>
+        </div>
+      </div>
+      <dl class="lg:col-span-5 grid grid-cols-2 border border-[#3A3F47] self-end font-mono num">
+        <div class="p-4 md:p-5 border-r border-b border-[#3A3F47]"><dt class="text-xs text-[#9AA0AA] uppercase">Rocódromos</dt><dd class="text-3xl md:text-4xl font-semibold mt-1">14</dd></div>
+        <div class="p-4 md:p-5 border-b border-[#3A3F47]"><dt class="text-xs text-[#9AA0AA] uppercase">Cuota media</dt><dd class="text-3xl md:text-4xl font-semibold mt-1">61 €<span class="text-base text-[#9AA0AA]">/mes</span></dd></div>
+        <div class="p-4 md:p-5 border-r border-[#3A3F47]"><dt class="text-xs text-[#9AA0AA] uppercase">Pies de gato</dt><dd class="text-3xl md:text-4xl font-semibold mt-1">32</dd></div>
+        <div class="p-4 md:p-5"><dt class="text-xs text-[#9AA0AA] uppercase">Resoladores</dt><dd class="text-3xl md:text-4xl font-semibold mt-1">6</dd></div>
+        <div class="col-span-2 px-4 md:px-5 py-2.5 border-t border-[#3A3F47] text-xs text-[#9AA0AA]">Última verificación: 28 sep 2026</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Rocódromos: tabla densa -->
+  <section class="max-w-page mx-auto px-4 md:px-8 py-12 md:py-16" aria-labelledby="h-gyms">
+    <div class="flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink pb-3">
+      <div>
+        <p class="font-mono text-sm text-blue">01 / ROCÓDROMOS</p>
+        <h2 id="h-gyms" class="wide font-extrabold uppercase text-2xl md:text-4xl tracking-tight mt-1">Comparativa rápida</h2>
+      </div>
+      <div class="flex gap-2 font-mono text-sm" role="group" aria-label="Ordenar por">
+        <button class="min-h-[44px] px-3 bg-ink text-white" aria-pressed="true">Nota autor</button>
+        <button class="min-h-[44px] px-3 border border-line2 hover:border-ink">Precio</button>
+        <button class="min-h-[44px] px-3 border border-line2 hover:border-ink">Principiante</button>
+      </div>
+    </div>
+
+    <div class="mt-0 divide-y divide-line num">
+      <!-- fila -->
+      <article class="grid grid-cols-12 gap-x-4 gap-y-3 py-5 items-center">
+        <div class="col-span-12 md:col-span-4 flex gap-4 items-center">
+          <div class="topo w-16 h-16 md:w-20 md:h-20 shrink-0 grid place-items-center"><span class="font-mono text-[10px] text-lime">IMG</span></div>
+          <div>
+            <h3 class="font-bold text-xl leading-tight"><a href="#" class="hover:text-blue">Bloc Poblenou</a></h3>
+            <p class="font-mono text-sm text-muted">BLOQUE · L4 POBLENOU</p>
+          </div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Mensual</p><p class="font-mono text-xl font-semibold">59 €</p></div>
+        <div class="col-span-4 md:col-span-3">
+          <p class="font-mono text-xs text-muted uppercase">Principiante</p>
+          <div class="flex items-center gap-2"><span class="font-mono text-xl font-semibold">8.7</span>
+            <span class="flex gap-0.5" aria-hidden="true"><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-line"></i></span></div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Nota autor</p><p class="font-mono text-xl font-semibold"><span class="bg-lime px-1">4.5</span><span class="text-sm text-muted">/5</span></p></div>
+        <div class="col-span-12 md:col-span-1 md:text-right font-mono text-xs text-muted">✓ 12.09.26</div>
+      </article>
+      <article class="grid grid-cols-12 gap-x-4 gap-y-3 py-5 items-center">
+        <div class="col-span-12 md:col-span-4 flex gap-4 items-center">
+          <div class="topo w-16 h-16 md:w-20 md:h-20 shrink-0 grid place-items-center"><span class="font-mono text-[10px] text-lime">IMG</span></div>
+          <div>
+            <h3 class="font-bold text-xl leading-tight"><a href="#" class="hover:text-blue">Vertical Sants</a></h3>
+            <p class="font-mono text-sm text-muted">CUERDA + BLOQUE · L5 SANTS</p>
+            <span class="inline-block mt-1 font-mono text-[11px] uppercase border border-g3 text-g3 px-1.5 py-0.5">Visita invitada</span>
+          </div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Mensual</p><p class="font-mono text-xl font-semibold">72 €</p></div>
+        <div class="col-span-4 md:col-span-3">
+          <p class="font-mono text-xs text-muted uppercase">Principiante</p>
+          <div class="flex items-center gap-2"><span class="font-mono text-xl font-semibold">7.9</span>
+            <span class="flex gap-0.5" aria-hidden="true"><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-line"></i></span></div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Nota autor</p><p class="font-mono text-xl font-semibold">4.2<span class="text-sm text-muted">/5</span></p></div>
+        <div class="col-span-12 md:col-span-1 md:text-right font-mono text-xs text-muted">✓ 20.09.26</div>
+      </article>
+      <article class="grid grid-cols-12 gap-x-4 gap-y-3 py-5 items-center">
+        <div class="col-span-12 md:col-span-4 flex gap-4 items-center">
+          <div class="topo w-16 h-16 md:w-20 md:h-20 shrink-0 grid place-items-center"><span class="font-mono text-[10px] text-lime">IMG</span></div>
+          <div>
+            <h3 class="font-bold text-xl leading-tight"><a href="#" class="hover:text-blue">La Paret Gràcia</a></h3>
+            <p class="font-mono text-sm text-muted">BLOQUE · L3 FONTANA</p>
+          </div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Mensual</p><p class="font-mono text-xl font-semibold">54 €</p></div>
+        <div class="col-span-4 md:col-span-3">
+          <p class="font-mono text-xs text-muted uppercase">Principiante</p>
+          <div class="flex items-center gap-2"><span class="font-mono text-xl font-semibold">9.1</span>
+            <span class="flex gap-0.5" aria-hidden="true"><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i></span></div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Nota autor</p><p class="font-mono text-xl font-semibold">4.0<span class="text-sm text-muted">/5</span></p></div>
+        <div class="col-span-12 md:col-span-1 md:text-right font-mono text-xs text-muted">✓ 03.09.26</div>
+      </article>
+      <article class="grid grid-cols-12 gap-x-4 gap-y-3 py-5 items-center">
+        <div class="col-span-12 md:col-span-4 flex gap-4 items-center">
+          <div class="topo w-16 h-16 md:w-20 md:h-20 shrink-0 grid place-items-center"><span class="font-mono text-[10px] text-lime">IMG</span></div>
+          <div>
+            <h3 class="font-bold text-xl leading-tight"><a href="#" class="hover:text-blue">Roca Sant Andreu</a></h3>
+            <p class="font-mono text-sm text-muted">CUERDA · L1 FABRA I PUIG</p>
+          </div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Mensual</p><p class="font-mono text-xl font-semibold">65 €</p></div>
+        <div class="col-span-4 md:col-span-3">
+          <p class="font-mono text-xs text-muted uppercase">Principiante</p>
+          <div class="flex items-center gap-2"><span class="font-mono text-xl font-semibold">6.4</span>
+            <span class="flex gap-0.5" aria-hidden="true"><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-g1"></i><i class="w-2 h-4 bg-line"></i><i class="w-2 h-4 bg-line"></i></span></div>
+        </div>
+        <div class="col-span-4 md:col-span-2"><p class="font-mono text-xs text-muted uppercase">Nota autor</p><p class="font-mono text-xl font-semibold">3.8<span class="text-sm text-muted">/5</span></p></div>
+        <div class="col-span-12 md:col-span-1 md:text-right font-mono text-xs text-muted">✓ 15.08.26</div>
+      </article>
+    </div>
+    <div class="border-t-2 border-ink pt-3 flex flex-wrap justify-between gap-3 text-sm">
+      <p class="text-muted max-w-[70ch]"><span class="font-mono">Índ. principiante</span> = test de aseguramiento + alquiler de material + % vías fáciles + horario. Calculado, no opinado.</p>
+      <a href="#" class="font-semibold text-blue underline underline-offset-4">Ver los 14 con filtros →</a>
+    </div>
+  </section>
+
+  <!-- Artículos -->
+  <section class="border-y border-line grid-paper" aria-labelledby="h-art">
+    <div class="max-w-page mx-auto px-4 md:px-8 py-12 md:py-16">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <p class="font-mono text-sm text-blue">02 / GUÍAS</p>
+          <h2 id="h-art" class="wide font-extrabold uppercase text-2xl md:text-4xl tracking-tight mt-1">Guías prácticas</h2>
+        </div>
+        <a href="#" class="font-semibold text-blue underline underline-offset-4 text-sm">Blog completo</a>
+      </div>
+      <div class="mt-8 grid md:grid-cols-3 gap-px bg-line border border-line">
+        <article class="bg-white md:col-span-2 md:row-span-2 flex flex-col">
+          <div class="topo aspect-[16/9] relative"><span class="absolute top-3 left-3 font-mono text-xs bg-lime text-ink px-2 py-1">IMG 16:9 · Cuotas y bonos</span></div>
+          <div class="p-5 md:p-7">
+            <p class="font-mono text-xs uppercase text-muted">Costes · 12 min</p>
+            <h3 class="cond font-extrabold text-3xl md:text-[2.6rem] leading-[1.02] mt-2"><a href="#" class="hover:text-blue">Cuánto cuesta realmente escalar en Barcelona al mes</a></h3>
+            <p class="text-muted mt-3 max-w-[60ch]">Cuota, bono de 10, resolados y transporte: el coste real a 2 visitas por semana en 14 rocódromos.</p>
+            <dl class="mt-5 grid grid-cols-3 border-t border-line pt-4 font-mono num">
+              <div><dt class="text-xs text-muted">MÍN.</dt><dd class="text-xl font-semibold">48 €</dd></div>
+              <div><dt class="text-xs text-muted">MEDIA</dt><dd class="text-xl font-semibold">61 €</dd></div>
+              <div><dt class="text-xs text-muted">MÁX.</dt><dd class="text-xl font-semibold">84 €</dd></div>
+            </dl>
+          </div>
+        </article>
+        <article class="bg-white p-5 md:p-6">
+          <p class="font-mono text-xs uppercase text-muted">Material · 9 min</p>
+          <h3 class="cond font-extrabold text-2xl leading-tight mt-2"><a href="#" class="hover:text-blue">Cómo elegir pies de gato según tu nivel y estilo</a></h3>
+          <p class="text-muted text-[15px] mt-2">Perfil, cierre y talla sin jerga.</p>
+        </article>
+        <article class="bg-white p-5 md:p-6">
+          <p class="font-mono text-xs uppercase text-muted">Dónde escalar · 6 min</p>
+          <h3 class="cond font-extrabold text-2xl leading-tight mt-2"><a href="#" class="hover:text-blue">Dónde escalar en Barcelona cuando llueve</a></h3>
+          <p class="text-muted text-[15px] mt-2">Rocódromos a 10 min del metro y roca que seca rápido.</p>
+        </article>
+        <article class="bg-white p-5 md:p-6">
+          <p class="font-mono text-xs uppercase text-muted">Material · 7 min</p>
+          <h3 class="cond font-extrabold text-2xl leading-tight mt-2"><a href="#" class="hover:text-blue">Cuándo resolar: señales de que tus pies de gato lo necesitan</a></h3>
+        </article>
+        <article class="bg-white p-5 md:p-6">
+          <p class="font-mono text-xs uppercase text-muted">Comunidad · 5 min</p>
+          <h3 class="cond font-extrabold text-2xl leading-tight mt-2"><a href="#" class="hover:text-blue">Rocódromos para ir solo y encontrar compañero</a></h3>
+        </article>
+        <article class="bg-white p-5 md:p-6">
+          <p class="font-mono text-xs uppercase text-muted">Costes · 6 min</p>
+          <h3 class="cond font-extrabold text-2xl leading-tight mt-2"><a href="#" class="hover:text-blue">Primer bono o cuota mensual: qué conviene</a></h3>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparador: matriz de specs -->
+  <section class="max-w-page mx-auto px-4 md:px-8 py-12 md:py-16" aria-labelledby="h-shoes">
+    <p class="font-mono text-sm text-blue">03 / PIES DE GATO</p>
+    <div class="flex flex-wrap items-end justify-between gap-4 mt-1">
+      <h2 id="h-shoes" class="wide font-extrabold uppercase text-2xl md:text-4xl tracking-tight">Comparador</h2>
+      <div class="flex flex-wrap gap-2 font-mono text-sm">
+        <span class="px-3 py-2 bg-ink text-white">Nivel: inicio</span>
+        <span class="px-3 py-2 border border-line2">≤ 110 €</span>
+        <span class="px-3 py-2 border border-line2">Perfil plano</span>
+      </div>
+    </div>
+    <div class="mt-6 border border-ink">
+      <table class="w-full text-left num table-fixed">
+        <caption class="sr-only">Comparativa de tres pies de gato para iniciación</caption>
+        <thead class="bg-ink text-white">
+          <tr>
+            <th scope="col" class="w-[28%] md:w-1/4 p-3 font-mono text-xs uppercase font-medium">Modelo</th>
+            <th scope="col" class="p-3 text-sm md:text-base font-bold leading-tight">Tarantulace<span class="block font-mono text-[11px] font-normal text-[#C9CDD3]">La Sportiva</span></th>
+            <th scope="col" class="p-3 text-sm md:text-base font-bold leading-tight">Origin<span class="block font-mono text-[11px] font-normal text-[#C9CDD3]">Scarpa</span></th>
+            <th scope="col" class="p-3 text-sm md:text-base font-bold leading-tight">Defy<span class="block font-mono text-[11px] font-normal text-[#C9CDD3]">Evolv</span></th>
+          </tr>
+        </thead>
+        <tbody class="font-mono text-[13px] md:text-sm divide-y divide-line">
+          <tr><th scope="row" class="p-3 text-muted font-normal uppercase text-xs">Perfil</th><td class="p-3">Plano</td><td class="p-3">Plano</td><td class="p-3">Plano</td></tr>
+          <tr><th scope="row" class="p-3 text-muted font-normal uppercase text-xs">Cierre</th><td class="p-3">Cordón</td><td class="p-3">Velcro</td><td class="p-3">Velcro</td></tr>
+          <tr><th scope="row" class="p-3 text-muted font-normal uppercase text-xs">Rigidez</th>
+            <td class="p-3"><span class="sr-only">Media, 3 de 5</span><span aria-hidden="true">■■■□□</span></td>
+            <td class="p-3"><span class="sr-only">Media, 3 de 5</span><span aria-hidden="true">■■■□□</span></td>
+            <td class="p-3"><span class="sr-only">Alta, 4 de 5</span><span aria-hidden="true">■■■■□</span></td></tr>
+          <tr><th scope="row" class="p-3 text-muted font-normal uppercase text-xs">Goma</th><td class="p-3">FriXion RS</td><td class="p-3">Vision</td><td class="p-3">TRAX SAS</td></tr>
+          <tr class="bg-[#F1F5D6]"><th scope="row" class="p-3 text-ink font-semibold uppercase text-xs">Precio</th><td class="p-3 font-semibold">80–95 €</td><td class="p-3 font-semibold">85–99 €</td><td class="p-3 font-semibold">95–110 €</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 font-mono text-xs text-muted flex flex-wrap gap-x-4 gap-y-1"><span>Precios a 01.10.26</span><span class="text-ink font-semibold">[AFILIADO] Algunos enlaces de compra son de afiliado</span></p>
+    <a href="#" class="inline-flex items-center mt-5 min-h-[48px] px-6 bg-blue text-white font-semibold hover:bg-ink transition-colors">Comparar 32 modelos</a>
+  </section>
+
+  <!-- Agenda + newsletter -->
+  <section class="bg-ink text-white on-dark">
+    <div class="max-w-page mx-auto px-4 md:px-8 py-12 md:py-16 grid lg:grid-cols-2 gap-12">
+      <div aria-labelledby="h-agenda">
+        <p class="font-mono text-sm text-lime">04 / AGENDA</p>
+        <h2 id="h-agenda" class="wide font-extrabold uppercase text-2xl md:text-4xl tracking-tight mt-1">Octubre 2026</h2>
+        <ol class="mt-6 border-t border-[#3A3F47] font-mono num">
+          <li class="grid grid-cols-[4.5rem_1fr] gap-4 py-4 border-b border-[#3A3F47]"><span class="text-lime">SÁB 10</span><span class="font-sans"><span class="font-semibold">Contest de bloque para principiantes</span><span class="block text-sm text-[#9AA0AA] font-mono">Bloc Poblenou · 17:00</span></span></li>
+          <li class="grid grid-cols-[4.5rem_1fr] gap-4 py-4 border-b border-[#3A3F47]"><span class="text-lime">JUE 15</span><span class="font-sans"><span class="font-semibold">Taller: asegurar con Grigri</span><span class="block text-sm text-[#9AA0AA] font-mono">Vertical Sants · 19:30 · 15 €</span></span></li>
+          <li class="grid grid-cols-[4.5rem_1fr] gap-4 py-4 border-b border-[#3A3F47]"><span class="text-lime">DOM 18</span><span class="font-sans"><span class="font-semibold">Salida a Montserrat: iniciación en roca</span><span class="block text-sm text-[#9AA0AA] font-mono">La Paret Gràcia · plazas limitadas</span></span></li>
+          <li class="grid grid-cols-[4.5rem_1fr] gap-4 py-4 border-b border-[#3A3F47]"><span class="text-lime">SÁB 24</span><span class="font-sans"><span class="font-semibold">Noche de vías nuevas</span><span class="block text-sm text-[#9AA0AA] font-mono">Roca Sant Andreu · 20:00</span></span></li>
+        </ol>
+        <a href="#" class="inline-block mt-4 text-lime underline underline-offset-4 font-semibold">Agenda completa</a>
+      </div>
+
+      <form id="newsletter" class="border border-[#3A3F47] p-5 md:p-8 self-start" onsubmit="return false" aria-labelledby="h-news">
+        <p class="font-mono text-sm text-lime">05 / NEWSLETTER</p>
+        <h2 id="h-news" class="wide font-extrabold uppercase text-2xl md:text-3xl tracking-tight mt-1">El parte mensual</h2>
+        <p class="text-[#C9CDD3] mt-3">1 email al mes: cambios de precios, actividades, un artículo nuevo y un pie de gato destacado.</p>
+        <label for="email-b" class="block mt-5 font-mono text-xs uppercase text-[#C9CDD3]">Email</label>
+        <input id="email-b" type="email" autocomplete="email" placeholder="nombre@correo.com" class="mt-1 w-full min-h-[48px] px-4 bg-ink2 border border-[#5A606A] text-white placeholder:text-[#8A909A] focus:border-lime">
+        <div class="mt-4 flex gap-3 items-start">
+          <input id="consent-b" type="checkbox" class="mt-1 w-5 h-5 accent-[#D9F24A] shrink-0">
+          <label for="consent-b" class="text-[15px] text-[#E4E6E9]">Quiero recibir la newsletter mensual. He leído la <a href="#" class="underline">política de privacidad</a>.</label>
+        </div>
+        <button class="mt-5 w-full min-h-[48px] bg-lime text-ink font-semibold hover:bg-white transition-colors">Suscribirme</button>
+        <p class="mt-3 font-mono text-xs text-[#9AA0AA]">Sin spam. Baja en 1 clic.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-bg border-t border-ink">
+  <div class="max-w-page mx-auto px-4 md:px-8 py-10 grid grid-cols-2 md:grid-cols-5 gap-8 text-[15px]">
+    <div class="col-span-2">
+      <p class="wide font-extrabold uppercase text-lg">ChalkGuide</p>
+      <p class="text-muted mt-2 max-w-[40ch]">Datos y opinión sobre escalar en Barcelona. Escrito por Xavi.</p>
+    </div>
+    <ul class="space-y-1"><li class="font-mono text-xs text-muted uppercase mb-2">Secciones</li><li><a href="#" class="hover:text-blue">Rocódromos</a></li><li><a href="#" class="hover:text-blue">Resoladores</a></li><li><a href="#" class="hover:text-blue">Pies de gato</a></li><li><a href="#" class="hover:text-blue">Blog</a></li></ul>
+    <ul class="space-y-1"><li class="font-mono text-xs text-muted uppercase mb-2">Método</li><li><a href="#" class="hover:text-blue">Cómo calculo los índices</a></li><li><a href="#" class="hover:text-blue">Afiliados</a></li><li><a href="#" class="hover:text-blue">Visitas invitadas</a></li></ul>
+    <ul class="space-y-1"><li class="font-mono text-xs text-muted uppercase mb-2">Legal</li><li><a href="#" class="hover:text-blue">Privacidad</a></li><li><a href="#" class="hover:text-blue">Cookies</a></li><li><a href="#" class="hover:text-blue">English</a></li></ul>
+  </div>
+  <p class="max-w-page mx-auto px-4 md:px-8 pb-8 font-mono text-xs text-muted">© 2026 CHALKGUIDE · NINGUNA RESEÑA SE COMPRA · LO PAGADO SE MARCA</p>
+</footer>
+</body>
+</html>

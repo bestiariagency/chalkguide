@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Exportar (modal) · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=9"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* F6.15 · D37 · modal de exportar */
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line-strong);border-radius:8px;cursor:pointer;background:var(--elev);transition:border-color .15s,background-color .15s}
+  .opt:hover{border-color:var(--control)}
+  .opt:has(input:checked){border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc);background:var(--acc-soft)}
+  .opt:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:2px}
+  .opt:has(input:disabled){opacity:.45;cursor:not-allowed}
+  .cols{display:flex;flex-wrap:wrap;gap:4px}
+  .cols code{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:1px 6px;border-radius:4px;background:var(--subtle);color:var(--meta)}
+  .xs-sec{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+  .xs-sec:first-child{border-top:0;padding-top:0}
+  .xs-sec>h3{font-size:12px;font-weight:500;color:var(--meta);padding-top:5px}
+  .fchip{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 4px 0 8px;border-radius:4px;background:var(--subtle);font-size:12px;color:var(--fg)}
+  .fchip button{width:20px;height:20px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;color:var(--meta)}
+  .fchip button:hover{background:var(--line);color:var(--fg)}
+  .fchip button svg{width:12px;height:12px}
+  details.adj>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12.5px;color:var(--meta);min-height:28px}
+  details.adj>summary::-webkit-details-marker{display:none}
+  details.adj>summary:hover{color:var(--fg)}
+  details.adj[open]>summary .chev{transform:rotate(180deg)}
+  .prog{height:4px;border-radius:99px;background:var(--line);overflow:hidden}
+  .prog>span{display:block;height:100%;background:var(--primary);transition:width .15s}
+  .xsum{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:13px;min-width:0}
+  @media (min-width:768px){.xsum{flex:1 1 0}}
+  @media (max-width:767px){
+    .xs-sec{grid-template-columns:1fr;gap:6px}
+    .xs-sec>h3{padding-top:0}
+    .opt{min-height:56px}
+    .fchip{height:32px} .fchip button{width:28px;height:28px}
+    details.adj>summary{min-height:44px}
+    .dialog-f{flex-wrap:wrap} .dialog-f>.xsum{flex:1 1 100%}
+  }
+  @media (prefers-reduced-motion:reduce){.opt,.prog>span{transition:none}}
+</style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased text-base">
+<script>
+/* El mockup pinta el listado del módulo detrás del modal; el menú marca ese módulo. */
+const MOD_PAGE={articulos:'articulos',fichas:'rocodromo',opiniones:'opiniones',suscriptores:'suscriptores',bajas:'suscriptores',agenda:'agenda'};
+document.body.dataset.page=MOD_PAGE[location.hash.slice(1)]||'suscriptores';
+</script>
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium" id="bgTitle">Suscriptores</h1>
+    <span class="ml-auto hidden xl:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · estado:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup">
+        <option value="data">Con datos</option><option value="counting">Contando</option><option value="empty">0 filas</option><option value="error">Error al contar</option><option value="truncated">Más de 50.000</option><option value="nolast">Sin exportaciones</option>
+      </select></span>
+    <button id="openExp" class="btn btn-ghost ml-auto xl:ml-0" aria-haspopup="dialog"><i data-lucide="download"></i><span class="hidden sm:inline">Exportar</span><span class="sr-only sm:hidden">Exportar</span></button>
+  </header>
+  <!-- listado de fondo (solo contexto) -->
+  <div class="mt-3 px-4 md:px-6 border-b border-line overflow-x-auto"><div class="flex gap-5 min-w-max text-sm" id="bgTabs"></div></div>
+  <div class="px-4 md:px-6 py-2.5 flex flex-wrap items-center gap-2 border-b border-line" id="bgChips"></div>
+  <ul class="divide-y divide-line" id="bgRows" aria-hidden="true"></ul>
+
+  <p class="mx-4 md:mx-6 my-6 text-xs text-meta border border-dashed border-line-strong rounded px-3 py-2">Mockup (D37): el modal se abre con «Exportar» de cada listado. Módulos: <a class="underline" href="#articulos">#articulos</a> · <a class="underline" href="#fichas">#fichas</a> (rocódromos) · <a class="underline" href="#opiniones">#opiniones</a> · <a class="underline" href="#suscriptores">#suscriptores</a> · <a class="underline" href="#bajas">#bajas</a> · <a class="underline" href="#agenda">#agenda</a>. Estados: <a class="underline" href="#preparando">#preparando</a> · <a class="underline" href="#vacio">#vacio</a> · <a class="underline" href="#error">#error</a> · <a class="underline" href="#error-archivo">#error-archivo</a> · <a class="underline" href="#cancelar">#cancelar</a> · <a class="underline" href="#truncado">#truncado</a>. Hoy, en el mockup: jueves 29 de octubre de 2026, 08:55 (Barcelona).</p>
+</main>
+
+<!-- ============ Modal Exportar (720; hoja inferior < 768) ============ -->
+<div id="exp" class="overlay" role="dialog" aria-modal="true" aria-labelledby="x-h" aria-describedby="x-d"><div class="dialog lg"><div class="grab"></div>
+  <div class="dialog-h flex items-start gap-3">
+    <div class="min-w-0 flex-1"><h2 id="x-h">Exportar suscriptores</h2><p id="x-d" class="text-sm text-meta mt-0.5">Con los filtros de la vista <b class="font-medium text-fg" id="x-view">Activos</b>. Puedes ajustarlos aquí.</p></div>
+    <button class="icon-btn -mr-2 -mt-1" data-close aria-label="Cerrar"><i data-lucide="x"></i></button>
+  </div>
+  <div class="dialog-b" id="xb"></div>
+  <div class="dialog-f items-center" id="xf"></div>
+</div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+/* ---------- módulos (guide.admin_export: p_module) ---------- */
+const M={
+ articulos:{mod:'articles',title:'Artículos',noun:['artículo','artículos'],slug:'articulos',
+   states:[['all','Todos',24],['published','Publicados',18],['scheduled','Programados',2],['draft','Borradores',4]],def:'published',
+   adj:[['cat','Categoría',[['','Todas'],['material','Material'],['tecnica','Técnica'],['barcelona','Barcelona']]],['en','Inglés',[['','Con y sin EN'],['1','Solo con EN'],['0','Solo sin EN']]]],dateL:'Publicado',
+   inherit:{cat:'material'},cols:22,colList:['id','status','published_at','category_es','title_es','title_en','slug_es','…','has_en','created_at','updated_at'],body:true,
+   last:'Nunca'},
+ fichas:{mod:'items',title:'Rocódromos',noun:['rocódromo','rocódromos'],slug:'fichas-rocodromos',
+   states:[['all','Publicadas y ocultas',14],['1','Publicadas',12],['0','Ocultas',2]],def:'all',
+   adj:[['en','Inglés',[['','Con y sin EN'],['1','Solo con EN'],['0','Solo sin EN']]]],dateL:'Verificada',
+   inherit:{},cols:53,colList:['id','name','slug','published','verified_at','…','price_day_eur','has_lead','surface_m2','nota_<criterio>…'],body:true,
+   note:'Solo rocódromos: cada tipo de ficha se exporta desde su listado. En CSV, una columna por dato (listas con « | »).',
+   last:{when:'22 oct',n:14,f:'JSON'}},
+ opiniones:{mod:'user_reviews',title:'Opiniones',noun:['opinión','opiniones'],slug:'opiniones',
+   states:[['visible','Visibles',131],['hidden','Ocultas',15],['all','Todas',146]],def:'visible',
+   adj:[['cat','Tipo de ficha',[['','Todas'],['gym','Rocódromos'],['resoler','Resoladores'],['shoe','Pies de gato']]],['loc','Idioma',[['','Todos'],['es','Español'],['en','Inglés']]]],dateL:'Publicada',
+   inherit:{d1:'2026-10-22'},cols:13,colList:['id','item_name','category','display_name','status','locale','body','overall_score','nota_<criterio>…','created_at'],
+   note:'Con el nombre público del lector. Nunca su email ni su cuenta, ni las fotos.',
+   last:{when:'15 oct',n:118,f:'CSV'}},
+ suscriptores:{mod:'subscribers',title:'Suscriptores',noun:['suscriptor','suscriptores'],slug:'suscriptores',pii:true,
+   states:[['active','Activos',1284],['pending','Sin confirmar',96],['unsub','Bajas',41],['all','Todos',1421]],def:'active',
+   adj:[['src','Origen',[['','Todos'],['footer','Pie de página'],['home','Inicio'],['item_page','Ficha'],['article_end','Artículo · al final']]],['loc','Idioma',[['','Todos'],['es','Español'],['en','Inglés']]],['ver','Texto aceptado',[['','Todas las versiones'],['3','v3'],['2','v2'],['1','v1']]]],dateL:'Alta',
+   inherit:{src:'article_end',d1:'2026-09-01'},
+   last:{when:'Ayer, 19:12',n:1279,f:'CSV',purpose:'Copia de seguridad'}},
+ agenda:{mod:'events',title:'Agenda',noun:['evento','eventos'],slug:'agenda',
+   states:[['approved','Aprobados',31],['draft','Borradores',9],['cancelled','Cancelados',3],['rejected','Descartados',9],['all','Todos',52]],def:'approved',
+   adj:[['src','Origen',[['','Agente y manual'],['agent','Agente'],['manual','Manual']]]],dateL:'Fecha del evento',
+   inherit:{d1:'2026-10-29'},upcoming:23,cols:16,colList:['id','status','source','event_type','title_es','title_en','starts_at','ends_at','place_name','url','…','created_at'],
+   last:{when:'1 oct',n:44,f:'CSV'}},
+};
+const SUB_MIN=['email','locale','status','consent_at','confirmed_at'];
+const SUB_PROOF=['+ id','consent_source','consent_version','consent_page','unsubscribed_at','unsubscribe_source','created_at'];
+const PURPOSE=[['','Elige una…'],['backup','Copia de seguridad'],['send_tool','Pasar a otra herramienta de envío'],['data_request','Responder a una petición (acceso o portabilidad)'],['audit','Revisión o auditoría'],['other','Otro']];
+
+let K='suscriptores',S={},demo='data',busy=null,failNext=false;
+function reset(k,keepFilters=true){K=k;const m=M[k];S=Object.assign({st:m.def,f:'csv',p:'min'},keepFilters?m.inherit:{});if(k==='bajas'){}}
+
+function count(){const m=M[K];if(demo==='empty')return 0;if(demo==='truncated')return 50000;
+  let n=(m.states.find(s=>s[0]===S.st)||m.states[0])[2];
+  if(K==='agenda'&&S.st==='approved'&&S.d1)n=m.upcoming;
+  const k=['cat','en','loc','src','ver'].filter(x=>S[x]).length+((K!=='agenda'&&S.d1)?1:0)+(S.d2?1:0);
+  for(let i=0;i<k;i++)n=Math.round(n*.45);return n;}
+function stLabel(){const m=M[K];return (m.states.find(s=>s[0]===S.st)||m.states[0])[1];}
+function filename(){const st=K==='fichas'?'':({all:''}[S.st]===''?'':stLabel().toLowerCase().replace(/ /g,'-').normalize('NFD').replace(/[̀-ͯ]/g,''));
+  return ['chalkguide',M[K].slug,st,'2026-10-29','0855'].filter(Boolean).join('-')+'.'+S.f;}
+function chips(){const m=M[K],o=[];
+  m.adj.forEach(([id,l,opts])=>{if(S[id]){o.push([id,l+': '+opts.find(x=>x[0]===S[id])[1]]);}});
+  if(S.d1||S.d2){const d=x=>x.split('-').reverse().slice(0,2).join('/');o.push(['date',m.dateL+(S.d1?' desde '+d(S.d1):'')+(S.d2?' hasta '+d(S.d2):'')]);}
+  return o;}
+
+/* ---------- pintar el cuerpo ---------- */
+function body(){const m=M[K],n=count(),ch=chips();
+  const stSel=`<label class="sr-only" for="x-st">Estado</label><select id="x-st" class="select !w-auto min-w-[180px]" data-f="st" autofocus>${m.states.map(s=>`<option value="${s[0]}"${S.st===s[0]?' selected':''}>${s[1]} · ${fmt(s[2])}</option>`).join('')}</select>`;
+  const adj=m.adj.map(([id,l,opts])=>`<div><label class="lbl" for="x-${id}">${l}</label><select id="x-${id}" class="select" data-f="${id}">${opts.map(o=>`<option value="${o[0]}"${(S[id]||'')===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></div>`).join('')
+    +`<div><label class="lbl" for="x-d1">${m.dateL} desde</label><input id="x-d1" type="date" class="input num" data-f="d1" value="${S.d1||''}"></div><div><label class="lbl" for="x-d2">Hasta</label><input id="x-d2" type="date" class="input num" data-f="d2" value="${S.d2||''}"></div>`;
+  let h=`<div class="xs-sec"><h3>Filas</h3><div class="space-y-2 min-w-0">
+     <div class="flex flex-wrap items-center gap-2">${stSel}${ch.map(([id,t])=>`<span class="fchip">${t}<button type="button" data-rm="${id}" aria-label="Quitar filtro ${t}"><i data-lucide="x"></i></button></span>`).join('')}</div>
+     <details class="adj"${S.adjOpen?' open':''} id="adj"><summary>Ajustar filtros<i data-lucide="chevron-down" class="chev w-3.5 h-3.5"></i></summary><div class="mt-2 grid sm:grid-cols-2 gap-3">${adj}</div></details></div></div>`;
+  // columnas
+  h+=`<div class="xs-sec"><h3>Columnas</h3><div class="space-y-2 min-w-0">`;
+  if(K==='suscriptores'){
+    h+=`<div class="grid sm:grid-cols-2 gap-2" role="radiogroup" aria-label="Columnas">
+      <label class="opt"><input type="radio" name="p" class="radio mt-0.5" value="min" ${S.p==='min'?'checked':''}><span><span class="block text-sm font-medium">Lo mínimo <span class="text-meta font-normal">· recomendado</span></span><span class="block text-xs text-meta">Email, idioma, estado, alta y confirmación</span></span></label>
+      <label class="opt"><input type="radio" name="p" class="radio mt-0.5" value="proof" ${S.p==='proof'?'checked':''}><span><span class="block text-sm font-medium">Con prueba de consentimiento</span><span class="block text-xs text-meta">Añade origen, página, versión del texto y baja</span></span></label></div>
+      <div class="cols">${SUB_MIN.map(c=>`<code>${c}</code>`).join('')}${S.p==='proof'?SUB_PROOF.map(c=>`<code>${c}</code>`).join(''):''}</div>
+      <p class="text-xs text-meta flex items-start gap-1.5"><i data-lucide="lock" class="w-3.5 h-3.5 mt-px flex-none"></i><span>Nunca salen: enlaces y tokens de baja, la cuenta (Google), datos del proveedor de email ni los suprimidos.</span></p>`;
+  } else {
+    h+=`<details class="adj"><summary>${m.cols} columnas, con su clave técnica<i data-lucide="chevron-down" class="chev w-3.5 h-3.5"></i></summary><div class="cols mt-1">${m.colList.map(c=>`<code>${c}</code>`).join('')}</div></details>`;
+    if(m.note)h+=`<p class="text-xs text-meta flex items-start gap-1.5"><i data-lucide="${K==='opiniones'?'eye-off':'info'}" class="w-3.5 h-3.5 mt-px flex-none"></i><span>${m.note}</span></p>`;
+    if(m.body)h+=`<label class="flex items-start gap-2 text-sm ${S.f==='json'?'':'opacity-45'}"><input type="checkbox" class="cb mt-0.5" id="x-body" ${S.body&&S.f==='json'?'checked':''} ${S.f==='json'?'':'disabled'} aria-describedby="x-body-h"><span>Incluir el texto completo<span id="x-body-h" class="block text-xs text-meta">${K==='fichas'?'La reseña del autor, en HTML (ES y EN). ':'HTML, ES y EN. '}Solo en JSON.</span></span></label>`;
+  }
+  h+=`</div></div>`;
+  // formato
+  h+=`<div class="xs-sec"><h3 id="x-fmt-l">Formato</h3><div class="min-w-0"><div class="seg !grid grid-cols-2 w-full sm:w-[240px]" role="radiogroup" aria-labelledby="x-fmt-l" aria-describedby="x-fmt-h" id="fmtSeg">
+     <button type="button" role="radio" data-v="csv" aria-checked="${S.f==='csv'}">CSV</button><button type="button" role="radio" data-v="json" aria-checked="${S.f==='json'}">JSON</button></div>
+     <p class="text-xs text-meta mt-1.5" id="x-fmt-h">${S.f==='csv'?'Para Excel o Numbers: separado por punto y coma, decimales con coma y acentos bien (UTF-8).':'Para copias de seguridad o pasar a otra herramienta: conserva notas y datos anidados.'}</p></div></div>`;
+  // RGPD
+  if(m.pii&&n>0&&demo!=='error'&&demo!=='counting'){
+    h+=`<div class="xs-sec"><h3>Datos personales</h3><div class="space-y-3 min-w-0">
+      <div class="banner banner-warn"><i data-lucide="shield-alert"></i><span><b>Contiene ${fmt(n)} emails.</b> Guárdalo en un sitio seguro, no lo compartas y bórralo cuando ya no lo necesites. Si después suprimes a alguien, bórralo también de este archivo.</span></div>
+      ${S.st!=='active'?`<div class="banner banner-warn"><i data-lucide="mail-x"></i><span>${S.st==='pending'?'<b>No han confirmado su email:</b> no tienen consentimiento válido.':(S.st==='all'?'<b>Incluye bajas y altas sin confirmar.</b>':`<b>Son ${fmt(n)} bajas.</b>`)} No los subas a ninguna herramienta de envío.</span></div>`:''}
+      <div><label class="lbl" for="x-purpose">Para qué lo exportas <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label><select id="x-purpose" class="select" aria-describedby="x-purpose-h">${PURPOSE.map(o=>`<option value="${o[0]}"${S.purpose===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select><p id="x-purpose-h" class="text-xs text-meta mt-1">Queda en Actividad junto a la exportación.</p></div>
+      <label class="flex items-start gap-2 text-sm min-h-8"><input type="checkbox" class="cb mt-0.5" id="x-ack" ${S.ack?'checked':''}><span>Entiendo que el archivo tiene datos personales y que soy responsable de guardarlo y borrarlo.</span></label></div></div>`;
+  }
+  // estados del resultado
+  if(demo==='error')h+=`<div class="banner banner-err mt-1" role="alert"><i data-lucide="circle-alert"></i><span class="flex-1"><b>No se ha podido contar las filas.</b> Revisa la conexión. <span class="mono text-xs text-meta">PGRST301</span></span><button type="button" class="btn btn-sm btn-ghost -my-1" id="retry"><i data-lucide="rotate-cw"></i>Reintentar</button></div>`;
+  else if(n===0&&demo!=='counting')h+=`<div class="banner banner-info mt-1"><i data-lucide="filter-x"></i><span class="flex-1"><b>Ninguna fila con estos filtros.</b> Sin filas no se genera archivo ni se registra nada.</span><button type="button" class="btn btn-sm btn-ghost -my-1" id="clearF">Quitar filtros</button></div>`;
+  else if(demo==='truncated')h+=`<div class="banner banner-warn mt-1"><i data-lucide="triangle-alert"></i><span>Hay <b class="num">63.410</b> filas: se exportan las primeras <b class="num">50.000</b> (límite por archivo). Acota con las fechas para sacar el resto.</span></div>`;
+  if(busy){const p=Math.min(n,busy.done);h+=`<div class="mt-3 space-y-1.5"><div class="prog" role="progressbar" aria-label="Preparando el archivo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(p/n*100)}"><span style="width:${Math.round(p/n*100)}%"></span></div><p class="text-xs text-meta">Preparando el archivo…</p></div>`;}
+  // última exportación del módulo
+  const L=demo==='nolast'||m.last==='Nunca'?null:m.last;
+  h+=`<p class="mt-3 pt-3 border-t border-line text-xs text-meta flex items-start gap-1.5"><i data-lucide="history" class="w-3.5 h-3.5 mt-px flex-none"></i><span>${L?`Última exportación de ${m.noun[1]}:<span class="num">${L.when} · ${fmt(L.n)} filas · ${L.f}${L.purpose?' · '+L.purpose:''}</span>. `:`Aún no has exportado ${m.noun[1]}. `}Cada exportación queda en <a href="actividad.html#exportaciones" class="underline underline-offset-2 hover:text-fg">Actividad</a>: qué, filtros, columnas, formato, filas${m.pii?' y para qué':''}. Nunca los datos.</span></p>`;
+  $('xb').innerHTML=h;
+  $('x-view').textContent=stLabel();$('x-h').textContent='Exportar '+m.noun[1];
+  foot();CG.icons();}
+function foot(){const m=M[K],n=count(),ready=!(m.pii&&n>0)||(S.purpose&&S.ack);let sum;
+  if(demo==='counting')sum=`<span class="sk h-4 w-40 inline-block" aria-hidden="true"></span><span class="sr-only">Contando filas…</span>`;
+  else if(demo==='error')sum=`<span class="text-meta">Sin recuento</span>`;
+  else sum=`<span><b class="num">${fmt(n)}</b> ${m.noun[n===1?0:1]} · ${S.f.toUpperCase()}</span>${n?`<span class="mono text-[11.5px] text-meta truncate max-w-full" title="Nombre del archivo">${filename()}</span>`:''}`;
+  const dis=demo==='counting'||demo==='error'||n===0||!ready;
+  const why=!ready&&n>0&&demo==='data'||(!ready&&demo==='truncated')?`<p id="x-why" class="text-xs text-meta basis-full md:order-last md:text-right">Elige para qué lo exportas y marca la casilla.</p>`:'';
+  $('xf').innerHTML=busy
+    ?`<div class="xsum" aria-live="polite"><span class="text-meta">Preparando ${fmt(n)} filas…</span></div><button class="btn btn-ghost" id="cancel">Cancelar</button><button class="btn btn-primary" aria-busy="true" disabled><i data-lucide="loader-2" class="spin"></i>Preparando…</button>`
+    :`<div class="xsum" aria-live="polite">${sum}</div><button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-primary" id="dl" ${dis?'disabled':''} ${why?'aria-describedby="x-why"':''}><i data-lucide="download"></i>${n&&demo!=='error'&&demo!=='counting'?`Descargar ${fmt(n)} ${n===1?'fila':'filas'}`:'Descargar'}</button>${why}`;
+  CG.icons();}
+
+/* ---------- fondo: el listado del módulo ---------- */
+function bg(){const m=M[K];$('bgTitle').textContent=m.title;
+  $('bgTabs').innerHTML=m.states.map(s=>`<span class="tab ${s[0]===m.def?'text-fg font-medium border-b-2 border-fg':'text-meta'} py-2">${s[1]} <span class="num text-muted">${fmt(s[2])}</span></span>`).join('');
+  $('bgChips').innerHTML=chips().map(c=>`<span class="chip st-neutral">${c[1]}</span>`).join('')||'<span class="text-xs text-meta">Sin filtros</span>';
+  $('bgRows').innerHTML=Array.from({length:8},(_,i)=>`<li class="px-4 md:px-6 h-10 flex items-center gap-4"><span class="sk h-3 ${['w-56','w-40','w-64','w-48'][i%4]}"></span><span class="sk h-3 w-16 ml-auto"></span><span class="sk h-3 w-20 hidden md:block"></span></li>`).join('');}
+
+/* ---------- interacción ---------- */
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.dataset.f){S[t.dataset.f]=t.value;if(t.dataset.f==='st'&&M[K].pii)S.ack=false;const id=t.id;S.adjOpen=$('adj')?.open;body();$(id)&&$(id).focus();return;}
+  if(t.name==='p'){S.p=t.value;S.ack=false;body();document.querySelector(`input[name=p][value=${S.p}]`).focus();return;}
+  if(t.id==='x-purpose'){S.purpose=t.value;foot();return;}
+  if(t.id==='x-ack'){S.ack=t.checked;foot();return;}
+  if(t.id==='x-body'){S.body=t.checked;return;}
+});
+document.addEventListener('toggle',e=>{if(e.target.id==='adj')S.adjOpen=e.target.open;},true);
+document.addEventListener('click',e=>{let b;
+  if(e.target.closest('#openExp')){CG.open('exp',$('openExp'));return;}
+  if(b=e.target.closest('#fmtSeg [role=radio]')){S.f=b.dataset.v;S.adjOpen=$('adj')?.open;body();$('fmtSeg').querySelector(`[data-v=${S.f}]`).focus();return;}
+  if(b=e.target.closest('[data-rm]')){const k=b.dataset.rm;if(k==='date'){S.d1='';S.d2='';}else S[k]='';body();bg();$('x-st').focus();return;}
+  if(e.target.closest('#clearF')){M[K].adj.forEach(a=>S[a[0]]='');S.d1='';S.d2='';demo='data';$('demoState').value='data';body();bg();return;}
+  if(e.target.closest('#retry')){demo='counting';body();setTimeout(()=>{demo='data';$('demoState').value='data';body();},700);return;}
+  if(e.target.closest('#cancel')){clearInterval(busy.iv);busy=null;body();CG.toast('Exportación cancelada · puede que quede registrada en Actividad',{type:'info',action:null});$('dl').focus();return;}
+  if(e.target.closest('#dl'))start();
+});
+document.addEventListener('keydown',e=>{const r=e.target.closest&&e.target.closest('#fmtSeg [role=radio]');if(r&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();S.f=S.f==='csv'?'json':'csv';body();$('fmtSeg').querySelector(`[data-v=${S.f}]`).focus();}});
+function start(){const n=count();busy={done:0};body();
+  busy.iv=setInterval(()=>{busy.done+=Math.ceil(n/3);if(busy.done<n){body();return;}
+    clearInterval(busy.iv);busy=null;
+    if(failNext){failNext=false;body();CG.toast('No se ha podido guardar el archivo. No se ha descargado, pero la exportación quedó registrada en Actividad.',{type:'err',action:'Reintentar'});return;}
+    const m=M[K];m.last={when:'Ahora',n,f:S.f.toUpperCase(),purpose:m.pii?PURPOSE.find(p=>p[0]===S.purpose)[1]:''};
+    CG.close('exp');S.ack=false;
+    CG.toast(`Descargado · ${fmt(n)} filas · registrado en Actividad`,{action:null});},450);}
+
+/* ---------- hashes ---------- */
+$('demoState').onchange=e=>{demo=e.target.value;body();};
+function fromHash(){const h=location.hash.slice(1);busy&&clearInterval(busy.iv);busy=null;demo='data';failNext=false;
+  const k=M[h]?h:h==='bajas'?'suscriptores':(K||'suscriptores');reset(k);if(h==='bajas')S.st='unsub';
+  if(h==='vacio')demo='empty';if(h==='error')demo='error';if(h==='truncado'){reset('agenda');demo='truncated';S.d1='';}
+  $('demoState').value=demo;
+  const want=MOD_PAGE[h];if(want&&want!==document.body.dataset.page){location.reload();return;}
+  bg();body();CG.open('exp',$('openExp'));
+  if(h==='preparando'){reset('opiniones');bg();body();setTimeout(start,60);}
+  if(h==='error-archivo'){reset('agenda');bg();body();failNext=true;setTimeout(start,60);}
+  if(h==='cancelar'){reset('articulos');bg();body();setTimeout(()=>{start();setTimeout(()=>$('cancel')&&$('cancel').click(),300);},60);}
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(fromHash,0));
+addEventListener('hashchange',fromHash);
+</script>
+</body>
+</html>

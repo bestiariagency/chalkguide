@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Home · hero oscuro con color de la foto (D20) · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="_shared/lectura.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw-vars.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+<link rel="stylesheet" href="_shared/lectura.css">
+<style>
+  /* ===== Hero de la home (D20) =====
+     Tres colores derivados de la foto destacada (OKLCH), calculados al subirla y guardados con el medio:
+     --amb-deep (L 0.20): fondo · --amb-mid (L 0.25): parte baja, el punto más claro bajo el texto · --amb-glow (L 0.40): halo SOLO detrás de la foto.
+     El texto nunca va sobre la foto ni sobre el halo: el contraste se mide contra --amb-mid (peor caso). */
+  @property --amb-deep { syntax: '<color>'; inherits: true; initial-value: #17120e; }
+  @property --amb-mid  { syntax: '<color>'; inherits: true; initial-value: #211912; }
+  @property --amb-glow { syntax: '<color>'; inherits: true; initial-value: #5a3a22; }
+  .hero { position: relative; isolation: isolate; overflow: hidden;
+    background: linear-gradient(180deg, #0f0f0f 0, var(--amb-deep) 160px, var(--amb-deep) 55%, var(--amb-mid) 100%);
+    transition: --amb-deep 700ms var(--ease-out), --amb-mid 700ms var(--ease-out), --amb-glow 700ms var(--ease-out); }
+  /* Rejilla de pizarra encima del color (misma textura que el resto de la marca) */
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background-image: linear-gradient(rgba(240,237,232,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(240,237,232,.016) 1px, transparent 1px); background-size: 32px 32px;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 160px); mask-image: linear-gradient(180deg, transparent 0, #000 160px); }
+  .hero-fig { position: relative; }
+  .hero-fig::before { content: ""; position: absolute; z-index: -1; inset: -14% -18%; pointer-events: none;
+    background: radial-gradient(closest-side, var(--amb-glow), transparent); opacity: .9; }
+  .hero-photo { position: relative; overflow: hidden; background: var(--amb-mid); aspect-ratio: 4 / 3; }
+  .hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 600ms var(--ease-out); }
+  .hero-photo img.is-out { opacity: 0; }
+  /* Móvil: foto a sangre arriba, se funde con el fondo por abajo; el texto empieza donde termina el fundido */
+  .hero-photo::after { content: ""; position: absolute; inset: auto 0 0 0; height: 38%; background: linear-gradient(180deg, transparent, var(--amb-deep)); pointer-events: none; }
+  @media (min-width: 1024px) {
+    .hero-photo { aspect-ratio: 4 / 5; border-radius: 16px; box-shadow: 0 0 0 .5px rgba(255,255,255,.08), 0 30px 60px -30px rgba(0,0,0,.7); }
+    .hero-photo::after { display: none; }
+    .hero-fig::before { inset: -10% -14%; }
+  }
+  @media (min-width: 640px) and (max-width: 1023.98px) {
+    .hero-photo { aspect-ratio: 16 / 9; border-radius: 16px; }
+    .hero-photo::after { display: none; }
+  }
+  .credit { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .02em; color: #A19D94; }
+  .credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .credit a:hover { color: #F0EDE8; }
+
+  /* Variante B: rotación */
+  .slide-text { transition: opacity 400ms var(--ease-out); }
+  .slide-text.is-out { opacity: 0; }
+  .dots { display: flex; align-items: center; gap: 4px; }
+  .dots button { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 8px; }
+  .dots button span { width: 24px; height: 3px; border-radius: 99px; background: rgba(240,237,232,.28); overflow: hidden; position: relative; }
+  .dots button[aria-current="true"] span::after { content: ""; position: absolute; inset: 0; background: #F0EDE8; transform-origin: left; animation: fill var(--slide-ms, 8000ms) linear forwards; }
+  .is-paused .dots button[aria-current="true"] span::after, .no-auto .dots button[aria-current="true"] span::after { animation: none; transform: none; }
+  @keyframes fill { from { transform: scaleX(0); } }
+  .icon-btn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 8px; color: #A19D94; border: 1px solid #75716A; transition: color var(--dur-fast), border-color var(--dur-fast); }
+  .icon-btn:hover { color: #F0EDE8; border-color: #A19D94; }
+
+  /* Controles solo del mockup (en la barra de mockup, fuera del diseño) */
+  .mk { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .mk button { color: #A19D94; text-decoration: underline; text-underline-offset: 3px; }
+  .mk button[aria-pressed="true"] { color: #F0EDE8; }
+  .mk img { width: 28px; height: 20px; object-fit: cover; border-radius: 3px; display: inline-block; vertical-align: middle; }
+  .mk .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; border: .5px solid rgba(255,255,255,.2); }
+  @media (prefers-reduced-motion: reduce) { .hero { transition: none; } }
+</style>
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="" data-route-es="/" data-route-en="/en">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <!-- 1 · Hero oscuro, pegado a la cabecera. Color ambiental desde la foto destacada. -->
+  <section id="hero" class="hero chrome-dark" aria-labelledby="hero-title" aria-roledescription="destacado">
+    <div class="max-w-page mx-auto md:px-6 pb-12 md:pb-16 lg:py-20 grid lg:grid-cols-12 gap-8 md:gap-10 lg:gap-16 items-center">
+      <figure class="hero-fig lg:col-span-5 lg:order-2 md:pt-8 lg:pt-0">
+        <div class="hero-photo">
+          <img id="heroImg" crossorigin="anonymous" alt="" fetchpriority="high" decoding="async">
+        </div>
+        <figcaption class="credit px-4 md:px-0 mt-2 lg:text-right" id="heroCredit"></figcaption>
+      </figure>
+
+      <div class="lg:col-span-7 lg:order-1 px-4 md:px-0" id="heroText">
+        <div class="slide-text" id="slideText">
+          <p class="label-mini !text-accent" id="hKicker">Costes · Guía práctica</p>
+          <h1 id="hero-title" class="display text-[2.4rem] leading-[1.08] md:text-[3.5rem] lg:text-[3.75rem] md:leading-[1.04] mt-4 max-w-[16ch]">
+            <a href="lectura-articulo.html" class="transition-colors duration-150 hover:text-white" id="hTitle">Cuánto cuesta <span class="chalk-ul">realmente<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true" data-draw style="--len:220"><path d="M3 9 C 40 4, 80 12, 120 7 S 180 5, 197 8" stroke-width="3.2"/><path d="M14 12 C 60 9, 120 13, 186 10" stroke-width="1.4" opacity=".55"/></svg></span> escalar en Barcelona al mes</a>
+          </h1>
+          <p class="text-[18px] leading-[1.7] text-meta mt-6 max-w-[52ch]" id="hExcerpt">Hice las cuentas de 14 rocódromos a dos visitas por semana. Y te digo cuál elegiría yo.</p>
+          <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a href="lectura-articulo.html" class="btn btn-primary" id="hCta"><span class="label">Leer la guía</span><span class="arrow" aria-hidden="true">→</span></a>
+            <span class="font-mono text-[13px] text-meta" id="hDate">Actualizado el 28.09.26</span>
+          </div>
+        </div>
+
+        <!-- B · controles de la rotación (ocultos en A) -->
+        <div class="mt-8 flex items-center gap-3" id="rotCtl" hidden>
+          <button type="button" class="icon-btn" id="rotPause" aria-label="Pausar el destacado"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-pause"/></svg></button>
+          <div class="dots" role="group" aria-label="Elegir destacado" id="rotDots"></div>
+          <span class="font-mono text-[12px] text-meta" id="rotN" aria-hidden="true"></span>
+        </div>
+
+        <div class="mt-10 pt-6 border-t-[0.5px] border-line-strong flex items-start gap-4 max-w-[52ch]">
+          <div class="w-10 h-10 rounded-full bg-elevated border-[0.5px] border-line-strong grid place-items-center text-accent text-sm font-medium shrink-0" aria-hidden="true">X</div>
+          <div>
+            <p class="font-hand text-[24px] leading-[1.15] text-foreground">«Empecé sin nadie a quien preguntar. Esto es lo que me habría gustado leer.»</p>
+            <p class="text-sm text-meta mt-2"><span class="text-foreground">Xavi</span> · 6 años escalando en BCN · <a href="sobre-mi.html" class="link">Sobre mí</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="sr-only" aria-live="polite" id="rotLive"></p>
+  </section>
+
+  <!-- 2 · ¿Por dónde empiezas? (claro, igual que la home actual) -->
+  <section class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24" aria-labelledby="h-perfil">
+    <div class="md:flex md:items-end md:justify-between gap-6">
+      <h2 id="h-perfil" class="display text-[1.75rem] md:text-4xl">¿Por dónde empiezas?</h2>
+      <div class="seg mt-5 md:mt-0 w-full md:w-auto" role="tablist" aria-label="Elige tu perfil" data-seg>
+        <span class="ind" aria-hidden="true"></span>
+        <button role="tab" id="t-nuevo" aria-controls="p-nuevo" aria-selected="true" tabindex="0">Acabo de empezar</button>
+        <button role="tab" id="t-habitual" aria-controls="p-habitual" aria-selected="false" tabindex="-1">Ya escalo cada semana</button>
+      </div>
+    </div>
+    <div id="p-nuevo" role="tabpanel" aria-labelledby="t-nuevo" class="tabpanel mt-8 grid sm:grid-cols-3 gap-3">
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">01</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Qué rocódromo me conviene si estoy empezando</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">02</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Bono o cuota mensual: qué conviene</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">03</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Cómo elegir tus primeros pies de gato</span></a>
+    </div>
+    <div id="p-habitual" role="tabpanel" aria-labelledby="t-habitual" class="tabpanel mt-8 grid sm:grid-cols-3 gap-3" hidden>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">01</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Comparar los rocódromos</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">02</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Cuándo resolar y dónde</span></a>
+      <a href="#" class="card block p-6"><span class="font-mono text-[13px] text-accent">03</span><span class="block text-xl font-medium leading-snug mt-3 t-link">Roca a menos de 2 horas</span></a>
+    </div>
+  </section>
+
+  <!-- 3 · Rocódromos (claro con rejilla) · resumido -->
+  <section class="board-tex border-y-[0.5px] border-line" aria-labelledby="h-gyms">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-16 md:py-24">
+      <p class="label-mini">Rocódromos</p>
+      <h2 id="h-gyms" class="display text-[1.75rem] md:text-4xl mt-3">Los rocódromos, uno a uno</h2>
+      <p class="text-meta mt-4 max-w-read">(Sección igual que en la home actual, en tema claro. Se recorta aquí: este mockup trata del hero.)</p>
+      <a href="buscador-rocodromos.html" class="btn btn-ghost mt-8"><span class="label">Ver los rocódromos</span><span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- Newsletter: bloque oscuro unido al pie (D20) -->
+  <section id="newsletter" class="chrome-dark board-tex" aria-labelledby="h-news">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-12 md:py-16 grid md:grid-cols-12 gap-10 items-start">
+      <div class="md:col-span-6">
+        <p class="label-mini !text-accent">Newsletter mensual</p>
+        <h2 id="h-news" class="display text-[2rem] md:text-[2.75rem] leading-[1.08] mt-3">Una carta al mes. Nada más.</h2>
+        <p class="text-meta mt-4 max-w-[44ch] text-[17px] leading-[1.7]">Novedades de los rocódromos, el artículo nuevo y un pie de gato que merece la pena.</p>
+      </div>
+      <div class="md:col-span-6 bg-background border-[0.5px] border-line-strong rounded-xl p-5 md:p-7">
+        <form data-nl="nlOk" novalidate>
+          <label for="nl-email" class="block text-sm text-meta mb-2">Tu email</label>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input id="nl-email" type="email" autocomplete="email" placeholder="nombre@correo.com" class="field flex-1" aria-describedby="nl-e1" data-nl-email>
+            <button type="submit" class="btn btn-primary"><span class="spinner" aria-hidden="true"></span><span class="label">Suscribirme</span></button>
+          </div>
+          <p id="nl-e1" class="hidden mt-2 text-[15px] text-danger-text items-center gap-1.5" data-nl-err-email><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-alert"/></svg>Escribe un email válido, por ejemplo nombre@correo.com.</p>
+          <label class="check mt-3" for="nl-consent">
+            <input id="nl-consent" type="checkbox" aria-describedby="nl-e2" data-nl-consent>
+            <span class="box" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="#1a0a00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="text-[15px]">Quiero recibir la newsletter mensual de ChalkGuide por email. Puedo darme de baja cuando quiera. <a href="#" class="link">Política de privacidad</a>.</span>
+          </label>
+          <p id="nl-e2" class="hidden mt-1 text-[15px] text-danger-text items-center gap-1.5" data-nl-err-consent><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-alert"/></svg>Marca la casilla para confirmar que quieres recibirla.</p>
+        </form>
+        <div id="nlOk" class="hidden text-center py-4" role="status" tabindex="-1"><p class="text-xl font-medium">¡Casi está!</p><p class="text-meta mt-1">Te he enviado un email para confirmar la suscripción.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$ } = window.CG;
+  const reduce = window.CG.reduce;
+  const IMG = (id, w) => `https://images.unsplash.com/${id}?w=${w}&q=75&auto=format&fit=crop`;
+  // Fotos dummy (Unsplash License). En producción: media.credit + media.dominant_color (calculado al subir).
+  const PHOTOS = {
+    gym:    { id: 'photo-1564769662533-4f00a87b4056', author: 'Yns Plt', page: 'https://unsplash.com/photos/NY1D4Zni7fc', alt: 'Escaladora en un bloque de rocódromo con presas de colores', pos: '50% 40%', label: 'rocódromo' },
+    rock:   { id: 'photo-1601224748193-d24f166b5c77', author: 'Sean Benesh', page: 'https://unsplash.com/photos/VnmbcgAfL3Q', alt: 'Escalador en una pared de roca rojiza desplomada', pos: '60% 50%', label: 'roca roja' },
+    forest: { id: 'photo-1727558729775-83c4ab8d55a8', author: 'Jeremy Vejgman', page: 'https://unsplash.com/photos/tMKfZRV_zj0', alt: 'Escaladora en un bloque de granito en el bosque, con dos personas asegurando', pos: '50% 45%', label: 'bosque' },
+    sea:    { id: 'photo-1522163182402-834f871fd851', author: 'Hu Chen', page: 'https://unsplash.com/photos/FZ0qzjVF_-c', alt: 'Escalador en un techo de roca sobre el mar', pos: '35% 30%', label: 'mar' },
+  };
+  const ARTICLES = [
+    { kicker: 'Costes · Guía práctica', title: 'Cuánto cuesta <span class="chalk-ul">realmente<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true" data-draw style="--len:220"><path d="M3 9 C 40 4, 80 12, 120 7 S 180 5, 197 8" stroke-width="3.2"/><path d="M14 12 C 60 9, 120 13, 186 10" stroke-width="1.4" opacity=".55"/></svg></span> escalar en Barcelona al mes', excerpt: 'Hice las cuentas de 14 rocódromos a dos visitas por semana. Y te digo cuál elegiría yo.', cta: 'Leer la guía', date: '28.09.26', photo: 'gym' },
+    { kicker: 'Dónde escalar', title: 'Roca a menos de dos horas: seis escuelas para empezar', excerpt: 'Aproximación corta, vías equipadas de grado bajo y cómo llegar sin coche desde Sants.', cta: 'Ver las escuelas', date: '14.09.26', photo: 'rock' },
+    { kicker: 'Primeros pasos', title: 'Bloque en el bosque: qué llevar la primera vez', excerpt: 'Crash pad, cepillo y poco más. Lo que aprendí en mis primeras salidas a roca.', cta: 'Leer el artículo', date: '02.09.26', photo: 'forest' },
+  ];
+
+  /* ---------- Color ambiental (OKLCH) ---------- */
+  const lin = (c) => (c /= 255) <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4;
+  const unlin = (c) => Math.round(255 * Math.min(1, Math.max(0, c <= .0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - .055)));
+  const toOklab = (r, g, b) => {
+    r = lin(r); g = lin(g); b = lin(b);
+    const l = Math.cbrt(.4122214708 * r + .5363371132 * g + .0514459929 * b), m = Math.cbrt(.2119034982 * r + .6806995451 * g + .1073969566 * b), s = Math.cbrt(.0883024619 * r + .2817188376 * g + .6299787005 * b);
+    return [.2104542553 * l + .793617785 * m - .0040720468 * s, 1.9779984951 * l - 2.428592205 * m + .4505937099 * s, .0259040371 * l + .7827717662 * m - .808675766 * s];
+  };
+  const fromOklch = (L, C, h) => {
+    const a = C * Math.cos(h), b = C * Math.sin(h);
+    const l = (L + .3963377774 * a + .2158037573 * b) ** 3, m = (L - .1055613458 * a - .0638541728 * b) ** 3, s = (L - .0894841775 * a - 1.291485548 * b) ** 3;
+    return [unlin(4.0767416621 * l - 3.3077115913 * m + .2309699292 * s), unlin(-1.2684380046 * l + 2.6097574011 * m - .3413193965 * s), unlin(-.0041960863 * l - .7034186147 * m + 1.707614701 * s)];
+  };
+  const hex = (rgb) => '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
+  const lum = (rgb) => { const [r, g, b] = rgb.map(lin); return .2126 * r + .7152 * g + .0722 * b; };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+  const META = [161, 157, 148], FG = [240, 237, 232], ACC = [232, 146, 58];
+
+  // Color dominante: histograma de tono (18 tramos) ponderado por croma; ignora casi-negros y casi-blancos.
+  const dominant = (img) => {
+    const c = document.createElement('canvas'); c.width = c.height = 48; const x = c.getContext('2d', { willReadFrequently: true });
+    x.drawImage(img, 0, 0, 48, 48); const d = x.getImageData(0, 0, 48, 48).data;
+    const bins = Array.from({ length: 18 }, () => ({ w: 0, a: 0, b: 0 })); let tw = 0, n = 0;
+    for (let i = 0; i < d.length; i += 4) {
+      const [L, a, b] = toOklab(d[i], d[i + 1], d[i + 2]); if (L < .18 || L > .95) continue;
+      const C = Math.hypot(a, b), w = C ** 1.5; n++; tw += C;
+      const h = (Math.atan2(b, a) + 2 * Math.PI) % (2 * Math.PI), k = Math.floor(h / (2 * Math.PI) * 18) % 18;
+      bins[k].w += w; bins[k].a += a * w; bins[k].b += b * w;
+    }
+    const best = bins.reduce((p, q) => q.w > p.w ? q : p);
+    if (!best.w || tw / Math.max(n, 1) < .02) return { C: .012, h: 1.05 }; // foto casi gris: neutro cálido de marca
+    return { C: Math.hypot(best.a, best.b) / best.w, h: Math.atan2(best.b, best.a) };
+  };
+  // Paleta del hero con garantía AA: si --amb-mid no da 4.5:1 con el texto meta, se oscurece en pasos de 0.01.
+  const palette = ({ C, h }) => {
+    let Lm = .25; const deep = fromOklch(.20, Math.min(C * .8, .05), h);
+    let mid = fromOklch(Lm, Math.min(C * .9, .065), h);
+    while (ratio(META, mid) < 4.5 && Lm > .15) { Lm -= .01; mid = fromOklch(Lm, Math.min(C * .9, .065), h); }
+    const glow = fromOklch(.40, Math.min(C * 1.2, .11), h);
+    return { deep: hex(deep), mid: hex(mid), glow: hex(glow), fg: ratio(FG, mid), meta: ratio(META, mid), acc: ratio(ACC, mid) };
+  };
+
+  const hero = $('#hero'), img = $('#heroImg');
+  let cur = null;
+  const applyPalette = (p) => {
+    hero.style.setProperty('--amb-deep', p.deep); hero.style.setProperty('--amb-mid', p.mid); hero.style.setProperty('--amb-glow', p.glow);
+    const st = document.getElementById('mkStat');
+    if (st) st.innerHTML = `<span class="sw" style="background:${p.deep}"></span><span class="sw" style="background:${p.mid}"></span><span class="sw" style="background:${p.glow}"></span> texto ${p.fg.toFixed(1)}:1 · meta ${p.meta.toFixed(1)}:1 · kicker ${p.acc.toFixed(1)}:1`;
+  };
+  const setPhoto = (key) => new Promise((res) => {
+    const P = PHOTOS[key]; cur = key;
+    const next = new Image(); next.crossOrigin = 'anonymous';
+    next.onload = () => {
+      const swap = () => {
+        img.src = next.src; img.alt = P.alt; img.style.objectPosition = P.pos; img.classList.remove('is-out');
+        $('#heroCredit').innerHTML = `Foto: <a href="${P.page}" rel="noopener">${P.author}</a> · Unsplash`;
+        try { applyPalette(palette(dominant(next))); } catch (e) { /* sin CORS: se queda el color anterior */ }
+        res();
+      };
+      if (img.getAttribute('src') && !reduce) { img.classList.add('is-out'); setTimeout(swap, 300); } else swap();
+    };
+    next.src = IMG(P.id, innerWidth >= 1024 ? 1000 : 900);
+    $$('[data-mk-photo]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mkPhoto === key)));
+  });
+
+  /* ---------- Texto del destacado ---------- */
+  const setText = (A) => {
+    $('#hKicker').textContent = A.kicker; $('#hTitle').innerHTML = A.title; $('#hExcerpt').textContent = A.excerpt;
+    $('#hCta .label').textContent = A.cta; $('#hDate').textContent = 'Actualizado el ' + A.date;
+    window.CG.observe($('#hTitle'));
+  };
+
+  /* ---------- Variante B: rotación lenta, con pausa (WCAG 2.2.2) ---------- */
+  const SLIDE_MS = 8000; hero.style.setProperty('--slide-ms', SLIDE_MS + 'ms');
+  let mode = 'a', idx = 0, timer = null, paused = false, hoverPause = false;
+  const dots = $('#rotDots');
+  const goTo = async (i, announce) => {
+    idx = (i + ARTICLES.length) % ARTICLES.length; const A = ARTICLES[idx];
+    const t = $('#slideText');
+    if (!reduce) { t.classList.add('is-out'); await new Promise(r => setTimeout(r, 250)); }
+    setText(A); t.classList.remove('is-out');
+    setPhoto(A.photo);
+    $$('button', dots).forEach((b, k) => { b.setAttribute('aria-current', String(k === idx)); const s = b.querySelector('span'); s.replaceWith(s.cloneNode()); });
+    $('#rotN').textContent = `${idx + 1}/${ARTICLES.length}`;
+    if (announce) $('#rotLive').textContent = `Destacado ${idx + 1} de ${ARTICLES.length}: ${A.title.replace(/<[^>]+>/g, '')}`;
+    schedule();
+  };
+  const schedule = () => { clearTimeout(timer); if (mode === 'b' && !paused && !hoverPause && !reduce) timer = setTimeout(() => goTo(idx + 1), SLIDE_MS); };
+  const setPaused = (p) => {
+    paused = p; hero.classList.toggle('is-paused', p);
+    const b = $('#rotPause'); b.setAttribute('aria-label', p ? 'Reanudar el destacado' : 'Pausar el destacado'); b.querySelector('use').setAttribute('href', p ? '#i-play' : '#i-pause');
+    schedule();
+  };
+  dots.innerHTML = ARTICLES.map((A, k) => `<button type="button" aria-label="Destacado ${k + 1}"><span></span></button>`).join('');
+  $$('button', dots).forEach((b, k) => b.addEventListener('click', () => { setPaused(true); goTo(k, true); }));
+  $('#rotPause').addEventListener('click', () => setPaused(!paused));
+  // Pausa mientras el ratón o el foco están dentro (no cambia nada bajo el cursor)
+  hero.addEventListener('mouseenter', () => { hoverPause = true; hero.classList.add('is-paused'); clearTimeout(timer); });
+  hero.addEventListener('mouseleave', () => { hoverPause = false; if (!paused) hero.classList.remove('is-paused'); schedule(); });
+  hero.addEventListener('focusin', () => { hoverPause = true; clearTimeout(timer); });
+  hero.addEventListener('focusout', (e) => { if (!hero.contains(e.relatedTarget)) { hoverPause = false; schedule(); } });
+
+  const setMode = (m) => {
+    mode = m; $('#rotCtl').hidden = m !== 'b'; hero.setAttribute('aria-roledescription', m === 'b' ? 'carrusel' : 'destacado');
+    hero.classList.toggle('no-auto', reduce);
+    $$('[data-mk-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mkMode === m)));
+    $('#mkPhotos').style.display = m === 'a' ? '' : 'none';
+    clearTimeout(timer);
+    if (m === 'a') { setText(ARTICLES[0]); setPhoto(new URLSearchParams(location.search).get('foto') || 'gym'); }
+    else { if (reduce) setPaused(true); goTo(0); }
+  };
+
+  /* ---------- Controles del mockup, en la barra de mockup (fuera del diseño) ---------- */
+  const bar = document.querySelector('.mock-bar > div');
+  if (bar) bar.insertAdjacentHTML('beforeend', `<span class="mk basis-full">Hero:
+    <button type="button" data-mk-mode="a" aria-pressed="true">A · Ambiente (recomendada)</button>
+    <button type="button" data-mk-mode="b" aria-pressed="false">B · Rotación</button>
+    <span id="mkPhotos">· Probar foto: ${Object.entries(PHOTOS).map(([k, P]) => `<button type="button" data-mk-photo="${k}" aria-pressed="false" aria-label="Foto ${P.label}"><img src="${IMG(P.id, 80)}" alt=""></button>`).join(' ')}</span>
+    · <span id="mkStat"></span></span>`);
+  $$('[data-mk-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mkMode)));
+  $$('[data-mk-photo]').forEach(b => b.addEventListener('click', () => setPhoto(b.dataset.mkPhoto)));
+
+  setMode(new URLSearchParams(location.search).get('hero') === 'b' ? 'b' : 'a');
+})();
+</script>
+</body>
+</html>

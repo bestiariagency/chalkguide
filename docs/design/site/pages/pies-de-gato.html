@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Pies de gato: comparador de zapatillas de escalada · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="pies" data-route-es="/pies-de-gato" data-route-en="/en/climbing-shoes">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="board-tex border-b-[0.5px] border-line">
+    <div class="max-w-page mx-auto px-4 md:px-6 pt-8 pb-10 md:pt-10 md:pb-14">
+      <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../direccion-e-pizarra.html">Inicio</a></li><li><span aria-current="page">Pies de gato</span></li></ol></nav>
+      <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-5 max-w-[20ch]">Pies de gato: comparador</h1>
+      <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">15 modelos con datos del fabricante y precios revisados el <span class="font-mono">01.09.26</span>. Elige hasta 3 y compáralos lado a lado.</p>
+    </div>
+  </section>
+
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-14 grid lg:grid-cols-[260px_minmax(0,1fr)] gap-10">
+    <!-- Filtros -->
+    <aside aria-labelledby="h-filters">
+      <button type="button" class="acc-btn lg:hidden w-full flex items-center justify-between min-h-[48px] px-4 rounded-md border border-control" aria-expanded="false" aria-controls="filters-acc"><span class="flex items-center gap-2"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-sliders"/></svg>Filtros <span class="font-mono text-meta text-sm" id="fcount">(1)</span></span><svg class="chev ico" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+      <div id="filters-acc" class="acc lg:!grid-rows-[1fr] lg:[&>div]:!visible"><div>
+        <div class="pt-6 lg:pt-0 space-y-7" id="filters">
+          <h2 id="h-filters" class="label-mini hidden lg:block">Filtros</h2>
+          <fieldset><legend class="text-sm text-meta mb-2">Nivel</legend>
+            <div class="flex flex-wrap gap-2"><button type="button" class="chip" aria-pressed="true" data-chip data-g="level" data-v="beginner"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Inicio</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="level" data-v="intermediate"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Intermedio</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="level" data-v="advanced"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Avanzado</button></div></fieldset>
+          <fieldset><legend class="text-sm text-meta mb-2">Perfil</legend>
+            <div class="flex flex-wrap gap-2"><button type="button" class="chip" aria-pressed="false" data-chip data-g="profile" data-v="flat"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Plano</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="profile" data-v="moderate"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Moderado</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="profile" data-v="aggressive"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Agresivo</button></div></fieldset>
+          <fieldset><legend class="text-sm text-meta mb-2">Cierre</legend>
+            <div class="flex flex-wrap gap-2"><button type="button" class="chip" aria-pressed="false" data-chip data-g="closure" data-v="velcro"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Velcro</button><button type="button" class="chip" aria-pressed="false" data-chip data-g="closure" data-v="lace"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Cordones</button></div></fieldset>
+          <fieldset><legend class="text-sm text-meta mb-1">Precio</legend>
+            <p class="font-mono text-[15px] num" aria-live="polite"><span id="pmin">40</span>–<span id="pmax">185</span> €</p>
+            <div class="range-dual mt-1"><span class="track"></span><span class="fill" id="pfill"></span>
+              <input type="range" min="40" max="185" step="5" value="40" id="rmin" aria-label="Precio mínimo">
+              <input type="range" min="40" max="185" step="5" value="185" id="rmax" aria-label="Precio máximo">
+            </div></fieldset>
+          <fieldset><legend class="sr-only">Experiencia del autor</legend>
+            <button type="button" class="chip" aria-pressed="false" data-chip data-g="owned" data-v="1"><span class="tick" aria-hidden="true"><svg class="ico !w-3.5 !h-3.5"><use href="#i-check"/></svg></span>Los he usado yo</button></fieldset>
+          <button type="button" class="link text-sm inline-flex items-center min-h-[44px]" id="clear">Quitar filtros</button>
+        </div>
+      </div></div>
+    </aside>
+
+    <!-- Resultados -->
+    <section aria-labelledby="h-results" class="min-w-0">
+      <div class="flex flex-wrap items-baseline justify-between gap-3">
+        <h2 id="h-results" class="text-xl font-medium" aria-live="polite"><span id="count">7 resultados</span></h2>
+        <p class="text-sm text-meta">Ordenado por precio</p>
+      </div>
+      <ul class="mt-5 grid sm:grid-cols-2 xl:grid-cols-3 gap-4 num" id="grid"></ul>
+      <div id="empty" class="hidden mt-5 border-[0.5px] border-line-strong rounded-lg bg-board p-8 text-center" role="status">
+        <svg class="ico !w-6 !h-6 mx-auto text-meta" aria-hidden="true"><use href="#i-sliders"/></svg>
+        <p class="font-medium mt-3">Ningún resultado con estos filtros</p>
+        <p class="text-sm text-meta mt-1">Prueba a quitar alguno de los filtros.</p>
+        <button type="button" class="btn btn-ghost mt-5" id="clear2"><span class="label">Quitar filtros</span></button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Comparación -->
+  <section id="comparacion" class="border-t-[0.5px] border-line scroll-mt-16" aria-labelledby="h-cmp">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-12 md:py-16">
+      <h2 id="h-cmp" class="display text-[1.75rem] md:text-[2.25rem]">Lado a lado</h2>
+      <div id="cmp" class="mt-6"></div>
+      <p class="mt-5 text-sm text-meta max-w-read flex gap-2"><svg class="ico !w-4 !h-4 mt-0.5 shrink-0 text-accent" aria-hidden="true"><use href="#i-link"/></svg><span><span class="text-foreground">Enlace de afiliado:</span> si compras desde este enlace, puedo recibir una comisión. A ti no te cuesta más. Los modelos sin enlace se comparan igual.</span></p>
+    </div>
+  </section>
+
+  <div class="compare-tray hidden" id="tray" aria-live="polite">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+      <p class="text-sm min-w-0"><span class="font-mono text-accent" id="trayN">3/3</span> <span class="text-meta">·</span> <span id="trayNames" class="truncate"></span></p>
+      <a href="#comparacion" class="btn btn-primary shrink-0"><span class="label">Ver comparación</span></a>
+    </div>
+  </div>
+</main>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$, vt } = window.CG;
+  const PROFILE = { flat: 'Plano', moderate: 'Moderado', aggressive: 'Agresivo' };
+  const ASYM = { none: 'Ninguna', slight: 'Ligera', moderate: 'Moderada', strong: 'Fuerte' };
+  const CLOSURE = { velcro: 'Velcro', lace: 'Cordones' };
+  const USE = { gym: 'Rocódromo', boulder: 'Bloque', sport: 'Deportiva', trad: 'Clásica', multipitch: 'Vías largas', training: 'Entrenamiento' };
+  const LEVEL = { beginner: 'Inicio', intermediate: 'Intermedio', advanced: 'Avanzado' };
+  // Datos del seed (guide_dummy.sql); "lo que aprendí" y notas solo en los modelos que tiene el autor.
+  const S = [
+    ['la-sportiva-solution','La Sportiva','Solution','aggressive','strong','velcro','Vibram XS Grip2',3.5,3,['boulder','sport','gym'],['advanced'],150,175,1,1,[3,5,4,4],'Duelen las primeras semanas; en desplomes no hay nada igual. Para vías largas, no.'],
+    ['la-sportiva-skwama','La Sportiva','Skwama','aggressive','moderate','velcro','Vibram XS Grip2',3.5,2,['boulder','sport'],['intermediate','advanced'],145,170,1,0],
+    ['la-sportiva-tarantulace','La Sportiva','Tarantulace','flat','slight','lace','FriXion RS',5.0,4,['gym','sport','trad'],['beginner'],80,95,1,1,[5,3,4,4],'Mi primer pie de gato serio. Los cordones me obligaron a ajustarlo bien y aguantó dos resolados.'],
+    ['la-sportiva-finale','La Sportiva','Finale','moderate','slight','lace','Vibram XS Edge',4.0,4,['sport','trad','multipitch'],['beginner','intermediate'],100,125,0,0],
+    ['la-sportiva-miura-vs','La Sportiva','Miura VS','moderate','strong','velcro','Vibram XS Edge',4.0,4,['sport','trad'],['intermediate','advanced'],150,175,0,0],
+    ['scarpa-instinct-vs','Scarpa','Instinct VS','aggressive','moderate','velcro','Vibram XS Edge',3.5,3,['boulder','sport'],['intermediate','advanced'],145,170,1,0],
+    ['scarpa-drago','Scarpa','Drago','aggressive','strong','velcro','Vibram XS Grip2',3.5,1,['boulder','gym'],['advanced'],160,185,0,0],
+    ['scarpa-veloce','Scarpa','Veloce','moderate','slight','velcro','Vibram XS Grip',3.5,2,['gym','boulder','training'],['beginner','intermediate'],95,115,1,1,[5,5,4,4],'Blandos y sensibles: perfectos para el bloque del rocódromo. En roca se gastan rápido.'],
+    ['scarpa-force-v','Scarpa','Force V','flat','slight','velcro','Vibram XS Edge',4.0,4,['gym','sport','multipitch'],['beginner'],90,110,0,0],
+    ['scarpa-vapor-v','Scarpa','Vapor V','moderate','moderate','velcro','Vibram XS Edge',3.5,3,['sport','boulder'],['intermediate'],130,155,0,0],
+    ['evolv-defy','Evolv','Defy','flat','none','velcro','TRAX SAS',4.2,4,['gym','training'],['beginner'],75,90,0,0],
+    ['tenaya-oasi','Tenaya','Oasi','moderate','moderate','velcro','Vibram XS Grip2',3.5,2,['boulder','sport','gym'],['intermediate','advanced'],145,165,0,0],
+    ['ocun-ozone','Ocun','Ozone','moderate','moderate','velcro','Ocun CAT',4.0,3,['sport','boulder'],['intermediate'],120,140,0,0],
+    ['black-diamond-momentum','Black Diamond','Momentum','flat','none','velcro','NeoFriction',4.3,3,['gym','training'],['beginner'],80,95,0,0],
+    ['simond-rock-plus','Simond','Rock+','flat','none','velcro','Simond Grip',4.0,3,['gym'],['beginner'],40,55,0,0],
+  ].map(r => ({ slug:r[0], brand:r[1], model:r[2], profile:r[3], asym:r[4], closure:r[5], rubber:r[6], mm:r[7], stiff:r[8], use:r[9], levels:r[10], pmin:r[11], pmax:r[12], aff:!!r[13], owned:!!r[14], scores:r[15], learned:r[16] }))
+   .sort((a, b) => a.pmin - b.pmin);
+  const MAX = 3;
+  let selected = ['la-sportiva-tarantulace', 'scarpa-veloce', 'evolv-defy'];
+  const chips = $$('#filters [data-chip]'), rmin = $('#rmin'), rmax = $('#rmax');
+  const ick = '<svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-check"/></svg>';
+  const avg = (a) => (a.reduce((x, y) => x + y, 0) / a.length).toFixed(1);
+
+  const card = (s) => {
+    const on = selected.includes(s.slug), full = !on && selected.length >= MAX;
+    return `<li><article class="card${on ? ' is-selected' : ''} p-5 h-full flex flex-col">
+      <div class="photo aspect-[16/9] sm:aspect-[4/3] rounded-md"><span class="tag">foto · ${s.model}</span></div>
+      <p class="text-sm text-meta mt-4">${s.brand}</p>
+      <h3 class="text-lg font-medium leading-snug"><a href="#" class="stretch t-link">${s.model}</a></h3>
+      <p class="text-sm text-meta mt-1">${PROFILE[s.profile]} · ${CLOSURE[s.closure].toLowerCase()} · ${s.rubber}</p>
+      <p class="font-mono text-accent mt-3">${s.pmin}–${s.pmax} €</p>
+      <div class="mt-auto pt-4 flex flex-wrap items-center justify-between gap-2 relative z-[2]">
+        <button type="button" class="btn-inline${on ? ' !bg-accent !text-on-accent' : ''}" aria-pressed="${on}" data-cmp="${s.slug}" ${full ? 'disabled aria-describedby="max-note"' : ''}>${on ? ick + 'En comparación' : '+ Comparar'}</button>
+        <span class="flex flex-wrap gap-1.5">${s.owned ? '<span class="badge">los uso</span>' : ''}${s.aff ? '<span class="badge badge-accent"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-link"/></svg>afiliado</span>' : ''}</span>
+      </div></article></li>`;
+  };
+
+  const filtered = () => {
+    const act = (g) => chips.filter(c => c.dataset.g === g && c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.v);
+    const lv = act('level'), pr = act('profile'), cl = act('closure'), ow = act('owned').length > 0;
+    const lo = +rmin.value, hi = +rmax.value;
+    $('#fcount').textContent = `(${chips.filter(c => c.getAttribute('aria-pressed') === 'true').length + (lo > 40 || hi < 185 ? 1 : 0)})`;
+    return S.filter(s => (!lv.length || s.levels.some(l => lv.includes(l))) && (!pr.length || pr.includes(s.profile)) && (!cl.length || cl.includes(s.closure)) && (!ow || s.owned) && s.pmax >= lo && s.pmin <= hi);
+  };
+
+  const renderGrid = () => {
+    const list = filtered();
+    $('#grid').innerHTML = list.map(card).join('') + `<li class="sm:col-span-2 xl:col-span-3 text-[13px] text-meta ${selected.length >= MAX ? '' : 'hidden'}" id="max-note">Puedes comparar hasta 3 modelos. Quita uno para añadir otro.</li>`;
+    $('#count').textContent = list.length === 0 ? 'Sin resultados' : list.length === 1 ? '1 resultado' : list.length + ' resultados';
+    $('#empty').classList.toggle('hidden', list.length > 0);
+    window.CG.observe($('#grid'));
+  };
+
+  const row = (label, fn) => `<tr class="border-b-[0.5px] border-line"><th scope="row" class="sticky left-0 z-[1] bg-board py-3 px-4 font-normal text-meta align-top">${label}</th>${sel().map(s => `<td class="px-3 py-3 align-top">${fn(s)}</td>`).join('')}</tr>`;
+  const sel = () => selected.map(sl => S.find(s => s.slug === sl));
+  const renderCmp = () => {
+    const box = $('#cmp');
+    if (selected.length < 2) {
+      box.innerHTML = `<div class="border-[0.5px] border-line-strong rounded-lg bg-board p-8 text-center"><p class="font-medium">Elige al menos 2 modelos</p><p class="text-sm text-meta mt-1">Pulsa "+ Comparar" en las tarjetas de arriba.</p></div>`;
+    } else {
+      box.innerHTML = `<div class="border-[0.5px] border-line-strong rounded-lg bg-board overflow-x-auto"><table class="w-full text-left num text-[15px]" style="min-width:${110 + selected.length * 170}px">
+        <caption class="sr-only">Comparación de ${selected.length} pies de gato</caption>
+        <thead><tr class="border-b-[0.5px] border-line-strong align-bottom"><th scope="col" class="sticky left-0 z-[1] bg-board w-28 py-3 px-4 label-mini font-normal">Modelo</th>${sel().map(s => `<th scope="col" class="py-3 px-3 font-normal align-bottom"><span class="block text-sm text-meta">${s.brand}</span><span class="block font-medium text-lg leading-tight">${s.model}</span><button type="button" class="text-[13px] text-meta hover:text-foreground underline underline-offset-2 min-h-[44px] inline-flex items-center" data-cmp="${s.slug}" aria-pressed="true" aria-label="Quitar ${s.model} de la comparación">Quitar</button></th>`).join('')}</tr></thead>
+        <tbody>
+          ${row('Precio', s => `<span class="font-mono text-accent">${s.pmin}–${s.pmax} €</span>`)}
+          ${row('Perfil', s => PROFILE[s.profile])}
+          ${row('Asimetría', s => ASYM[s.asym])}
+          ${row('Cierre', s => CLOSURE[s.closure])}
+          ${row('Goma', s => `${s.rubber}<span class="block font-mono text-[13px] text-meta">${s.mm.toFixed(1)} mm</span>`)}
+          ${row('Rigidez', s => `<span class="flex items-center gap-2"><span class="bar w-14 block" aria-hidden="true"><span style="--w:${s.stiff * 20}%"></span></span><span class="font-mono text-sm">${s.stiff}/5</span></span>`)}
+          ${row('Uso', s => s.use.map(u => USE[u]).join(', '))}
+          ${row('Nivel', s => s.levels.map(l => LEVEL[l]).join(', '))}
+          ${row('Nota del autor', s => s.scores ? `<span class="badge badge-accent !text-[15px] !py-1.5">${avg(s.scores)}<span class="opacity-70">/5</span></span><span class="block text-[13px] text-meta mt-1">comodidad ${s.scores[0]} · canteo ${s.scores[1]} · adherencia ${s.scores[2]} · durabilidad ${s.scores[3]}</span>` : '<span class="text-meta">No los he usado</span>')}
+          ${row('Lo que aprendí', s => s.learned ? `<p class="font-hand text-[22px] leading-tight text-accent">Lo que aprendí</p><p class="text-[15px] mt-1">${s.learned}</p>` : '<span class="text-meta">—</span>')}
+          <tr><th scope="row" class="sticky left-0 z-[1] bg-board py-3 px-4 font-normal text-meta align-top">Dónde comprar</th>${sel().map(s => `<td class="px-3 py-4 align-top">${s.aff ? `<a href="#" rel="sponsored nofollow" class="btn btn-ghost !min-h-[44px]"><span class="label">Ver precio</span><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-external"/></svg></a><span class="badge badge-accent mt-2"><svg class="ico !w-3.5 !h-3.5" aria-hidden="true"><use href="#i-link"/></svg>Enlace de afiliado</span>` : '<span class="text-sm text-meta">Sin enlace de afiliado. Búscalo en tu tienda habitual.</span>'}</td>`).join('')}</tr>
+        </tbody></table></div>
+        <p class="text-[13px] text-meta mt-3 font-mono">Precios revisados el 01.09.26 · datos técnicos del fabricante</p>`;
+    }
+    window.CG.observe(box);
+    const tray = $('#tray');
+    tray.classList.toggle('hidden', selected.length === 0);
+    $('#trayN').textContent = `${selected.length}/${MAX}`;
+    $('#trayNames').textContent = sel().map(s => s.model).join(' · ');
+  };
+
+  const render = () => vt(() => { renderGrid(); renderCmp(); });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-cmp]'); if (!b || b.disabled) return;
+    const sl = b.dataset.cmp, i = selected.indexOf(sl);
+    if (i >= 0) selected.splice(i, 1); else if (selected.length < MAX) selected.push(sl);
+    const s = S.find(x => x.slug === sl);
+    window.CG.toast('info', i >= 0 ? `${s.model} fuera de la comparación` : `Añadido a comparar (${selected.length}/${MAX})`);
+    render();
+  });
+  $('#filters').addEventListener('chip-change', render);
+  const syncRange = () => {
+    if (+rmin.value > +rmax.value - 10) { if (document.activeElement === rmin) rmin.value = +rmax.value - 10; else rmax.value = +rmin.value + 10; }
+    $('#pmin').textContent = rmin.value; $('#pmax').textContent = rmax.value;
+    const pct = (v) => (v - 40) / 145 * 100; const f = $('#pfill'); f.style.left = pct(rmin.value) + '%'; f.style.right = (100 - pct(rmax.value)) + '%';
+  };
+  [rmin, rmax].forEach(r => { r.addEventListener('input', () => { syncRange(); renderGrid(); }); });
+  const clear = () => { chips.forEach(c => c.setAttribute('aria-pressed', 'false')); rmin.value = 40; rmax.value = 185; syncRange(); render(); };
+  $('#clear').addEventListener('click', clear); $('#clear2').addEventListener('click', clear);
+  syncRange(); renderGrid(); renderCmp();
+})();
+</script>
+</body>
+</html>

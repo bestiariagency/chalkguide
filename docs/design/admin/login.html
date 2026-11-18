@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Entrar · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+</head>
+<body data-page="login" data-shell="none" class="bg-side text-fg font-sans antialiased text-base">
+<main id="contenido" class="min-h-[calc(100dvh-32px)] flex flex-col">
+  <div class="flex-1 grid place-items-center px-4 py-10">
+    <div class="w-full max-w-[380px]">
+      <img src="../../../public/brand/logo-dark.svg" alt="ChalkGuide" class="h-[18px]">
+      <h1 class="mt-8 text-xl font-semibold tracking-tight">Entrar al panel</h1>
+      <p class="mt-1 text-sm text-meta">Solo para quien edita ChalkGuide.</p>
+
+      <form class="mt-6 card p-5 space-y-4" novalidate onsubmit="return false" aria-describedby="login-err">
+        <div id="login-err" class="banner banner-err hidden" role="alert"><i data-lucide="circle-alert"></i><span>El email o la contraseña no son correctos.</span></div>
+        <div><label class="lbl" for="email">Email</label><input id="email" class="input" type="email" autocomplete="username" inputmode="email" placeholder="nombre@dominio.com"></div>
+        <div><div class="lbl"><label for="pw">Contraseña</label><a href="#" class="ml-auto text-xs font-normal text-meta underline underline-offset-2 hover:text-fg">¿La has olvidado?</a></div>
+          <div class="input affix"><input id="pw" type="password" autocomplete="current-password"><button type="button" class="icon-btn !w-8 !h-8 mr-0.5" aria-label="Mostrar contraseña" aria-pressed="false" id="eye"><i data-lucide="eye"></i></button></div></div>
+        <button type="submit" class="btn btn-primary w-full" id="go">Entrar</button>
+      </form>
+      <p class="mt-4 text-xs text-meta">¿Buscabas la guía? <a href="#" class="underline underline-offset-2 hover:text-fg">Ir a chalkguide.com</a></p>
+    </div>
+  </div>
+
+  <!-- Estados (documentación del mockup) -->
+  <section class="border-t border-line bg-bg px-4 md:px-8 py-8" aria-labelledby="h-est">
+    <h2 id="h-est" class="grp-label">Estados del formulario</h2>
+    <div class="mt-4 grid sm:grid-cols-2 xl:grid-cols-4 gap-4 text-sm">
+      <div class="card p-4 space-y-3"><p class="font-medium">Cargando</p><button class="btn btn-primary w-full" aria-busy="true"><i data-lucide="loader-2" class="spin"></i>Entrando…</button><p class="text-xs text-meta">Campos en solo lectura mientras tanto. Sin spinner de página.</p></div>
+      <div class="card p-4 space-y-3"><p class="font-medium">Datos incorrectos</p><div class="banner banner-err"><i data-lucide="circle-alert"></i><span>El email o la contraseña no son correctos.</span></div><p class="text-xs text-meta">Mensaje único (no revela si el email existe). Foco al banner; la contraseña se vacía.</p></div>
+      <div class="card p-4 space-y-3"><p class="font-medium">Cuenta sin acceso</p><div class="banner banner-warn"><i data-lucide="shield-x"></i><span>Esta cuenta no tiene acceso al panel. Si eres lector, tu cuenta sirve en la guía.</span></div><p class="text-xs text-meta">Sesión válida pero no está en <code class="mono">guide.admins</code>: se cierra la sesión y se queda aquí (D2).</p></div>
+      <div class="card p-4 space-y-3"><p class="font-medium">Demasiados intentos</p><div class="banner banner-err"><i data-lucide="timer"></i><span>Demasiados intentos. Prueba de nuevo en 5 minutos.</span></div><p class="text-xs text-meta">Límite de Supabase Auth. Botón desactivado con la cuenta atrás.</p></div>
+    </div>
+    <p class="mt-4 text-xs text-meta max-w-3xl">Ruta <code class="mono">/administrador/entrar</code>, <code class="mono">noindex</code>, fuera del layout del panel. Tras entrar vuelve a la ruta que pedía (<code class="mono">?volver=</code>, solo rutas internas). Sesión caducada dentro del panel: modal "Tu sesión ha caducado" con el mismo formulario, sin perder lo que estabas editando.</p>
+  </section>
+</main>
+<script>
+document.getElementById('eye').onclick=e=>{const b=e.currentTarget,p=document.getElementById('pw'),on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);p.type=on?'text':'password';b.setAttribute('aria-label',on?'Ocultar contraseña':'Mostrar contraseña');};
+document.getElementById('go').onclick=()=>{location.href='inicio.html';};
+</script>
+</body>
+</html>

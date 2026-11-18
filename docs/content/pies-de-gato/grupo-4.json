@@ -1,0 +1,177 @@
+[
+  {
+    "name": "Tenaya Mastia",
+    "slug": "tenaya-mastia",
+    "brand": "Tenaya",
+    "model": "Mastia",
+    "summary_es": "Pie de gato de diseño agresivo y horma algo más ancha para deportiva y búlder. Cierre de velcro ancho y goma Vibram XS Grip de 3,5 mm.",
+    "summary_en": "Aggressively shaped climbing shoe with a slightly wider last for sport climbing and bouldering. Wide Velcro closure and 3.5 mm Vibram XS Grip rubber.",
+    "profile": "Agresivo",
+    "closure": "Velcro",
+    "rubber": "Vibram XS Grip",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Deportiva",
+      "Bloque"
+    ],
+    "price_min_eur": 152.96,
+    "price_max_eur": 179.9,
+    "source_url": "https://www.barrabes.com/en/tenaya-mastia/product-39797",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Tenaya Indalo",
+    "slug": "tenaya-indalo",
+    "brand": "Tenaya",
+    "model": "Indalo",
+    "summary_es": "Pie de gato asimétrico y equilibrado para deportiva, búlder y vías exigentes. Lleva el cierre Draxtor y goma Vibram XS Grip de 3,5 mm.",
+    "summary_en": "Asymmetric, balanced climbing shoe for sport climbing, bouldering and demanding routes. It has the Draxtor closure and 3.5 mm Vibram XS Grip rubber.",
+    "rubber": "Vibram XS Grip",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Deportiva",
+      "Bloque"
+    ],
+    "price_min_eur": 158.99,
+    "price_max_eur": 181.75,
+    "source_url": "https://www.barrabes.com/en/tenaya-indalo/product-89553",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Tenaya Tarifa",
+    "slug": "tenaya-tarifa",
+    "brand": "Tenaya",
+    "model": "Tarifa",
+    "summary_es": "Pie de gato de cordones para deportiva en todo tipo de inclinaciones. Microfibra, forro de algodón y goma Vibram XS Grip de 3,5 mm.",
+    "summary_en": "Lace-up climbing shoe for sport climbing on all kinds of angles. Microfibre upper, cotton lining and 3.5 mm Vibram XS Grip rubber.",
+    "closure": "Cordones",
+    "rubber": "Vibram XS Grip",
+    "rubber_thickness_mm": 3.5,
+    "recommended_use": [
+      "Deportiva"
+    ],
+    "price_min_eur": 143.99,
+    "price_max_eur": 161.1,
+    "source_url": "https://www.barrabes.com/en/tenaya-tarifa/product-25394",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Boreal Joker",
+    "slug": "boreal-joker",
+    "brand": "Boreal",
+    "model": "Joker",
+    "summary_es": "Pie de gato cómodo para empezar y para entrenar, con horma casi simétrica y dos cierres de velcro. Sirve en rocódromo y en roca.",
+    "summary_en": "Comfortable climbing shoe for beginners and training, with a nearly symmetrical last and two Velcro closures. Suits the gym and the crag.",
+    "asymmetry": "Ninguna",
+    "closure": "Velcro",
+    "recommended_use": [
+      "Rocódromo",
+      "Entrenamiento"
+    ],
+    "levels": [
+      "Inicio"
+    ],
+    "price_min_eur": 77.0,
+    "price_max_eur": 109.95,
+    "source_url": "https://www.barrabes.com/en/boreal-joker/product-236817",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Boreal Silex",
+    "slug": "boreal-silex",
+    "brand": "Boreal",
+    "model": "Silex",
+    "summary_es": "Pie de gato versátil con suela rígida para bordes pequeños y ajuste cómodo para uso prolongado. Cierre de cordones y horma ligeramente asimétrica.",
+    "summary_en": "Versatile climbing shoe with a stiff sole for small edges and a comfortable fit for long use. Lace closure and slightly asymmetric last.",
+    "asymmetry": "Ligera",
+    "closure": "Cordones",
+    "rubber": "FS Quattro",
+    "recommended_use": [
+      "Deportiva",
+      "Bloque",
+      "Rocódromo"
+    ],
+    "price_min_eur": 84.0,
+    "price_max_eur": 119.95,
+    "source_url": "https://www.barrabes.com/boreal-silex/product-236819",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Boreal Beta",
+    "slug": "boreal-beta",
+    "brand": "Boreal",
+    "model": "Beta",
+    "summary_es": "Modelo de hombre cómodo y económico, válido como primer par o para entrenar. Horma simétrica con ligero downturn y dos correas.",
+    "summary_en": "Comfortable, affordable men's model, suited to a first pair or to training. Symmetrical last with a slight downturn and two straps.",
+    "fit": "Hombre",
+    "profile": "Moderado",
+    "asymmetry": "Ninguna",
+    "closure": "Velcro",
+    "rubber": "Zenith Quattro",
+    "stiffness": "Media",
+    "recommended_use": [
+      "Entrenamiento",
+      "Vías largas"
+    ],
+    "levels": [
+      "Inicio"
+    ],
+    "price_min_eur": 79.99,
+    "price_max_eur": 99.95,
+    "source_url": "https://www.barrabes.com/en/boreal-beta/product-49984",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Boreal Ace",
+    "slug": "boreal-ace",
+    "brand": "Boreal",
+    "model": "Ace",
+    "summary_es": "Pie de gato de cordones y piel para clásica y vías largas. Horma de poco volumen, entresuela rígida y protección de goma en la puntera para fisuras.",
+    "summary_en": "Leather lace-up shoe for trad and multi-pitch climbing. Low-volume last, stiff midsole and a rubber toe patch for cracks.",
+    "fit": "Hombre",
+    "profile": "Moderado",
+    "closure": "Cordones",
+    "rubber": "Zenith Pro",
+    "stiffness": "Rígida",
+    "recommended_use": [
+      "Clásica",
+      "Vías largas"
+    ],
+    "price_min_eur": 107.49,
+    "price_max_eur": 134.95,
+    "source_url": "https://www.barrabes.com/en/boreal-ace/product-120061",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  },
+  {
+    "name": "Boreal Ninja",
+    "slug": "boreal-ninja",
+    "brand": "Boreal",
+    "model": "Ninja",
+    "summary_es": "Pie de gato de perfil cóncavo agresivo y cierre elástico para técnicas exigentes como talones de puntera y bordes mínimos. Ligero y flexible.",
+    "summary_en": "Climbing shoe with an aggressive concave profile and elastic closure for demanding techniques such as toe hooks and micro-edges. Light and flexible.",
+    "profile": "Agresivo",
+    "closure": "Slipper",
+    "rubber": "Zenith Ultra",
+    "stiffness": "Blanda",
+    "price_min_eur": 84.87,
+    "price_max_eur": 119.95,
+    "source_url": "https://www.barrabes.com/en/boreal-ninja/product-43600",
+    "price_checked_at": "2026-11-06",
+    "source": "Barrabes",
+    "verified_at": "2026-11-06"
+  }
+]

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Noticias · propuesta F8 · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_editorial-v2/ev2.js"></script>
+<link rel="stylesheet" href="_editorial-v2/ev2.css">
+<style>
+  /* F8 · /noticias. Reutiliza ListingHeader, chips y filas de editorial v2 (§13.6). Solo lo de aquí es nuevo. */
+  .nrow { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; padding:20px 0; }
+  @media (min-width:768px) { .nrow { grid-template-columns:132px minmax(0,1fr); gap:32px; padding:24px 0; } }
+  .nrow .d { font-family:'JetBrains Mono',monospace; font-size:14px; line-height:1.6; color:var(--color-meta); font-variant-numeric:tabular-nums; }
+  .nrow .k { font-size:14px; font-weight:500; color:var(--color-meta); }
+  .nrow .t { display:block; margin-top:4px; font-size:19px; line-height:1.3; letter-spacing:-.012em; font-weight:500; color:var(--color-foreground); text-wrap:balance; }
+  @media (min-width:768px) { .nrow .t { font-size:23px; line-height:1.3; } }
+  .nrow .s { margin-top:8px; font-size:16px; line-height:1.5; color:var(--color-meta); max-width:62ch; }
+  .nrow .src { margin-top:10px; font-size:14px; color:var(--color-meta); display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; }
+  .nrow .src b { font-weight:500; color:var(--color-foreground); }
+  .scope { display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 12px; border-radius:8px; font-size:15px; color:var(--color-meta); transition:background-color 150ms,color 150ms; }
+  .scope:hover { background:var(--color-elevated); color:var(--color-foreground); }
+  .scope[aria-pressed=true] { color:var(--color-foreground); font-weight:500; box-shadow:inset 0 -2px 0 var(--color-chalk); border-radius:8px 8px 0 0; }
+  .pager a, .pager span { display:inline-grid; place-items:center; min-width:44px; height:44px; padding:0 8px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:14px; }
+  .pager a:hover { background:var(--color-elevated); }
+  .pager [aria-current=page], .pager a[aria-current=page]:hover { background:var(--color-foreground); color:var(--color-background); }
+  .pager .wide { font-family:Inter,sans-serif; font-size:15px; font-weight:500; gap:6px; padding:0 14px; border:1px solid var(--color-control); }
+  .note-k { font-family:Caveat,cursive; font-weight:700; font-size:28px; line-height:1; color:var(--color-accent); transform:rotate(-1.5deg); transform-origin:left; display:block; }
+</style>
+</head>
+<body>
+<div data-ev2="mockbar" data-title="/noticias · propuesta F8"><a href="noticia.html">Ficha</a><a href="home-noticias.html">Bloque en la home</a><a href="#anexo">Reglas y estados</a></div>
+<div data-ev2="header" data-active="noticias" data-news></div>
+
+<main>
+  <!-- ListingHeader: igual que /blog -->
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-6 md:pt-10">
+    <p class="mock-note">Misma cabecera que /blog y agenda (`ListingHeader`): miga, H1 en Archivo (D40), entradilla y buscador. Categorías = rutas (`/noticias/categoria/[slug]`, enlaces). Alcance = estado de la UI (`?alcance=`, botones con `aria-pressed`, canonical sin query, §6).</p>
+    <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="#">Inicio</a></li><li><span aria-current="page">Noticias</span></li></ol></nav>
+    <div class="mt-4 md:mt-5 grid lg:grid-cols-12 gap-x-6 gap-y-4 items-end">
+      <div class="lg:col-span-8">
+        <h1 class="title-section">Noticias</h1>
+        <p class="mt-3 md:mt-4 text-[17px] md:text-[18px] leading-[1.6] text-meta max-w-[56ch]">Lo que pasa en la escalada de Cataluña, España y el mundo, resumido con mis palabras. Cada noticia enlaza a su fuente.</p>
+      </div>
+      <div class="hidden lg:block lg:col-span-4">
+        <label for="q" class="sr-only">Buscar en noticias</label>
+        <div class="search"><svg class="i" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Competición, Montserrat, IFSC…"><kbd aria-hidden="true">/</kbd></div>
+      </div>
+    </div>
+    <div class="mt-6 md:mt-8 flex items-center gap-2">
+      <button type="button" class="icon-btn lg:hidden" aria-label="Buscar en noticias" aria-expanded="false"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <nav class="chips-scroll flex-1 min-w-0" aria-label="Categorías">
+        <a href="#" class="chip" aria-current="page">Todo <span class="n">86</span></a>
+        <a href="#" class="chip">Competición <span class="n">38</span></a>
+        <a href="#" class="chip">Rocódromos <span class="n">21</span></a>
+        <a href="#" class="chip">Roca y acceso <span class="n">17</span></a>
+        <a href="#" class="chip">Material <span class="n">9</span></a>
+        <a href="#" class="chip">Comunidad <span class="n">1</span></a>
+      </nav>
+    </div>
+    <div class="mt-3 flex items-center gap-1 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0" role="group" aria-label="Alcance">
+      <span class="text-[14px] text-meta mr-2 whitespace-nowrap">Alcance</span>
+      <button type="button" class="scope" aria-pressed="true">Todo</button>
+      <button type="button" class="scope" aria-pressed="false">Cataluña</button>
+      <button type="button" class="scope" aria-pressed="false">España</button>
+      <button type="button" class="scope" aria-pressed="false">Internacional</button>
+    </div>
+  </section>
+
+  <!-- Destacada: la última con «Nota de Xavi» de los últimos 7 días. Si no hay, no se pinta -->
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-8 md:pt-10" aria-labelledby="h-feat">
+    <h2 id="h-feat" class="sr-only">Con nota de Xavi</h2>
+    <article class="slab bg-board grid lg:grid-cols-12 gap-x-8 gap-y-6 p-5 md:p-8 lg:p-10">
+      <div class="lg:col-span-7">
+        <p class="text-[14px] font-medium text-meta">Roca y acceso · Cataluña · <span class="mono">15 nov 2026</span></p>
+        <h3 class="mt-2 text-[26px] md:text-[36px] leading-[1.12] tracking-[-.025em] font-medium max-w-[22ch]"><a href="noticia.html" class="group"><span class="uline">Montserrat actualiza las restricciones por nidificación en seis sectores</span></a></h3>
+        <p class="mt-4 text-[17px] leading-[1.55] text-meta max-w-[56ch]">El parque natural amplía hasta junio el cierre de tres sectores de la cara norte y reabre dos en Sant Benet. Afecta sobre todo a vías largas.</p>
+        <p class="mt-4 text-[14px] text-meta">Resumen de ChalkGuide · Fuente: <b class="font-medium text-foreground">Parcs Naturals de Catalunya</b></p>
+      </div>
+      <aside class="lg:col-span-5 rounded-[6px] bg-accent-muted p-5 md:p-6 self-start" aria-label="Nota de Xavi">
+        <span class="note-k" aria-hidden="true">Nota de Xavi</span>
+        <p class="mt-3 text-[17px] leading-[1.55] text-foreground">Si estás empezando en roca, aquí es donde más se nota: los sectores que siguen abiertos son los de una tirada. Para multilargos, mejor Sant Llorenç hasta junio.</p>
+      </aside>
+    </article>
+  </section>
+
+  <!-- Lista por semanas -->
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-14 md:pt-20" aria-labelledby="h-w1">
+    <p class="mock-note">Filas de texto, sin miniatura: casi ninguna noticia tendrá imagen con licencia (D71), y una columna de huecos grises cansa. La imagen, si existe, solo en la ficha. La fuente va siempre en la fila, como texto (el enlace a la fuente está en la ficha: una sola parada de tabulación por fila).</p>
+    <h2 id="h-w1" class="text-[22px] md:text-[26px] font-medium tracking-[-.015em]">Esta semana <span class="text-meta font-normal text-[16px] md:text-[18px] mono ml-1">16–22 nov</span></h2>
+    <ul class="mt-4 border-t border-foreground" id="w1"></ul>
+  </section>
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-12 md:pt-16" aria-labelledby="h-w2">
+    <h2 id="h-w2" class="text-[22px] md:text-[26px] font-medium tracking-[-.015em]">Semana anterior <span class="text-meta font-normal text-[16px] md:text-[18px] mono ml-1">9–15 nov</span></h2>
+    <ul class="mt-4 border-t border-foreground" id="w2"></ul>
+  </section>
+
+  <!-- Paginación (?pagina=N, self-canonical, como /blog) -->
+  <nav class="max-w-page mx-auto px-4 md:px-6 pt-10 pb-20 md:pb-28" aria-label="Paginación">
+    <div class="pager flex items-center justify-between gap-2 border-t border-line-strong pt-6">
+      <span class="wide !border-line-strong text-muted" aria-disabled="true"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="hidden sm:inline">Más recientes</span></span>
+      <span class="sm:hidden font-mono text-[14px] text-meta">1 / 5</span>
+      <ol class="hidden sm:flex items-center gap-1">
+        <li><a href="#" aria-current="page">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li><li><span aria-hidden="true">…</span></li><li><a href="#">5</a></li>
+      </ol>
+      <a href="#" class="wide" rel="next"><span>Anteriores</span><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </nav>
+</main>
+
+<div data-ev2="newsletter" data-weekly></div>
+<div data-ev2="footer"></div>
+
+<section id="anexo" class="annex">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2>Anexo · Reglas y estados de /noticias</h2>
+    <ul class="sub mt-3 list-disc pl-5 space-y-1.5 !max-w-[60ch] [text-wrap:pretty]">
+      <li><b>Orden:</b> por fecha de publicación en ChalkGuide, agrupado por semana (lunes a domingo, hora de Barcelona). 20 por página; <code>?pagina=N</code> con canonical propio, como /blog.</li>
+      <li><b>Destacada:</b> la última con «Nota de Xavi» de los últimos 7 días, en placa <code>board</code> con la nota a la derecha. No se repite en la lista (como «el siguiente» de la agenda). Sin ninguna, la sección no se pinta y la lista sube. Solo en la página 1 y sin filtros.</li>
+      <li><b>Fila:</b> fecha (mono) · categoría y alcance · título · resumen (2 líneas desde 768, sin resumen en 390) · «Resumen de ChalkGuide · Fuente: X» · insignia «Con nota de Xavi» si la tiene. Toda la fila es un enlace a la ficha.</li>
+      <li><b>Búsqueda (FTS):</b> sustituye a destacada y semanas por una sola lista «N resultados para “montserrat”», misma fila, sin agrupar. La cabecera no se mueve.</li>
+      <li><b>Sin resultados:</b> «No hay noticias sobre “x”» + «Quitar filtros» y enlace a /blog. <b>Categoría vacía:</b> la ruta existe pero <code>noindex,follow</code> (lince-max, 8.4).</li>
+      <li><b>EN (<code>/en/news</code>):</b> solo las noticias con título y resumen en inglés. Indexable con ≥ 3 (D3).</li>
+    </ul>
+    <div class="mt-8 max-w-[760px] on-paper bg-background p-6 rounded-md">
+      <p class="text-[15px] font-medium">Estado vacío, con búsqueda</p>
+      <p class="mt-4 text-[22px] font-medium tracking-[-.015em]">No hay noticias sobre «margalef»</p>
+      <p class="mt-2 text-meta text-[16px]">Prueba con otra palabra o quita el filtro de alcance.</p>
+      <div class="mt-5 flex flex-wrap gap-3"><button class="btn btn-ghost">Quitar filtros</button><a href="#" class="btn btn-ghost">Ir al blog</a></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const W1=[
+ ['15 nov','Rocódromos · Cataluña','Un nuevo rocódromo de bloque abrirá en Sabadell en enero','Tendrá 900 m² de bloque, zona infantil y abrirá de 7:00 a 23:00 entre semana.','Diari de Sabadell',0],
+ ['14 nov','Competición · Cataluña','La FEEC abre inscripciones para el Campeonato de Cataluña de bloque','Será el 6 de febrero en Sant Cugat. Plazas limitadas a 60 por categoría y cierre el 25 de enero.','FEEC',0],
+ ['13 nov','Competición · Internacional','La IFSC publica el calendario de la Copa del Mundo 2027','La temporada arranca en abril y suma una prueba de bloque más que en 2026. No hay parada en España.','IFSC',0],
+];
+const W2=[
+ ['12 nov','Material · España','Desnivel repasa las novedades de pies de gato para 2027','Más modelos de horma simétrica para iniciación y precios que suben entre 5 y 10 euros.','Desnivel',0],
+ ['10 nov','Roca y acceso · Cataluña','Por qué el cierre temporal de Sant Llorenç importa a los que empiezan','Dos sectores de iniciación cierran por obras en el aparcamiento hasta diciembre.','Parcs Naturals de Catalunya',1],
+ ['9 nov','Competición · Internacional','La IFSC cambia el formato de la combinada para 2027','Bloque y dificultad seguirán juntos, con un nuevo sistema de puntos por presa.','IFSC',0],
+];
+const row=r=>`<li class="border-b border-line-strong"><a href="noticia.html" class="nrow group">
+  <span class="d hidden md:block pt-1">${r[0]}</span>
+  <span class="min-w-0"><span class="k"><span class="md:hidden mono">${r[0]} · </span>${r[1]}</span>
+  <span class="t"><span class="uline">${r[2]}</span></span>
+  <span class="s hidden md:block">${r[3]}</span>
+  <span class="src"><span>Resumen de ChalkGuide · Fuente: <b>${r[4]}</b></span>${r[5]?'<span class="badge badge-acc">Con nota de Xavi</span>':''}</span></span></a></li>`;
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('w1').innerHTML=W1.map(row).join('');document.getElementById('w2').innerHTML=W2.map(row).join('');
+  document.querySelectorAll('.scope').forEach(b=>b.onclick=()=>document.querySelectorAll('.scope').forEach(x=>x.setAttribute('aria-pressed',x===b)));});
+</script>
+</body>
+</html>

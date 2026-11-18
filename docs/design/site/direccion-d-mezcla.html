@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChalkGuide · Dirección D · Mezcla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        paper: '#F5F0E6', paper2: '#EDE5D6', surface: '#FBF8F2',
+        ink: '#1C1915', muted: '#5E554A', rule: '#D9CFBE',
+        terra: '#A63D1C', terra7: '#8A3116', terra5: '#F3DDD1',
+        olive: '#4F5B3A', olive5: '#DFE4D2', ochre: '#E9C77B', ochre5: '#F6E7C4'
+      },
+      fontFamily: {
+        serif: ['Fraunces', 'Georgia', 'serif'],
+        sans: ['"Source Sans 3"', 'system-ui', 'sans-serif']
+      },
+      maxWidth: { page: '1200px', measure: '68ch' }
+    }
+  }
+}
+</script>
+<style>
+  /* ---------- Tokens (pasan a @theme) ---------- */
+  :root {
+    --paper:#F5F0E6; --paper2:#EDE5D6; --surface:#FBF8F2; --ink:#1C1915; --muted:#5E554A; --rule:#D9CFBE;
+    --terra:#A63D1C; --terra7:#8A3116; --terra5:#F3DDD1; --olive:#4F5B3A; --olive5:#DFE4D2; --ochre:#E9C77B; --ochre5:#F6E7C4;
+    --radius-sm:6px; --radius-md:12px; --radius-lg:20px;
+    --dur-fast:120ms; --dur-base:200ms; --dur-slow:360ms; --dur-reveal:640ms; --dur-count:900ms;
+    --ease-out:cubic-bezier(.22,1,.36,1); --ease-in-out:cubic-bezier(.65,0,.35,1); --ease-pop:cubic-bezier(.34,1.56,.64,1);
+    --ring:0 0 0 2px var(--paper), 0 0 0 4px var(--terra);
+    --lift:0 14px 28px -16px rgba(28,25,21,.35), 0 2px 6px -2px rgba(28,25,21,.12);
+  }
+  html { scroll-behavior: smooth; }
+  [hidden] { display: none !important; }
+  body { font-feature-settings: "kern","liga"; }
+  .num { font-variant-numeric: tabular-nums lining-nums; }
+  .smallcaps { font-variant-caps: all-small-caps; letter-spacing: .06em; }
+  .grain { position: relative; overflow: hidden; }
+  .grain::after { content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:multiply; opacity:.5;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 .35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .dropcap::first-letter { font-family:Fraunces,serif; float:left; font-size:3.6em; line-height:.85; padding:.08em .1em 0 0; color:var(--terra); font-weight:600; }
+
+  /* ---------- Foco ---------- */
+  :focus { outline: none; }
+  :focus-visible { box-shadow: var(--ring); border-radius: var(--radius-sm); }
+  .on-ink :focus-visible { box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--paper); }
+
+  /* ---------- Botones ---------- */
+  .btn { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.5rem; min-height:48px; padding:0 1.25rem;
+    font-weight:600; border-radius:var(--radius-sm); isolation:isolate; overflow:hidden; cursor:pointer; user-select:none;
+    transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+  .btn:active:not(:disabled):not([aria-busy="true"]) { transform: scale(.97); }
+  .btn .arrow { transition: transform var(--dur-base) var(--ease-out); }
+  .btn-primary { background:var(--terra); color:#fff; }
+  .btn-primary::before { content:""; position:absolute; inset:0; z-index:-1; background:var(--ink); transform:scaleX(0); transform-origin:right; transition: transform var(--dur-slow) var(--ease-out); }
+  .btn-secondary { background:transparent; color:var(--ink); border:1.5px solid var(--ink); }
+  .btn-secondary::before { content:""; position:absolute; inset:0; z-index:-1; background:var(--ink); transform:translateY(101%); transition: transform var(--dur-slow) var(--ease-out); }
+  .btn-ghost { color:var(--terra); padding:0 .75rem; }
+  .btn-ghost::before { content:""; position:absolute; inset:0; z-index:-1; background:var(--terra5); opacity:0; transition: opacity var(--dur-base) var(--ease-out); }
+  @media (hover:hover) {
+    .btn-primary:hover:not(:disabled)::before { transform:scaleX(1); transform-origin:left; }
+    .btn-secondary:hover:not(:disabled) { color:var(--paper); }
+    .btn-secondary:hover:not(:disabled)::before { transform:translateY(0); }
+    .btn-ghost:hover:not(:disabled)::before { opacity:1; }
+    .btn:hover:not(:disabled) .arrow { transform: translateX(4px); }
+  }
+  .btn:disabled, .btn[aria-disabled="true"] { background:#E3DACB; color:#6F665A; border-color:#E3DACB; cursor:not-allowed; }
+  .btn:disabled::before { display:none; }
+  .btn .spinner { display:none; width:18px; height:18px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation: spin .7s linear infinite; }
+  .btn[aria-busy="true"] { cursor:progress; }
+  .btn[aria-busy="true"] .label, .btn[aria-busy="true"] .arrow { opacity:.0; }
+  .btn[aria-busy="true"] .spinner { display:block; position:absolute; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Links editoriales ---------- */
+  .link { background-image: linear-gradient(var(--terra),var(--terra)), linear-gradient(var(--rule),var(--rule));
+    background-size: 0% 2px, 100% 1px; background-position: 0 100%, 0 100%; background-repeat:no-repeat; padding-bottom:2px;
+    transition: background-size var(--dur-slow) var(--ease-out), color var(--dur-base); }
+  .link-strong { color:var(--terra); font-weight:600; background-image: linear-gradient(currentColor,currentColor), linear-gradient(var(--terra5),var(--terra5)); }
+  @media (hover:hover) { .link:hover { background-size: 100% 2px, 100% 1px; } }
+  .link:focus-visible { background-size: 100% 2px, 100% 1px; }
+  .title-link { background-image: linear-gradient(currentColor,currentColor); background-size:0% 1.5px; background-position:0 92%; background-repeat:no-repeat; transition: background-size var(--dur-slow) var(--ease-out); }
+
+  /* ---------- Tarjetas ---------- */
+  .card { position:relative; background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius-md); overflow:hidden;
+    transition: transform var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow) var(--ease-out), border-color var(--dur-base); }
+  .card .media > .img { transition: transform 700ms var(--ease-out); }
+  .card .stretch::after { content:""; position:absolute; inset:0; z-index:1; }
+  .card:focus-within { box-shadow: var(--ring); }
+  .card .stretch:focus-visible { box-shadow:none; }
+  @media (hover:hover) {
+    .card:hover { transform: translateY(-4px); box-shadow: var(--lift); border-color:#C9BDA8; }
+    .card:hover .media > .img { transform: scale(1.04); }
+    .card:hover .title-link { background-size: 100% 1.5px; }
+  }
+
+  .zoom .media > .img { transition: transform 700ms var(--ease-out); }
+  .zoom .stretch::after { content:""; position:absolute; inset:0; }
+  @media (hover:hover) { .zoom:hover .media > .img { transform: scale(1.03); } .zoom:hover .title-link { background-size:100% 2px; } }
+
+  /* ---------- Segmented control / tabs ---------- */
+  .seg { position:relative; display:inline-grid; grid-auto-flow:column; grid-auto-columns:1fr; padding:4px; background:var(--paper2); border:1px solid var(--rule); border-radius:999px; }
+  .seg button { position:relative; z-index:1; min-height:44px; padding:.45rem .75rem; border-radius:999px; font-weight:600; font-size:15px; line-height:1.2; color:var(--muted); text-align:center; transition: color var(--dur-base) var(--ease-out); }
+  .seg button[aria-selected="true"], .seg button[aria-pressed="true"] { color:var(--paper); }
+  .seg .ind { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:0; border-radius:999px; background:var(--ink);
+    transition: transform var(--dur-slow) var(--ease-out), width var(--dur-slow) var(--ease-out); }
+  @media (min-width:768px) { .seg button { padding:.45rem 1.1rem; font-size:16px; white-space:nowrap; } }
+  @media (hover:hover) { .seg button:not([aria-selected="true"]):not([aria-pressed="true"]):hover { color:var(--ink); } }
+
+  /* ---------- Chips ---------- */
+  .chip { display:inline-flex; align-items:center; gap:.4rem; min-height:44px; padding:0 .95rem; border-radius:999px; border:1.5px solid #B8AC98; font-weight:600; font-size:15px; color:var(--ink); background:transparent;
+    transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base), color var(--dur-base), transform var(--dur-fast) var(--ease-out); }
+  .chip:active { transform: scale(.96); }
+  .chip .tick { width:0; opacity:0; overflow:hidden; transition: width var(--dur-base) var(--ease-out), opacity var(--dur-base); display:inline-flex; }
+  .chip[aria-pressed="true"] { background:var(--ink); border-color:var(--ink); color:var(--paper); }
+  .chip[aria-pressed="true"] .tick { width:14px; opacity:1; }
+  @media (hover:hover) { .chip:not([aria-pressed="true"]):hover { border-color:var(--ink); background:var(--paper2); } }
+
+  /* ---------- Barras de índice ---------- */
+  .bar { height:6px; background:var(--rule); border-radius:999px; overflow:hidden; }
+  .bar > span { display:block; height:100%; width:var(--w); background:var(--olive); border-radius:999px; transform-origin:left; }
+
+  /* ---------- Checkbox con check dibujado ---------- */
+  .check { position:relative; display:flex; gap:.75rem; align-items:flex-start; min-height:44px; padding:.5rem 0; cursor:pointer; }
+  .check input { position:absolute; opacity:0; width:24px; height:24px; margin:0; top:.55rem; left:0; }
+  .check .box { flex-shrink:0; width:24px; height:24px; margin-top:2px; border:2px solid var(--muted); border-radius:6px; background:var(--surface); display:grid; place-items:center;
+    transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base), transform var(--dur-base) var(--ease-pop); }
+  .check .box path { stroke-dasharray:20; stroke-dashoffset:20; transition: stroke-dashoffset var(--dur-slow) var(--ease-out) 60ms; }
+  .check input:checked + .box { background:var(--terra); border-color:var(--terra); transform: scale(1.06); }
+  .check input:checked + .box path { stroke-dashoffset:0; }
+  .check input:focus-visible + .box { box-shadow: var(--ring); }
+  .check input[aria-invalid="true"] + .box { border-color:#9B2C1A; }
+
+  .field { min-height:48px; padding:0 1rem; background:var(--surface); border:1.5px solid #8C8173; border-radius:var(--radius-sm); transition: border-color var(--dur-base), box-shadow var(--dur-base); }
+  .field:focus { border-color:var(--ink); box-shadow: 0 0 0 3px rgba(166,61,28,.25); }
+  .field[aria-invalid="true"] { border-color:#9B2C1A; }
+
+  /* ---------- Header sticky que aparece compacto ---------- */
+  .sticky-bar { position:fixed; inset:0 0 auto 0; z-index:40; transform: translateY(-105%);
+    background: rgba(245,240,230,.82); -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+    border-bottom:1px solid var(--rule); transition: transform var(--dur-slow) var(--ease-out); }
+  .sticky-bar.is-on { transform: translateY(0); }
+  .navlink { position:relative; padding:.6rem 0; }
+  .navlink::after { content:""; position:absolute; left:0; right:0; bottom:.25rem; height:2px; background:var(--terra); transform:scaleX(0); transform-origin:right; transition: transform var(--dur-base) var(--ease-out); }
+  .navlink[aria-current="page"]::after { transform:scaleX(1); }
+  @media (hover:hover) { .navlink:hover::after { transform:scaleX(1); transform-origin:left; } }
+
+  /* Menú móvil */
+  .sheet { position:fixed; inset:0; z-index:50; visibility:hidden; }
+  .sheet .scrim { position:absolute; inset:0; background:rgba(28,25,21,.4); opacity:0; transition: opacity var(--dur-slow) var(--ease-out); }
+  .sheet .panel { position:absolute; inset:0 0 auto 0; background:var(--paper); border-bottom:1px solid var(--ink); transform: translateY(-16px); opacity:0; transition: transform var(--dur-slow) var(--ease-out), opacity var(--dur-base) var(--ease-out); }
+  .sheet.is-open { visibility:visible; }
+  .sheet.is-open .scrim { opacity:1; }
+  .sheet.is-open .panel { transform:none; opacity:1; }
+
+  /* ---------- Ticker de agenda ---------- */
+  .ticker { overflow:hidden; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .ticker-track { display:flex; width:max-content; animation: marquee 48s linear infinite; }
+  .ticker.is-paused .ticker-track, .ticker:hover .ticker-track, .ticker:focus-within .ticker-track { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* ---------- Subrayado marcador (hero) ---------- */
+  .marker { background-image: linear-gradient(transparent 58%, var(--ochre) 58%, var(--ochre) 92%, transparent 92%); background-repeat:no-repeat; background-size:100% 100%; }
+
+  /* ---------- Panel de perfil ---------- */
+  .tabpanel.is-entering { animation: panelIn var(--dur-slow) var(--ease-out); }
+  @keyframes panelIn { from { opacity:0; transform: translateY(8px); } }
+
+  /* ---------- Éxito newsletter ---------- */
+  .success-check circle { stroke-dasharray:152; stroke-dashoffset:152; animation: draw 600ms var(--ease-out) forwards; }
+  .success-check path { stroke-dasharray:40; stroke-dashoffset:40; animation: draw 360ms var(--ease-out) 420ms forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+
+  /* ---------- Movimiento solo si el usuario lo acepta ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .js [data-reveal] { opacity:0; transform: translateY(18px); transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out); transition-delay: calc(var(--i, 0) * 70ms); }
+    .js [data-reveal].is-in { opacity:1; transform:none; }
+    .js .bar > span { transform: scaleX(0); transition: transform 900ms var(--ease-out) 150ms; }
+    .js .is-in .bar > span, .js .bar.is-in > span { transform: scaleX(1); }
+    .js .marker { background-size: 0% 100%; transition: background-size 900ms var(--ease-out) 400ms; }
+    .js .marker.is-in { background-size: 100% 100%; }
+    ::view-transition-old(*), ::view-transition-new(*) { animation-duration: var(--dur-slow); animation-timing-function: var(--ease-out); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0s !important; animation-iteration-count: 1 !important; transition-duration: 0s !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
+    .ticker { mask-image:none; overflow-x:auto; }
+    .ticker-track { animation:none; }
+    .ticker-track [aria-hidden="true"] { display:none; }
+    .success-check circle, .success-check path { stroke-dashoffset:0; }
+    .btn .spinner { animation: none; border-right-color: currentColor; opacity:.6; }
+  }
+</style>
+</head>
+<body class="bg-paper text-ink font-sans text-[17px] leading-relaxed antialiased">
+<script>document.documentElement.classList.add('js');</script>
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] bg-ink text-paper px-3 py-2 rounded">Saltar al contenido</a>
+
+<!-- Barra compacta que aparece al bajar -->
+<div class="sticky-bar" id="stickyBar" aria-hidden="true">
+  <div class="max-w-page mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
+    <a href="#" class="font-serif text-xl font-semibold tracking-tight" tabindex="-1">ChalkGuide</a>
+    <nav aria-label="Principal compacta" class="hidden md:block">
+      <ul class="flex gap-6 text-[15px] font-semibold">
+        <li><a class="navlink" tabindex="-1" href="#rocodromos">Rocódromos</a></li>
+        <li><a class="navlink" tabindex="-1" href="#">Resoladores</a></li>
+        <li><a class="navlink" tabindex="-1" href="#pies">Pies de gato</a></li>
+        <li><a class="navlink" tabindex="-1" href="#blog">Blog</a></li>
+        <li><a class="navlink" tabindex="-1" href="#agenda">Agenda</a></li>
+      </ul>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="#newsletter" tabindex="-1" class="btn btn-primary hidden sm:inline-flex !min-h-[44px] text-[15px]"><span class="label">Newsletter</span></a>
+      <button type="button" tabindex="-1" data-menu-toggle class="btn btn-secondary md:hidden !min-h-[44px] !px-4" aria-controls="menu" aria-expanded="false"><span class="label">Menú</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Menú móvil -->
+<div class="sheet" id="menu" aria-hidden="true">
+  <div class="scrim" data-menu-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Menú">
+    <div class="px-4 h-16 flex items-center justify-between border-b border-rule">
+      <span class="font-serif text-xl font-semibold">ChalkGuide</span>
+      <button type="button" class="btn btn-ghost !min-h-[44px]" data-menu-close><span class="label">Cerrar</span></button>
+    </div>
+    <ul class="px-4 py-2 divide-y divide-rule font-serif text-2xl">
+      <li><a class="block py-3" href="#rocodromos" data-menu-close>Rocódromos</a></li>
+      <li><a class="block py-3" href="#" data-menu-close>Resoladores</a></li>
+      <li><a class="block py-3" href="#pies" data-menu-close>Pies de gato</a></li>
+      <li><a class="block py-3" href="#blog" data-menu-close>Blog</a></li>
+      <li><a class="block py-3" href="#agenda" data-menu-close>Agenda</a></li>
+      <li><a class="block py-3" href="#" data-menu-close>Sobre mí</a></li>
+    </ul>
+    <div class="px-4 pb-5 flex gap-2 text-sm"><a href="#" aria-current="true" class="px-3 py-2 font-semibold underline underline-offset-4">ES</a><a href="#" class="px-3 py-2" lang="en">EN</a></div>
+  </div>
+</div>
+
+<!-- Cabecera de revista -->
+<header class="border-b border-ink" id="masthead">
+  <div class="max-w-page mx-auto px-4 md:px-8">
+    <div class="flex items-center justify-between py-2 text-sm text-muted border-b border-rule">
+      <span class="hidden sm:inline">Barcelona · domingo 4 de octubre de 2026</span>
+      <span class="sm:hidden">BCN · 4 oct 2026</span>
+      <nav aria-label="Idioma" class="flex gap-1">
+        <a href="#" aria-current="true" class="px-2 py-1 font-semibold text-ink underline underline-offset-4">ES</a>
+        <a href="#" class="px-2 py-1 hover:text-ink" lang="en">EN</a>
+      </nav>
+    </div>
+    <div class="flex items-end justify-between gap-4 py-5 md:py-7">
+      <a href="#" class="block">
+        <span class="font-serif text-4xl md:text-6xl font-semibold tracking-tight leading-none">ChalkGuide</span>
+        <span class="block mt-2 font-serif italic text-muted text-base md:text-lg">Escalar en Barcelona, con datos y sin postureo</span>
+      </a>
+      <button type="button" data-menu-toggle class="btn btn-secondary md:hidden !px-4" aria-controls="menu" aria-expanded="false"><span class="label">Menú</span></button>
+      <a href="#newsletter" class="btn btn-primary hidden md:inline-flex"><span class="label">Newsletter mensual</span><span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+    <nav aria-label="Principal" class="hidden md:block border-t border-rule">
+      <ul class="flex gap-8 py-1 font-semibold">
+        <li><a class="navlink" href="#rocodromos">Rocódromos</a></li>
+        <li><a class="navlink" href="#">Resoladores</a></li>
+        <li><a class="navlink" href="#pies">Pies de gato</a></li>
+        <li><a class="navlink" href="#blog">Blog</a></li>
+        <li><a class="navlink" href="#agenda">Agenda</a></li>
+        <li><a class="navlink" href="#">Sobre mí</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- Ticker de agenda -->
+<div class="bg-ink text-paper on-ink" id="agenda-ticker">
+  <div class="max-w-page mx-auto px-4 md:px-8 flex items-center gap-3 h-12">
+    <span class="smallcaps font-semibold text-ochre shrink-0">Octubre</span>
+    <div class="ticker flex-1" id="ticker" aria-label="Agenda de octubre">
+      <ul class="ticker-track text-[15px] num">
+        <li class="flex gap-10 pr-10 shrink-0">
+          <a href="#agenda" class="whitespace-nowrap hover:text-ochre"><b>Sáb 10</b> · Contest de bloque para principiantes · Bloc Poblenou</a>
+          <a href="#agenda" class="whitespace-nowrap hover:text-ochre"><b>Jue 15</b> · Taller: asegurar con Grigri · Vertical Sants</a>
+          <a href="#agenda" class="whitespace-nowrap hover:text-ochre"><b>Dom 18</b> · Salida a Montserrat · La Paret Gràcia</a>
+          <a href="#agenda" class="whitespace-nowrap hover:text-ochre"><b>Sáb 24</b> · Noche de vías nuevas · Roca Sant Andreu</a>
+        </li>
+        <li class="flex gap-10 pr-10 shrink-0" aria-hidden="true">
+          <a href="#agenda" tabindex="-1" class="whitespace-nowrap"><b>Sáb 10</b> · Contest de bloque para principiantes · Bloc Poblenou</a>
+          <a href="#agenda" tabindex="-1" class="whitespace-nowrap"><b>Jue 15</b> · Taller: asegurar con Grigri · Vertical Sants</a>
+          <a href="#agenda" tabindex="-1" class="whitespace-nowrap"><b>Dom 18</b> · Salida a Montserrat · La Paret Gràcia</a>
+          <a href="#agenda" tabindex="-1" class="whitespace-nowrap"><b>Sáb 24</b> · Noche de vías nuevas · Roca Sant Andreu</a>
+        </li>
+      </ul>
+    </div>
+    <button type="button" id="tickerToggle" class="shrink-0 w-11 h-11 grid place-items-center rounded-full hover:bg-white/10 transition-colors" aria-pressed="false" aria-label="Pausar agenda en movimiento">
+      <svg id="icoPause" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z" fill="currentColor"/></svg>
+      <svg id="icoPlay" class="hidden" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</div>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="max-w-page mx-auto px-4 md:px-8 py-8 md:py-12 grid md:grid-cols-12 gap-8 md:gap-10">
+    <article class="md:col-span-8 relative zoom" data-reveal>
+      <p class="smallcaps text-terra font-semibold">Costes · Guía práctica</p>
+      <h1 class="font-serif text-[2.1rem] leading-[1.08] md:text-6xl md:leading-[1.03] font-semibold tracking-tight mt-2"><a href="#" class="stretch title-link">Cuánto cuesta realmente escalar en Barcelona al mes</a></h1>
+      <p class="font-serif text-xl md:text-2xl text-muted mt-4 leading-snug">Cuotas, bonos, resolados y ese café de después. Hice las cuentas de 14 rocódromos a dos visitas por semana.</p>
+      <div class="media mt-6 aspect-[16/10] md:aspect-[16/9] rounded-[12px] overflow-hidden relative">
+        <div class="img grain absolute inset-0" style="background: linear-gradient(135deg,#C98A5B 0%,#A63D1C 45%,#4F3324 100%);"></div>
+        <span class="absolute bottom-3 left-3 bg-paper/90 text-ink text-xs px-2 py-1 rounded">Foto · Muro de bloque, luz de tarde (placeholder)</span>
+      </div>
+      <p class="mt-2 text-sm text-muted italic">Precios verificados el 28 sep 2026. Ninguno de estos rocódromos ha pagado por aparecer.</p>
+    </article>
+
+    <aside class="md:col-span-4 md:border-l md:border-rule md:pl-10 flex flex-col gap-6" data-reveal style="--i:2">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 rounded-full grain shrink-0" style="background: radial-gradient(circle at 35% 35%,#E3C9A0,#8C6A4A);" role="img" aria-label="Retrato de Xavi (placeholder)"></div>
+        <div>
+          <p class="font-serif text-lg font-semibold leading-tight">Hola, soy Xavi</p>
+          <p class="text-sm text-muted">6 años escalando en BCN · 7b a los 41</p>
+        </div>
+      </div>
+      <p class="dropcap">Empecé <span class="marker" data-reveal-self>sin nadie a quien preguntar</span> qué pies de gato comprar ni qué rocódromo me convenía. Aquí está lo que me habría gustado leer: precios reales, rocódromos visitados uno a uno y errores que ya cometí por ti.</p>
+      <a href="#" class="link link-strong self-start">Por qué escribo esto</a>
+      <dl class="grid grid-cols-2 gap-px bg-rule border border-rule rounded-[12px] overflow-hidden num">
+        <div class="bg-surface p-4"><dt class="text-sm text-muted">Rocódromos visitados</dt><dd class="font-serif text-3xl font-semibold" data-count="14">14</dd></div>
+        <div class="bg-surface p-4"><dt class="text-sm text-muted">Cuota media</dt><dd class="font-serif text-3xl font-semibold"><span data-count="61">61</span> €</dd></div>
+        <div class="bg-surface p-4"><dt class="text-sm text-muted">Pies de gato</dt><dd class="font-serif text-3xl font-semibold" data-count="32">32</dd></div>
+        <div class="bg-surface p-4"><dt class="text-sm text-muted">Resoladores</dt><dd class="font-serif text-3xl font-semibold" data-count="6">6</dd></div>
+      </dl>
+    </aside>
+  </section>
+
+  <!-- Entrada por perfil (de C) -->
+  <section class="max-w-page mx-auto px-4 md:px-8 pb-12" aria-labelledby="h-perfil">
+    <div class="rounded-[20px] bg-surface border border-rule p-5 md:p-8" data-reveal>
+      <div class="md:flex md:items-center md:justify-between gap-6">
+        <h2 id="h-perfil" class="font-serif text-2xl md:text-3xl font-semibold">¿Por dónde empiezas?</h2>
+        <div class="seg mt-4 md:mt-0 w-full md:w-auto" role="tablist" aria-label="Elige tu perfil" data-seg>
+          <span class="ind" aria-hidden="true"></span>
+          <button role="tab" id="t-nuevo" aria-controls="p-nuevo" aria-selected="true" tabindex="0">Acabo de empezar</button>
+          <button role="tab" id="t-habitual" aria-controls="p-habitual" aria-selected="false" tabindex="-1">Ya escalo cada semana</button>
+        </div>
+      </div>
+      <div id="p-nuevo" role="tabpanel" aria-labelledby="t-nuevo" class="tabpanel mt-6 grid sm:grid-cols-3 gap-4">
+        <a href="#" class="card block p-5 !bg-terra5 !border-transparent"><span class="smallcaps text-terra font-semibold">Paso 1</span><span class="block font-serif text-xl font-semibold leading-snug mt-1 title-link">Qué rocódromo me conviene si estoy empezando</span><span class="block text-[15px] text-muted mt-2">Ordenados por índice principiante.</span></a>
+        <a href="#" class="card block p-5 !bg-terra5 !border-transparent"><span class="smallcaps text-terra font-semibold">Paso 2</span><span class="block font-serif text-xl font-semibold leading-snug mt-1 title-link">Primer bono o cuota mensual: qué conviene</span><span class="block text-[15px] text-muted mt-2">Según cuántas veces vas a la semana.</span></a>
+        <a href="#" class="card block p-5 !bg-terra5 !border-transparent"><span class="smallcaps text-terra font-semibold">Paso 3</span><span class="block font-serif text-xl font-semibold leading-snug mt-1 title-link">Cómo elegir tus primeros pies de gato</span><span class="block text-[15px] text-muted mt-2">Sin gastar de más ni sufrir.</span></a>
+      </div>
+      <div id="p-habitual" role="tabpanel" aria-labelledby="t-habitual" class="tabpanel mt-6 grid sm:grid-cols-3 gap-4" hidden>
+        <a href="#" class="card block p-5 !bg-olive5 !border-transparent"><span class="smallcaps text-olive font-semibold">Comparar</span><span class="block font-serif text-xl font-semibold leading-snug mt-1 title-link">Los 14 rocódromos con filtros y precios</span><span class="block text-[15px] text-muted mt-2">Cuota, m², vías, autobelays.</span></a>
+        <a href="#" class="card block p-5 !bg-olive5 !border-transparent"><span class="smallcaps text-olive font-semibold">Material</span><span class="block font-serif text-xl font-semibold leading-snug mt-1 title-link">Cuándo resolar y dónde hacerlo bien</span><span class="block text-[15px] text-muted mt-2">6 resoladores, plazos y rand.</span></a>
+        <a href="#" class="card block p-5 !bg-olive5 !border-transparent"><span class="smallcaps text-olive font-semibold">Roca</span><span class="block font-serif text-xl font-semibold leading-snug mt-1 title-link">Zonas a menos de 2 horas de Barcelona</span><span class="block text-[15px] text-muted mt-2">Aproximación, orientación y grados.</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Artículos en bento -->
+  <section id="blog" class="max-w-page mx-auto px-4 md:px-8 pb-14 scroll-mt-20" aria-labelledby="h-art">
+    <div class="flex items-baseline justify-between border-t-4 border-double border-ink pt-3">
+      <h2 id="h-art" class="font-serif text-2xl md:text-3xl font-semibold">Guías para empezar con buen pie</h2>
+      <a href="#" class="link text-sm font-semibold">Todo el blog</a>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
+      <article class="card sm:col-span-2 lg:row-span-2 flex flex-col" data-reveal>
+        <div class="media relative aspect-[16/10] lg:aspect-auto lg:flex-1 lg:min-h-[260px] overflow-hidden"><div class="img grain absolute inset-0" style="background: linear-gradient(160deg,#9AA48A,#4F5B3A);"></div><span class="absolute bottom-3 left-3 bg-paper/90 text-xs px-2 py-0.5 rounded">Placeholder</span></div>
+        <div class="p-5 md:p-6">
+          <p class="smallcaps text-olive font-semibold">Material · 9 min</p>
+          <h3 class="font-serif text-2xl md:text-3xl leading-tight font-semibold mt-1"><a href="#" class="stretch title-link">Cómo elegir pies de gato según tu nivel y estilo</a></h3>
+          <p class="text-muted mt-2">Perfil, cierre y talla: lo que importa en los primeros dos años y lo que no.</p>
+        </div>
+      </article>
+      <article class="card" data-reveal style="--i:1">
+        <div class="media relative aspect-[16/9] overflow-hidden"><div class="img grain absolute inset-0" style="background: linear-gradient(160deg,#8D9AA6,#3C4A57);"></div></div>
+        <div class="p-5"><p class="smallcaps text-olive font-semibold">Dónde escalar · 6 min</p><h3 class="font-serif text-xl leading-snug font-semibold mt-1"><a href="#" class="stretch title-link">Dónde escalar en Barcelona cuando llueve</a></h3></div>
+      </article>
+      <article class="card" data-reveal style="--i:2">
+        <div class="media relative aspect-[16/9] overflow-hidden"><div class="img grain absolute inset-0" style="background: linear-gradient(160deg,#D2A679,#8A4B2A);"></div></div>
+        <div class="p-5"><p class="smallcaps text-olive font-semibold">Experiencia · 7 min</p><h3 class="font-serif text-xl leading-snug font-semibold mt-1"><a href="#" class="stretch title-link">Mi primer resolado: errores que cometí y qué revisar</a></h3></div>
+      </article>
+      <article class="card p-5 !bg-ochre5 !border-transparent" data-reveal style="--i:3">
+        <p class="smallcaps text-muted font-semibold">Familia · 8 min</p>
+        <h3 class="font-serif text-xl leading-snug font-semibold mt-1"><a href="#" class="stretch title-link">Rocódromos con zona infantil para ir con hijos</a></h3>
+        <p class="text-[15px] text-muted mt-2">Índice familia de los 14, calculado igual para todos.</p>
+      </article>
+      <article class="card p-5" data-reveal style="--i:4">
+        <p class="smallcaps text-olive font-semibold">Dónde escalar · 11 min</p>
+        <h3 class="font-serif text-xl leading-snug font-semibold mt-1"><a href="#" class="stretch title-link">Zonas de roca a menos de 2 horas de Barcelona para empezar</a></h3>
+      </article>
+    </div>
+  </section>
+
+  <!-- Rocódromos con orden -->
+  <section id="rocodromos" class="bg-paper2 border-y border-rule scroll-mt-14" aria-labelledby="h-gyms">
+    <div class="max-w-page mx-auto px-4 md:px-8 py-10 md:py-14">
+      <div class="md:flex md:items-end md:justify-between gap-6" data-reveal>
+        <div>
+          <p class="smallcaps text-terra font-semibold">Rocódromos · 14 fichas</p>
+          <h2 id="h-gyms" class="font-serif text-3xl md:text-4xl font-semibold mt-1">Los rocódromos, uno a uno</h2>
+          <p class="text-muted mt-2 max-w-measure">Precio mensual, cuánto le sirve a alguien que empieza y mi nota tras visitarlo.</p>
+        </div>
+        <div class="mt-5 md:mt-0">
+          <p id="sort-label" class="text-sm text-muted mb-2">Ordenar por</p>
+          <div class="seg w-full md:w-auto" role="group" aria-labelledby="sort-label" data-seg data-sort>
+            <span class="ind" aria-hidden="true"></span>
+            <button type="button" aria-pressed="true" data-key="score">Nota autor</button>
+            <button type="button" aria-pressed="false" data-key="price">Precio</button>
+            <button type="button" aria-pressed="false" data-key="beginner">Principiante</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="hidden md:table w-full mt-8 text-left num">
+        <caption class="sr-only">Comparativa de rocódromos destacados</caption>
+        <thead>
+          <tr class="border-b-2 border-ink text-sm">
+            <th scope="col" class="py-2 pr-4 font-semibold">Rocódromo</th>
+            <th scope="col" class="py-2 pr-4 font-semibold">Tipo</th>
+            <th scope="col" class="py-2 pr-4 font-semibold text-right">Cuota mensual</th>
+            <th scope="col" class="py-2 pr-4 font-semibold">Índice principiante</th>
+            <th scope="col" class="py-2 pr-4 font-semibold text-right">Nota del autor</th>
+            <th scope="col" class="py-2 font-semibold">Opiniones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-rule" data-sortable>
+          <tr data-score="4.5" data-price="59" data-beginner="8.7" style="view-transition-name:gym-bloc" class="transition-colors hover:bg-surface/70">
+            <th scope="row" class="py-4 pr-4 font-normal"><a href="#" class="font-serif text-xl font-semibold title-link hover:bg-[length:100%_1.5px]">Bloc Poblenou</a><span class="block text-sm text-muted">L4 Poblenou · verificado 12 sep 2026</span></th>
+            <td class="py-4 pr-4">Bloque</td>
+            <td class="py-4 pr-4 text-right font-semibold">59 €</td>
+            <td class="py-4 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-28" aria-hidden="true"><span style="--w:87%"></span></span>8,7</span></td>
+            <td class="py-4 pr-4 text-right"><span class="font-serif text-2xl font-semibold bg-ochre5 px-1.5 rounded">4,5</span><span class="text-sm text-muted">/5</span></td>
+            <td class="py-4 text-sm">4,1 · 12 opiniones</td>
+          </tr>
+          <tr data-score="4.2" data-price="72" data-beginner="7.9" style="view-transition-name:gym-sants" class="transition-colors hover:bg-surface/70">
+            <th scope="row" class="py-4 pr-4 font-normal"><a href="#" class="font-serif text-xl font-semibold title-link hover:bg-[length:100%_1.5px]">Vertical Sants</a><span class="block text-sm text-muted">L5 Pl. de Sants · verificado 20 sep 2026</span><span class="inline-block mt-1 text-xs font-semibold border border-terra text-terra px-1.5 py-0.5 rounded">Visita invitada</span></th>
+            <td class="py-4 pr-4">Cuerda + bloque</td>
+            <td class="py-4 pr-4 text-right font-semibold">72 €</td>
+            <td class="py-4 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-28" aria-hidden="true"><span style="--w:79%"></span></span>7,9</span></td>
+            <td class="py-4 pr-4 text-right"><span class="font-serif text-2xl font-semibold">4,2</span><span class="text-sm text-muted">/5</span></td>
+            <td class="py-4 text-sm text-muted italic">2 opiniones · aún sin media</td>
+          </tr>
+          <tr data-score="4.0" data-price="54" data-beginner="9.1" style="view-transition-name:gym-paret" class="transition-colors hover:bg-surface/70">
+            <th scope="row" class="py-4 pr-4 font-normal"><a href="#" class="font-serif text-xl font-semibold title-link hover:bg-[length:100%_1.5px]">La Paret Gràcia</a><span class="block text-sm text-muted">L3 Fontana · verificado 3 sep 2026</span></th>
+            <td class="py-4 pr-4">Bloque</td>
+            <td class="py-4 pr-4 text-right font-semibold">54 €</td>
+            <td class="py-4 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-28" aria-hidden="true"><span style="--w:91%"></span></span>9,1</span></td>
+            <td class="py-4 pr-4 text-right"><span class="font-serif text-2xl font-semibold">4,0</span><span class="text-sm text-muted">/5</span></td>
+            <td class="py-4 text-sm">4,4 · 7 opiniones</td>
+          </tr>
+          <tr data-score="3.8" data-price="65" data-beginner="6.4" style="view-transition-name:gym-roca" class="transition-colors hover:bg-surface/70">
+            <th scope="row" class="py-4 pr-4 font-normal"><a href="#" class="font-serif text-xl font-semibold title-link hover:bg-[length:100%_1.5px]">Roca Sant Andreu</a><span class="block text-sm text-muted">L1 Fabra i Puig · verificado 15 ago 2026</span></th>
+            <td class="py-4 pr-4">Cuerda</td>
+            <td class="py-4 pr-4 text-right font-semibold">65 €</td>
+            <td class="py-4 pr-4"><span class="inline-flex items-center gap-3"><span class="bar w-28" aria-hidden="true"><span style="--w:64%"></span></span>6,4</span></td>
+            <td class="py-4 pr-4 text-right"><span class="font-serif text-2xl font-semibold">3,8</span><span class="text-sm text-muted">/5</span></td>
+            <td class="py-4 text-sm">3,9 · 5 opiniones</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="md:hidden mt-6 divide-y divide-rule border-y-2 border-ink num" data-sortable>
+        <li class="py-4" data-score="4.5" data-price="59" data-beginner="8.7" style="view-transition-name:gymm-bloc">
+          <div class="flex justify-between items-baseline gap-3"><a href="#" class="font-serif text-xl font-semibold">Bloc Poblenou</a><span><span class="font-serif text-2xl font-semibold bg-ochre5 px-1.5 rounded">4,5</span><span class="text-sm text-muted">/5</span></span></div>
+          <p class="text-sm text-muted">Bloque · L4 Poblenou · verificado 12 sep</p>
+          <dl class="grid grid-cols-3 gap-3 mt-3 text-sm">
+            <div><dt class="text-muted">Mensual</dt><dd class="font-semibold text-base">59 €</dd></div>
+            <div><dt class="text-muted">Principiante</dt><dd class="font-semibold text-base">8,7</dd><dd class="bar mt-1" aria-hidden="true"><span style="--w:87%"></span></dd></div>
+            <div><dt class="text-muted">Usuarios</dt><dd class="font-semibold text-base">4,1 <span class="font-normal text-muted">(12)</span></dd></div>
+          </dl>
+        </li>
+        <li class="py-4" data-score="4.2" data-price="72" data-beginner="7.9" style="view-transition-name:gymm-sants">
+          <div class="flex justify-between items-baseline gap-3"><a href="#" class="font-serif text-xl font-semibold">Vertical Sants</a><span><span class="font-serif text-2xl font-semibold">4,2</span><span class="text-sm text-muted">/5</span></span></div>
+          <p class="text-sm text-muted">Cuerda + bloque · L5 Pl. de Sants · verificado 20 sep</p>
+          <span class="inline-block mt-1 text-xs font-semibold border border-terra text-terra px-1.5 py-0.5 rounded">Visita invitada</span>
+          <dl class="grid grid-cols-3 gap-3 mt-3 text-sm">
+            <div><dt class="text-muted">Mensual</dt><dd class="font-semibold text-base">72 €</dd></div>
+            <div><dt class="text-muted">Principiante</dt><dd class="font-semibold text-base">7,9</dd><dd class="bar mt-1" aria-hidden="true"><span style="--w:79%"></span></dd></div>
+            <div><dt class="text-muted">Usuarios</dt><dd class="text-muted italic">aún sin media</dd></div>
+          </dl>
+        </li>
+        <li class="py-4" data-score="4.0" data-price="54" data-beginner="9.1" style="view-transition-name:gymm-paret">
+          <div class="flex justify-between items-baseline gap-3"><a href="#" class="font-serif text-xl font-semibold">La Paret Gràcia</a><span><span class="font-serif text-2xl font-semibold">4,0</span><span class="text-sm text-muted">/5</span></span></div>
+          <p class="text-sm text-muted">Bloque · L3 Fontana · verificado 3 sep</p>
+          <dl class="grid grid-cols-3 gap-3 mt-3 text-sm">
+            <div><dt class="text-muted">Mensual</dt><dd class="font-semibold text-base">54 €</dd></div>
+            <div><dt class="text-muted">Principiante</dt><dd class="font-semibold text-base">9,1</dd><dd class="bar mt-1" aria-hidden="true"><span style="--w:91%"></span></dd></div>
+            <div><dt class="text-muted">Usuarios</dt><dd class="font-semibold text-base">4,4 <span class="font-normal text-muted">(7)</span></dd></div>
+          </dl>
+        </li>
+        <li class="py-4" data-score="3.8" data-price="65" data-beginner="6.4" style="view-transition-name:gymm-roca">
+          <div class="flex justify-between items-baseline gap-3"><a href="#" class="font-serif text-xl font-semibold">Roca Sant Andreu</a><span><span class="font-serif text-2xl font-semibold">3,8</span><span class="text-sm text-muted">/5</span></span></div>
+          <p class="text-sm text-muted">Cuerda · L1 Fabra i Puig · verificado 15 ago</p>
+          <dl class="grid grid-cols-3 gap-3 mt-3 text-sm">
+            <div><dt class="text-muted">Mensual</dt><dd class="font-semibold text-base">65 €</dd></div>
+            <div><dt class="text-muted">Principiante</dt><dd class="font-semibold text-base">6,4</dd><dd class="bar mt-1" aria-hidden="true"><span style="--w:64%"></span></dd></div>
+            <div><dt class="text-muted">Usuarios</dt><dd class="font-semibold text-base">3,9 <span class="font-normal text-muted">(5)</span></dd></div>
+          </dl>
+        </li>
+      </ul>
+      <p class="sr-only" aria-live="polite" id="sort-status"></p>
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
+        <p class="text-sm text-muted max-w-measure">Índice principiante (0–10): test de aseguramiento, alquiler de material, vías fáciles y horario. Calculado, no opinado. <a href="#" class="link">Cómo lo calculo</a></p>
+        <a href="#" class="btn btn-secondary"><span class="label">Ver los 14 rocódromos</span><span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparador (matriz de B) + Agenda -->
+  <section class="max-w-page mx-auto px-4 md:px-8 py-12 md:py-14 grid lg:grid-cols-12 gap-12">
+    <div id="pies" class="lg:col-span-7 min-w-0 scroll-mt-20" aria-labelledby="h-shoes" data-reveal>
+      <p class="smallcaps text-terra font-semibold">Comparador · Pies de gato</p>
+      <h2 id="h-shoes" class="font-serif text-3xl font-semibold mt-1">Tus primeros pies de gato, lado a lado</h2>
+      <div class="mt-5 flex flex-wrap gap-2" role="group" aria-label="Filtros del comparador">
+        <button type="button" class="chip" aria-pressed="true" data-filter="inicio"><span class="tick" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>Nivel inicio</button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="precio"><span class="tick" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>Hasta 100 €</button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="velcro"><span class="tick" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>Velcro</button>
+      </div>
+      <p class="mt-3 text-sm text-muted" aria-live="polite"><span id="shoe-count" class="font-semibold text-ink">4 modelos</span> coinciden</p>
+      <div class="mt-3 border-t-2 border-ink overflow-x-auto" style="view-transition-name:shoe-matrix">
+        <table class="w-full text-left num min-w-[520px]">
+          <caption class="sr-only">Comparativa de pies de gato para iniciación</caption>
+          <thead>
+            <tr class="border-b border-rule align-bottom">
+              <th scope="col" class="sticky left-0 bg-paper w-24 py-3 pr-3 text-sm text-muted font-semibold">Modelo</th>
+              <th scope="col" data-shoe="tarantulace" class="py-3 px-3"><span class="block font-serif text-lg font-semibold leading-tight">Tarantulace</span><span class="text-sm text-muted font-normal">La Sportiva</span></th>
+              <th scope="col" data-shoe="tarantula" class="py-3 px-3"><span class="block font-serif text-lg font-semibold leading-tight">Tarantula</span><span class="text-sm text-muted font-normal">La Sportiva</span></th>
+              <th scope="col" data-shoe="origin" class="py-3 px-3"><span class="block font-serif text-lg font-semibold leading-tight">Origin</span><span class="text-sm text-muted font-normal">Scarpa</span></th>
+              <th scope="col" data-shoe="defy" class="py-3 px-3"><span class="block font-serif text-lg font-semibold leading-tight">Defy</span><span class="text-sm text-muted font-normal">Evolv</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-rule text-[15px]">
+            <tr><th scope="row" class="sticky left-0 bg-paper py-2.5 pr-3 font-normal text-muted">Perfil</th><td data-shoe="tarantulace" class="px-3">Plano</td><td data-shoe="tarantula" class="px-3">Plano</td><td data-shoe="origin" class="px-3">Plano</td><td data-shoe="defy" class="px-3">Plano</td></tr>
+            <tr><th scope="row" class="sticky left-0 bg-paper py-2.5 pr-3 font-normal text-muted">Cierre</th><td data-shoe="tarantulace" class="px-3">Cordones</td><td data-shoe="tarantula" class="px-3">Velcro</td><td data-shoe="origin" class="px-3">Velcro</td><td data-shoe="defy" class="px-3">Velcro</td></tr>
+            <tr><th scope="row" class="sticky left-0 bg-paper py-2.5 pr-3 font-normal text-muted">Rigidez</th>
+              <td data-shoe="tarantulace" class="px-3"><span class="bar w-16 inline-block align-middle" role="img" aria-label="3 de 5"><span style="--w:60%"></span></span></td>
+              <td data-shoe="tarantula" class="px-3"><span class="bar w-16 inline-block align-middle" role="img" aria-label="3 de 5"><span style="--w:60%"></span></span></td>
+              <td data-shoe="origin" class="px-3"><span class="bar w-16 inline-block align-middle" role="img" aria-label="3 de 5"><span style="--w:60%"></span></span></td>
+              <td data-shoe="defy" class="px-3"><span class="bar w-16 inline-block align-middle" role="img" aria-label="4 de 5"><span style="--w:80%"></span></span></td></tr>
+            <tr class="bg-ochre5"><th scope="row" class="sticky left-0 bg-ochre5 py-2.5 pr-3 font-semibold">Precio</th><td data-shoe="tarantulace" class="px-3 font-semibold">80–95 €</td><td data-shoe="tarantula" class="px-3 font-semibold">85–99 €</td><td data-shoe="origin" class="px-3 font-semibold">85–99 €</td><td data-shoe="defy" class="px-3 font-semibold">95–110 €</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sm:hidden mt-2 text-sm text-muted">Desliza la tabla para ver todos los modelos →</p>
+      <blockquote class="mt-6 border-l-2 border-terra pl-4 font-serif italic text-lg">«Mis primeros fueron unos Tarantulace. Los cordones me obligaron a ajustarlos bien y aguantaron dos resolados.»</blockquote>
+      <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+        <a href="#" class="btn btn-primary"><span class="label">Abrir el comparador · 32 modelos</span><span class="arrow" aria-hidden="true">→</span></a>
+        <span class="text-sm text-muted">Precios del 1 oct 2026 · <span class="font-semibold text-ink">Contiene enlaces de afiliado</span></span>
+      </div>
+    </div>
+
+    <div id="agenda" class="lg:col-span-5 min-w-0 lg:border-l lg:border-rule lg:pl-10 scroll-mt-20" aria-labelledby="h-agenda">
+      <p class="smallcaps text-terra font-semibold">Agenda</p>
+      <h2 id="h-agenda" class="font-serif text-3xl font-semibold mt-1">Octubre en los rocódromos</h2>
+      <ol class="mt-6 border-t-2 border-ink divide-y divide-rule num">
+        <li class="py-4 grid grid-cols-[3.5rem_1fr] gap-3" data-reveal><div class="text-center"><span class="block font-serif text-3xl font-semibold leading-none">10</span><span class="smallcaps text-sm text-muted">sáb</span></div><div><p class="font-semibold leading-snug">Contest de bloque para principiantes</p><p class="text-sm text-muted">Bloc Poblenou · 17:00 · gratis para socios</p></div></li>
+        <li class="py-4 grid grid-cols-[3.5rem_1fr] gap-3" data-reveal style="--i:1"><div class="text-center"><span class="block font-serif text-3xl font-semibold leading-none">15</span><span class="smallcaps text-sm text-muted">jue</span></div><div><p class="font-semibold leading-snug">Taller: asegurar con Grigri sin miedo</p><p class="text-sm text-muted">Vertical Sants · 19:30 · 15 €</p></div></li>
+        <li class="py-4 grid grid-cols-[3.5rem_1fr] gap-3" data-reveal style="--i:2"><div class="text-center"><span class="block font-serif text-3xl font-semibold leading-none">18</span><span class="smallcaps text-sm text-muted">dom</span></div><div><p class="font-semibold leading-snug">Salida a roca: Montserrat, vías de iniciación</p><p class="text-sm text-muted">La Paret Gràcia · plazas limitadas</p></div></li>
+        <li class="py-4 grid grid-cols-[3.5rem_1fr] gap-3" data-reveal style="--i:3"><div class="text-center"><span class="block font-serif text-3xl font-semibold leading-none">24</span><span class="smallcaps text-sm text-muted">sáb</span></div><div><p class="font-semibold leading-snug">Noche de vías nuevas</p><p class="text-sm text-muted">Roca Sant Andreu · 20:00</p></div></li>
+      </ol>
+      <a href="#" class="link link-strong inline-block mt-4">Toda la agenda de octubre</a>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section id="newsletter" class="border-t border-ink scroll-mt-14" aria-labelledby="h-news">
+    <div class="max-w-page mx-auto px-4 md:px-8 py-12 md:py-16 grid md:grid-cols-12 gap-8 items-start">
+      <div class="md:col-span-6" data-reveal>
+        <p class="smallcaps text-terra font-semibold">La carta del mes</p>
+        <h2 id="h-news" class="font-serif text-3xl md:text-5xl font-semibold leading-tight mt-1">Una carta al mes. Lo que pasa en los rocódromos de Barcelona.</h2>
+        <p class="text-muted mt-4 max-w-measure">Novedades de rocódromos, el artículo nuevo y un pie de gato que merece la pena. Sin spam; te das de baja con un clic.</p>
+      </div>
+      <div class="md:col-span-6 bg-surface border border-rule p-5 md:p-8 rounded-[20px]" data-reveal style="--i:1">
+        <form id="nlForm" novalidate>
+          <label for="email-d" class="block font-semibold">Tu email</label>
+          <div class="mt-2 flex flex-col sm:flex-row gap-3">
+            <input id="email-d" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" class="field flex-1 placeholder:text-muted" aria-describedby="err-email">
+            <button type="submit" class="btn btn-primary"><span class="spinner" aria-hidden="true"></span><span class="label">Suscribirme</span><span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+          <p id="err-email" class="hidden mt-2 text-[15px] text-[#9B2C1A] font-semibold items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5v4.5M8 11v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Escribe un email válido, por ejemplo nombre@correo.com.</p>
+          <label class="check mt-3" for="consent-d">
+            <input id="consent-d" name="consent" type="checkbox" aria-describedby="err-consent">
+            <span class="box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="text-[15px]">Quiero recibir la newsletter mensual de ChalkGuide. He leído la <a href="#" class="link">política de privacidad</a>.</span>
+          </label>
+          <p id="err-consent" class="hidden mt-1 text-[15px] text-[#9B2C1A] font-semibold items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5v4.5M8 11v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Marca la casilla para confirmar que quieres recibirla.</p>
+          <p class="mt-3 text-sm text-muted">Entrar con Google para opinar no te apunta a la newsletter.</p>
+        </form>
+        <div id="nlSuccess" class="hidden text-center py-4" role="status" tabindex="-1">
+          <svg class="success-check mx-auto" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" fill="none" stroke="#4F5B3A" stroke-width="3"/><path d="M17 29l7 7 15-16" fill="none" stroke="#4F5B3A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p class="font-serif text-2xl font-semibold mt-3">¡Casi está!</p>
+          <p class="text-muted mt-1">Te he enviado un email para confirmar la suscripción. Revisa también la carpeta de promociones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Muestrario de estados (solo en el mockup) -->
+  <section class="bg-paper2 border-t border-rule" aria-labelledby="h-kit">
+    <div class="max-w-page mx-auto px-4 md:px-8 py-10">
+      <p class="smallcaps text-muted font-semibold">Solo en el mockup</p>
+      <h2 id="h-kit" class="font-serif text-2xl font-semibold mt-1">Muestrario de estados</h2>
+      <p class="text-[15px] text-muted mt-1">Pasa el ratón, pulsa y navega con Tab para ver hover, press y foco. "Cargando" simula 1,5 s.</p>
+      <div class="mt-5 flex flex-wrap gap-3 items-center">
+        <button type="button" class="btn btn-primary"><span class="spinner" aria-hidden="true"></span><span class="label">Primario</span><span class="arrow" aria-hidden="true">→</span></button>
+        <button type="button" class="btn btn-secondary"><span class="spinner" aria-hidden="true"></span><span class="label">Secundario</span></button>
+        <button type="button" class="btn btn-ghost"><span class="label">Ghost</span></button>
+        <button type="button" class="btn btn-primary" disabled><span class="label">Deshabilitado</span></button>
+        <button type="button" class="btn btn-primary" data-demo-loading><span class="spinner" aria-hidden="true"></span><span class="label">Cargando</span><span class="arrow" aria-hidden="true">→</span></button>
+        <a href="#" class="link link-strong">Link editorial</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-ink text-paper on-ink">
+  <div class="max-w-page mx-auto px-4 md:px-8 py-10 grid sm:grid-cols-2 md:grid-cols-4 gap-8 text-[15px]">
+    <div class="sm:col-span-2 md:col-span-1">
+      <p class="font-serif text-2xl font-semibold">ChalkGuide</p>
+      <p class="text-[#CFC6B6] mt-2">Un medio de escalada en Barcelona escrito por Xavi.</p>
+    </div>
+    <nav aria-label="Secciones"><p class="smallcaps text-[#CFC6B6]">Secciones</p><ul class="mt-2 space-y-1"><li><a href="#" class="hover:text-ochre transition-colors">Rocódromos</a></li><li><a href="#" class="hover:text-ochre transition-colors">Resoladores</a></li><li><a href="#" class="hover:text-ochre transition-colors">Pies de gato</a></li><li><a href="#" class="hover:text-ochre transition-colors">Blog</a></li><li><a href="#" class="hover:text-ochre transition-colors">Agenda</a></li></ul></nav>
+    <div><p class="smallcaps text-[#CFC6B6]">Transparencia</p><ul class="mt-2 space-y-1"><li><a href="#" class="hover:text-ochre transition-colors">Cómo valoro los rocódromos</a></li><li><a href="#" class="hover:text-ochre transition-colors">Enlaces de afiliado</a></li><li><a href="#" class="hover:text-ochre transition-colors">Visitas invitadas</a></li></ul></div>
+    <div><p class="smallcaps text-[#CFC6B6]">Legal</p><ul class="mt-2 space-y-1"><li><a href="#" class="hover:text-ochre transition-colors">Privacidad</a></li><li><a href="#" class="hover:text-ochre transition-colors">Cookies</a></li><li><a href="#" class="hover:text-ochre transition-colors" lang="en">English version</a></li></ul></div>
+  </div>
+  <p class="max-w-page mx-auto px-4 md:px-8 pb-8 text-sm text-[#CFC6B6]">© 2026 ChalkGuide · Ninguna reseña se compra. Lo pagado se marca.</p>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const vt = (fn) => (!reduce && document.startViewTransition) ? document.startViewTransition(fn) : fn();
+
+  /* Barra compacta al bajar */
+  const bar = $('#stickyBar'), mast = $('#masthead');
+  const io0 = new IntersectionObserver(([e]) => {
+    const on = !e.isIntersecting;
+    bar.classList.toggle('is-on', on);
+    bar.setAttribute('aria-hidden', String(!on));
+    $$('a,button', bar).forEach(el => el.tabIndex = on ? 0 : -1);
+  });
+  io0.observe(mast);
+
+  /* Reveal + barras + marcador */
+  const io = new IntersectionObserver((ents) => ents.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: .12 });
+  $$('[data-reveal], [data-reveal-self], .bar').forEach(el => io.observe(el));
+
+  /* Contadores */
+  const fmt = new Intl.NumberFormat('es-ES');
+  const ioC = new IntersectionObserver((ents) => ents.forEach(e => {
+    if (!e.isIntersecting) return; ioC.unobserve(e.target);
+    const el = e.target, to = +el.dataset.count; if (reduce) return;
+    const t0 = performance.now(), d = 900;
+    const tick = (t) => { const p = Math.min(1, (t - t0) / d), k = 1 - Math.pow(1 - p, 4);
+      el.textContent = fmt.format(Math.round(to * k)); if (p < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }), { threshold: .6 });
+  $$('[data-count]').forEach(el => ioC.observe(el));
+
+  /* Segmented: indicador deslizante */
+  const place = (seg) => {
+    const act = seg.querySelector('[aria-selected="true"],[aria-pressed="true"]'), ind = seg.querySelector('.ind');
+    if (!act || !ind) return;
+    ind.style.width = act.offsetWidth + 'px';
+    ind.style.transform = `translateX(${act.offsetLeft}px)`;
+  };
+  const segs = $$('[data-seg]');
+  segs.forEach(place);
+  addEventListener('resize', () => segs.forEach(place));
+  document.fonts && document.fonts.ready.then(() => segs.forEach(place));
+
+  /* Tabs de perfil (con teclado) */
+  const tabs = $$('[role="tab"]');
+  const select = (tab, focus) => {
+    tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1;
+      const p = document.getElementById(t.getAttribute('aria-controls')); p.hidden = !on;
+      if (on) { p.classList.remove('is-entering'); void p.offsetWidth; p.classList.add('is-entering'); } });
+    place(tab.closest('[data-seg]')); if (focus) tab.focus();
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault();
+        select(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length], true); }
+    });
+  });
+
+  /* Ordenar rocódromos (View Transitions si hay) */
+  const sortSeg = $('[data-sort]'), status = $('#sort-status');
+  const names = { score: 'nota del autor', price: 'precio, de menor a mayor', beginner: 'índice principiante' };
+  $$('button', sortSeg).forEach(b => b.addEventListener('click', () => {
+    if (b.getAttribute('aria-pressed') === 'true') return;
+    const key = b.dataset.key;
+    $$('button', sortSeg).forEach(x => x.setAttribute('aria-pressed', x === b));
+    place(sortSeg);
+    vt(() => $$('[data-sortable]').forEach(list => {
+      [...list.children].sort((a, c) => key === 'price' ? a.dataset.price - c.dataset.price : c.dataset[key] - a.dataset[key])
+        .forEach(n => list.appendChild(n));
+    }));
+    status.textContent = 'Ordenado por ' + names[key];
+  }));
+
+  /* Chips de filtro del comparador */
+  const shoes = { tarantulace: { price: 95, velcro: false }, tarantula: { price: 99, velcro: true }, origin: { price: 99, velcro: true }, defy: { price: 110, velcro: true } };
+  const chips = $$('[data-filter]');
+  chips.forEach(c => c.addEventListener('click', () => {
+    c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') !== 'true');
+    const on = Object.fromEntries(chips.map(x => [x.dataset.filter, x.getAttribute('aria-pressed') === 'true']));
+    vt(() => {
+      let n = 0;
+      Object.entries(shoes).forEach(([k, s]) => {
+        const show = (!on.precio || s.price <= 100) && (!on.velcro || s.velcro);
+        if (show) n++;
+        $$(`[data-shoe="${k}"]`).forEach(el => el.hidden = !show);
+      });
+      $('#shoe-count').textContent = n === 1 ? '1 modelo' : n + ' modelos';
+    });
+  }));
+
+  /* Ticker: pausa accesible */
+  const tk = $('#ticker'), tb = $('#tickerToggle');
+  tb.addEventListener('click', () => {
+    const paused = tk.classList.toggle('is-paused');
+    tb.setAttribute('aria-pressed', paused);
+    tb.setAttribute('aria-label', paused ? 'Reanudar agenda en movimiento' : 'Pausar agenda en movimiento');
+    $('#icoPause').classList.toggle('hidden', paused); $('#icoPlay').classList.toggle('hidden', !paused);
+  });
+  if (reduce) tb.hidden = true;
+
+  /* Menú móvil */
+  const sheet = $('#menu'); let lastFocus;
+  const setMenu = (open) => {
+    sheet.classList.toggle('is-open', open); sheet.setAttribute('aria-hidden', String(!open));
+    $$('[data-menu-toggle]').forEach(b => b.setAttribute('aria-expanded', open));
+    if (open) { lastFocus = document.activeElement; setTimeout(() => $('a', sheet).focus(), 50); }
+    else if (lastFocus) lastFocus.focus();
+  };
+  $$('[data-menu-toggle]').forEach(b => b.addEventListener('click', () => setMenu(true)));
+  $$('[data-menu-close]').forEach(b => b.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheet.classList.contains('is-open')) setMenu(false); });
+
+  /* Botón cargando (demo) */
+  const busy = (btn, ms) => new Promise(r => { btn.setAttribute('aria-busy', 'true'); btn.disabled = false; setTimeout(() => { btn.removeAttribute('aria-busy'); r(); }, ms); });
+  $$('[data-demo-loading]').forEach(b => b.addEventListener('click', () => { if (b.getAttribute('aria-busy') !== 'true') busy(b, 1500); }));
+
+  /* Newsletter */
+  const form = $('#nlForm'), email = $('#email-d'), consent = $('#consent-d');
+  const showErr = (input, id, bad) => { input.setAttribute('aria-invalid', bad); const m = document.getElementById(id); m.classList.toggle('hidden', !bad); m.classList.toggle('flex', bad); };
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const badEmail = !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value.trim());
+    showErr(email, 'err-email', badEmail); showErr(consent, 'err-consent', !consent.checked);
+    if (badEmail) return email.focus();
+    if (!consent.checked) return consent.focus();
+    const btn = form.querySelector('[type="submit"]');
+    if (btn.getAttribute('aria-busy') === 'true') return;
+    await busy(btn, 1100);
+    vt(() => { form.classList.add('hidden'); const s = $('#nlSuccess'); s.classList.remove('hidden'); s.focus(); });
+  });
+  consent.addEventListener('change', () => consent.checked && showErr(consent, 'err-consent', false));
+})();
+</script>
+</body>
+</html>

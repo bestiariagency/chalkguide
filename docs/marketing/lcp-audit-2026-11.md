@@ -1,0 +1,35 @@
+# Auditoría de LCP móvil, sitio público (2026-11-06)
+
+Autor: lince-max. Método: análisis estático del build (`dist/`, log de build, HTML prerenderizado de `/newsletter`). No se ha medido con Lighthouse: home, blog, artículo, agenda, fichas y comparador son ISR/SSR y viven en la función de Netlify, no hay HTML de esas rutas en `dist/`, y servirlas exige Supabase y variables de entorno. La única ruta con HTML en disco es `/newsletter`, que comparte el mismo grafo de entrada que el resto. Las cifras son por tanto del grafo común, no por ruta. Hay que repetir la medición con Lighthouse móvil (throttling 4G lento) sobre el deploy de preview cuando exista.
+
+## Hallazgos
+
+1. **Todas las páginas públicas cargan casi todo el JS.** `/newsletter` hace `modulepreload` de unos 70 chunks, unos 478 KB gzip (medidos con gzip -9). El script de entrada (`EXAVfsGX.js`) pesa 104 KB gzip por sí solo, y su grafo estático incluye dos chunks que el sitio público no debería pagar:
+   - `osvtzJx5.js`, 143 KB gzip: contiene Tiptap y ProseMirror (editor del panel). Entra en el grafo de entrada vía los chunks compartidos `BLvBvgBY` y `CkcpCCRl`, probablemente porque el middleware global `admin.global.ts` y los auto-imports de `app/utils/` (`article-blocks`, `article-editor-nodes`, `article-embed-nodes`, `media-body`, `article-editor`) arrastran código del editor a un módulo compartido.
+   - `BcxHqw2i.js`, 57 KB gzip: contiene `sanitize-html` (y postcss). La entrada lo importa estáticamente. Los usos públicos son `app/components/ui/Prose.vue` y `app/pages/blog/[slug].vue`, que llaman a `sanitizeArticleHtml` también en cliente. Confirma la nota de leona-lia de 6.19.
+   Suma evitable en el sitio público: unos 200 KB gzip de JS (más del 40 % del preload). Es la mejora de LCP más grande, porque en móvil lento el JS compite por red y CPU con la imagen del hero.
+2. **CSS de entrada bloqueante de 201 KB (36,9 KB gzip), uno solo para todo.** `main.css` importa `admin.css` además de Tailwind y `hero.css`, así que el sitio público descarga las reglas del panel. Es render-blocking en todas las rutas. El otro CSS (`about`) es de 0,3 KB y no importa.
+3. **Fuentes.** Autoalojadas, bien por RGPD, con `font-display: swap` y subset latin. Hay 7 woff2: Archivo variable 90 KB (H1 del hero y fecha de agenda), Caveat 51 KB, Inter 400/500/600 (~24 KB cada uno), JetBrains Mono 400/500 (~21 KB cada uno). Ninguna tiene `preload`. Inter 600 es solo del panel y no debería estar en el CSS público. Archivo es el candidato real a LCP de texto en la home: sin preload, el H1 se pinta con la fuente de respaldo y salta al llegar (riesgo de CLS).
+4. **Imagen del LCP.** `HeroCard.vue` pone `loading="eager"` y `fetchpriority="high"` en la primera tarjeta, y `UiPhoto` tiene `priority`. Bien. Faltan:
+   - `<link rel="preload" as="image" imagesrcset imagesizes fetchpriority="high">` en el `<head>` del SSR: sin él el navegador descubre la imagen cuando termina el parseo del HTML, y la home es ISR, así que se puede emitir.
+   - Las imágenes ocultas del carrusel (el LCP móvil ya anotado en el PLAN el 2026-10-30): las tarjetas 2..n son `lazy`, pero si están en el flujo visible del carrusel o con `transform`, algunos navegadores las cargan igual. Hay que comprobar en el navegador (pestaña Network) que solo se pide la primera.
+   - `sizes` del hero (`390:88vw 560:88vw 600:55vw 900:25vw 1440:25vw`) usa claves de `@nuxt/image`. Hay que confirmar que el `srcset` generado ofrece un ancho de unos 340-400 px para móvil y que no sirve la original.
+5. **`@nuxt/image`.** Está usado de forma consistente (`NuxtImg` con `width`/`height`, evita CLS). La config solo declara `domains` del bucket de Supabase: sin `format` (se espera `webp`/`avif`), sin `quality` ni `screens` propios. El build avisa de que sharp es darwin-arm64 y Netlify es linux: si el proveedor `ipx` no funciona en producción, todas las imágenes salen sin optimizar. Es un riesgo para el LCP hasta que osset-op lo resuelva (F4) o se use el proveedor de Netlify Image CDN.
+6. **Prefetch.** Se emiten unos 30 `prefetch` de chunks, que compiten con el LCP en conexiones lentas.
+7. **Nota aparte (no es LCP).** `dist/_headers` lleva `X-Robots-Tag: noindex, nofollow` global y la canónica apunta a `chalkguide.example`. Es lo esperado sin dominio; hay que verificar que desaparece en producción con dominio real.
+
+## Acciones priorizadas
+
+| # | Acción | Agente | Impacto estimado | Esfuerzo |
+| --- | --- | --- | --- | --- |
+| 1 | Sacar Tiptap/ProseMirror del grafo de entrada: que el middleware admin y los utils del editor no se importen desde código público (importaciones dinámicas o mover el código del editor a `app/components/admin`/composables solo del panel; revisar qué módulo compartido los junta). Comprobar con el analizador de bundle que el chunk deja de estar en el `modulepreload` de `/newsletter`. | coneja-lucky | -140 KB gzip en cada página pública; es lo más grande, LCP -0,5 a -1,2 s en 4G lento | Medio |
+| 2 | Quitar `sanitize-html` del cliente: sanear solo en servidor (SSR/ISR, ya prerender) y en el cliente no re-sanear. Requiere decisión de seguridad porque cambia la defensa en profundidad D6. | coneja-lucky, tras visto bueno de leona-lia | -57 KB gzip; LCP -0,2 a -0,4 s | Medio |
+| 3 | Partir el CSS: `admin.css` (y las utilidades solo del panel) fuera de `main.css`, cargado solo en el layout del panel. Medir cuánto baja el CSS de entrada. | coneja-lucky | CSS bloqueante menor; LCP -0,1 a -0,3 s | Bajo-medio |
+| 4 | `<link rel="preload" as="image" imagesrcset imagesizes>` para la primera imagen del hero en la home (vía `useHead` en `index.vue`), y preload de Archivo woff2 con `crossorigin`. Yo puedo hacerlo cuando indiques; toca `useHead`. | lince-max | LCP -0,2 a -0,5 s en móvil; menos salto de fuente | Bajo |
+| 5 | Verificar en el navegador que las imágenes 2..n del carrusel no se descargan al inicio; si se descargan, quitarles `src` hasta que sean visibles o usar `content-visibility`/observador. | coneja-lucky | Menos bytes competidores; LCP -0,2 a -0,6 s si hay fuga | Bajo |
+| 6 | Quitar Inter 600 y la fuente Caveat del CSS público si no se usan en el sitio (o cargarlas solo donde se usan). | coneja-lucky | -24 a -75 KB de fuentes bajo demanda | Bajo |
+| 7 | Confirmar el proveedor de imágenes en Netlify (sharp linux o Netlify Image CDN) y fijar `format: webp`, `quality` y `screens` en `image`. | osset-op | Evita imágenes sin optimizar en producción; potencialmente el mayor impacto real si falla | Bajo |
+| 8 | Desactivar o recortar `prefetch` de chunks en rutas públicas (`experimental` de Nuxt / `routeRules`). | coneja-lucky | Menos contienda de red | Bajo |
+| 9 | Medir con Lighthouse móvil sobre el preview de Netlify (home, `/blog`, un artículo, `/agenda`, una ficha, el comparador) antes y después de 1-3, y registrar LCP/TBT. | lince-max | Línea base y verificación | Bajo |
+
+Orden recomendado: 7 y 4 primero (barato y de mucho efecto), después 1, 2 y 3 (por impacto en bytes), 5 en paralelo, 9 al final. Los cambios de componentes (1, 2, 3, 5, 6, 8) los ejecuta coneja-lucky; esta auditoría no ha tocado código.

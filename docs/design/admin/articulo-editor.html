@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Editar artículo · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  #insp{position:fixed;z-index:55;background:var(--elev);overflow-y:auto;transition:transform .2s var(--ease)}
+  #inspScrim{position:fixed;inset:0;z-index:54;background:rgb(9 9 11/.45);display:none}
+  #inspScrim.open{display:block}
+  @media (max-width:767px){#insp{left:0;right:0;bottom:0;max-height:88dvh;border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(105%);box-shadow:var(--shadow-pop)} #insp.open{transform:none}}
+  @media (min-width:768px) and (max-width:1279px){#insp{top:0;right:0;height:100dvh;width:360px;border-left:1px solid var(--line);transform:translateX(105%);box-shadow:var(--shadow-pop)} #insp.open{transform:none}}
+  @media (min-width:1280px){#insp{position:sticky;top:48px;height:calc(100vh - 48px);width:340px;background:var(--side);border-left:1px solid var(--line);transform:none;flex:none;z-index:1} #insp.closed{display:none}}
+  .blk-chg{position:relative} .blk-chg::before{content:"";position:absolute;left:-20px;top:4px;bottom:4px;width:3px;border-radius:2px;background:var(--st-rev)}
+  .blk-new{position:relative} .blk-new::before{content:"";position:absolute;left:-20px;top:4px;bottom:4px;width:3px;border-radius:2px;background:var(--st-pub)}
+  .cover:hover .cover-act,.cover:focus-within .cover-act{opacity:1}
+  .cover-act{opacity:0;transition:opacity .15s var(--ease)}
+  @media (pointer:coarse){.cover-act{opacity:1}}
+</style>
+</head>
+<body data-page="editor" data-bottomnav="none" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <!-- cabecera del editor -->
+  <header class="h-12 px-2 md:px-4 flex items-center gap-2 border-b border-line text-sm sticky top-14 md:top-0 bg-bg z-30">
+    <a href="articulos.html" class="icon-btn" aria-label="Volver a artículos"><i data-lucide="arrow-left"></i></a>
+    <nav aria-label="Migas" class="crumbs hidden lg:flex"><a href="articulos.html">Artículos</a><span aria-hidden="true">/</span><span class="text-fg truncate max-w-[240px]" aria-current="page">Rocódromos para ir solo…</span></nav>
+    <span class="chip-pair ml-1 flex-none"><span class="chip st-pub"><span class="dot"></span><span class="hidden sm:inline">Publicado</span><span class="sm:hidden sr-only">Publicado</span></span><span class="chip st-rev">3<span class="hidden sm:inline">&nbsp;cambios</span><span class="sr-only"> sin publicar</span></span></span>
+    <span class="text-xs text-muted hidden 2xl:inline-flex items-center gap-1 whitespace-nowrap" aria-live="polite"><i data-lucide="check" class="w-3.5 h-3.5"></i>Guardado · hace 4 s</span><span class="2xl:hidden sr-only" aria-live="polite">Guardado</span><span class="hidden md:inline-grid 2xl:hidden text-muted" title="Borrador de cambios guardado hace 4 s"><i data-lucide="cloud-check" class="w-4 h-4"></i></span>
+    <div class="ml-auto flex items-center gap-1.5">
+      <div class="seg" role="tablist" aria-label="Idioma del contenido" id="langTabs"><button role="tab" aria-selected="true" data-l="es">ES</button><button role="tab" aria-selected="false" data-l="en">EN<span class="w-1.5 h-1.5 rounded-full bg-warn-icon" aria-hidden="true"></span><span class="sr-only"> (incompleto)</span></button></div>
+      <button class="btn btn-ghost t hidden lg:inline-flex"><i data-lucide="eye"></i>Vista previa</button>
+      <div class="split hidden md:inline-flex relative">
+        <button class="btn btn-rev t" data-open="pub"><i data-lucide="upload"></i>Publicar cambios</button>
+        <button class="btn btn-rev t" id="pubMore" aria-label="Más opciones de publicación" aria-haspopup="menu" aria-expanded="false"><i data-lucide="chevron-down"></i></button>
+        <div id="pubMenu" class="menu absolute right-0 top-10 z-40 hidden w-60" role="menu">
+          <button class="menu-i" role="menuitem" data-open="pub"><i data-lucide="git-compare-arrows"></i>Ver los 3 cambios</button>
+          <button class="menu-i" role="menuitem" data-open="discard"><i data-lucide="undo-2"></i>Descartar cambios…</button>
+          <div class="menu-sep"></div>
+          <button class="menu-i" role="menuitem"><i data-lucide="link"></i>Copiar enlace de vista previa</button>
+          <button class="menu-i" role="menuitem"><i data-lucide="file-minus"></i>Despublicar…</button>
+        </div>
+      </div>
+      <button id="toggleInsp" class="icon-btn hidden md:inline-grid" aria-label="Ajustes del artículo" aria-controls="insp" aria-expanded="true"><i data-lucide="panel-right"></i></button>
+    </div>
+  </header>
+
+  <!-- banda: cambios sin publicar -->
+  <div class="rev-band px-4 py-2.5 text-sm flex flex-wrap items-center gap-x-3 gap-y-1" role="status">
+    <i data-lucide="git-compare-arrows" class="w-4 h-4 text-st-rev flex-none"></i>
+    <span class="flex-1 min-w-[220px]">Estás editando un <b>borrador de cambios</b>. El sitio sigue mostrando la versión del 3 oct hasta que publiques.</span>
+    <span class="flex gap-4"><button class="underline underline-offset-2 font-medium" data-open="pub">Ver 3 cambios</button><button class="underline underline-offset-2 text-meta hover:text-fg" data-open="discard">Descartar</button></span>
+  </div>
+
+  <div class="flex items-start">
+    <!-- lienzo -->
+    <div class="flex-1 min-w-0">
+      <div class="sticky top-[104px] md:top-12 z-20 bg-bg/95 backdrop-blur border-b border-line">
+        <div role="toolbar" aria-label="Formato" class="max-w-[760px] mx-auto px-2 md:px-6 h-11 flex items-center gap-0.5 overflow-x-auto">
+          <button class="icon-btn" aria-label="Deshacer"><i data-lucide="undo-2"></i></button><button class="icon-btn" aria-label="Rehacer"><i data-lucide="redo-2"></i></button>
+          <span class="w-px h-5 bg-line mx-1 flex-none"></span>
+          <button class="btn btn-quiet !px-2 flex-none" aria-haspopup="menu">Párrafo<i data-lucide="chevron-down" class="!w-3.5 !h-3.5"></i></button>
+          <button class="icon-btn" aria-label="Negrita" aria-pressed="false"><i data-lucide="bold"></i></button><button class="icon-btn" aria-label="Cursiva" aria-pressed="false"><i data-lucide="italic"></i></button><button class="icon-btn" aria-label="Enlace" aria-pressed="false"><i data-lucide="link"></i></button>
+          <span class="w-px h-5 bg-line mx-1 flex-none"></span>
+          <button class="icon-btn" aria-label="Lista"><i data-lucide="list"></i></button><button class="icon-btn" aria-label="Cita"><i data-lucide="quote"></i></button>
+          <button class="icon-btn" aria-label="Imagen de la biblioteca" data-open="picker"><i data-lucide="image"></i></button><button class="icon-btn" aria-label="Vídeo o embed"><i data-lucide="youtube"></i></button><button class="icon-btn" aria-label="Tarjeta de ficha"><i data-lucide="mountain"></i></button>
+          <span class="ml-auto text-xs text-muted flex-none hidden sm:inline num pl-2">980 palabras · 4 min</span>
+        </div>
+      </div>
+
+      <article class="max-w-[760px] mx-auto px-5 md:px-8 pt-6 pb-32" id="canvas">
+        <!-- portada en el lienzo (préstamo B) -->
+        <figure class="cover relative blk-chg">
+          <div class="photo aspect-[16/9] rounded-lg" style="background-image:linear-gradient(150deg,#5d6a7a 0%,#2f3a44 55%,#1b2027 100%)" role="img" aria-label="Portada: grupo de escaladores charlando junto a la pared de bloque"></div>
+          <div class="cover-act absolute inset-x-3 bottom-3 flex flex-wrap gap-1.5">
+            <button class="btn btn-ghost btn-sm" data-open="picker"><i data-lucide="image"></i>Cambiar</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('alt-es').focus()"><i data-lucide="text"></i>Alt</button>
+            <span class="ml-auto chip !bg-white/90 !text-fg"><span class="swatch !w-3 !h-3" style="background:#2f3a44"></span><span class="mono">#2f3a44</span></span>
+          </div>
+          <figcaption class="mt-2 text-xs text-meta flex items-center gap-2"><span class="chg-mark">Portada cambiada</span><span class="ml-auto inline-flex items-center gap-1 text-ok"><i data-lucide="check" class="w-3.5 h-3.5"></i>Alt ES</span></figcaption>
+        </figure>
+
+        <p class="mt-6 text-xs font-medium text-meta flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background:#B56576"></span>Comunidad</p>
+        <div class="blk-chg mt-1">
+          <label for="title" class="sr-only">Título (ES)</label>
+          <textarea id="title" rows="2" style="field-sizing:content" class="w-full resize-none bg-transparent text-[28px] md:text-[34px] leading-[1.15] font-semibold tracking-tight focus:outline-none">Rocódromos para ir solo y encontrar compañero en Barcelona</textarea>
+        </div>
+        <p class="mt-2 text-sm text-meta flex flex-wrap items-center gap-1.5"><i data-lucide="link-2" class="w-3.5 h-3.5"></i><span class="mono text-xs break-all">/blog/<span class="text-fg">rocodromos-para-ir-solo</span></span><span class="text-xs inline-flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i>fija (publicado)</span><button class="text-xs underline underline-offset-2 hover:text-fg">Cambiar…</button></p>
+
+        <!-- entradilla en el lienzo (préstamo B) -->
+        <div class="mt-5">
+          <label for="lead" class="text-xs font-medium text-meta flex items-center gap-2">Entradilla <span class="font-normal">· también es el extracto</span><span class="counter">92 / 300</span></label>
+          <textarea id="lead" rows="2" style="field-sizing:content" class="mt-1 w-full resize-none bg-transparent text-lg leading-7 text-meta focus:outline-none" placeholder="Una o dos frases que resuman el artículo">Dónde es fácil engancharse a un grupo, qué preguntar en recepción y a qué hora ir.</textarea>
+        </div>
+        <hr class="my-6 border-line">
+
+        <div class="prose-ed" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Cuerpo del artículo (ES)">
+          <p>Empezar a escalar sin nadie con quien ir es más normal de lo que parece. La mitad de la gente que conozco en el rocódromo llegó sola, y casi todos encontraron cordada en el primer mes.</p>
+          <h2>Bloque: no necesitas a nadie</h2>
+          <p>En bloque no hace falta compañero para asegurar. Es la forma más fácil de empezar sola o solo, y la que más conversación genera: todo el mundo mira el mismo problema.</p>
+          <p class="blk-new">Si quieres conocer gente, ve <b>entre semana de 19:00 a 21:00</b>: hay más ambiente que por la mañana y menos agobio que el domingo por la tarde.</p>
+          <h2>Cuerda: busca los tablones y las quedadas</h2>
+          <p class="blk-chg">La Paret de Gràcia tiene un tablón en la entrada y un grupo de mensajería para buscar cordada; en Altura Cornellà organizan quedadas los jueves.</p>
+          <div contenteditable="false" class="my-5 rounded-md border border-line p-3 flex gap-3 items-center bg-side">
+            <div class="photo w-14 h-14 rounded flex-none" style="background-image:linear-gradient(160deg,#9b5a3a,#3d2a22)"></div>
+            <div class="min-w-0 text-sm"><p class="grp-label">Tarjeta de ficha · rocódromo</p><p class="font-medium">La Paret de Gràcia</p><p class="text-xs text-meta">Gràcia · Fontana (L3) · entrada 15 €</p></div>
+            <button class="icon-btn ml-auto" aria-label="Opciones de la tarjeta"><i data-lucide="more-horizontal"></i></button>
+          </div>
+          <p class="text-muted">Escribe o pulsa <span class="kbd">/</span> para insertar…</p>
+        </div>
+      </article>
+    </div>
+
+    <!-- inspector -->
+    <div id="inspScrim" aria-hidden="true"></div>
+    <aside id="insp" aria-label="Ajustes del artículo">
+      <div class="grab md:!hidden"></div>
+      <div class="xl:hidden h-12 px-4 flex items-center border-b border-line sticky top-0 bg-elev z-10"><p class="text-sm font-semibold">Ajustes del artículo</p><button id="closeInsp" class="icon-btn ml-auto" aria-label="Cerrar ajustes"><i data-lucide="x"></i></button></div>
+
+      <details class="sec border-b border-line" open>
+        <summary class="h-11 px-4 flex items-center gap-2 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-muted"></i>Publicación</summary>
+        <div class="px-4 pb-4 space-y-3 text-sm">
+          <div class="flex items-center justify-between gap-2"><span class="text-meta">Estado</span><span class="chip st-pub"><span class="dot"></span>Publicado · 3 oct, 08:00</span></div>
+          <div class="flex items-center justify-between gap-2"><span class="text-meta">Sin publicar</span><button class="chip st-rev hover:underline" data-open="pub">3 cambios · ver</button></div>
+          <div class="flex items-center justify-between"><span class="text-meta" id="lbl-feat">Destacado en el blog</span><button role="switch" aria-checked="false" aria-labelledby="lbl-feat" class="switch"></button></div>
+          <div class="flex items-center justify-between"><span class="text-meta">Lectura</span><span class="num">4 min (ES)</span></div>
+        </div>
+      </details>
+
+      <details class="sec border-b border-line" open>
+        <summary class="h-11 px-4 flex items-center gap-2 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-muted"></i>Portada<span class="chg-mark ml-1">Cambiado</span></summary>
+        <div class="px-4 pb-4 space-y-3 text-sm">
+          <div class="flex gap-3 items-center"><div class="photo w-20 h-12 rounded flex-none" style="background-image:linear-gradient(150deg,#5d6a7a,#2f3a44,#1b2027)"></div><div class="min-w-0"><p class="mono text-xs truncate">grupo-bloque-poblenou.jpg</p><p class="text-xs text-meta flex items-center gap-1.5 mt-0.5"><span class="swatch" style="background:#2f3a44"></span><span class="mono">#2f3a44</span> · 2400×1600</p></div></div>
+          <div><label class="lbl" for="alt-es">Texto alternativo <span class="lang-tag">ES</span></label><input id="alt-es" class="input" value="Grupo de escaladores charlando junto a la pared de bloque"></div>
+          <p class="help !mt-0">El alt EN se edita en la pestaña EN. Cambiarlo aquí cambia la foto en la biblioteca (se usa en 2 sitios).</p>
+        </div>
+      </details>
+
+      <details class="sec border-b border-line" open>
+        <summary class="h-11 px-4 flex items-center gap-2 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-muted"></i>Organización</summary>
+        <div class="px-4 pb-4 space-y-3 text-sm">
+          <div><label class="lbl" for="cat">Categoría <span class="req" aria-hidden="true">*</span></label><button id="cat" class="input t flex items-center gap-2 text-left" aria-haspopup="listbox"><span class="w-2 h-2 rounded-full" style="background:#B56576"></span>Comunidad<i data-lucide="chevron-down" class="w-4 h-4 text-muted ml-auto"></i></button></div>
+          <div><p class="lbl">Fichas relacionadas</p><div class="flex flex-wrap gap-1.5"><span class="chip st-neutral !text-fg">La Paret de Gràcia<button aria-label="Quitar La Paret de Gràcia" class="text-muted hover:text-fg">×</button></span><span class="chip st-neutral !text-fg">Altura Cornellà<button aria-label="Quitar Altura Cornellà" class="text-muted hover:text-fg">×</button></span><button class="chip border border-dashed border-line-strong text-meta hover:text-fg">+ Añadir</button></div></div>
+        </div>
+      </details>
+
+      <details class="sec border-b border-line" open>
+        <summary class="h-11 px-4 flex items-center gap-2 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-muted"></i>SEO<span class="ml-auto lang-tag">ES</span></summary>
+        <div class="px-4 pb-4 space-y-3 text-sm">
+          <div class="rounded-md border border-line bg-elev p-3"><p class="text-xs text-meta truncate">chalkguide › blog › rocodromos-para-ir-solo</p><p class="text-[15px] leading-5 text-[#1a0dab] mt-0.5">Rocódromos para ir solo y encontrar compañero en Barcelona</p><p class="text-xs text-meta mt-1 line-clamp-2">Dónde es fácil engancharse a un grupo, qué preguntar en recepción y a qué hora ir.</p></div>
+          <div class="changed ml-3"><div class="lbl"><label for="seo-t">Título SEO</label><span class="chg-mark">Cambiado</span><span class="counter warn" id="seo-t-c">64 / 70</span></div><input id="seo-t" class="input" value="Rocódromos para ir solo y encontrar compañero en Barcelona" aria-describedby="seo-t-c seo-t-h"><div class="meter warn"><span style="width:91%"></span></div><p id="seo-t-h" class="help">Ideal 50–60: Google puede cortar el final.</p></div>
+          <div><div class="lbl"><label for="seo-d">Descripción</label><span class="counter" id="seo-d-c">0 / 160</span></div><textarea id="seo-d" rows="2" class="input" placeholder="Se usa la entradilla" aria-describedby="seo-d-c"></textarea></div>
+          <div class="flex items-center justify-between"><span class="text-meta" id="lbl-noidx">No indexar</span><button role="switch" aria-checked="false" aria-labelledby="lbl-noidx" class="switch"></button></div>
+        </div>
+      </details>
+
+      <details class="sec border-b border-line" open>
+        <summary class="h-11 px-4 flex items-center gap-2 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-muted"></i>Listo para publicar<span class="ml-auto text-xs font-normal text-ok num">5 / 5</span></summary>
+        <ul class="px-4 pb-4 space-y-2 text-sm">
+          <li class="flex gap-2"><i data-lucide="circle-check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Título y URL</li><li class="flex gap-2"><i data-lucide="circle-check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Categoría</li>
+          <li class="flex gap-2"><i data-lucide="circle-check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Portada con alt ES</li><li class="flex gap-2"><i data-lucide="circle-check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Entradilla</li>
+          <li class="flex gap-2"><i data-lucide="circle-check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Imágenes del cuerpo con alt</li>
+        </ul>
+      </details>
+
+      <details class="sec border-b border-line">
+        <summary class="h-11 px-4 flex items-center gap-2 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-muted"></i>Historial</summary>
+        <ol class="px-4 pb-4 text-sm space-y-2">
+          <li class="flex gap-2"><span class="mt-1.5 w-2 h-2 rounded-full bg-st-rev flex-none"></span><span>Borrador de cambios<span class="block text-xs text-muted">hoy, 09:12 · 3 campos</span></span></li>
+          <li class="flex gap-2"><span class="mt-1.5 w-2 h-2 rounded-full bg-ok flex-none"></span><span>Publicado<span class="block text-xs text-muted">3 oct, 08:00 · programado</span></span></li>
+          <li class="flex gap-2"><span class="mt-1.5 w-2 h-2 rounded-full bg-line-strong flex-none"></span><span>Creado<span class="block text-xs text-muted">28 sep, 21:40</span></span></li>
+        </ol>
+      </details>
+
+      <div class="px-4 py-4 flex flex-wrap gap-2 text-sm pb-24 md:pb-4">
+        <button class="btn btn-ghost" data-toast="Duplicado como borrador" data-action="Abrir"><i data-lucide="copy"></i>Duplicar</button>
+        <button class="btn btn-danger-ghost" data-open="del"><i data-lucide="trash-2"></i>Eliminar…</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- barra inferior del editor en móvil (préstamo B) -->
+  <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-bg border-t border-line px-3 pt-2 pb-[calc(8px+env(safe-area-inset-bottom))] flex gap-2">
+    <button class="btn btn-ghost flex-1" id="openInspM" aria-controls="insp" aria-expanded="false"><i data-lucide="sliders-horizontal"></i>Ajustes</button>
+    <button class="btn btn-rev flex-1" data-open="pub"><i data-lucide="upload"></i>Publicar cambios</button>
+  </div>
+</main>
+
+<!-- ===== Modal: publicar cambios / ver cambios ===== -->
+<div id="pub" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pub-h"><div class="dialog lg"><div class="grab"></div>
+  <div class="dialog-h flex items-start gap-3"><div><h2 id="pub-h">Publicar 3 cambios</h2><p class="text-sm text-meta mt-1">Frente a la versión publicada el 3 oct a las 08:00. Revisa y publica; los cambios salen al sitio al momento.</p></div><button class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="dialog-b">
+    <ul class="divide-y divide-line text-sm border border-line rounded-lg">
+      <li class="p-3"><div class="flex items-center gap-2"><span class="font-medium">Título</span><span class="lang-tag">ES</span><button class="ml-auto text-xs text-meta underline underline-offset-2 hover:text-fg">Revertir</button></div>
+        <p class="mt-1.5 leading-6">Rocódromos para ir solo y encontrar compañero<span class="diff-add"> en Barcelona</span></p></li>
+      <li class="p-3"><div class="flex items-center gap-2"><span class="font-medium">Portada</span><button class="ml-auto text-xs text-meta underline underline-offset-2 hover:text-fg">Revertir</button></div>
+        <div class="mt-2 flex items-center gap-3"><figure><span class="photo block w-24 h-14 rounded opacity-70" style="background-image:linear-gradient(150deg,#a0603e,#3a2418)"></span><figcaption class="mono text-2xs text-meta mt-1">pared-cuerda-gracia.jpg</figcaption></figure><i data-lucide="arrow-right" class="w-4 h-4 text-muted"></i><figure><span class="photo block w-24 h-14 rounded" style="background-image:linear-gradient(150deg,#5d6a7a,#2f3a44,#1b2027)"></span><figcaption class="mono text-2xs text-meta mt-1">grupo-bloque-poblenou.jpg</figcaption></figure></div></li>
+      <li class="p-3"><details><summary class="flex items-center gap-2 cursor-pointer list-none"><span class="font-medium">Cuerpo</span><span class="lang-tag">ES</span><span class="text-xs text-meta">1 párrafo nuevo · 1 cambiado</span><span class="ml-auto text-xs text-meta underline underline-offset-2">Ver texto</span></summary>
+        <div class="mt-3 space-y-2 text-[13px] leading-6 border-l-2 border-line pl-3">
+          <p class="bg-[var(--diff-add)] rounded px-2"><span class="sr-only">Añadido: </span>Si quieres conocer gente, ve entre semana de 19:00 a 21:00: hay más ambiente que por la mañana y menos agobio que el domingo por la tarde.</p>
+          <p>La Paret de Gràcia tiene un tablón en la entrada<span class="diff-del"> para buscar cordada</span><span class="diff-add"> y un grupo de mensajería para buscar cordada</span>; en Altura Cornellà organizan quedadas los jueves.</p>
+        </div></details>
+        <div class="mt-2"><button class="text-xs text-meta underline underline-offset-2 hover:text-fg">Revertir el cuerpo</button></div></li>
+      <li class="p-3 text-meta flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i>Título SEO: también cambia porque sigue al título.</li>
+    </ul>
+    <div class="mt-4 flex items-center gap-2 text-sm"><i data-lucide="circle-check" class="w-4 h-4 text-ok"></i>Listo para publicar · 5 de 5 comprobaciones</div>
+  </div>
+  <div class="dialog-f"><button class="btn btn-quiet mr-auto !text-danger hidden sm:inline-flex" data-open="discard">Descartar todos…</button><button class="btn btn-ghost" data-close>Seguir editando</button><button class="btn btn-rev" data-close data-toast="Cambios publicados en «Rocódromos para ir solo…»" id="doPub">Publicar cambios</button></div>
+</div></div>
+
+<div id="discard" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="dc-h" aria-describedby="dc-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="dc-h">¿Descartar los 3 cambios?</h2><p id="dc-d" class="text-sm text-meta mt-1">El editor vuelve a la versión publicada el 3 oct. Lo que se ve en el sitio no cambia. Se puede deshacer durante unos segundos.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Cambios descartados">Descartar cambios</button></div></div></div>
+
+<div id="del" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="del-h" aria-describedby="del-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="del-h">¿Eliminar «Rocódromos para ir solo…»?</h2><p id="del-d" class="text-sm text-meta mt-1">Está publicado: su URL dejará de existir y los enlaces desde otros artículos quedarán rotos (1 artículo lo enlaza). Si solo quieres retirarlo, <button class="underline underline-offset-2 text-fg">despublícalo</button>.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Artículo eliminado" data-action="Deshacer">Eliminar artículo</button></div></div></div>
+
+<div id="picker" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pk-h"><div class="dialog xl"><div class="grab"></div>
+  <div class="flex items-center gap-3 px-5 h-14 border-b border-line"><h2 id="pk-h" class="text-base font-semibold">Elegir imagen</h2><button class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="p-5 text-sm text-meta">Selector de medios completo en el <a class="underline underline-offset-2" href="design-system.html#medios">design system</a> y en <a class="underline underline-offset-2" href="medios.html">Medios</a>.</div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close>Cancelar</button></div></div></div>
+
+<script>
+/* inspector: sticky ≥1280, drawer 768–1279, hoja inferior <768 */
+const insp=document.getElementById('insp'),scrim=document.getElementById('inspScrim'),ti=document.getElementById('toggleInsp'),om=document.getElementById('openInspM');
+const wide=()=>matchMedia('(min-width:1280px)').matches;
+function openI(){insp.classList.add('open');scrim.classList.add('open');om.setAttribute('aria-expanded','true');ti.setAttribute('aria-expanded','true');insp.querySelector('button,summary').focus();}
+function closeI(){insp.classList.remove('open');scrim.classList.remove('open');om.setAttribute('aria-expanded','false');if(!wide())ti.setAttribute('aria-expanded','false');}
+ti.onclick=()=>{if(wide()){const c=insp.classList.toggle('closed');ti.setAttribute('aria-expanded',!c);}else openI();};
+om.onclick=openI;document.getElementById('closeInsp').onclick=closeI;scrim.onclick=closeI;
+addEventListener('keydown',e=>{if(e.key==='Escape'&&insp.classList.contains('open'))closeI();});
+if(!wide())ti.setAttribute('aria-expanded','false');
+/* menú del botón dividido */
+const pm=document.getElementById('pubMenu'),pmb=document.getElementById('pubMore');
+pmb.onclick=e=>{e.stopPropagation();const o=pm.classList.toggle('hidden');pmb.setAttribute('aria-expanded',!o);};
+document.addEventListener('click',e=>{if(!e.target.closest('#pubMenu'))pm.classList.add('hidden');});
+/* idioma */
+document.querySelectorAll('#langTabs [role=tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#langTabs [role=tab]').forEach(x=>x.setAttribute('aria-selected',x===b));const en=b.dataset.l==='en';
+  document.getElementById('title').value=en?'Climbing gyms to go solo and find a partner':'Rocódromos para ir solo y encontrar compañero en Barcelona';
+  document.getElementById('lead').value=en?'':'Dónde es fácil engancharse a un grupo, qué preguntar en recepción y a qué hora ir.';
+  document.getElementById('lead').placeholder=en?'Lead paragraph (missing)':'';
+  document.querySelector('.prose-ed').innerHTML=en?'<p class="text-muted">Sin cuerpo en inglés. <button class="underline underline-offset-2 text-fg">Copiar el texto en español para traducir</button></p>':document.querySelector('.prose-ed')._es;
+  CG.icons();});
+document.querySelector('.prose-ed')._es=document.querySelector('.prose-ed').innerHTML;
+if(location.hash==='#cambios')setTimeout(()=>CG.open('pub'),200);
+</script>
+</body>
+</html>

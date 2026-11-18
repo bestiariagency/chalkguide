@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Opiniones con fotos · La Paret de Gràcia · ChalkGuide (F6.11b)</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="_shared/lectura.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw-vars.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+<link rel="stylesheet" href="_shared/lectura.css">
+<style>
+  /* ===== F6.11b · Miniaturas en la opinión ===== */
+  .rv-thumbs { display:flex; flex-wrap:wrap; gap:8px; }
+  .rv-thumb { position:relative; width:72px; height:72px; border-radius:8px; overflow:hidden; background:var(--elevated); flex:none; }
+  @media (min-width:768px) { .rv-thumb { width:88px; height:88px; } }
+  .rv-thumb img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 200ms var(--ease-out); }
+  .rv-thumb::after { content:""; position:absolute; inset:0; border-radius:inherit; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.12); pointer-events:none; }
+  @media (hover:hover) { button.rv-thumb:hover img { transform:scale(1.04); } }
+  button.rv-thumb:active img { transform:scale(.98); }
+  .rv-thumb .st { position:absolute; inset:auto 0 0 0; padding:3px 4px; font-size:11px; font-weight:500; line-height:1.2; text-align:center; background:var(--board); color:var(--foreground); }
+  .rv-thumb[data-st="rev"] img { opacity:.55; }
+  /* ===== Visor (lightbox): oscuro siempre, la foto manda ===== */
+  .lb { position:fixed; inset:0; z-index:80; display:flex; flex-direction:column; background:#0f0f0f; color:#F0EDE8; visibility:hidden; opacity:0;
+    transition: opacity 200ms var(--ease-standard), visibility 0s linear 200ms; }
+  .lb.is-open { visibility:visible; opacity:1; transition-delay:0s; }
+  .lb figure img { max-width:100%; max-height:calc(100dvh - 168px); object-fit:contain; border-radius:4px; transform:scale(.98); transition: transform 200ms var(--ease-out), opacity 160ms var(--ease-standard); }
+  @media (min-width:768px) { .lb figure img { max-height:calc(100dvh - 140px); } }
+  .lb.is-open figure img { transform:none; }
+  .lb .lb-btn { width:44px; height:44px; display:grid; place-items:center; border-radius:999px; color:#F0EDE8; background:rgba(255,255,255,.08); transition: background-color 120ms var(--ease-standard); }
+  @media (hover:hover) { .lb .lb-btn:hover { background:rgba(255,255,255,.16); } }
+  .lb .lb-btn:disabled { opacity:.35; cursor:default; }
+  .lb .lb-btn:focus-visible { box-shadow: 0 0 0 2px #0f0f0f, 0 0 0 4px #E8923A; }
+  .lb .meta { color:#A19D94; }
+  @media (prefers-reduced-motion: reduce) { .lb, .lb figure img { transition:none; } .lb figure img { transform:none; } }
+</style>
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-nav="rocodromos" data-route-es="/rocodromos/la-paret-de-gracia#opiniones" data-route-en="/en/climbing-gyms/la-paret-de-gracia#reviews">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <div class="max-w-page mx-auto px-4 md:px-6 pt-4">
+    <div class="border border-dashed border-line-strong rounded-md px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[12px] text-meta">
+      <span>F6.11b · fotos aprobadas en la ficha (mockup)</span>
+      <a class="link" href="opinar-fotos.html">→ formulario con fotos</a>
+      <a class="link" href="../../admin/opiniones-fotos.html">→ bandeja del panel</a>
+    </div>
+  </div>
+
+  <section id="opiniones" class="scroll-mt-20" aria-labelledby="h-op">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-14">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="h-op" class="display text-[1.75rem] md:text-[2.25rem]">Opiniones</h2>
+          <p class="text-sm text-meta mt-1">5 opiniones de escaladores</p>
+        </div>
+      </div>
+
+      <div class="mt-8 grid lg:grid-cols-12 gap-8 lg:gap-12">
+        <div class="lg:col-span-4">
+          <div class="card p-5 md:p-6 num">
+            <p class="state-label">Nota de lectores</p>
+            <p class="mt-2"><span class="font-mono text-[40px] leading-none">4.2</span><span class="text-meta"> de 5 · 5 opiniones</span></p>
+            <p class="text-[13px] text-meta mt-4">Mockup: reparto y criterios sin cambios (§9.5).</p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-8 space-y-3">
+          <!-- Tu opinión (solo la ve su autora): fotos con su estado -->
+          <section class="rounded-lg border-[0.5px] border-accent bg-board p-5" aria-labelledby="mine-h">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div><h3 id="mine-h" class="text-[16px] font-medium">Tu opinión</h3><p class="font-mono text-xs text-meta">02.10.26</p></div>
+              <span class="badge !text-foreground !text-[15px] !py-1.5 !bg-accent-muted">4<span class="text-meta">/5</span></span>
+            </div>
+            <p class="mt-3 text-[15px] leading-[1.6] text-prose">Voy por las mañanas y está casi vacío. Los autobelays son geniales para entrenar sola.</p>
+            <ul class="rv-thumbs mt-3" aria-label="Tus fotos">
+              <li><button type="button" class="rv-thumb" data-lb="mine" data-i="0" aria-label="Ver tu foto 1 de 2 (publicada)"><img src="https://images.unsplash.com/photo-1564769662533-4f00a87b4056?w=200&h=200&fit=crop&q=65&auto=format" alt=""></button></li>
+              <li><div class="rv-thumb" data-st="rev"><img src="https://images.unsplash.com/photo-1689775884478-9ed19b79d659?w=200&h=200&fit=crop&q=65&auto=format" alt="Tu foto 2 de 2"><span class="st">En revisión</span></div></li>
+            </ul>
+            <p class="mt-2 text-[13px] text-meta">Las fotos en revisión solo las ves tú. Salen en la ficha cuando las apruebe.</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <a href="opinar-fotos.html" class="btn btn-ghost"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-pencil"/></svg><span class="label">Editar</span></a>
+              <button type="button" class="btn btn-ghost"><span class="label">Borrar</span></button>
+            </div>
+          </section>
+
+          <ul class="space-y-3" id="reviews"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Visor -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-labelledby="lb-title" aria-hidden="true">
+  <div class="flex items-center gap-3 px-4 md:px-6 h-16 shrink-0">
+    <div class="min-w-0">
+      <p id="lb-title" class="text-[15px] font-medium truncate">Fotos de Marta G.</p>
+      <p class="meta text-[13px] truncate"><span class="font-mono">02.10.26</span> · La Paret de Gràcia</p>
+    </div>
+    <p class="ml-auto font-mono text-[13px] meta" id="lb-count" aria-live="polite">1 / 3</p>
+    <button type="button" class="lb-btn" data-lb-close aria-label="Cerrar"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="relative flex-1 min-h-0 flex items-center justify-center px-4 md:px-20">
+    <figure class="m-0 flex flex-col items-center"><img id="lb-img" src="" alt=""><figcaption id="lb-cap" class="meta text-[13px] mt-3 text-center">Subida por un lector, no por ChalkGuide</figcaption></figure>
+    <button type="button" class="lb-btn absolute left-4 top-1/2 -translate-y-1/2 hidden md:grid" data-lb-prev aria-label="Foto anterior"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+    <button type="button" class="lb-btn absolute right-4 top-1/2 -translate-y-1/2 hidden md:grid" data-lb-next aria-label="Foto siguiente"><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+  </div>
+  <div class="md:hidden flex items-center justify-between px-4 h-[72px] shrink-0 pb-[env(safe-area-inset-bottom)]" id="lb-mnav">
+    <button type="button" class="lb-btn" data-lb-prev aria-label="Foto anterior"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+    <button type="button" class="lb-btn" data-lb-next aria-label="Foto siguiente"><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+  </div>
+</div>
+
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+<script>
+(() => {
+  const { $, $$, reduce } = window.CG;
+  const U = (id, w, h = w) => `https://images.unsplash.com/${id}?w=${w}&h=${h}&fit=crop&q=70&auto=format`;
+  const UL = (id) => `https://images.unsplash.com/${id}?w=1600&q=75&auto=format`;
+  const R = [
+    { n: 'Marta G.', d: '02.10.26', s: 5, x: 'Muy buen ambiente y bloques renovados cada semana. Por la tarde se llena, pero vale la pena.', c: 'variedad 5 · afluencia 3', ph: ['photo-1564769662533-4f00a87b4056', 'photo-1689775884353-b01c7a8ad1b2', 'photo-1730659071194-4c833ac5da4e'] },
+    { n: 'Pau R.', d: '21.09.26', s: 4, x: 'La zona de cuerda es de las mejores de Barcelona. Los vestuarios se quedan pequeños en hora punta.', ph: ['photo-1775654792524-739718a3b001'] },
+    { n: 'Laia M.', d: '04.09.26', s: 3, x: 'Para bloque hay poca variedad de grado bajo. Para vía, muy bien.', c: 'para principiantes 2' },
+    { n: 'Tom H.', d: '28.08.26', s: 4, x: '', ph: ['photo-1704030641902-b10c41ebc147', 'photo-1689775884478-9ed19b79d659'] },
+  ];
+  const ini = (n) => n.split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase();
+  $('#reviews').innerHTML = R.map((r, k) => `
+    <li class="card p-5">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-elevated border-[0.5px] border-line grid place-items-center text-xs font-medium text-accent" aria-hidden="true">${ini(r.n)}</div><div><p class="text-sm font-medium">${r.n}</p><p class="text-xs text-meta font-mono">${r.d}</p></div></div>
+        <span class="badge !text-foreground !text-[15px] !py-1.5">${r.s}<span class="text-meta">/5</span></span>
+      </div>
+      ${r.x ? `<p class="text-[15px] leading-[1.6] mt-3 text-prose">${r.x}</p>` : ''}
+      ${r.ph ? `<ul class="rv-thumbs mt-3" aria-label="Fotos de ${r.n}">${r.ph.map((id, i) => `<li><button type="button" class="rv-thumb" data-lb="${k}" data-i="${i}" aria-label="Ver foto ${i + 1} de ${r.ph.length} de ${r.n}"><img src="${U(id, 200)}" alt="" loading="lazy" decoding="async"></button></li>`).join('')}</ul>` : ''}
+      ${r.c ? `<p class="mt-3 font-mono text-[12px] text-meta">${r.c}</p>` : ''}
+    </li>`).join('');
+
+  // Visor: ← → navegan, Esc cierra, foco atrapado y vuelve a la miniatura
+  const lb = $('#lb'), img = $('#lb-img');
+  let set = [], who = null, i = 0, opener = null;
+  const MINE = { n: 'ti', d: '02.10.26', ph: ['photo-1564769662533-4f00a87b4056'] };
+  const paint = () => {
+    img.src = UL(set[i]); img.alt = `Foto ${i + 1} de ${set.length} de ${who.n === 'ti' ? 'tu opinión' : who.n} en La Paret de Gràcia`;
+    $('#lb-title').textContent = who.n === 'ti' ? 'Tus fotos' : `Fotos de ${who.n}`;
+    $('#lb-cap').textContent = who.n === 'ti' ? 'Tu foto, publicada en la ficha' : `Subida por ${who.n}, no por ChalkGuide`;
+    $('#lb-count').textContent = `${i + 1} / ${set.length}`; $('#lb-count').hidden = set.length < 2;
+    $$('[data-lb-prev]').forEach(b => { b.disabled = i === 0; b.hidden = set.length < 2; });
+    $$('[data-lb-next]').forEach(b => { b.disabled = i === set.length - 1; b.hidden = set.length < 2; });
+    $('#lb-mnav').classList.toggle('invisible', set.length < 2);
+  };
+  const open = (btn) => { opener = btn; who = btn.dataset.lb === 'mine' ? MINE : R[+btn.dataset.lb]; set = who.ph; i = +btn.dataset.i; paint();
+    lb.classList.add('is-open'); lb.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; setTimeout(() => $('[data-lb-close]').focus(), 30); };
+  const close = () => { lb.classList.remove('is-open'); lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; opener && opener.focus(); };
+  const go = (d) => { const j = Math.max(0, Math.min(set.length - 1, i + d)); if (j === i) return; i = j; paint(); };
+  document.addEventListener('click', (e) => { const t = e.target.closest('button[data-lb]'); if (t) open(t); });
+  $('[data-lb-close]').addEventListener('click', close);
+  $$('[data-lb-prev]').forEach(b => b.addEventListener('click', () => go(-1)));
+  $$('[data-lb-next]').forEach(b => b.addEventListener('click', () => go(1)));
+  lb.addEventListener('click', (e) => { if (e.target === lb || e.target.classList.contains('flex-1')) close(); });
+  addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'Tab') { const f = $$('button:not([disabled]):not([hidden])', lb).filter(x => x.offsetParent); const a = f.indexOf(document.activeElement);
+      if (e.shiftKey && a <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && a === f.length - 1) { e.preventDefault(); f[0].focus(); } }
+  });
+  // Deslizar en móvil
+  let x0 = null; lb.addEventListener('touchstart', (e) => x0 = e.touches[0].clientX, { passive: true });
+  lb.addEventListener('touchend', (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 48) go(dx < 0 ? 1 : -1); x0 = null; });
+})();
+</script>
+</body>
+</html>

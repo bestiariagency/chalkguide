@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel · Arquitectura de información (F5.1) · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'], mono: ['JetBrains Mono','ui-monospace','monospace'] },
+  colors: { ink:'#18181B', meta:'#52525B', line:'#E4E4E7', soft:'#F4F4F5', acc:'#C2410C', accbg:'#FFF1E8' }
+}}}
+</script>
+<style>
+  :focus-visible{outline:2px solid #C2410C;outline-offset:2px;border-radius:4px}
+  .step{counter-increment:s}
+  .step::before{content:counter(s);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:999px;background:#18181B;color:#fff;flex:none;margin-top:1px}
+  .flow{counter-reset:s}
+  .arrow{color:#A1A1AA}
+  details>summary{list-style:none;cursor:pointer}
+  details>summary::-webkit-details-marker{display:none}
+  details[open] .chev{transform:rotate(90deg)}
+  .chev{transition:transform .15s}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body class="bg-white text-ink font-sans antialiased text-[14px] leading-6">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-ink text-white px-3 py-2 rounded">Saltar al contenido</a>
+
+<header class="border-b border-line">
+  <div class="max-w-6xl mx-auto px-4 md:px-8 py-6">
+    <p class="font-mono text-[11px] uppercase tracking-[.14em] text-meta">ChalkGuide · Panel /administrador · F5.1 · 9 oct 2026 · Búho-Pixel</p>
+    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight mt-2">Arquitectura de información</h1>
+    <p class="mt-2 text-meta max-w-3xl">Menú lateral, jerarquía de pantallas, rutas y los cinco flujos clave. Vale para las dos direcciones visuales: lo que cambia entre ellas es la piel y la densidad, no la estructura. <a class="underline underline-offset-2 hover:text-ink" href="index.html">Volver al índice</a></p>
+    <nav aria-label="En esta página" class="mt-5 flex flex-wrap gap-2 text-[13px]">
+      <a href="#menu" class="px-3 py-1.5 rounded-md border border-line hover:border-ink">1 · Menú</a>
+      <a href="#rutas" class="px-3 py-1.5 rounded-md border border-line hover:border-ink">2 · Rutas y patrones</a>
+      <a href="#f1" class="px-3 py-1.5 rounded-md border border-line hover:border-ink">3 · Flujos</a>
+      <a href="#reglas" class="px-3 py-1.5 rounded-md border border-line hover:border-ink">4 · Reglas transversales</a>
+      <a href="#dudas" class="px-3 py-1.5 rounded-md border border-line hover:border-ink">5 · Dudas</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="max-w-6xl mx-auto px-4 md:px-8 py-10 space-y-16">
+
+<!-- 1 MENU -->
+<section id="menu" aria-labelledby="h-menu">
+  <h2 id="h-menu" class="text-xl font-semibold tracking-tight">1 · Menú lateral y jerarquía</h2>
+  <p class="mt-1 text-meta max-w-3xl">Agrupado por <strong class="text-ink font-medium">qué hace Xavi</strong>, no por tablas. Cinco grupos más Inicio y Ajustes, 16 destinos, dos niveles como máximo. Los contadores solo aparecen cuando piden acción (opiniones pendientes, borradores de agenda), nunca como decoración.</p>
+
+  <div class="mt-6 grid lg:grid-cols-[300px_1fr] gap-8">
+    <!-- sidebar replica -->
+    <div class="rounded-xl border border-line bg-[#FAFAFA] p-3 text-[13px]" aria-label="Réplica del menú lateral">
+      <div class="flex items-center gap-2 px-2 py-2">
+        <img src="../../../public/brand/logo-dark.svg" alt="ChalkGuide" class="h-4">
+        <span class="font-mono text-[10px] uppercase tracking-[.14em] text-meta ml-auto">Admin</span>
+      </div>
+      <div class="mt-2 flex items-center gap-2 rounded-md border border-line bg-white px-2.5 h-8 text-meta"><span aria-hidden="true">⌕</span> Buscar o ir a… <kbd class="ml-auto font-mono text-[10px] border border-line rounded px-1">⌘K</kbd></div>
+      <div class="mt-2 rounded-md bg-ink text-white px-2.5 h-8 flex items-center gap-2 font-medium">＋ Nuevo <span class="ml-auto font-mono text-[10px] opacity-70">C</span></div>
+      <ul class="mt-3 space-y-0.5">
+        <li class="px-2.5 h-8 flex items-center rounded-md bg-white border border-line font-medium">Inicio</li>
+      </ul>
+      <p class="mt-4 px-2.5 font-mono text-[10px] uppercase tracking-[.14em] text-meta">Editorial</p>
+      <ul class="mt-1 space-y-0.5"><li class="px-2.5 h-8 flex items-center">Artículos</li><li class="px-2.5 h-8 flex items-center">Categorías</li><li class="px-2.5 h-8 flex items-center">Páginas</li></ul>
+      <p class="mt-4 px-2.5 font-mono text-[10px] uppercase tracking-[.14em] text-meta">Guías</p>
+      <ul class="mt-1 space-y-0.5"><li class="px-2.5 h-8 flex items-center">Rocódromos</li><li class="px-2.5 h-8 flex items-center">Resoladores</li><li class="px-2.5 h-8 flex items-center">Pies de gato</li><li class="px-2.5 h-8 flex items-center">Criterios de nota</li></ul>
+      <p class="mt-4 px-2.5 font-mono text-[10px] uppercase tracking-[.14em] text-meta">Comunidad</p>
+      <ul class="mt-1 space-y-0.5"><li class="px-2.5 h-8 flex items-center">Opiniones <span class="ml-auto font-mono text-[11px] bg-accbg text-acc rounded px-1.5">7</span></li><li class="px-2.5 h-8 flex items-center">Agenda <span class="ml-auto font-mono text-[11px] bg-accbg text-acc rounded px-1.5">4</span></li><li class="px-2.5 h-8 flex items-center">Suscriptores</li></ul>
+      <p class="mt-4 px-2.5 font-mono text-[10px] uppercase tracking-[.14em] text-meta">Biblioteca</p>
+      <ul class="mt-1 space-y-0.5"><li class="px-2.5 h-8 flex items-center">Medios</li></ul>
+      <p class="mt-4 px-2.5 font-mono text-[10px] uppercase tracking-[.14em] text-meta">Datos</p>
+      <ul class="mt-1 space-y-0.5"><li class="px-2.5 h-8 flex items-center">Estadísticas</li><li class="px-2.5 h-8 flex items-center">Exportar</li><li class="px-2.5 h-8 flex items-center">Actividad</li></ul>
+      <div class="mt-4 border-t border-line pt-2 space-y-0.5"><div class="px-2.5 h-8 flex items-center">Ajustes</div><div class="px-2.5 h-8 flex items-center">Ver sitio ↗</div><div class="px-2.5 h-10 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-ink text-white grid place-items-center text-[11px]">X</span>Xavi <span class="ml-auto text-meta">Salir</span></div></div>
+    </div>
+
+    <!-- rationale -->
+    <div class="space-y-6">
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-line p-4"><p class="font-medium">Editorial</p><p class="text-meta mt-1">Lo que Xavi escribe. Artículos (con Tiptap es/en y estados), categorías = los 6 pilares (ordenables), páginas fijas (Sobre mí, legales).</p></div>
+        <div class="rounded-xl border border-line p-4"><p class="font-medium">Guías</p><p class="text-meta mt-1">Las fichas, una entrada por categoría de <code class="font-mono text-[12px]">items</code>. Cada ficha agrupa datos, reseña del autor, notas, galería y SEO. Criterios aparte porque se tocan poco y afectan a las tres.</p></div>
+        <div class="rounded-xl border border-line p-4"><p class="font-medium">Comunidad</p><p class="text-meta mt-1">Lo que llega de fuera y pide decisión: opiniones (moderar), agenda (aprobar borradores del agente), suscriptores (consultar, baja manual).</p></div>
+        <div class="rounded-xl border border-line p-4"><p class="font-medium">Biblioteca · Datos · Ajustes</p><p class="text-meta mt-1">Medios es transversal (portadas, galerías, OG, cuerpo). Datos = mirar y sacar (estadísticas, exportar, actividad). Ajustes = <code class="font-mono text-[12px]">site_settings</code>.</p></div>
+      </div>
+      <div class="rounded-xl border border-line p-4">
+        <p class="font-medium">Barra superior de cada pantalla</p>
+        <p class="text-meta mt-1">Migas (<span class="text-ink">Guías / Rocódromos / La Paret de Gràcia</span>) · título · estado · acciones a la derecha, con <strong class="text-ink font-medium">una sola primaria</strong> (Publicar, Guardar, Nuevo artículo). Secundarias en botones ghost; las raras (duplicar, exportar, eliminar) en el menú "⋯".</p>
+      </div>
+      <div class="rounded-xl border border-line p-4">
+        <p class="font-medium">"＋ Nuevo" y ⌘K</p>
+        <p class="text-meta mt-1">"Nuevo" abre un menú: artículo, rocódromo, resolador, pie de gato, evento, subir medios. ⌘K busca en todo (artículos, fichas, medios, suscriptores por email) y navega ("ir a opiniones pendientes"). Atajos de una tecla solo dentro de listados: <kbd class="font-mono text-[11px] border border-line rounded px-1">/</kbd> buscar, <kbd class="font-mono text-[11px] border border-line rounded px-1">J</kbd>/<kbd class="font-mono text-[11px] border border-line rounded px-1">K</kbd> mover, <kbd class="font-mono text-[11px] border border-line rounded px-1">X</kbd> seleccionar, <kbd class="font-mono text-[11px] border border-line rounded px-1">Intro</kbd> abrir.</p>
+      </div>
+      <div class="rounded-xl border border-line p-4">
+        <p class="font-medium">Responsive</p>
+        <ul class="text-meta mt-1 list-disc pl-5 space-y-1">
+          <li><strong class="text-ink font-medium">≥ 1280</strong>: menú de 240 px fijo + contenido + inspector (en editores).</li>
+          <li><strong class="text-ink font-medium">768–1279</strong>: menú en raíl de iconos (56 px, tooltip y etiqueta al expandir); el inspector del editor pasa a panel deslizante.</li>
+          <li><strong class="text-ink font-medium">&lt; 768</strong>: barra superior con menú en drawer y una barra inferior de 4 accesos (Inicio, Opiniones, Agenda, Nuevo). Tablas → tarjetas. Pensado para moderar, aprobar, publicar y subir una foto desde el móvil; la edición de fichas completa se permite pero no se optimiza.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 ROUTES -->
+<section id="rutas" aria-labelledby="h-rutas">
+  <h2 id="h-rutas" class="text-xl font-semibold tracking-tight">2 · Rutas y patrón de cada pantalla</h2>
+  <p class="mt-1 text-meta max-w-3xl">Todas bajo <code class="font-mono text-[12px]">/administrador</code>, en español, <code class="font-mono text-[12px]">ssr:false</code> y <code class="font-mono text-[12px]">noindex</code>. Tres patrones: <strong class="text-ink font-medium">página completa</strong> para lo que se escribe (artículo, ficha, página), <strong class="text-ink font-medium">drawer lateral</strong> para entidades pequeñas que se editan sin perder el listado (medio, evento, categoría, suscriptor, opinión en móvil) y <strong class="text-ink font-medium">modal</strong> solo para confirmar o elegir (borrar, programar, elegir medio).</p>
+  <div class="mt-5 overflow-x-auto rounded-xl border border-line">
+    <table class="w-full text-left text-[13px] min-w-[760px]">
+      <caption class="sr-only">Rutas del panel</caption>
+      <thead class="bg-soft text-meta font-mono text-[11px] uppercase tracking-[.1em]"><tr><th class="px-4 py-2.5 font-medium">Ruta</th><th class="px-4 py-2.5 font-medium">Pantalla</th><th class="px-4 py-2.5 font-medium">Patrón</th><th class="px-4 py-2.5 font-medium">Datos (schema guide)</th><th class="px-4 py-2.5 font-medium">F6</th></tr></thead>
+      <tbody class="divide-y divide-line">
+        <tr><td class="px-4 py-2.5 font-mono">/entrar</td><td class="px-4">Login (email + contraseña)</td><td class="px-4 text-meta">Página sin menú</td><td class="px-4 text-meta">Supabase Auth + <code>is_admin()</code></td><td class="px-4 text-meta">6.1</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/</td><td class="px-4">Inicio (dashboard)</td><td class="px-4 text-meta">KPIs + "pendiente" + actividad</td><td class="px-4 text-meta"><code>admin_dashboard_stats</code>, <code>admin_timeseries</code></td><td class="px-4 text-meta">6.3</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/articulos · /nuevo · /[id]</td><td class="px-4">Listado y editor</td><td class="px-4 text-meta">Tabla → página completa con inspector</td><td class="px-4 text-meta"><code>articles</code>, <code>article_items</code>, <code>media</code></td><td class="px-4 text-meta">6.4</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/categorias</td><td class="px-4">Pilares y orden de artículos</td><td class="px-4 text-meta">Lista ordenable + drawer</td><td class="px-4 text-meta"><code>article_categories</code>, <code>reorder_*</code>, <code>delete_article_category</code></td><td class="px-4 text-meta">6.5</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/paginas · /[key]</td><td class="px-4">Sobre mí, aviso legal, privacidad, cookies</td><td class="px-4 text-meta">Lista corta → editor (mismo que artículo, sin programar)</td><td class="px-4 text-meta"><code>pages</code></td><td class="px-4 text-meta">6.13</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/rocodromos · /resoladores · /pies-de-gato (+ /nuevo, /[id])</td><td class="px-4">Fichas</td><td class="px-4 text-meta">Tabla → página con pestañas</td><td class="px-4 text-meta"><code>items</code> + <code>gyms</code>/<code>resolers</code>/<code>shoes</code>, <code>author_reviews</code>, <code>*_scores</code>, <code>item_media</code></td><td class="px-4 text-meta">6.7–6.9</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/criterios</td><td class="px-4">Criterios por categoría</td><td class="px-4 text-meta">Pestañas gym/resoler/shoe + lista ordenable</td><td class="px-4 text-meta"><code>criteria</code>, <code>reorder_criteria</code></td><td class="px-4 text-meta">6.10</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/opiniones</td><td class="px-4">Bandeja de moderación</td><td class="px-4 text-meta">Lista + detalle en split (drawer en móvil)</td><td class="px-4 text-meta"><code>user_reviews</code>, <code>moderate_user_review</code></td><td class="px-4 text-meta">6.11, 6.11b</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/agenda</td><td class="px-4">Eventos y borradores del agente</td><td class="px-4 text-meta">Tabla (vista "Por aprobar") + drawer</td><td class="px-4 text-meta"><code>events</code>, <code>approve_event</code>/<code>reject_event</code></td><td class="px-4 text-meta">6.12</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/suscriptores</td><td class="px-4">Listado, consentimiento, baja</td><td class="px-4 text-meta">Tabla + drawer de detalle</td><td class="px-4 text-meta"><code>subscribers</code></td><td class="px-4 text-meta">6.14</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/medios</td><td class="px-4">Biblioteca</td><td class="px-4 text-meta">Rejilla/lista + drawer de detalle</td><td class="px-4 text-meta"><code>media_library</code>, <code>media_usage</code>, bucket <code>media</code></td><td class="px-4 text-meta">6.6</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/estadisticas</td><td class="px-4">Gráficos</td><td class="px-4 text-meta">Rango de fechas + 4 gráficos</td><td class="px-4 text-meta"><code>admin_timeseries</code>, <code>admin_top_pages</code></td><td class="px-4 text-meta">6.16</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/exportar</td><td class="px-4">CSV / JSON</td><td class="px-4 text-meta">Formulario de un paso</td><td class="px-4 text-meta"><code>export_*</code></td><td class="px-4 text-meta">6.15</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/actividad</td><td class="px-4">Registro</td><td class="px-4 text-meta">Línea de tiempo filtrable</td><td class="px-4 text-meta"><code>activity_log</code></td><td class="px-4 text-meta">6.18</td></tr>
+        <tr><td class="px-4 py-2.5 font-mono">/ajustes</td><td class="px-4">General · SEO · Newsletter y consentimiento · Opiniones</td><td class="px-4 text-meta">Formulario por secciones</td><td class="px-4 text-meta"><code>site_settings</code></td><td class="px-4 text-meta">6.17</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-3 text-[13px] text-meta">Rutas en singular para el recurso y en español, igual que el sitio. Los filtros de listado viven en la URL (<code class="font-mono">?estado=programado&amp;q=montserrat</code>) para poder compartir y volver.</p>
+</section>
+
+<!-- 3 FLOWS -->
+<section aria-labelledby="h-flujos" class="space-y-10">
+  <div>
+    <h2 id="h-flujos" class="text-xl font-semibold tracking-tight">3 · Flujos clave</h2>
+    <p class="mt-1 text-meta max-w-3xl">Cada paso lleva la pantalla, lo que valida el panel y el estado que ve Xavi. Los puntos de decisión van en naranja.</p>
+  </div>
+
+  <!-- F1 -->
+  <article id="f1" class="rounded-2xl border border-line overflow-hidden">
+    <header class="bg-soft px-5 py-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <h3 class="text-lg font-semibold">A · Crear y programar un artículo con portada</h3>
+      <span class="font-mono text-[11px] text-meta">Artículos → Nuevo → Programar · ~3 min · desktop</span>
+    </header>
+    <div class="p-5 grid lg:grid-cols-[1fr_320px] gap-8">
+      <ol class="flow space-y-3">
+        <li class="step flex gap-3"><div><strong class="font-medium">Artículos → "Nuevo artículo"</strong> (o <kbd class="font-mono text-[11px] border border-line rounded px-1">C</kbd>). Se crea el borrador al escribir el primer carácter del título; desde ahí, <strong class="font-medium">autoguardado</strong> cada 3 s ("Guardado · hace 2 s").</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Título</strong> → el slug se propone solo (<code class="font-mono text-[12px]">/blog/donde-escalar-cuando-llueve</code>) y se puede bloquear/editar; aviso si ya existe.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Cuerpo en Tiptap</strong>: barra fija + menú "/" (título, lista, cita, imagen, embed, tarjeta de ficha). Las imágenes se eligen de la biblioteca o se suben al vuelo; si no tienen alt, se pide en el momento.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Inspector → Portada</strong>: "Elegir de la biblioteca" o soltar un archivo. Muestra miniatura, color dominante y el alt es/en editable allí mismo.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Categoría</strong> (obligatoria), <strong class="font-medium">extracto</strong> (contador 0/300), fichas relacionadas, destacado.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">SEO</strong>: título (70) y descripción (160) con contadores y vista previa tipo Google; si están vacíos, se ve el valor heredado en gris.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Pestaña EN</strong> (opcional): mismo editor; el chip "EN incompleto" se queda visible en la cabecera y el listado.</div></li>
+        <li class="step flex gap-3"><div><span class="text-acc font-medium">Decisión:</span> botón dividido <strong class="font-medium">Publicar ▾ → Programar…</strong>. Modal con fecha y hora (Europe/Madrid, mínimo +5 min) y <strong class="font-medium">checklist</strong>: título, categoría, portada con alt ES, extracto, SEO. Lo que falta bloquea el botón y enlaza al campo.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Confirmar</strong> → toast "Programado para el mié 14 oct, 08:00" con "Deshacer". La cabecera pasa a <span class="font-mono text-[12px] bg-[#DBEAFE] text-[#1D4ED8] rounded px-1.5">Programado</span> y el botón primario a "Guardar cambios" (a partir de aquí no hay autoguardado: ver reglas).</div></li>
+        <li class="step flex gap-3"><div>La tarea programada (<code class="font-mono text-[12px]">publish_due_articles</code>) lo publica; aparece en Actividad e Inicio ("Publicado automáticamente").</div></li>
+      </ol>
+      <aside class="rounded-xl border border-line p-4 text-[13px] self-start">
+        <p class="font-mono text-[11px] uppercase tracking-[.12em] text-meta">Estados del artículo</p>
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <span class="font-mono text-[12px] bg-soft text-[#3F3F46] rounded px-1.5 py-0.5">Borrador</span><span class="arrow">→</span>
+          <span class="font-mono text-[12px] bg-[#DBEAFE] text-[#1D4ED8] rounded px-1.5 py-0.5">Programado</span><span class="arrow">→</span>
+          <span class="font-mono text-[12px] bg-[#DCFCE7] text-[#15803D] rounded px-1.5 py-0.5">Publicado</span>
+        </div>
+        <ul class="mt-3 text-meta list-disc pl-5 space-y-1">
+          <li>Programado → Borrador: "Cancelar programación".</li>
+          <li>Publicado → Borrador: "Despublicar" (confirmación; la URL deja de existir).</li>
+          <li>Programado con fecha pasada = publicado (lo resuelve <code class="font-mono">article_is_live</code>).</li>
+          <li>Errores: slug duplicado (en el campo), sin conexión (banner + reintento, nada se pierde: copia local).</li>
+        </ul>
+        <p class="mt-4 font-mono text-[11px] uppercase tracking-[.12em] text-meta">Lo ves en</p>
+        <p class="mt-1"><a class="underline underline-offset-2" href="direccion-a-consola.html#editor">A · Consola · editor</a> · <a class="underline underline-offset-2" href="direccion-b-taller.html#editor">B · Taller · editor</a></p>
+      </aside>
+    </div>
+  </article>
+
+  <!-- F2 -->
+  <article id="f2" class="rounded-2xl border border-line overflow-hidden">
+    <header class="bg-soft px-5 py-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <h3 class="text-lg font-semibold">B · Subir o reemplazar una foto y ver dónde se usa</h3>
+      <span class="font-mono text-[11px] text-meta">Medios → soltar → detalle → Reemplazar · desktop y móvil</span>
+    </header>
+    <div class="p-5 grid lg:grid-cols-[1fr_320px] gap-8">
+      <ol class="flow space-y-3">
+        <li class="step flex gap-3"><div><strong class="font-medium">Medios</strong>: rejilla con buscador (nombre, alt), filtros "Sin alt", "Sin usar", "En uso" y orden por fecha. Arrastrar en cualquier punto de la pantalla abre la zona de soltar; en móvil, "Subir" abre la cámara o la galería.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Subida múltiple</strong>: cada archivo en una fila de progreso. Antes de subir, el navegador valida tipo (JPG, PNG, WebP, AVIF, GIF) y tamaño (≤ 10 MB), quita EXIF y calcula <strong class="font-medium">dimensiones y color dominante</strong>. Errores por archivo, el resto sigue.</div></li>
+        <li class="step flex gap-3"><div>Al terminar: toast "6 fotos subidas · 6 sin alt" con "Describir ahora" → abre la primera en el detalle con el foco en Alt ES.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Detalle (drawer)</strong>: vista previa, alt ES/EN, pie, crédito, color dominante (muestra + hex, editable), metadatos y <strong class="font-medium">"En uso en 4 sitios"</strong>: lista de <code class="font-mono text-[12px]">media_usage</code> con tipo (portada, galería, cuerpo ES, OG, ajustes) y enlace a cada uno.</div></li>
+        <li class="step flex gap-3"><div><span class="text-acc font-medium">Decisión:</span> <strong class="font-medium">Reemplazar archivo</strong> → modal "Se actualizará en 4 sitios. La URL cambia; el texto alternativo y el crédito se mantienen". Muestra antes/después. Confirmar → nueva versión (v2), nuevo color dominante, toast.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Borrar</strong>: si está en uso, el botón está desactivado con el motivo ("Quítala de esos 4 sitios para poder borrarla"). Si no, modal de confirmación con el nombre del archivo y un botón rojo "Borrar foto". Es definitivo: se avisa en el propio modal.</div></li>
+      </ol>
+      <aside class="rounded-xl border border-line p-4 text-[13px] self-start">
+        <p class="font-mono text-[11px] uppercase tracking-[.12em] text-meta">Validación del alt</p>
+        <p class="mt-2 text-meta">La BD no lo bloquea (se sube antes de describir). El panel sí: <strong class="text-ink font-medium">no se publica</strong> un artículo o ficha cuya portada no tenga alt ES; el checklist de publicar lo marca. Inicio cuenta "medios sin alt".</p>
+        <p class="mt-4 font-mono text-[11px] uppercase tracking-[.12em] text-meta">Selector de medios (modal)</p>
+        <p class="mt-2 text-meta">El mismo de la biblioteca, en modo "elegir": buscador, pestaña "Subir", y al elegir pide el alt si falta. Se usa desde portada, galería, OG, cuerpo y ajustes.</p>
+      </aside>
+    </div>
+  </article>
+
+  <!-- F3 -->
+  <article id="f3" class="rounded-2xl border border-line overflow-hidden">
+    <header class="bg-soft px-5 py-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <h3 class="text-lg font-semibold">C · Editar una ficha de rocódromo con su reseña y notas</h3>
+      <span class="font-mono text-[11px] text-meta">Guías → Rocódromos → ficha · pestañas · desktop</span>
+    </header>
+    <div class="p-5 grid lg:grid-cols-[1fr_320px] gap-8">
+      <ol class="flow space-y-3">
+        <li class="step flex gap-3"><div><strong class="font-medium">Rocódromos</strong>: tabla con nombre, zona, estado, nota del autor, opiniones, <strong class="font-medium">verificado</strong> (en naranja si &gt; 6 meses) y EN. Vista guardada "Por verificar".</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Ficha</strong> con cabecera fija (nombre, estado Publicado/Oculto, "Ver en el sitio ↗", Guardar) y <strong class="font-medium">pestañas</strong>:
+          <span class="block mt-1 text-meta">General (nombre, slug, resumen ES/EN, portada, destacado, fuente y URL, <code class="font-mono">verified_at</code> con "Marcar verificado hoy") · Ubicación y horarios (dirección, barrio, metro como chips, mapa con pin arrastrable, horario por día con "copiar a todos") · Precios (4 precios, descuentos ES/EN, <code class="font-mono">prices_verified_at</code>) · Instalaciones (booleanos en tres estados <em>Sí / No / No lo sé</em>, superficie, altura, vías, autos, edad mínima, <strong class="text-ink font-medium">dificultad de grados 1–5</strong> y <strong class="text-ink font-medium">dinamismo 1–5</strong> con sus etiquetas) · Reseña y notas · Galería (ordenar arrastrando) · Relacionados · SEO.</span></div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Reseña y notas</strong>: veredicto corto ES/EN, cuerpo Tiptap ES/EN, fecha de visita y <span class="text-acc font-medium">tipo de visita</span> (Pagada / Invitada). Si es invitada, la nota de transparencia es obligatoria y se muestra la vista previa del badge tal como sale en el sitio.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Notas por criterio</strong>: una fila por criterio activo de <code class="font-mono">gym</code> con selector 1–5 (segmentado, teclado ← →) y "sin nota". La media global se calcula en vivo; los índices derivados (principiante, familia, precio) se previsualizan con un "incompleto" si faltan datos.</div></li>
+        <li class="step flex gap-3"><div>Guardado <strong class="font-medium">explícito</strong> (la ficha suele estar publicada). Cambios sin guardar = punto en la pestaña afectada + aviso al salir. Errores de validación: contador en la pestaña + foco al primer error.</div></li>
+        <li class="step flex gap-3"><div><span class="text-acc font-medium">Decisión:</span> Publicar/Despublicar. Checklist: resumen, portada con alt, reseña con al menos 3 notas, verificado en los últimos 6 meses (aviso, no bloqueo).</div></li>
+      </ol>
+      <aside class="rounded-xl border border-line p-4 text-[13px] self-start">
+        <p class="font-mono text-[11px] uppercase tracking-[.12em] text-meta">Resoladores y pies de gato</p>
+        <p class="mt-2 text-meta">Misma plantilla y mismas pestañas comunes (General, Reseña y notas, Galería, Relacionados, SEO). Cambian las de datos: resolador = Servicios y precios (servicios como chips del CHECK, plazos min–max, envío); pie de gato = Ficha técnica (marca, modelo, perfil, asimetría, cierre, goma, rigidez 1–5, usos, niveles), Precio y afiliado (precio, fecha, URL https, programa: badge "Enlace de afiliado" en vista previa), y "Lo que aprendí" con tallas del autor (solo si <code class="font-mono">owned_by_author</code>).</p>
+        <p class="mt-4 font-mono text-[11px] uppercase tracking-[.12em] text-meta">Estado en esta ronda</p>
+        <p class="mt-2 text-meta">Flujo definido aquí; el mockup llega en 5.5 sobre la dirección elegida.</p>
+      </aside>
+    </div>
+  </article>
+
+  <!-- F4 -->
+  <article id="f4" class="rounded-2xl border border-line overflow-hidden">
+    <header class="bg-soft px-5 py-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <h3 class="text-lg font-semibold">D · Moderar opiniones</h3>
+      <span class="font-mono text-[11px] text-meta">Inicio o Comunidad → Opiniones · teclado en desktop, pulgar en móvil</span>
+    </header>
+    <div class="p-5 grid lg:grid-cols-[1fr_320px] gap-8">
+      <ol class="flow space-y-3">
+        <li class="step flex gap-3"><div><strong class="font-medium">Entrada</strong>: tarjeta "7 opiniones por revisar" en Inicio o el contador del menú. Abre <code class="font-mono text-[12px]">/opiniones?estado=pendiente</code> si hay premoderación; si no (por defecto, P2), la vista "Recientes · 7 días".</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Bandeja</strong> en dos columnas: lista (autor "Marta G.", ficha, nota global, extracto, fecha, idioma, estado) + detalle (texto completo, notas por criterio, enlace a la ficha, fotos cuando llegue 6.11b). Filtros: estado, categoría, ficha, nota ≤ 2.</div></li>
+        <li class="step flex gap-3"><div><span class="text-acc font-medium">Decisión:</span> <strong class="font-medium">Mostrar</strong> (<kbd class="font-mono text-[11px] border border-line rounded px-1">V</kbd>) u <strong class="font-medium">Ocultar</strong> (<kbd class="font-mono text-[11px] border border-line rounded px-1">H</kbd>). Ocultar no borra: se puede volver a mostrar. Al decidir, pasa a la siguiente y sale un toast con "Deshacer" (5 s).</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">En lote</strong>: seleccionar varias → "Mostrar 4" / "Ocultar 4" con confirmación si son más de 10.</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Móvil</strong>: una tarjeta por opinión con dos botones de 44 px (Mostrar / Ocultar) y el texto completo desplegable; tocar la ficha abre el detalle en drawer.</div></li>
+        <li class="step flex gap-3"><div>Vacío digno: "Nada por revisar. La última la moderaste hace 2 h."</div></li>
+      </ol>
+      <aside class="rounded-xl border border-line p-4 text-[13px] self-start">
+        <p class="font-mono text-[11px] uppercase tracking-[.12em] text-meta">Fuera de la moderación</p>
+        <p class="mt-2 text-meta">El admin no edita el texto ni la nota de nadie (solo <code class="font-mono">status</code>, por la RLS de I3). Borrar opiniones: no se ofrece en la bandeja; si hiciera falta (RGPD), desde el detalle con confirmación.</p>
+      </aside>
+    </div>
+  </article>
+
+  <!-- F5 -->
+  <article id="f5" class="rounded-2xl border border-line overflow-hidden">
+    <header class="bg-soft px-5 py-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <h3 class="text-lg font-semibold">E · Exportar</h3>
+      <span class="font-mono text-[11px] text-meta">Datos → Exportar, o "⋯ → Exportar esta vista" en cualquier listado</span>
+    </header>
+    <div class="p-5 grid lg:grid-cols-[1fr_320px] gap-8">
+      <ol class="flow space-y-3">
+        <li class="step flex gap-3"><div><strong class="font-medium">Qué</strong>: Artículos · Fichas (todas o una categoría) · Opiniones · Suscriptores · Eventos (tarjetas de selección con nº de filas).</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Filtro</strong> opcional: rango de fechas y estado (p. ej. suscriptores activos desde el 1 de septiembre).</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Formato</strong>: CSV (UTF-8 con BOM, separador "," para abrir bien en Excel) o JSON.</div></li>
+        <li class="step flex gap-3"><div><span class="text-acc font-medium">Decisión:</span> si incluye <strong class="font-medium">datos personales</strong> (suscriptores), aviso RGPD en línea: "Contiene 1.284 emails. Guárdalo en un sitio seguro y bórralo cuando no lo necesites".</div></li>
+        <li class="step flex gap-3"><div><strong class="font-medium">Descargar</strong> → loading en el botón → descarga con nombre <code class="font-mono text-[12px]">chalkguide-suscriptores-2026-10-09.csv</code> → toast. Queda en Actividad ("Exportó suscriptores · 1.284 filas").</div></li>
+        <li class="step flex gap-3"><div>Desde un listado, "Exportar esta vista" hereda los filtros activos y salta al paso 3.</div></li>
+      </ol>
+      <aside class="rounded-xl border border-line p-4 text-[13px] self-start">
+        <p class="font-mono text-[11px] uppercase tracking-[.12em] text-meta">Nota técnica</p>
+        <p class="mt-2 text-meta">Las vistas <code class="font-mono">export_*</code> ya filtran por <code class="font-mono">is_admin()</code>. Registrar la exportación en <code class="font-mono">activity_log</code> no lo hace hoy ningún trigger (es una lectura): ver duda 4.</p>
+      </aside>
+    </div>
+  </article>
+</section>
+
+<!-- 4 RULES -->
+<section id="reglas" aria-labelledby="h-reglas">
+  <h2 id="h-reglas" class="text-xl font-semibold tracking-tight">4 · Reglas transversales</h2>
+  <div class="mt-5 grid md:grid-cols-2 gap-4 text-[13px]">
+    <div class="rounded-xl border border-line p-4"><p class="font-medium text-[14px]">Guardado</p><p class="text-meta mt-1">Borradores: autoguardado (3 s tras dejar de escribir) con indicador. Contenido programado o publicado: guardado explícito, porque cada guardado sale al sitio. Siempre: aviso de cambios sin guardar al salir y copia local por si se cae la conexión.</p></div>
+    <div class="rounded-xl border border-line p-4"><p class="font-medium text-[14px]">Idiomas</p><p class="text-meta mt-1">Conmutador ES / EN en la cabecera de cada editor. ES obligatorio, EN opcional. Indicador de completitud en editor y listados ("EN" verde si <code class="font-mono">has_en</code>, gris tachado si falta). La UI del panel nunca se traduce.</p></div>
+    <div class="rounded-xl border border-line p-4"><p class="font-medium text-[14px]">Destructivas</p><p class="text-meta mt-1">Modal con el nombre del objeto y la consecuencia concreta ("3 artículos pasarán a Material"). Botón rojo con verbo + objeto. Si hay alternativa reversible (ocultar, despublicar, desactivar criterio), se ofrece primero.</p></div>
+    <div class="rounded-xl border border-line p-4"><p class="font-medium text-[14px]">Feedback</p><p class="text-meta mt-1">Toast abajo a la derecha (abajo centrado en móvil): éxito 5 s con "Deshacer" si aplica; error persistente con <code class="font-mono">role="alert"</code> y "Reintentar". Errores de campo en el campo.</p></div>
+    <div class="rounded-xl border border-line p-4"><p class="font-medium text-[14px]">Transparencia</p><p class="text-meta mt-1">Visita invitada, pie cedido y afiliado se editan con la vista previa del badge público al lado. No hay forma de publicarlos sin nota de transparencia.</p></div>
+    <div class="rounded-xl border border-line p-4"><p class="font-medium text-[14px]">Accesibilidad</p><p class="text-meta mt-1">Reka UI para menús, diálogos, selects, tabs y tooltips (foco atrapado, Esc, roles). Tablas con <code class="font-mono">aria-sort</code>, selección con checkbox con nombre ("Seleccionar «Cuánto cuesta…»"). Todo por teclado; atajos de una tecla desactivables en Ajustes.</p></div>
+  </div>
+</section>
+
+<!-- 5 DUDAS -->
+<section id="dudas" aria-labelledby="h-dudas">
+  <h2 id="h-dudas" class="text-xl font-semibold tracking-tight">5 · Dudas de arquitectura para Xavi</h2>
+  <ol class="mt-4 list-decimal pl-5 space-y-2 text-[14px] max-w-3xl">
+    <li><strong class="font-medium">Editar algo publicado</strong>: ¿te vale "guardar = sale al sitio al momento" o quieres revisiones (guardar cambios como borrador sobre un artículo publicado)? Lo segundo necesita una tabla de revisiones (jabali-javi).</li>
+    <li><strong class="font-medium">Barra inferior en móvil</strong> con Inicio, Opiniones, Agenda y Nuevo: ¿son esas tus tareas rápidas o cambiarías alguna (p. ej. Medios para subir fotos desde el rocódromo)?</li>
+    <li><strong class="font-medium">Fichas en el menú</strong>: tres entradas fijas (Rocódromos, Resoladores, Pies de gato) o una "Fichas" con pestañas. Propongo tres: son tareas distintas y cada una tiene su tabla.</li>
+    <li><strong class="font-medium">Exportaciones en Actividad</strong>: ¿quieres que quede registro de cada exportación (útil para RGPD)? Requiere una RPC pequeña de registro.</li>
+  </ol>
+</section>
+</main>
+<footer class="border-t border-line"><div class="max-w-6xl mx-auto px-4 md:px-8 py-6 text-[13px] text-meta">Siguiente: <a class="underline underline-offset-2 hover:text-ink" href="direccion-a-consola.html">A · Consola</a> · <a class="underline underline-offset-2 hover:text-ink" href="direccion-b-taller.html">B · Taller</a> · <a class="underline underline-offset-2 hover:text-ink" href="README.md">README (spec)</a></div></footer>
+</body>
+</html>

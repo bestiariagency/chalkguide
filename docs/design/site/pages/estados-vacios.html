@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Estados vacíos · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_shared/tw.js"></script>
+<link rel="stylesheet" href="_shared/chalk.css">
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed" data-route-es="(varias rutas)" data-route-en="">
+<script>document.documentElement.classList.add('js');</script>
+
+<main id="main">
+  <section class="max-w-page mx-auto px-4 md:px-6 pt-8 md:pt-10">
+    <p class="label-mini">Solo en el mockup · referencia</p>
+    <h1 class="display text-[2.125rem] md:text-[3rem] leading-[1.08] mt-3">Estados vacíos y de error</h1>
+    <p class="text-[18px] leading-[1.7] text-meta mt-4 max-w-read">Cómo se ve cada página cuando no hay datos, los filtros no devuelven nada o algo falla. Siempre dicen qué pasa y qué puedes hacer; nunca un "0" ni una pantalla en blanco.</p>
+  </section>
+  <section class="max-w-page mx-auto px-4 md:px-6 py-10 md:py-14 grid md:grid-cols-2 gap-8">
+    <div><p class="state-label mb-3">Listado · filtros sin resultados (/rocodromos)</p>
+      <div class="border-[0.5px] border-line-strong rounded-lg bg-board p-8 text-center"><svg class="ico !w-6 !h-6 mx-auto text-meta" aria-hidden="true"><use href="#i-sliders"/></svg><p class="font-medium mt-3">Ningún resultado con estos filtros</p><p class="text-sm text-meta mt-1">Prueba a quitar alguno de los filtros.</p><button type="button" class="btn btn-ghost mt-5"><span class="label">Quitar filtros</span></button></div></div>
+    <div><p class="state-label mb-3">Ficha · sin opiniones</p>
+      <div class="board-tex border-[0.5px] border-line-strong rounded-xl p-8 text-center"><p class="font-hand text-[30px] text-meta -rotate-1">Pizarra limpia</p><p class="font-medium mt-2">Aún nadie ha opinado</p><p class="text-sm text-meta mt-1 max-w-[40ch] mx-auto">Si has escalado aquí, cuéntalo. Solo hace falta entrar con Google.</p><a href="opinar.html" class="btn btn-primary mt-5"><svg class="ico !w-4 !h-4" aria-hidden="true"><use href="#i-pencil"/></svg><span class="label">Ser el primero</span></a></div></div>
+    <div><p class="state-label mb-3">Ficha · menos de 3 opiniones</p>
+      <div class="card p-5 flex gap-3 items-start"><svg class="ico text-meta mt-0.5" aria-hidden="true"><use href="#i-info"/></svg><div><p class="font-medium">Nota de lectores</p><p class="text-sm text-meta mt-1">Aún no hay suficientes opiniones (mínimo 3).</p><p class="text-sm text-meta mt-3">2 opiniones · se muestran debajo, sin media.</p></div></div></div>
+    <div><p class="state-label mb-3">Agenda · sin actividades en el periodo</p>
+      <div class="board-tex border-[0.5px] border-line-strong rounded-xl p-8 text-center"><p class="font-hand text-[44px] leading-none -rotate-1">Diciembre</p><p class="font-medium mt-4">Nada por aquí todavía</p><p class="text-sm text-meta mt-1 max-w-[40ch] mx-auto">Cuando haya algo que mostrar, lo verás aquí.</p><a href="agenda.html" class="btn btn-ghost mt-5"><span class="label">Ver la agenda</span></a></div></div>
+    <div><p class="state-label mb-3">Comparador · sin modelos elegidos</p>
+      <div class="border-[0.5px] border-line-strong rounded-lg bg-board p-8 text-center"><p class="font-medium">Elige al menos 2 modelos</p><p class="text-sm text-meta mt-1">Pulsa "+ Comparar" en las tarjetas de arriba.</p></div></div>
+    <div><p class="state-label mb-3">Encuentra compañero · nadie más apuntado</p>
+      <div class="bg-background border-[0.5px] border-line-strong rounded-xl p-5"><div class="flex items-baseline justify-between"><p class="text-lg font-medium">Magnesi Poblenou</p><p class="font-mono text-[12px] text-meta">MAR 13 OCT</p></div><p class="text-sm text-meta mt-4 text-center py-4">Aún no hay nadie más apuntado. Sé el primero en escribir en la pizarra.</p><a href="#" class="btn btn-primary w-full"><span class="label">Abrir la pizarra en Chalk app</span><svg class="ico arrow !w-4 !h-4" aria-hidden="true"><use href="#i-external"/></svg></a></div></div>
+    <div class="md:col-span-2"><p class="state-label mb-3">Error de carga (cualquier bloque cargado en cliente)</p>
+      <div class="border-[0.5px] border-line-strong rounded-lg bg-board p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" role="alert"><div class="flex gap-3"><svg class="ico !w-6 !h-6 text-danger-text shrink-0" aria-hidden="true"><use href="#i-alert"/></svg><div><p class="font-medium">Algo ha fallado</p><p class="text-sm text-meta mt-1">No hemos podido cargar esto. Inténtalo de nuevo en un momento.</p></div></div><button type="button" class="btn btn-ghost shrink-0" data-demo-retry><span class="spinner" aria-hidden="true"></span><span class="label">Reintentar</span></button></div></div>
+  </section>
+</main>
+<script>document.addEventListener('click',e=>{const b=e.target.closest('[data-demo-retry]');if(b&&b.getAttribute('aria-busy')!=='true')window.CG.busy(b,1200);});</script>
+<script src="_shared/layout.js"></script>
+<script src="_shared/chalk.js"></script>
+</body>
+</html>

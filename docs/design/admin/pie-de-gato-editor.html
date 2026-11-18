@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>La Sportiva Tarantulace · Pies de gato · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=6"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>.fsec{padding-top:24px;margin-top:24px;border-top:1px solid var(--line)} .fsec:first-child{border-top:0;margin-top:0;padding-top:0} .fsec>h3{font-size:14px;font-weight:600} .fsec>h3+p{font-size:12px;color:var(--meta);margin-top:2px}
+ .chk{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid var(--line-strong);border-radius:6px;font-size:13px;cursor:pointer;background:var(--elev)} .chk:has(input:checked){border-color:var(--fg);background:var(--subtle);font-weight:500} .chk:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:2px}
+ @media (max-width:767px){.chk{height:44px}}</style>
+</head>
+<body data-page="pie" data-bottomnav="none" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-2 md:px-4 flex items-center gap-2 border-b border-line text-sm sticky top-14 md:top-0 bg-bg z-30">
+    <a href="#" class="icon-btn" aria-label="Volver a pies de gato"><i data-lucide="arrow-left"></i></a>
+    <nav aria-label="Migas" class="crumbs hidden lg:flex"><a href="#">Pies de gato</a><span aria-hidden="true">/</span><span class="text-fg" aria-current="page">La Sportiva Tarantulace</span></nav>
+    <span class="lg:hidden font-medium truncate">Tarantulace</span>
+    <span class="chip st-draft"><span class="dot"></span>Borrador</span>
+    <span class="text-xs text-muted hidden xl:inline-flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i>Guardado · hace 3 s</span>
+    <div class="ml-auto flex items-center gap-1.5"><button class="btn btn-ghost hidden lg:inline-flex"><i data-lucide="eye"></i>Vista previa</button><button class="btn btn-primary" data-toast="Ficha publicada"><i data-lucide="send"></i>Publicar</button></div>
+  </header>
+  <div class="px-4 md:px-6 border-b border-line overflow-x-auto sticky top-[104px] md:top-12 bg-bg z-20">
+    <div role="tablist" data-tabs aria-label="Secciones de la ficha" class="flex gap-5 min-w-max">
+      <button role="tab" class="tab" aria-controls="t-gen">General</button>
+      <button role="tab" class="tab" aria-controls="t-tec">Ficha técnica</button>
+      <button role="tab" class="tab" aria-controls="t-pre">Precio y afiliado</button>
+      <button role="tab" class="tab" aria-controls="t-lqa" aria-selected="true">Lo que aprendí</button>
+      <button role="tab" class="tab" aria-controls="t-gal">Galería</button>
+      <button role="tab" class="tab" aria-controls="t-seo">SEO</button>
+    </div>
+  </div>
+
+  <div class="px-4 md:px-6 py-6 max-w-[800px] pb-24">
+    <section id="t-gen" role="tabpanel" aria-label="General" hidden><p class="text-sm text-meta">Igual que en rocódromos: nombre, URL, resumen ES/EN, portada, destacado ("pie de gato del mes"), fuente y verificación. Ver <a href="rocodromo-editor.html" class="underline underline-offset-2">ficha de rocódromo</a>.</p></section>
+
+    <section id="t-tec" role="tabpanel" aria-label="Ficha técnica" hidden>
+      <div class="fsec space-y-4">
+        <div class="grid sm:grid-cols-2 gap-4"><div><label class="lbl" for="br">Marca <span class="req">*</span></label><input id="br" class="input" value="La Sportiva"></div><div><label class="lbl" for="mo">Modelo <span class="req">*</span></label><input id="mo" class="input" value="Tarantulace"></div></div>
+        <div><p class="lbl" id="fit">Horma</p><div class="seg" role="radiogroup" aria-labelledby="fit"><button role="radio" aria-checked="true">Unisex</button><button role="radio" aria-checked="false">Mujer</button><button role="radio" aria-checked="false">Hombre</button><button role="radio" aria-checked="false">Niños</button></div></div>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div><p class="lbl" id="pr">Perfil</p><div class="seg w-full grid grid-cols-3" role="radiogroup" aria-labelledby="pr"><button role="radio" aria-checked="true">Plano</button><button role="radio" aria-checked="false">Moderado</button><button role="radio" aria-checked="false">Agresivo</button></div></div>
+          <div><label class="lbl" for="as">Asimetría</label><select id="as" class="select"><option>Ninguna</option><option selected>Ligera</option><option>Moderada</option><option>Fuerte</option></select></div>
+          <div><p class="lbl" id="cl">Cierre</p><div class="seg w-full grid grid-cols-3" role="radiogroup" aria-labelledby="cl"><button role="radio" aria-checked="true">Cordones</button><button role="radio" aria-checked="false">Velcro</button><button role="radio" aria-checked="false">Slipper</button></div></div>
+        </div>
+        <div class="grid sm:grid-cols-[1fr_140px] gap-4"><div><label class="lbl" for="ru">Goma</label><input id="ru" class="input" value="FriXion RS"></div><div><label class="lbl" for="rt">Grosor</label><div class="input affix"><input id="rt" class="num" value="5,0"><span class="suf">mm</span></div></div></div>
+        <div><p class="lbl" id="st">Rigidez</p><div class="seg scale" role="radiogroup" aria-labelledby="st"><button role="radio" aria-checked="false"><b>1</b><span>Muy blanda</span></button><button role="radio" aria-checked="false"><b>2</b><span>Blanda</span></button><button role="radio" aria-checked="false"><b>3</b><span>Media</span></button><button role="radio" aria-checked="true"><b>4</b><span>Rígida</span></button><button role="radio" aria-checked="false"><b>5</b><span>Muy rígida</span></button></div></div>
+        <fieldset><legend class="lbl">Uso recomendado</legend><div class="flex flex-wrap gap-2"><label class="chk"><input type="checkbox" class="cb" checked>Rocódromo</label><label class="chk"><input type="checkbox" class="cb">Bloque</label><label class="chk"><input type="checkbox" class="cb" checked>Deportiva</label><label class="chk"><input type="checkbox" class="cb" checked>Clásica</label><label class="chk"><input type="checkbox" class="cb">Vías largas</label><label class="chk"><input type="checkbox" class="cb">Entrenamiento</label></div></fieldset>
+        <fieldset><legend class="lbl">Nivel</legend><div class="flex flex-wrap gap-2"><label class="chk"><input type="checkbox" class="cb" checked>Iniciación</label><label class="chk"><input type="checkbox" class="cb">Intermedio</label><label class="chk"><input type="checkbox" class="cb">Avanzado</label></div></fieldset>
+      </div>
+    </section>
+
+    <section id="t-pre" role="tabpanel" aria-label="Precio y afiliado" hidden>
+      <div class="fsec space-y-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4"><div><label class="lbl" for="p1">Precio desde</label><div class="input affix"><input id="p1" class="num" value="80,00"><span class="suf">€</span></div></div><div><label class="lbl" for="p2">Hasta</label><div class="input affix"><input id="p2" class="num" value="95,00"><span class="suf">€</span></div></div><div class="col-span-2 sm:col-span-1"><label class="lbl" for="p3">Precio mirado el</label><input id="p3" class="input num" value="01/09/2026"></div></div>
+        <div class="grid sm:grid-cols-2 gap-4"><div><label class="lbl" for="af">Enlace de afiliado</label><input id="af" class="input" value="https://www.example.com/afiliado?producto=tarantulace"><p class="help">Con https://. Si hay enlace, el sitio lo marca siempre como "enlace de afiliado".</p></div><div><label class="lbl" for="ap">Programa</label><input id="ap" class="input" value="Deporvillage"></div></div>
+        <div class="flex items-center gap-2 text-sm"><span class="text-meta">Así sale:</span><span class="chip st-acc"><i data-lucide="link"></i>Enlace de afiliado</span><span class="text-xs text-meta">No cambia la opinión ni el orden del comparador.</span></div>
+      </div>
+    </section>
+
+    <section id="t-lqa" role="tabpanel" aria-label="Lo que aprendí">
+      <div class="fsec space-y-4">
+        <div class="flex items-start gap-3"><button role="switch" aria-checked="true" aria-labelledby="own-l" aria-describedby="own-h" class="switch mt-0.5" id="own"></button><div><p id="own-l" class="text-sm font-medium">Los tengo y los he usado</p><p id="own-h" class="text-xs text-meta mt-0.5">Activa "Lo que aprendí", la reseña y tus tallas. Si está apagado, la ficha es solo técnica.</p></div></div>
+        <div id="ownBox" class="space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div><label class="lbl" for="vt">Cómo los conseguí</label><div class="seg" role="radiogroup" aria-labelledby="vt" id="vt"><button role="radio" aria-checked="true">Comprados</button><button role="radio" aria-checked="false">Cedidos por la marca</button></div></div>
+            <div><label class="lbl" for="since">Usándolos desde</label><input id="since" class="input num" value="03/2025"></div>
+          </div>
+          <div class="rounded-lg border border-line p-4 bg-side">
+            <h3 class="text-sm font-semibold">Mis tallas</h3>
+            <div class="mt-3 grid sm:grid-cols-[160px_160px_1fr] gap-4 items-start">
+              <div><label class="lbl" for="sz">Talla que uso <span class="lang-tag">EU</span></label><div class="flex items-center gap-1"><button class="icon-btn border border-line-strong bg-elev" aria-label="Media talla menos"><i data-lucide="minus"></i></button><input id="sz" class="input num text-center !w-16" value="42,5" inputmode="decimal"><button class="icon-btn border border-line-strong bg-elev" aria-label="Media talla más"><i data-lucide="plus"></i></button></div></div>
+              <div><label class="lbl" for="sz2">Talla de calle <span class="lang-tag">EU</span></label><div class="flex items-center gap-1"><button class="icon-btn border border-line-strong bg-elev" aria-label="Media talla menos"><i data-lucide="minus"></i></button><input id="sz2" class="input num text-center !w-16" value="43,5" inputmode="decimal"><button class="icon-btn border border-line-strong bg-elev" aria-label="Media talla más"><i data-lucide="plus"></i></button></div></div>
+              <div class="text-sm"><p class="lbl">En el comparador</p><p class="mono text-[15px]">42,5</p><p class="text-xs text-meta">calzo 43,5 de calle · <span class="num">−1</span></p></div>
+            </div>
+            <p class="help">De 30 a 50, de media en media. Las dos o ninguna.</p>
+            <div class="grid lg:grid-cols-2 gap-4 mt-4"><div><label class="lbl" for="sn">Nota de ajuste <span class="lang-tag">ES</span><span class="counter">69 / 140</span></label><textarea id="sn" rows="2" class="input">Justos pero sin dolor en sesiones de dos horas. Tallas EU de La Sportiva.</textarea></div>
+              <div><label class="lbl" for="sne">Nota de ajuste <span class="lang-tag">EN</span><span class="counter">0 / 140</span></label><textarea id="sne" rows="2" class="input" placeholder="Opcional; necesita la nota en español"></textarea></div></div>
+          </div>
+          <div class="grid lg:grid-cols-2 gap-4"><div><label class="lbl" for="hd">Veredicto <span class="lang-tag">ES</span></label><input id="hd" class="input" value="El primer pie de gato serio que no te hace odiar escalar"></div><div><label class="lbl" for="hde">Veredicto <span class="lang-tag">EN</span></label><input id="hde" class="input" placeholder="Opcional"></div></div>
+          <div class="card p-4 text-sm text-meta">Cuerpo de "Lo que aprendí" (Tiptap con pestañas ES/EN) y notas por criterio (Comodidad, Canteo, Adherencia, Durabilidad) con el mismo patrón que la <a href="rocodromo-editor.html" class="underline underline-offset-2">reseña del rocódromo</a>.</div>
+        </div>
+      </div>
+    </section>
+    <section id="t-gal" role="tabpanel" aria-label="Galería" hidden><p class="text-sm text-meta">Igual que en rocódromos.</p></section>
+    <section id="t-seo" role="tabpanel" aria-label="SEO" hidden><p class="text-sm text-meta">Igual que en rocódromos.</p></section>
+  </div>
+</main>
+<script>
+document.getElementById('own').addEventListener('click',e=>{setTimeout(()=>{const on=e.currentTarget.getAttribute('aria-checked')==='true';const b=document.getElementById('ownBox');b.style.opacity=on?'':'.45';b.querySelectorAll('input,textarea,button').forEach(x=>x.disabled=!on);},0);});
+</script>
+</body>
+</html>

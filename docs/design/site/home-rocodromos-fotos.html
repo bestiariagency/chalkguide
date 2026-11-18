@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ChalkGuide · Home · Rocódromos con foto (propuesta)</title>
+<link rel="icon" href="../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+/* Tokens = app/assets/css/main.css (@theme, tema claro "papel"). */
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        background: '#f4f1ea', board: '#fbf9f5', elevated: '#ebe6dc',
+        line: '#dcd5c8', 'line-strong': '#c2b9a9', control: '#827a6d',
+        accent: '#9a4a16', 'accent-fill': '#e8923a', 'accent-muted': '#f7e4d0', 'on-accent': '#1a0a00',
+        chalk: '#d2702a', foreground: '#1c1a17', prose: '#34302a', meta: '#5e584e', hint: '#b5ac9c',
+        success: '#17855f', 'success-text': '#1a6e4e'
+      },
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'] },
+      borderRadius: { sm: '4px', xs: '6px', md: '8px', lg: '12px', xl: '16px' },
+      maxWidth: { page: '1200px' },
+      fontSize: { note: ['13px', '1.45'], micro: ['12px', '1.3'], caption: ['14px', '1.45'] }
+    }
+  }
+}
+</script>
+<style>
+  :root { --ring:0 0 0 2px #f4f1ea, 0 0 0 4px #9a4a16; --bar-track:#e3ddd1; --ease-out:cubic-bezier(.2,.8,.2,1); }
+  body { font-feature-settings:"cv11","ss01"; -webkit-font-smoothing:antialiased; }
+  .num { font-variant-numeric: tabular-nums; }
+  .display { letter-spacing:-.025em; font-weight:500; line-height:1.12; }
+  .label-mini { font-family:"JetBrains Mono",monospace; font-size:12px; line-height:1; letter-spacing:.14em; text-transform:uppercase; color:#5e584e; }
+  .board-tex { background-color:#fbf9f5; background-image:linear-gradient(rgb(28 26 23/.035) 1px,transparent 1px),linear-gradient(90deg,rgb(28 26 23/.022) 1px,transparent 1px); background-size:32px 32px; }
+  .photo-placeholder { background:linear-gradient(150deg,#3a2f27 0%,#1f1b18 55%,#121212 100%); }
+  :focus { outline:none; }
+  :focus-visible { box-shadow:var(--ring); border-radius:4px; }
+
+  /* cardTitleUnderline (utils/card-classes.ts) */
+  .t-under { background:linear-gradient(currentColor,currentColor) 0 95%/0% 1.5px no-repeat; transition:background-size 300ms var(--ease-out); }
+  .group:hover .t-under { background-size:100% 1.5px; }
+  /* rowOverlayLink: ::after cubre tarjeta/fila; el foco lo pinta el contenedor (has-focus-visible) */
+  .overlay-link::after { content:""; position:absolute; inset:0; z-index:1; border-radius:8px; }
+  .overlay-link:focus-visible { box-shadow:none; }
+  .card:has(a:focus-visible), .row:has(a:focus-visible) { box-shadow:var(--ring); }
+
+  /* Segmentado (UiSegmentedControl, mode="segmented") */
+  .seg { position:relative; display:inline-grid; grid-auto-flow:column; grid-auto-columns:1fr; padding:4px; border-radius:8px; border:.5px solid #c2b9a9; background:#f4f1ea; }
+  .seg button { position:relative; z-index:1; min-height:40px; padding:0 14px; font-size:15px; color:#5e584e; border-radius:6px; white-space:nowrap; transition:color 150ms; }
+  .seg button[aria-pressed="true"] { color:#1c1a17; background:#ebe6dc; box-shadow:inset 0 0 0 .5px #9a4a16; }
+  @media (hover:hover){ .seg button:hover{ color:#1c1a17; } }
+
+  /* Índice (UiIndexBar) */
+  .bar { display:block; height:4px; border-radius:9999px; background:var(--bar-track); overflow:hidden; }
+  .bar > span { display:block; height:100%; border-radius:9999px; background:#d2702a; }
+
+  /* Valor destacado: mismo tono que ItemsScore highlight (accent-muted + accent) */
+  .best { background:#f7e4d0; color:#9a4a16; border-radius:4px; padding:4px 6px; margin-left:-6px; }
+  /* Criterio activo: rótulo en acento + filete superior de 2px */
+  [data-cell][data-active="true"] { box-shadow:inset 0 2px 0 #9a4a16; }
+  [data-cell][data-active="true"] dt { color:#9a4a16; }
+  th[data-col][data-active="true"] { color:#9a4a16; box-shadow:inset 0 -2px 0 #9a4a16; }
+
+  /* Zoom de foto solo con puntero con hover (GymsCard) */
+  @media (hover:hover) and (prefers-reduced-motion:no-preference) {
+    .zoom { transition:transform 600ms var(--ease-out); }
+    .group:hover .zoom { transform:scale(1.03); }
+  }
+  .surface { transition:background-color 200ms, border-color 200ms; }
+  @media (hover:hover){ .card.surface:hover { background:#ebe6dc; border-color:#827a6d; } .row:hover { background:rgb(235 230 220/.6); } }
+  @media (prefers-reduced-motion:reduce){ *,*::before,*::after{ transition-duration:0s!important; animation-duration:0s!important; } }
+
+  /* Notas de diseño del mockup (no se implementan) */
+  .note { border-left:2px solid #d2702a; }
+</style>
+</head>
+<body class="bg-background text-foreground font-sans text-[16px] leading-relaxed">
+
+<!-- Cabecera del documento de propuesta -->
+<header class="max-w-page mx-auto px-4 md:px-6 pt-10 pb-8">
+  <p class="label-mini">Propuesta · Home · sección #rocodromos · 29.10.26</p>
+  <h1 class="display text-[2rem] md:text-[2.5rem] mt-3">Rocódromos de la home, con foto</h1>
+  <p class="text-meta mt-3 max-w-[64ch]">Dos opciones. Las dos mantienen lo que hace valiosa la sección: tres rocódromos, tres datos comparables, orden por criterio y el mejor resaltado. Cambia el criterio en cada opción para ver la reordenación. Revisar en 1440 y 390.</p>
+  <nav class="mt-5 flex flex-wrap gap-2 text-[15px]" aria-label="Opciones">
+    <a href="#opcion-a" class="inline-flex items-center min-h-[44px] px-4 rounded-md border border-control hover:bg-elevated">A · Tarjetas comparables <span class="ml-2 font-mono text-micro px-1.5 py-0.5 rounded-sm bg-accent-muted text-accent">recomendada</span></a>
+    <a href="#opcion-b" class="inline-flex items-center min-h-[44px] px-4 rounded-md border border-control hover:bg-elevated">B · Tabla con miniatura</a>
+    <a href="#spec" class="inline-flex items-center min-h-[44px] px-4 rounded-md border border-control hover:bg-elevated">Spec para coneja-lucky</a>
+  </nav>
+</header>
+
+<!-- ===================================================== -->
+<!-- OPCIÓN A · Tarjetas comparables                        -->
+<!-- ===================================================== -->
+<div id="opcion-a" class="scroll-mt-4">
+  <div class="max-w-page mx-auto px-4 md:px-6 pb-4">
+    <p class="label-mini text-accent">Opción A · recomendada</p>
+    <p class="text-xl font-medium mt-2">Tarjetas comparables</p>
+    <p class="text-meta text-[15px] mt-1 max-w-[70ch]">Tres tarjetas con foto en rejilla. La foto es una franja (no fondo completo como el blog) y los datos van debajo, en la misma posición en las tres, para leer en horizontal. El criterio activo se marca en las tres tarjetas y su mejor valor lleva el tono de acento.</p>
+  </div>
+
+  <section id="rocodromos" class="border-y-[0.5px] border-line board-tex" aria-labelledby="a-title" data-sorter="a">
+    <div class="mx-auto max-w-page px-4 py-16 md:px-6 md:py-24">
+      <div class="gap-6 md:flex md:items-end md:justify-between">
+        <div>
+          <p class="label-mini">Rocódromos</p>
+          <h2 id="a-title" class="display mt-3 text-[1.75rem] md:text-[2.25rem]">Los rocódromos, uno a uno</h2>
+        </div>
+        <div class="seg mt-6 w-full md:mt-0 md:w-auto" role="group" aria-label="Ordenar por">
+          <button type="button" data-sort="score" aria-pressed="true"><span class="md:hidden">Nota autor</span><span class="hidden md:inline">Nota del autor</span></button>
+          <button type="button" data-sort="price" aria-pressed="false">Precio</button>
+          <button type="button" data-sort="beginner" aria-pressed="false">Principiante</button>
+        </div>
+      </div>
+
+      <ul class="mt-8 grid gap-3 md:mt-10 md:grid-cols-3 md:gap-4 num" data-list aria-label="Rocódromos destacados">
+        <!-- Tarjeta: data-* solo para el mockup -->
+        <li data-item data-id="presa" data-price="55" data-beginner="4.5" data-score="4.3">
+          <article class="card surface group relative flex h-full flex-col overflow-hidden rounded-lg border-[0.5px] border-line-strong bg-board">
+            <!-- Sin position: el ::after del título debe cubrir la tarjeta entera (como GymsCard) -->
+            <div class="grid aspect-[2/1] overflow-hidden md:aspect-[3/2] [grid-template:minmax(0,1fr)/minmax(0,1fr)]">
+              <img class="zoom col-start-1 row-start-1 h-full w-full min-h-0 object-cover photo-placeholder" alt="" loading="lazy"
+                   src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg">
+              <div class="pointer-events-none col-start-1 row-start-1 bg-gradient-to-b from-transparent from-25% via-black/70 via-60% to-black" aria-hidden="true"></div>
+              <div class="col-start-1 row-start-1 self-end p-4 pt-10 md:p-5 md:pt-12 text-[#f0ede8]">
+                <h3 class="[text-shadow:0_1px_2px_rgb(0_0_0/0.6)]"><a href="#" class="overlay-link text-lg font-medium"><span class="t-under">Presa Badalona</span></a></h3>
+                <p class="mt-0.5 truncate text-caption text-[#a19d94] [text-shadow:0_1px_2px_rgb(0_0_0/0.6)]">Bloque · Badalona · Pompeu Fabra (L2)</p>
+              </div>
+              <span class="pointer-events-none absolute top-3 right-3 z-20 rounded-sm bg-board px-2 py-1 font-mono text-micro text-foreground shadow-[0_1px_4px_rgb(0_0_0/0.4)]" data-rank><span class="sr-only">Puesto </span><span data-rank-n>01</span></span>
+            </div>
+            <dl class="grid grid-cols-3 gap-3 p-4 md:p-5">
+              <div data-cell="score" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Nota autor</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">4,3<span class="text-meta">/5</span></span><span class="sr-only" data-best-sr></span></dd></div>
+              <div data-cell="price" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Mensual</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">55 €</span><span class="sr-only" data-best-sr></span></dd></div>
+              <div data-cell="beginner" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Principiante</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">4,5</span><span class="sr-only"> sobre 5</span><span class="sr-only" data-best-sr></span><span class="bar mt-2" aria-hidden="true"><span style="width:90%"></span></span></dd></div>
+            </dl>
+          </article>
+        </li>
+
+        <li data-item data-id="altura" data-price="58" data-beginner="4.2" data-score="4.1">
+          <article class="card surface group relative flex h-full flex-col overflow-hidden rounded-lg border-[0.5px] border-line-strong bg-board">
+            <!-- Sin position: el ::after del título debe cubrir la tarjeta entera (como GymsCard) -->
+            <div class="grid aspect-[2/1] overflow-hidden md:aspect-[3/2] [grid-template:minmax(0,1fr)/minmax(0,1fr)]">
+              <img class="zoom col-start-1 row-start-1 h-full w-full min-h-0 object-cover photo-placeholder" alt="" loading="lazy"
+                   src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg">
+              <div class="pointer-events-none col-start-1 row-start-1 bg-gradient-to-b from-transparent from-25% via-black/70 via-60% to-black" aria-hidden="true"></div>
+              <div class="col-start-1 row-start-1 self-end p-4 pt-10 md:p-5 md:pt-12 text-[#f0ede8]">
+                <h3 class="[text-shadow:0_1px_2px_rgb(0_0_0/0.6)]"><a href="#" class="overlay-link text-lg font-medium"><span class="t-under">Altura Cornellà</span></a></h3>
+                <p class="mt-0.5 truncate text-caption text-[#a19d94] [text-shadow:0_1px_2px_rgb(0_0_0/0.6)]">Bloque y cuerda · Cornellà de Llobregat · Cornellà Centre (L5)</p>
+              </div>
+              <span class="pointer-events-none absolute top-3 right-3 z-20 rounded-sm bg-board px-2 py-1 font-mono text-micro text-foreground shadow-[0_1px_4px_rgb(0_0_0/0.4)]" data-rank><span class="sr-only">Puesto </span><span data-rank-n>02</span></span>
+            </div>
+            <dl class="grid grid-cols-3 gap-3 p-4 md:p-5">
+              <div data-cell="score" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Nota autor</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">4,1<span class="text-meta">/5</span></span><span class="sr-only" data-best-sr></span></dd></div>
+              <div data-cell="price" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Mensual</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">58 €</span><span class="sr-only" data-best-sr></span></dd></div>
+              <div data-cell="beginner" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Principiante</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">4,2</span><span class="sr-only"> sobre 5</span><span class="sr-only" data-best-sr></span><span class="bar mt-2" aria-hidden="true"><span style="width:84%"></span></span></dd></div>
+            </dl>
+          </article>
+        </li>
+
+        <li data-item data-id="paret" data-price="62" data-beginner="4.8" data-score="4.0">
+          <article class="card surface group relative flex h-full flex-col overflow-hidden rounded-lg border-[0.5px] border-line-strong bg-board">
+            <!-- Sin position: el ::after del título debe cubrir la tarjeta entera (como GymsCard) -->
+            <div class="grid aspect-[2/1] overflow-hidden md:aspect-[3/2] [grid-template:minmax(0,1fr)/minmax(0,1fr)]">
+              <img class="zoom col-start-1 row-start-1 h-full w-full min-h-0 object-cover photo-placeholder" alt="" loading="lazy"
+                   src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg">
+              <div class="pointer-events-none col-start-1 row-start-1 bg-gradient-to-b from-transparent from-25% via-black/70 via-60% to-black" aria-hidden="true"></div>
+              <div class="col-start-1 row-start-1 self-end p-4 pt-10 md:p-5 md:pt-12 text-[#f0ede8]">
+                <h3 class="[text-shadow:0_1px_2px_rgb(0_0_0/0.6)]"><a href="#" class="overlay-link text-lg font-medium"><span class="t-under">La Paret de Gràcia</span></a></h3>
+                <p class="mt-0.5 truncate text-caption text-[#a19d94] [text-shadow:0_1px_2px_rgb(0_0_0/0.6)]">Cuerda + bloque · Gràcia · Fontana (L3)</p>
+              </div>
+              <!-- Visita invitada: UiBadge kind="guest-visit", arriba a la izquierda, como en GymsCard -->
+              <span class="pointer-events-none absolute top-3 left-3 z-20 inline-flex items-center gap-1.5 rounded-sm bg-accent-muted px-2 py-[5px] font-mono text-micro text-accent">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>visita invitada</span>
+              <span class="pointer-events-none absolute top-3 right-3 z-20 rounded-sm bg-board px-2 py-1 font-mono text-micro text-foreground shadow-[0_1px_4px_rgb(0_0_0/0.4)]" data-rank><span class="sr-only">Puesto </span><span data-rank-n>03</span></span>
+            </div>
+            <dl class="grid grid-cols-3 gap-3 p-4 md:p-5">
+              <div data-cell="score" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Nota autor</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">4,0<span class="text-meta">/5</span></span><span class="sr-only" data-best-sr></span></dd></div>
+              <div data-cell="price" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Mensual</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">62 €</span><span class="sr-only" data-best-sr></span></dd></div>
+              <div data-cell="beginner" class="pt-2.5"><dt class="text-note whitespace-nowrap text-meta">Principiante</dt><dd class="mt-1.5"><span data-val class="font-mono text-xl leading-none">4,8</span><span class="sr-only"> sobre 5</span><span class="sr-only" data-best-sr></span><span class="bar mt-2" aria-hidden="true"><span style="width:96%"></span></span></dd></div>
+            </dl>
+          </article>
+        </li>
+      </ul>
+      <p class="sr-only" aria-live="polite" data-status></p>
+
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
+        <p class="font-mono text-note text-meta">Datos verificados en septiembre de 2026 · <a href="#" class="underline decoration-control underline-offset-4 hover:decoration-accent">Cómo calculo el índice</a></p>
+        <a href="#" class="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-control px-4 text-[15px] font-medium hover:bg-elevated">Ver los 14 rocódromos <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contexto: bloque del blog (OverlayCard) para comprobar que no se repite -->
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <p class="label-mini">Contexto · más abajo en la home, el blog (OverlayCard, ya aprobado)</p>
+    <div class="mt-4 grid gap-3 md:grid-cols-3 opacity-90">
+      <div class="relative overflow-hidden rounded-lg bg-neutral-900 aspect-[4/3] md:aspect-auto md:min-h-[14rem] md:col-span-2">
+        <img class="absolute inset-0 size-full object-cover" alt="" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000008/1-escalador-desde-abajo.jpg">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/0 from-15% via-black/45 via-55% to-black/85"></div>
+        <p class="absolute bottom-0 p-6 text-white text-[1.375rem] font-medium leading-tight">Cuánto cuesta escalar en Barcelona</p>
+      </div>
+      <div class="relative overflow-hidden rounded-lg bg-neutral-900 aspect-video md:aspect-auto">
+        <img class="absolute inset-0 size-full object-cover" alt="" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000009/1-pared-amarilla-presas-pequenas.jpg">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/0 from-15% via-black/45 via-55% to-black/85"></div>
+        <p class="absolute bottom-0 p-5 text-white text-[1.25rem] font-medium leading-snug">Mis primeros pies de gato</p>
+      </div>
+    </div>
+    <aside class="note mt-6 pl-4 text-[15px] text-meta max-w-[72ch]">
+      <p><strong class="font-medium text-foreground">Por qué no se repite:</strong> el blog es un mosaico asimétrico de fotos a sangre con el texto encima, sin datos. Los rocódromos son una rejilla regular de 3 iguales sobre la pizarra (<code class="font-mono text-note">board-tex</code>), con la foto como franja y un panel de datos claro debajo. Entre ambos bloques están los pies de gato y la agenda, sin fotos grandes.</p>
+    </aside>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- OPCIÓN B · Tabla con miniatura                         -->
+<!-- ===================================================== -->
+<div id="opcion-b" class="scroll-mt-4 border-t-[0.5px] border-line pt-12">
+  <div class="max-w-page mx-auto px-4 md:px-6 pb-4">
+    <p class="label-mini">Opción B</p>
+    <p class="text-xl font-medium mt-2">Tabla con miniatura</p>
+    <p class="text-meta text-[15px] mt-1 max-w-[70ch]">La tabla actual sin cambios de estructura; cada fila gana una miniatura 4:3 junto al nombre. En móvil, la "row card" lleva la miniatura a la izquierda. Comparación máxima, foto discreta.</p>
+  </div>
+
+  <section class="border-y-[0.5px] border-line board-tex" aria-labelledby="b-title" data-sorter="b">
+    <div class="mx-auto max-w-page px-4 py-16 md:px-6 md:py-24">
+      <div class="gap-6 md:flex md:items-end md:justify-between">
+        <div>
+          <p class="label-mini">Rocódromos</p>
+          <h2 id="b-title" class="display mt-3 text-[1.75rem] md:text-[2.25rem]">Los rocódromos, uno a uno</h2>
+        </div>
+        <div class="seg mt-6 w-full md:mt-0 md:w-auto" role="group" aria-label="Ordenar por">
+          <button type="button" data-sort="score" aria-pressed="true"><span class="md:hidden">Nota autor</span><span class="hidden md:inline">Nota del autor</span></button>
+          <button type="button" data-sort="price" aria-pressed="false">Precio</button>
+          <button type="button" data-sort="beginner" aria-pressed="false">Principiante</button>
+        </div>
+      </div>
+
+      <!-- md+: tabla -->
+      <table class="mt-10 hidden w-full text-left num md:table">
+        <caption class="sr-only">Comparativa de rocódromos destacados</caption>
+        <thead>
+          <tr class="border-b-[0.5px] border-line-strong label-mini">
+            <th scope="col" class="py-3 pr-4 font-normal">Rocódromo</th>
+            <th scope="col" class="py-3 pr-4 text-right font-normal" data-col="price">Mensual</th>
+            <th scope="col" class="py-3 pr-4 font-normal" data-col="beginner">Índice principiante</th>
+            <th scope="col" class="py-3 text-right font-normal" data-col="score">Nota del autor</th>
+          </tr>
+        </thead>
+        <tbody data-list>
+          <tr data-item data-id="presa" data-price="55" data-beginner="4.5" data-score="4.3" class="row group relative border-b-[0.5px] border-line transition-colors">
+            <th scope="row" class="py-4 pr-4 font-normal">
+              <div class="flex items-center gap-4">
+                <img class="h-[60px] w-20 shrink-0 rounded-md object-cover photo-placeholder" alt="" loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg">
+                <div><a href="#" class="overlay-link text-lg font-medium"><span class="t-under">Presa Badalona</span></a><span class="block text-caption text-meta">Bloque · Badalona · Pompeu Fabra (L2)</span></div>
+              </div>
+            </th>
+            <td class="py-4 pr-4 text-right font-mono" data-cell="price"><span data-val>55 €</span><span class="sr-only" data-best-sr></span></td>
+            <td class="py-4 pr-4" data-cell="beginner"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="width:90%"></span></span><span data-val class="font-mono">4,5</span><span class="sr-only" data-best-sr></span></span></td>
+            <td class="py-4 text-right" data-cell="score"><span data-val class="font-mono text-[15px] inline-flex rounded-sm bg-elevated px-2 py-1.5 leading-none">4,3<span class="text-meta">/5</span></span><span class="sr-only" data-best-sr></span></td>
+          </tr>
+          <tr data-item data-id="altura" data-price="58" data-beginner="4.2" data-score="4.1" class="row group relative border-b-[0.5px] border-line transition-colors">
+            <th scope="row" class="py-4 pr-4 font-normal">
+              <div class="flex items-center gap-4">
+                <img class="h-[60px] w-20 shrink-0 rounded-md object-cover photo-placeholder" alt="" loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg">
+                <div><a href="#" class="overlay-link text-lg font-medium"><span class="t-under">Altura Cornellà</span></a><span class="block text-caption text-meta">Bloque y cuerda · Cornellà de Llobregat · Cornellà Centre (L5)</span></div>
+              </div>
+            </th>
+            <td class="py-4 pr-4 text-right font-mono" data-cell="price"><span data-val>58 €</span><span class="sr-only" data-best-sr></span></td>
+            <td class="py-4 pr-4" data-cell="beginner"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="width:84%"></span></span><span data-val class="font-mono">4,2</span><span class="sr-only" data-best-sr></span></span></td>
+            <td class="py-4 text-right" data-cell="score"><span data-val class="font-mono text-[15px] inline-flex rounded-sm bg-elevated px-2 py-1.5 leading-none">4,1<span class="text-meta">/5</span></span><span class="sr-only" data-best-sr></span></td>
+          </tr>
+          <tr data-item data-id="paret" data-price="62" data-beginner="4.8" data-score="4.0" class="row group relative border-b-[0.5px] border-line transition-colors">
+            <th scope="row" class="py-4 pr-4 font-normal">
+              <div class="flex items-center gap-4">
+                <img class="h-[60px] w-20 shrink-0 rounded-md object-cover photo-placeholder" alt="" loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg">
+                <div><a href="#" class="overlay-link text-lg font-medium"><span class="t-under">La Paret de Gràcia</span></a><span class="block text-caption text-meta">Cuerda + bloque · Gràcia · Fontana (L3)</span>
+                  <span class="mt-1.5 inline-flex items-center gap-1.5 rounded-sm bg-accent-muted px-2 py-[5px] font-mono text-micro text-accent">visita invitada</span></div>
+              </div>
+            </th>
+            <td class="py-4 pr-4 text-right font-mono" data-cell="price"><span data-val>62 €</span><span class="sr-only" data-best-sr></span></td>
+            <td class="py-4 pr-4" data-cell="beginner"><span class="inline-flex items-center gap-3"><span class="bar w-32" aria-hidden="true"><span style="width:96%"></span></span><span data-val class="font-mono">4,8</span><span class="sr-only" data-best-sr></span></span></td>
+            <td class="py-4 text-right" data-cell="score"><span data-val class="font-mono text-[15px] inline-flex rounded-sm bg-elevated px-2 py-1.5 leading-none">4,0<span class="text-meta">/5</span></span><span class="sr-only" data-best-sr></span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- < md: row cards con miniatura -->
+      <ul class="mt-8 space-y-3 num md:hidden" data-list data-mobile>
+        <li data-item data-id="presa" data-price="55" data-beginner="4.5" data-score="4.3" class="row group relative rounded-md border-[0.5px] border-line-strong bg-background p-4">
+          <div class="flex items-start gap-3">
+            <img class="size-16 shrink-0 rounded-md object-cover photo-placeholder" alt="" loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg">
+            <div class="min-w-0 flex-1"><a href="#" class="overlay-link text-lg font-medium leading-snug">Presa Badalona</a><p class="text-caption text-meta">Bloque · Badalona · Pompeu Fabra (L2)</p></div>
+          </div>
+          <dl class="mt-4 grid grid-cols-3 gap-3 text-caption">
+            <div data-cell="score" class="pt-2"><dt class="text-meta">Nota autor</dt><dd class="mt-1"><span data-val class="font-mono text-body">4,3/5</span><span class="sr-only" data-best-sr></span></dd></div>
+            <div data-cell="price" class="pt-2"><dt class="text-meta">Mensual</dt><dd class="mt-1"><span data-val class="font-mono text-body">55 €</span><span class="sr-only" data-best-sr></span></dd></div>
+            <div data-cell="beginner" class="pt-2"><dt class="text-meta">Principiante</dt><dd class="mt-1"><span data-val class="font-mono text-body">4,5</span><span class="sr-only" data-best-sr></span><span class="bar mt-1.5" aria-hidden="true"><span style="width:90%"></span></span></dd></div>
+          </dl>
+        </li>
+        <li data-item data-id="altura" data-price="58" data-beginner="4.2" data-score="4.1" class="row group relative rounded-md border-[0.5px] border-line-strong bg-background p-4">
+          <div class="flex items-start gap-3">
+            <img class="size-16 shrink-0 rounded-md object-cover photo-placeholder" alt="" loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg">
+            <div class="min-w-0 flex-1"><a href="#" class="overlay-link text-lg font-medium leading-snug">Altura Cornellà</a><p class="text-caption text-meta">Bloque y cuerda · Cornellà de Llobregat · Cornellà Centre (L5)</p></div>
+          </div>
+          <dl class="mt-4 grid grid-cols-3 gap-3 text-caption">
+            <div data-cell="score" class="pt-2"><dt class="text-meta">Nota autor</dt><dd class="mt-1"><span data-val class="font-mono text-body">4,1/5</span><span class="sr-only" data-best-sr></span></dd></div>
+            <div data-cell="price" class="pt-2"><dt class="text-meta">Mensual</dt><dd class="mt-1"><span data-val class="font-mono text-body">58 €</span><span class="sr-only" data-best-sr></span></dd></div>
+            <div data-cell="beginner" class="pt-2"><dt class="text-meta">Principiante</dt><dd class="mt-1"><span data-val class="font-mono text-body">4,2</span><span class="sr-only" data-best-sr></span><span class="bar mt-1.5" aria-hidden="true"><span style="width:84%"></span></span></dd></div>
+          </dl>
+        </li>
+        <li data-item data-id="paret" data-price="62" data-beginner="4.8" data-score="4.0" class="row group relative rounded-md border-[0.5px] border-line-strong bg-background p-4">
+          <div class="flex items-start gap-3">
+            <img class="size-16 shrink-0 rounded-md object-cover photo-placeholder" alt="" loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg">
+            <div class="min-w-0 flex-1"><a href="#" class="overlay-link text-lg font-medium leading-snug">La Paret de Gràcia</a><p class="text-caption text-meta">Cuerda + bloque · Gràcia · Fontana (L3)</p>
+              <span class="mt-1.5 inline-flex rounded-sm bg-accent-muted px-2 py-[5px] font-mono text-micro text-accent">visita invitada</span></div>
+          </div>
+          <dl class="mt-4 grid grid-cols-3 gap-3 text-caption">
+            <div data-cell="score" class="pt-2"><dt class="text-meta">Nota autor</dt><dd class="mt-1"><span data-val class="font-mono text-body">4,0/5</span><span class="sr-only" data-best-sr></span></dd></div>
+            <div data-cell="price" class="pt-2"><dt class="text-meta">Mensual</dt><dd class="mt-1"><span data-val class="font-mono text-body">62 €</span><span class="sr-only" data-best-sr></span></dd></div>
+            <div data-cell="beginner" class="pt-2"><dt class="text-meta">Principiante</dt><dd class="mt-1"><span data-val class="font-mono text-body">4,8</span><span class="sr-only" data-best-sr></span><span class="bar mt-1.5" aria-hidden="true"><span style="width:96%"></span></span></dd></div>
+          </dl>
+        </li>
+      </ul>
+      <p class="sr-only" aria-live="polite" data-status></p>
+    </div>
+  </section>
+</div>
+
+<!-- ===================================================== -->
+<!-- Comparativa + spec                                     -->
+<!-- ===================================================== -->
+<section id="spec" class="max-w-page mx-auto px-4 md:px-6 py-14 text-[15px]">
+  <h2 class="display text-[1.75rem]">A frente a B</h2>
+  <div class="mt-6 grid gap-6 md:grid-cols-2">
+    <div class="rounded-lg border-[0.5px] border-line-strong bg-board p-5">
+      <p class="font-medium">A · Tarjetas comparables <span class="ml-1 font-mono text-micro px-1.5 py-0.5 rounded-sm bg-accent-muted text-accent">recomendada</span></p>
+      <ul class="mt-3 space-y-1.5 text-meta list-disc pl-5">
+        <li><span class="text-success-text">+</span> Cumple la petición: la foto se ve de verdad y vende el sitio.</li>
+        <li><span class="text-success-text">+</span> Sigue comparando: mismos 3 datos, misma posición, criterio activo marcado en las tres.</li>
+        <li><span class="text-success-text">+</span> Coherente con /rocodromos (GymsCard): se reutiliza su bloque de foto.</li>
+        <li><span class="text-danger-text">−</span> En 390 ocupa más (~3 × 330 px frente a ~3 × 190 px): foto 2:1 para contenerlo.</li>
+        <li><span class="text-danger-text">−</span> Al reordenar se mueven bloques grandes: FLIP corto (300 ms) y sin movimiento con reduced-motion.</li>
+      </ul>
+    </div>
+    <div class="rounded-lg border-[0.5px] border-line-strong bg-board p-5">
+      <p class="font-medium">B · Tabla con miniatura</p>
+      <ul class="mt-3 space-y-1.5 text-meta list-disc pl-5">
+        <li><span class="text-success-text">+</span> Comparación más densa; cambio mínimo sobre GymsRows.</li>
+        <li><span class="text-success-text">+</span> Cero riesgo de parecerse al blog.</li>
+        <li><span class="text-danger-text">−</span> La foto es un sello de 80 × 60 px: apenas responde a "que se vea la foto".</li>
+        <li><span class="text-danger-text">−</span> Miniaturas pequeñas de rocódromos (presas de colores) se leen como ruido, no como lugar.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 class="display text-[1.75rem] mt-12">Spec de A para coneja-lucky</h2>
+  <div class="mt-4 grid gap-x-10 gap-y-6 md:grid-cols-2 text-prose">
+    <div>
+      <p class="label-mini">Componentes</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li><strong class="font-medium">Nuevo <code class="font-mono text-note">GymsCardPhoto.vue</code></strong>: se extrae el bloque de foto de GymsCard (UiPhoto + degradado + h3 con <code class="font-mono text-note">rowOverlayLink</code> + meta + badge guest-visit arriba a la izquierda) con un slot <code class="font-mono text-note">#corner</code> para la esquina superior derecha. GymsCard lo usa con ItemsVerified; la home con el puesto.</li>
+        <li><strong class="font-medium">Nuevo <code class="font-mono text-note">GymsHomeCards.vue</code></strong>: <code class="font-mono text-note">TransitionGroup tag="ul"</code> en rejilla + panel <code class="font-mono text-note">dl</code> de 3 datos. Props: <code class="font-mono text-note">gyms, sortKey, caption</code>.</li>
+        <li><strong class="font-medium"><code class="font-mono text-note">GymsHomeTable.vue</code></strong>: sustituye GymsRows por GymsHomeCards y le pasa <code class="font-mono text-note">sortKey</code>. Calcula el mejor por criterio (precio: mínimo; nota e índice: máximo; empates: todos). GymsRows no se toca (lo usa el buscador).</li>
+        <li>Reutiliza: UiPhoto, UiBadge, UiIndexBar, UiSegmentedControl, <code class="font-mono text-note">cardSurface</code>, <code class="font-mono text-note">cardTitleUnderline</code>.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="label-mini">Rejilla y medidas</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li>&lt; md: 1 columna, <code class="font-mono text-note">gap-3</code>, foto <code class="font-mono text-note">aspect-[2/1]</code>. md+: <code class="font-mono text-note">grid-cols-3 gap-4</code>, foto <code class="font-mono text-note">aspect-[3/2]</code>. 768: 3 columnas (~232 px), los datos caben con <code class="font-mono text-note">text-xl</code>; meta con <code class="font-mono text-note">truncate</code>.</li>
+        <li>Panel: <code class="font-mono text-note">dl grid-cols-3 gap-3 p-4 md:p-5</code>; orden de datos = orden del segmentado (Nota autor, Mensual, Principiante). <code class="font-mono text-note">dt text-note text-meta</code>, valor <code class="font-mono text-note">font-mono text-xl leading-none</code>, barra UiIndexBar <code class="font-mono text-note">mt-2</code> bajo el índice.</li>
+        <li><code class="font-mono text-note">sizes="100vw md:33vw"</code>. Sin portada: <code class="font-mono text-note">photo-placeholder</code> (lo hace UiPhoto).</li>
+      </ul>
+    </div>
+    <div>
+      <p class="label-mini">Criterio activo y "mejor"</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li>Celda del criterio activo, en las 3 tarjetas: filete superior 2 px <code class="font-mono text-note">accent</code> + <code class="font-mono text-note">dt text-accent</code> (#9a4a16 sobre board: 6,9:1).</li>
+        <li>Mejor valor de ese criterio: pastilla <code class="font-mono text-note">bg-accent-muted text-accent</code> (5,6:1) + <code class="font-mono text-note">sr-only</code> "el mejor". La forma de pastilla es la señal no cromática.</li>
+        <li>Puesto en la esquina: chip <code class="font-mono text-note">bg-board font-mono text-micro</code> "01–03", con "Puesto" en <code class="font-mono text-note">sr-only</code>. Se actualiza al reordenar.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="label-mini">Estados, movimiento y a11y</p>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5">
+        <li>Tarjeta entera clicable vía <code class="font-mono text-note">::after</code> del enlace del h3 (no posicionar el bloque de foto salvo los chips). Foco: <code class="font-mono text-note">has-[a:focus-visible]:ring-focus</code> en la tarjeta.</li>
+        <li>Hover (solo <code class="font-mono text-note">hover:hover</code>): board → elevated 200 ms, subrayado del nombre 300 ms, zoom 1.03 de la foto 600 ms.</li>
+        <li>Reordenar: <code class="font-mono text-note">move-class</code> 300 ms ease-out (FLIP de TransitionGroup, vale en grid); el filete y la pastilla cambian a la vez, 150 ms. <code class="font-mono text-note">motion-reduce</code>: sin transición. Anuncio <code class="font-mono text-note">aria-live</code> existente se mantiene.</li>
+        <li>Texto sobre foto: blanco/#a19d94 sobre degradado a negro con text-shadow (≥ 7:1 en la zona del texto). Visita invitada siempre visible en la foto; foto <code class="font-mono text-note">alt=""</code> (decorativa, el nombre es el enlace).</li>
+        <li>Textos nuevos: "Puesto", "el mejor" (sr-only) → loro-lola es/en.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+/* Mockup: ordenar + FLIP + mejor valor. En la app lo hacen sortGyms + TransitionGroup. */
+(function () {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const labels = { score: 'nota del autor', price: 'precio mensual', beginner: 'índice principiante' };
+  const fmt = (n) => String(n).padStart(2, '0');
+
+  function bestValue(items, key) {
+    const vals = items.map((i) => parseFloat(i.dataset[key]));
+    return key === 'price' ? Math.min(...vals) : Math.max(...vals);
+  }
+
+  function flip(list, apply) {
+    const kids = [...list.children];
+    const first = new Map(kids.map((k) => [k, k.getBoundingClientRect()]));
+    apply();
+    if (reduce) return;
+    kids.forEach((k) => {
+      const a = first.get(k), b = k.getBoundingClientRect();
+      const dx = a.left - b.left, dy = a.top - b.top;
+      if (!dx && !dy) return;
+      k.style.transition = 'none';
+      k.style.transform = `translate(${dx}px, ${dy}px)`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        k.style.transition = 'transform 300ms cubic-bezier(.2,.8,.2,1)';
+        k.style.transform = '';
+      }));
+    });
+  }
+
+  document.querySelectorAll('[data-sorter]').forEach((root) => {
+    const buttons = root.querySelectorAll('[data-sort]');
+    const status = root.querySelector('[data-status]');
+    function sort(key) {
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sort === key)));
+      root.querySelectorAll('[data-list]').forEach((list) => {
+        const items = [...list.querySelectorAll(':scope > [data-item]')];
+        const best = bestValue(items, key);
+        items.sort((a, b) => key === 'price'
+          ? a.dataset.price - b.dataset.price
+          : b.dataset[key] - a.dataset[key]);
+        flip(list, () => items.forEach((i) => list.appendChild(i)));
+        items.forEach((item, idx) => {
+          const n = item.querySelector('[data-rank-n]'); if (n) n.textContent = fmt(idx + 1);
+          item.querySelectorAll('[data-cell]').forEach((cell) => {
+            const active = cell.dataset.cell === key;
+            cell.dataset.active = String(active && !cell.matches('td'));
+            const isBest = active && parseFloat(item.dataset[key]) === best;
+            const val = cell.querySelector('[data-val]');
+            val.classList.toggle('best', isBest);
+            if (cell.matches('td') && cell.dataset.cell === 'score' && val.classList.contains('bg-elevated') !== !isBest) val.classList.toggle('bg-elevated', !isBest);
+            cell.querySelector('[data-best-sr]').textContent = isBest ? ', el mejor' : '';
+          });
+        });
+      });
+      root.querySelectorAll('th[data-col]').forEach((th) => th.dataset.active = String(th.dataset.col === key));
+      if (status) status.textContent = `Ordenado por ${labels[key]}`;
+    }
+    buttons.forEach((b) => b.addEventListener('click', () => sort(b.dataset.sort)));
+    sort('score');
+  });
+
+  /* Foto caída → placeholder del DS */
+  document.querySelectorAll('img').forEach((img) => img.addEventListener('error', () => { img.removeAttribute('src'); img.classList.add('photo-placeholder'); }));
+})();
+</script>
+</body>
+</html>

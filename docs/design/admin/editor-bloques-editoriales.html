@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Bloques editoriales y datos del autor · Panel · propuesta · ChalkGuide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans:['Inter','ui-sans-serif','system-ui','sans-serif'], mono:['JetBrains Mono','ui-monospace','monospace'] },
+  colors: { bg:'var(--bg)', side:'var(--side)', subtle:'var(--subtle)', elev:'var(--elev)', line:'var(--line)', 'line-strong':'var(--line-strong)', control:'var(--control)', fg:'var(--fg)', meta:'var(--meta)', muted:'var(--muted)', acc:'var(--acc)', 'acc-soft':'var(--acc-soft)', warn:'var(--warn)', 'warn-soft':'var(--warn-soft)' },
+  fontSize: { '2xs':['11px','16px'], xs:['12px','16px'], sm:['13px','20px'], base:['14px','22px'], lg:['16px','24px'], xl:['20px','28px'], '2xl':['24px','32px'] },
+}}}
+</script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .blk { position:relative; border-radius:8px; outline:1px solid transparent; transition:outline-color .15s var(--ease); }
+  .blk:hover { outline-color:var(--line-strong); }
+  .blk.sel { outline:2px solid var(--acc); outline-offset:4px; }
+  .bar-float { position:absolute; left:0; top:-48px; display:flex; align-items:center; gap:4px; padding:4px; border:1px solid var(--line); border-radius:8px; background:var(--elev); box-shadow:var(--shadow-pop); z-index:5; white-space:nowrap; }
+  @media (max-width:767px){ .bar-float{ position:static; flex-wrap:wrap; white-space:normal; margin-bottom:8px; } .blk.sel{ outline-offset:2px } .slash{ width:100%; } .flex.gap-4.items-start{ flex-direction:column } }
+  .note-ed { background:#FFF1E8; border-radius:8px; padding:14px 16px; }
+  .note-ed .k { font-family:Caveat,cursive; font-weight:700; font-size:22px; color:#9A4A16; line-height:1; }
+  .tbl-ed { width:100%; border-collapse:collapse; font-size:14px; }
+  .tbl-ed th, .tbl-ed td { border:1px solid var(--line); padding:6px 8px; text-align:left; }
+  .tbl-ed thead th { background:var(--subtle); font-weight:500; font-size:12px; color:var(--meta); }
+  .tbl-ed td.n { text-align:right; font-family:'JetBrains Mono',monospace; }
+  .tbl-ed td.cur { outline:2px solid var(--acc); outline-offset:-2px; }
+  .slash { width:300px; border:1px solid var(--line); border-radius:10px; background:var(--elev); box-shadow:var(--shadow-pop); padding:6px; }
+  .slash button { display:flex; width:100%; align-items:center; gap:10px; min-height:40px; padding:0 8px; border-radius:6px; font-size:13px; text-align:left; }
+  .slash button:hover, .slash button[aria-selected=true] { background:var(--subtle); }
+  .slash .ic { display:grid; place-items:center; width:28px; height:28px; border:1px solid var(--line); border-radius:6px; background:var(--bg); font-size:12px; color:var(--meta); }
+  .slash .new { margin-left:auto; font-size:11px; color:var(--acc); }
+  .prose-ed .meta-note { font-size:12px; line-height:16px; color:var(--muted); margin:8px 0 0; }
+  .fld label { display:block; font-size:12px; font-weight:500; margin-bottom:4px; }
+  .fld .help { font-size:12px; color:var(--muted); margin-top:4px; }
+</style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased text-base">
+
+<div class="border-b border-line bg-side">
+  <div class="max-w-[1200px] mx-auto px-4 md:px-6 py-2 text-xs flex flex-wrap gap-x-4 gap-y-1">
+    <strong class="font-medium">Panel · bloques editoriales (D47) y datos del autor · propuesta</strong>
+    <a class="underline" href="../site/pages/editorial-v2.html">Índice de la propuesta del sitio</a>
+    <span class="text-meta">Encaja en <code>articulo-editor.html</code> y en Ajustes (6.17). Tokens del panel, no del sitio.</span>
+  </div>
+</div>
+
+<main class="max-w-[1200px] mx-auto px-4 md:px-6 py-8 grid lg:grid-cols-[minmax(0,1fr)_320px] gap-8">
+  <!-- ========== LIENZO DEL EDITOR ========== -->
+  <section aria-label="Lienzo del editor (ejemplo)">
+    <p class="grp-label">Cuerpo · ES</p>
+    <div class="prose-ed mt-3 max-w-[680px] pb-10">
+      <h2>Haz la cuenta con tus números</h2>
+      <p>La comparación que importa es el precio por visita. Para sacarlo solo necesitas la tarifa y el número de visitas.</p>
+
+      <!-- Menú «/» -->
+      <div class="flex gap-4 items-start my-6">
+        <div class="text-muted text-sm pt-2 font-mono">/ta</div>
+        <div class="slash" role="listbox" aria-label="Insertar bloque">
+          <div class="grp-label px-2 py-1.5">Bloques</div>
+          <button role="option"><span class="ic">¶</span>Párrafo</button>
+          <button role="option"><span class="ic">H2</span>Título</button>
+          <button role="option"><span class="ic">H3</span>Subtítulo</button>
+          <button role="option"><span class="ic">•</span>Lista</button>
+          <button role="option"><span class="ic">«»</span>Cita</button>
+          <button role="option"><span class="ic">▣</span>Imagen con pie<span class="new">nuevo</span></button>
+          <button role="option" aria-selected="true"><span class="ic">▦</span>Tabla<span class="new">nuevo</span></button>
+          <button role="option"><span class="ic" style="font-family:Caveat;font-size:15px">X</span>Nota del autor<span class="new">nuevo</span></button>
+          <button role="option"><span class="ic">▶</span>Vídeo de YouTube</button>
+          <button role="option"><span class="ic">◧</span>Ficha</button>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="blk sel mt-16 mb-10">
+        <div class="bar-float" role="toolbar" aria-label="Tabla">
+          <button class="btn btn-sm t">+ Fila</button><button class="btn btn-sm t">+ Columna</button>
+          <span class="w-px h-5 bg-line mx-1"></span>
+          <label class="flex items-center gap-1.5 text-xs px-2"><input type="checkbox" class="cb" checked>Primera fila = encabezado</label>
+          <span class="w-px h-5 bg-line mx-1"></span>
+          <button class="btn btn-sm t text-[var(--danger)]">Quitar tabla</button>
+        </div>
+        <table class="tbl-ed">
+          <thead><tr><th>Forma de pago</th><th>Precio</th><th>Visitas</th><th>Por visita</th></tr></thead>
+          <tbody>
+            <tr><td>Entrada suelta</td><td class="n">14 €</td><td class="n">1</td><td class="n">14,00 €</td></tr>
+            <tr><td>Bono de 10</td><td class="n">120 €</td><td class="n">10</td><td class="n cur">12,00 €</td></tr>
+          </tbody>
+        </table>
+        <p class="meta-note">Hasta 5 columnas y 30 filas. Las columnas con cifras se alinean a la derecha y en mono solas. Sin celdas combinadas, sin colores.</p>
+      </div>
+
+      <!-- Imagen con pie y ancho -->
+      <div class="blk mt-16 mb-10">
+        <div class="bar-float" role="toolbar" aria-label="Imagen">
+          <span class="text-xs text-meta px-1">Ancho</span>
+          <div class="seg" role="radiogroup" aria-label="Ancho de la imagen"><button role="radio" aria-checked="false">Columna</button><button role="radio" aria-checked="true" style="background:var(--subtle);color:var(--fg)">Ancha</button><button role="radio" aria-checked="false" title="Solo fotos apaisadas">A sangre</button></div>
+          <span class="w-px h-5 bg-line mx-1"></span><button class="btn btn-sm t">Cambiar</button>
+        </div>
+        <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg" alt="" class="w-full rounded-md block">
+        <div class="mt-2 grid sm:grid-cols-[minmax(0,1fr)_200px] gap-2">
+          <div class="fld"><label for="cap">Pie de foto</label><input id="cap" class="input" value="Desplome con presas rojas y verdes, visto desde abajo."></div>
+          <div class="fld"><label for="cred">Crédito</label><input id="cred" class="input" placeholder="Foto: nombre"></div>
+        </div>
+        <p class="meta-note">El texto alternativo sale de Medios (obligatorio). «A sangre» se desactiva si la foto es vertical o mide menos de 1.600 px de ancho.</p>
+      </div>
+
+      <!-- Nota del autor -->
+      <div class="blk mt-10 mb-10">
+        <div class="note-ed">
+          <p class="k" aria-hidden="true">Nota de Xavi</p>
+          <p class="!mt-2 !mb-0">Si dudas entre bono y cuota, empieza por el bono. Al terminarlo sabrás cuántas veces vas de verdad.</p>
+        </div>
+        <p class="meta-note">Admite párrafos, negrita, cursiva, enlaces y lista. La etiqueta «Nota de Xavi» sale del nombre en Ajustes, no se escribe.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== AJUSTES · AUTOR (6.17) ========== -->
+  <aside aria-labelledby="t-autor" class="lg:sticky lg:top-6 self-start">
+    <div class="card p-4">
+      <h2 id="t-autor" class="text-lg font-semibold">Ajustes · Autor</h2>
+      <p class="text-xs text-muted mt-1">Alimenta la firma de los artículos y la cabecera de Sobre mí. El cuerpo de Sobre mí sigue en Páginas (D34).</p>
+      <div class="mt-4 space-y-4">
+        <div class="fld"><label>Foto</label>
+          <div class="flex items-center gap-3"><span class="w-14 h-14 rounded-full bg-subtle border border-line grid place-items-center text-muted text-xs">Vacío</span><button class="btn btn-sm t" style="border:1px solid var(--control)">Elegir de Medios</button></div>
+          <p class="help">Vertical, mín. 1.200 px de alto. Sin foto, la firma no enseña círculo ni inicial.</p></div>
+        <div class="fld"><label for="an">Nombre</label><input id="an" class="input" value="Xavi"></div>
+        <div class="fld"><label for="ar">Rol · ES</label><input id="ar" class="input" value="Escribe ChalkGuide"></div>
+        <div class="fld"><label for="al">Frase de Sobre mí (H1) · ES</label><textarea id="al" class="input !h-20 py-2" placeholder="Primera persona, máx. 120 caracteres"></textarea><p class="help">Aviso de texto provisional si contiene [XAVI: …] (D46).</p></div>
+        <div class="fld"><label for="ab">Bio corta · ES</label><textarea id="ab" class="input !h-20 py-2"></textarea><p class="help">Firma de los artículos. Máx. 160 caracteres. Pestaña EN igual.</p></div>
+        <div class="fld"><label>En números (hasta 2 cifras escritas)</label>
+          <div class="grid grid-cols-[72px_minmax(0,1fr)] gap-2"><input class="input font-mono" placeholder="Cifra"><input class="input" placeholder="Etiqueta ES"></div>
+          <div class="grid grid-cols-[72px_minmax(0,1fr)] gap-2 mt-2"><input class="input font-mono" placeholder="Cifra"><input class="input" placeholder="Etiqueta ES"></div>
+          <p class="help">Rocódromos con ficha y pies de gato comparados se cuentan solos.</p></div>
+        <div class="fld"><label for="ce">Email de contacto</label><input id="ce" class="input" type="email" placeholder="hola@…"><p class="help">Público. Vacío = sin botón «Escríbeme».</p></div>
+      </div>
+    </div>
+  </aside>
+</main>
+</body>
+</html>

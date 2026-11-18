@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Páginas · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=9"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* inspector: igual que articulo-editor.html */
+  #insp{position:fixed;z-index:55;background:var(--elev);overflow-y:auto;transition:transform .2s var(--ease)}
+  #inspScrim{position:fixed;inset:0;z-index:54;background:rgb(9 9 11/.45);display:none}
+  #inspScrim.open{display:block}
+  @media (max-width:767px){#insp{left:0;right:0;bottom:0;max-height:88dvh;border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(105%);box-shadow:var(--shadow-pop)} #insp.open{transform:none}}
+  @media (min-width:768px) and (max-width:1279px){#insp{top:0;right:0;height:100dvh;width:360px;border-left:1px solid var(--line);transform:translateX(105%);box-shadow:var(--shadow-pop)} #insp.open{transform:none}}
+  @media (min-width:1280px){#insp{position:sticky;top:48px;height:calc(100vh - 48px);width:340px;background:var(--side);border-left:1px solid var(--line);transform:none;flex:none;z-index:1} #insp.closed{display:none}}
+  @media (prefers-reduced-motion:reduce){#insp{transition:none}}
+  .blk-chg{position:relative} .blk-chg::before{content:"";position:absolute;left:-20px;top:4px;bottom:4px;width:3px;border-radius:2px;background:var(--st-rev)}
+  .blk-new{position:relative} .blk-new::before{content:"";position:absolute;left:-20px;top:4px;bottom:4px;width:3px;border-radius:2px;background:var(--st-pub)}
+  .blk-err{position:relative;outline:2px solid var(--danger);outline-offset:4px;border-radius:6px}
+  .mark-x{background:var(--warn-soft);color:var(--warn);border-radius:3px;padding:0 3px}
+  /* vistas del mockup */
+  body.v-editor nav[aria-label="Accesos rápidos"]{display:none}
+  body.v-editor #contenido{padding-bottom:0}
+  [data-view]{display:none} body.v-list [data-view=list],body.v-editor [data-view=editor]{display:block}
+  .prow{display:grid;grid-template-columns:minmax(0,1fr) 190px 92px 150px 140px 40px;align-items:center;gap:12px;min-height:56px;padding:8px 24px;border-bottom:1px solid var(--line)}
+  .prow:hover{background:var(--subtle)}
+  .prow-h{min-height:36px;background:var(--side);font-size:12px;color:var(--meta);font-weight:500}
+  .prow-h:hover{background:var(--side)}
+  @media (max-width:1279px){.prow{grid-template-columns:minmax(0,1fr) 190px 92px 140px 40px}.prow .c-idx{display:none}}
+  @media (max-width:1023px){.prow{grid-template-columns:minmax(0,1fr) 180px 92px 40px}.prow .c-upd{display:none}}
+  .pop-wrap{position:relative}
+  .pop-wrap>.menu{position:absolute;top:calc(100% + 4px);right:0;z-index:40}
+  .menu-i[aria-disabled=true]{opacity:.55;cursor:not-allowed}
+</style>
+</head>
+<body data-page="paginas" class="bg-bg text-fg font-sans antialiased text-base v-list">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+
+<!-- ================= LISTADO ================= -->
+<section data-view="list" aria-labelledby="h-pag">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 id="h-pag" class="font-medium">Páginas</h1>
+    <span class="chip st-neutral ml-1 hidden md:inline-flex" title="Las crea el sistema; no se añaden ni se borran"><i data-lucide="lock"></i>5 páginas fijas del sitio</span>
+    <span class="ml-auto text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1 hidden sm:inline-flex items-center gap-1">Mockup · ver estado:
+      <select class="demo bg-transparent outline-none text-fg" aria-label="Estado del mockup"></select></span>
+  </header>
+  <div class="sm:hidden px-4 py-2 border-b border-line text-xs text-meta">Mockup · <select class="demo bg-transparent outline-none text-fg" aria-label="Estado del mockup"></select></div>
+
+  <div id="l-data">
+    <div class="px-4 md:px-6 pt-4">
+      <div class="banner banner-warn" role="status"><i data-lucide="triangle-alert" class="w-4 h-4 flex-none mt-0.5 text-warn-icon"></i>
+        <div class="flex-1"><b>3 páginas legales sin publicar.</b> Hasta que las publiques, el sitio enseña «Esta página aún no está publicada». Tienen que estar publicadas antes del lanzamiento (textos en F7.4).</div></div>
+    </div>
+    <div class="mt-4 border-t border-line" role="table" aria-label="Páginas del sitio">
+      <div class="prow prow-h hidden md:grid" role="row"><span role="columnheader">Página</span><span role="columnheader">Estado</span><span role="columnheader">Idiomas</span><span role="columnheader" class="c-idx">Buscadores</span><span role="columnheader" class="c-upd">Actualizada</span><span role="columnheader"><span class="sr-only">Acciones</span></span></div>
+      <div id="rows" role="rowgroup" class="hidden md:block"></div>
+    </div>
+    <ul id="cards" class="md:hidden divide-y divide-line border-b border-line"></ul>
+    <p class="px-4 md:px-6 py-4 text-xs text-meta flex gap-2"><i data-lucide="info" class="w-4 h-4 flex-none"></i>Son rutas fijas del sitio: su URL no cambia y no se crean ni se borran desde aquí. Las legales nunca se indexan.</p>
+  </div>
+
+  <div id="l-loading" hidden aria-busy="true" aria-label="Cargando páginas">
+    <div class="px-6 pt-4"><div class="sk h-11 w-full"></div></div>
+    <div class="mt-4 border-t border-line"><div class="h-9 bg-side"></div>
+      <script>document.write(Array.from({length:5},(_, i)=>`<div class="h-14 px-6 flex items-center gap-4 border-b border-line"><span class="flex-1 space-y-2"><span class="sk h-3 block" style="width:${20+i*7}%"></span><span class="sk h-2.5 block w-32"></span></span><span class="sk h-5 w-24"></span><span class="sk h-4 w-14 hidden md:block"></span><span class="sk h-3 w-20 hidden lg:block"></span></div>`).join(''))</script>
+    </div>
+  </div>
+  <div id="l-error" hidden><div class="empty"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se han podido cargar las páginas</h3><p>Comprueba la conexión. Si sigue, puede ser Supabase. Código: PGRST301.</p><button class="btn btn-ghost mt-2" data-toast="Páginas cargadas" data-action=""><i data-lucide="rotate-cw"></i>Reintentar</button></div></div>
+
+  <div id="rowmenu" class="menu fixed z-50 hidden w-64" role="menu" aria-label="Acciones de la página"></div>
+</section>
+
+<!-- ================= EDITOR ================= -->
+<section data-view="editor" id="editor"></section>
+
+</main>
+
+<!-- ===== Modales ===== -->
+<div id="pub" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pub-h"><div class="dialog lg"><div class="grab"></div><div id="pub-in"></div></div></div>
+
+<div id="discard" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="dc-h" aria-describedby="dc-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="dc-h">¿Descartar los 2 cambios?</h2><p id="dc-d" class="text-sm text-meta mt-1">«Sobre mí» vuelve a la versión publicada el 8 oct. Lo que se ve en el sitio no cambia. Se puede deshacer durante unos segundos.</p></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="Cambios descartados">Descartar cambios</button></div></div></div>
+
+<div id="unpub" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="up-h" aria-describedby="up-d"><div class="dialog"><div class="grab"></div>
+  <div class="dialog-h"><h2 id="up-h">¿Despublicar «Sobre mí»?</h2>
+    <div id="up-d" class="text-sm text-meta mt-1 space-y-2"><p>/sobre-mi mostrará «Esta página aún no está publicada» y dejará de indexarse; /en/about dará 404.</p><p>La enlazan el pie del sitio y la firma de cada artículo: esos enlaces seguirán llevando al aviso. El texto no se borra: vuelve a borrador y lo puedes publicar otra vez.</p></div></div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close autofocus>Cancelar</button><button class="btn btn-danger" data-close data-toast="«Sobre mí» despublicada · vuelve a borrador">Despublicar</button></div></div></div>
+
+<div id="picker" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pk-h"><div class="dialog xl"><div class="grab"></div>
+  <div class="flex items-center gap-3 px-5 h-14 border-b border-line"><h2 id="pk-h" class="text-base font-semibold">Elegir imagen</h2><button class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+  <div class="p-5 text-sm text-meta">Selector de medios de siempre (<a class="underline underline-offset-2" href="medios.html">Medios</a>): alt ES obligatorio para usarla (D27).</div>
+  <div class="dialog-f"><button class="btn btn-ghost" data-close>Cancelar</button></div></div></div>
+
+<script>
+/* ================= datos ================= */
+const PAGES=[
+ {k:'about',t:'Sobre mí',grp:'Sobre ChalkGuide',es:'/sobre-mi',en:'/en/about',st:'rev',n:2,lang:'ok',idx:'Indexable',upd:'hoy, 09:12',state:'cambios',legal:false},
+ {k:'transparency',t:'Transparencia',grp:'Sobre ChalkGuide',es:'/transparencia',en:'/en/transparency',st:'empty',lang:'miss',idx:'No, sin publicar',upd:'—',state:'vacio',legal:false,note:'Texto en F7.4b'},
+ {k:'legal_notice',t:'Aviso legal',grp:'Legales',es:'/aviso-legal',en:'/en/legal-notice',st:'draft',lang:'miss',idx:'Nunca (legal)',upd:'5 oct',state:'publicar',legal:true,note:'Texto provisional'},
+ {k:'privacy',t:'Política de privacidad',grp:'Legales',es:'/privacidad',en:'/en/privacy',st:'draft',lang:'miss',idx:'Nunca (legal)',upd:'5 oct',state:'publicar',legal:true,note:'Texto provisional'},
+ {k:'cookies',t:'Política de cookies',grp:'Legales',es:'/cookies',en:'/en/cookies',st:'draft',lang:'miss',idx:'Nunca (legal)',upd:'5 oct',state:'publicar',legal:true,note:'Texto provisional'},
+];
+const chip=p=>p.st==='rev'?`<span class="chip-pair" title="${p.n} cambios sin publicar"><span class="chip st-pub"><span class="dot"></span>Publicada</span><span class="chip st-rev">${p.n} cambios</span></span>`
+ :p.st==='pub'?'<span class="chip st-pub"><span class="dot"></span>Publicada</span>'
+ :p.st==='empty'?'<span class="chip st-draft"><span class="dot"></span>Sin contenido</span>'
+ :'<span class="chip st-draft"><span class="dot"></span>Borrador</span>';
+const langs=p=>`<span class="lang lang-ok">ES</span> `+(p.lang==='ok'?'<span class="lang lang-ok">EN</span>':p.lang==='part'?'<span class="lang lang-part" title="EN incompleto">EN</span>':'<span class="lang lang-miss" title="Sin versión en inglés">EN</span><span class="sr-only"> sin inglés</span>');
+function renderList(){
+  let g='',h='',c='';
+  PAGES.forEach(p=>{
+    if(p.grp!==g){g=p.grp;h+=`<div class="prow prow-h !min-h-8 !grid-cols-1" role="row"><span role="cell" class="grp-label">${g}</span></div>`;c+=`<li class="px-4 pt-4 pb-1 grp-label bg-side">${g}</li>`;}
+    const sub=p.note?` · <span class="text-warn">${p.note}</span>`:'';
+    h+=`<div class="prow" role="row"><span role="cell" class="min-w-0"><a href="#${p.state}" class="row-link font-medium hover:underline underline-offset-2">${p.t}</a><span class="block text-xs text-meta mono truncate">${p.es}<span class="text-muted"> · ${p.en}</span>${sub}</span></span>
+      <span role="cell">${chip(p)}${p.st!=='rev'&&p.st!=='pub'?'<span class="block text-2xs text-meta mt-1">El sitio dice «en preparación»</span>':''}</span>
+      <span role="cell" class="flex gap-1">${langs(p)}</span>
+      <span role="cell" class="c-idx text-sm ${p.legal?'text-meta':''}">${p.legal?'<i data-lucide="eye-off" class="inline w-3.5 h-3.5 mr-1 -mt-0.5"></i>':''}${p.idx}</span>
+      <span role="cell" class="c-upd text-sm text-meta num">${p.upd}</span>
+      <span role="cell"><button class="icon-btn rm" data-k="${p.k}" aria-label="Acciones de ${p.t}" aria-haspopup="menu"><i data-lucide="more-horizontal"></i></button></span></div>`;
+    c+=`<li><a href="#${p.state}" class="flex gap-3 px-4 py-3 min-h-[64px] items-center"><span class="flex-1 min-w-0"><span class="block font-medium">${p.t}</span><span class="block text-xs text-meta mono truncate">${p.es}${p.note?' · '+p.note:''}</span><span class="mt-2 flex flex-wrap gap-1.5 items-center">${chip(p)} ${langs(p)}</span></span><i data-lucide="chevron-right" class="w-4 h-4 text-muted flex-none"></i></a></li>`;
+  });
+  document.getElementById('rows').innerHTML=h;document.getElementById('cards').innerHTML=c;
+}
+function rowMenu(p){
+  const live=p.st==='rev'||p.st==='pub';
+  return `<a href="#${p.state}" class="menu-i" role="menuitem"><i data-lucide="pencil"></i>Editar</a>
+   <a href="#" class="menu-i" role="menuitem"><i data-lucide="eye"></i>Vista previa</a>
+   <a href="#" class="menu-i" role="menuitem"><i data-lucide="external-link"></i>Ver en el sitio (${p.es})</a>
+   ${p.st==='rev'?`<div class="menu-sep"></div><a href="#cambios" class="menu-i" role="menuitem"><i data-lucide="git-compare-arrows" class="!text-st-rev"></i>Ver cambios sin publicar</a><button class="menu-i" role="menuitem" data-open="discard"><i data-lucide="undo-2"></i>Descartar cambios…</button>`:''}
+   ${live?`<div class="menu-sep"></div>${p.legal?`<span class="menu-i !h-auto py-2 items-start" role="menuitem" aria-disabled="true"><i data-lucide="file-minus" class="mt-0.5"></i><span>Despublicar<span class="block text-xs text-meta">Las legales no se despublican</span></span></span>`:`<button class="menu-i" role="menuitem" data-open="unpub"><i data-lucide="file-minus"></i>Despublicar…</button>`}`:''}`;
+}
+
+/* ================= editor ================= */
+const BODY_ES=`<p>Me llamo Xavi y escalo en Barcelona desde hace seis años. Empecé en bloque, solo, un martes de enero, y a los dos meses ya tenía con quién ir a cuerda.</p>
+ <h2>Por qué existe ChalkGuide</h2>
+ <p>Cuando empecé no tenía a quién preguntar dónde escalar, qué pies de gato comprar ni cuánto me iba a costar. Esta guía es lo que me habría gustado encontrar.</p>
+ <figure contenteditable="false" class="my-5"><div class="photo aspect-[3/2] rounded-lg" style="background-image:linear-gradient(150deg,#7a6a5a,#3b3026 60%,#1d1813)" role="img" aria-label="Xavi tizándose las manos ante un muro de bloque"></div><figcaption class="mt-2 text-xs text-meta flex gap-2 items-center">En La Paret de Gràcia, 2025.<span class="ml-auto inline-flex items-center gap-1 text-ok"><i data-lucide="check" class="w-3.5 h-3.5"></i>Alt ES</span></figcaption></figure>
+ <h2>Cómo trabajo</h2>
+ <ul><li>Visito cada rocódromo y pago la entrada; si alguna visita es invitada, lo digo.</li><li>Los precios llevan fecha de verificación.</li><li>Ningún rocódromo ni marca paga por una reseña.</li></ul>
+ <p><span class="mark-x">[XAVI: cierre y contacto.]</span></p>`;
+const BODY_CHG=`<p>Me llamo Xavi y escalo en Barcelona desde hace seis años. Empecé en bloque, solo, un martes de enero, y a los dos meses ya tenía con quién ir a cuerda.</p>
+ <h2>Por qué existe ChalkGuide</h2>
+ <p class="blk-chg">Cuando empecé no tenía a quién preguntar dónde escalar, qué pies de gato comprar ni cuánto me iba a costar. Esta guía es lo que me habría gustado encontrar <b>el primer mes</b>.</p>
+ <h2>Cómo trabajo</h2>
+ <ul><li>Visito cada rocódromo y pago la entrada; si alguna visita es invitada, lo digo.</li><li>Los precios llevan fecha de verificación.</li><li>Ningún rocódromo ni marca paga por una reseña.</li></ul>
+ <p class="blk-new">Si ves un dato que ha cambiado, escríbeme: lo compruebo y actualizo la ficha con la fecha.</p>`;
+const BODY_EN=`<p>I'm Xavi and I've been climbing in Barcelona for six years. I started bouldering on my own, on a Tuesday in January.</p>
+ <h2>Why ChalkGuide exists</h2>
+ <p>When I started I had no one to ask where to climb, which shoes to buy or what it would cost. This guide is what I wish I had found.</p>
+ <figure contenteditable="false" class="my-5 blk-err blk-new" id="img-en"><div class="photo aspect-[16/7] rounded-lg" style="background-image:linear-gradient(150deg,#7a6a5a,#3b3026 60%,#1d1813)" role="img" aria-label="Imagen sin texto alternativo en inglés"></div>
+   <figcaption class="mt-2 text-xs flex flex-wrap gap-2 items-center"><span class="err !mt-0 inline-flex items-center gap-1" id="img-en-err"><i data-lucide="circle-alert" class="w-3.5 h-3.5"></i>Falta el texto alternativo en inglés. Sin él no se puede publicar (D27).</span><button class="btn btn-ghost btn-sm ml-auto"><i data-lucide="text"></i>Añadir alt EN</button></figcaption></figure>
+ <h2>How I work</h2>
+ <ul><li>I visit every gym and pay for my ticket; if a visit is invited, I say so.</li><li>Prices carry a verification date.</li></ul>`;
+const BODY_LEGAL=`<p><span class="mark-x">Texto provisional.</span> La política de privacidad (RGPD) se redactará en F7.4.</p>
+ <h2>Quién trata tus datos</h2><p><span class="mark-x">[XAVI: titular, NIF y email de contacto.]</span></p>
+ <h2>Qué datos y para qué</h2><ul><li>Newsletter: tu email, con doble confirmación.</li><li>Opiniones: nombre visible y texto; fotos solo si las subes.</li></ul>
+ <h2>Tus derechos</h2><p>Acceso, rectificación, supresión, oposición, limitación y portabilidad. Escríbeme a <a href="#" class="underline">hola@…</a></p>`;
+
+const S={
+ 'editor-es':{p:'about',lang:'es',live:true,changes:0,body:BODY_ES,title:'Sobre mí',enDot:false},
+ 'cambios':{p:'about',lang:'es',live:true,changes:2,body:BODY_CHG,title:'Sobre mí',enDot:false,seoChg:true},
+ 'editor-en':{p:'about',lang:'en',live:true,changes:3,body:BODY_EN,title:'About me',enDot:true},
+ 'publicar':{p:'privacy',lang:'es',live:false,body:BODY_LEGAL,title:'Política de privacidad'},
+ 'errores':{p:'privacy',lang:'es',live:false,body:BODY_LEGAL,title:'Política de privacidad',errors:true,enDot:true},
+ 'vacio':{p:'transparency',lang:'es',live:false,body:'',title:'Transparencia'},
+ 'editor-cargando':{p:'about',loading:true},
+ 'editor-error':{p:'about',failed:true},
+};
+const P=k=>PAGES.find(x=>x.k===k);
+
+function header(s,p){
+  const legal=p.legal, rev=s.live&&s.changes;
+  const status=s.live?(rev?`<span class="chip-pair ml-1 flex-none"><span class="chip st-pub"><span class="dot"></span><span class="hidden sm:inline">Publicada</span><span class="sm:hidden sr-only">Publicada</span></span><span class="chip st-rev">${s.changes}<span class="hidden sm:inline">&nbsp;cambios</span><span class="sr-only"> sin publicar</span></span></span>`:'<span class="chip st-pub ml-1 flex-none"><span class="dot"></span>Publicada</span>')
+   :`<span class="chip st-draft ml-1 flex-none"><span class="dot"></span>${s.body?'Borrador':'Sin contenido'}</span>`;
+  const blocked=s.errors||!s.body||s.lang==='en';
+  const pubBtn=s.live
+   ?`<div class="split hidden md:inline-flex relative"><button class="btn btn-rev t" ${rev&&s.lang!=='en'?'data-open="pub"':'disabled'} ${s.lang==='en'?'aria-describedby="why-block" title="Falta el alt EN de 1 imagen"':''}><i data-lucide="upload"></i>Publicar cambios</button><button class="btn btn-rev t" id="pubMore" aria-label="Más opciones de publicación" aria-haspopup="menu" aria-expanded="false"><i data-lucide="chevron-down"></i></button>
+      <div id="pubMenu" class="menu absolute right-0 top-10 z-40 hidden w-64" role="menu">
+       ${rev?`<button class="menu-i" role="menuitem" data-open="pub"><i data-lucide="git-compare-arrows"></i>Ver los ${s.changes} cambios</button><button class="menu-i" role="menuitem" data-open="discard"><i data-lucide="undo-2"></i>Descartar cambios…</button><div class="menu-sep"></div>`:''}
+       <button class="menu-i" role="menuitem" data-toast="Enlace de vista previa copiado" data-action=""><i data-lucide="link"></i>Copiar enlace de vista previa</button>
+       ${legal?'<span class="menu-i !h-auto py-2 items-start" aria-disabled="true" role="menuitem"><i data-lucide="file-minus" class="mt-0.5"></i><span>Despublicar<span class="block text-xs text-meta">Una página legal publicada no se retira</span></span></span>':'<button class="menu-i" role="menuitem" data-open="unpub"><i data-lucide="file-minus"></i>Despublicar…</button>'}
+      </div></div>`
+   :`<button class="btn btn-primary t hidden md:inline-flex" id="pubBtn" ${!s.body?'disabled aria-describedby="why-block"':''}><i data-lucide="upload"></i>Publicar</button>`;
+  return `<header class="h-12 px-2 md:px-4 flex items-center gap-2 border-b border-line text-sm sticky top-14 md:top-0 bg-bg z-30">
+    <a href="#listado" class="icon-btn" aria-label="Volver a páginas"><i data-lucide="arrow-left"></i></a>
+    <nav aria-label="Migas" class="crumbs hidden lg:flex"><a href="#listado">Páginas</a><span aria-hidden="true">/</span><span class="text-fg truncate max-w-[240px]" aria-current="page">${p.t}</span></nav>
+    ${status}
+    <span class="text-xs text-muted hidden 2xl:inline-flex items-center gap-1 whitespace-nowrap" aria-live="polite"><i data-lucide="check" class="w-3.5 h-3.5"></i>${s.live?(rev?'Borrador de cambios guardado · hace 4 s':'Sin cambios'):'Guardado · hace 12 s'}</span>
+    <div class="ml-auto flex items-center gap-1.5">
+      <span class="text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1 hidden 2xl:inline-flex items-center gap-1">Mockup: <select class="demo bg-transparent outline-none text-fg" aria-label="Estado del mockup"></select></span>
+      <div class="seg" role="tablist" aria-label="Idioma del contenido" id="langTabs"><button role="tab" aria-selected="${s.lang==='es'}" data-l="es">ES</button><button role="tab" aria-selected="${s.lang==='en'}" data-l="en">EN${s.enDot?'<span class="w-1.5 h-1.5 rounded-full bg-warn-icon" aria-hidden="true"></span><span class="sr-only"> (incompleto)</span>':''}</button></div>
+      <button class="btn btn-ghost t hidden lg:inline-flex"><i data-lucide="eye"></i>Vista previa</button>
+      ${pubBtn}
+      <button id="toggleInsp" class="icon-btn hidden md:inline-grid" aria-label="Ajustes de la página" aria-controls="insp" aria-expanded="true"><i data-lucide="panel-right"></i></button>
+    </div>
+  </header>`;
+}
+function bands(s,p){
+  let b='';
+  if(s.live&&s.changes) b+=`<div class="rev-band px-4 py-2.5 text-sm flex flex-wrap items-center gap-x-3 gap-y-1" role="status"><i data-lucide="git-compare-arrows" class="w-4 h-4 text-st-rev flex-none"></i><span class="flex-1 min-w-[220px]">Estás editando un <b>borrador de cambios</b>. El sitio sigue mostrando la versión del 8 oct hasta que publiques.</span><span class="flex gap-4"><button class="underline underline-offset-2 font-medium" data-open="pub">Ver ${s.changes} cambios</button><button class="underline underline-offset-2 text-meta hover:text-fg" data-open="discard">Descartar</button></span></div>`;
+  if(s.lang==='en') b+=`<div class="px-4 py-2.5 text-sm flex flex-wrap items-center gap-x-3 gap-y-1 bg-warn-soft text-warn border-b border-line" role="status"><i data-lucide="triangle-alert" class="w-4 h-4 text-warn-icon flex-none"></i><span class="flex-1 min-w-[220px]"><b>Inglés incompleto:</b> la foto nueva no tiene texto alternativo en inglés. No se pueden publicar los cambios (ni los del español) hasta añadirlo o quitar la foto. /en/about sigue con la versión publicada.</span><a href="#img-en" class="underline underline-offset-2 font-medium">Ir a la imagen</a></div>`;
+  if(!s.live) b+=`<div class="px-4 py-2.5 text-sm flex flex-wrap items-center gap-x-3 gap-y-1 bg-side border-b border-line" role="status"><i data-lucide="eye-off" class="w-4 h-4 text-meta flex-none"></i><span class="flex-1 min-w-[220px]">Sin publicar: <span class="mono text-xs">${p.es}</span> muestra «Esta página aún no está publicada» y no se indexa${p.k==='transparency'?'. Ya la enlazan las fichas, las reseñas y los artículos':''}.</span></div>`;
+  if(s.errors) b+=`<div class="px-4 md:px-6 pt-4"><div class="banner banner-err" role="alert" tabindex="-1" id="errBanner"><i data-lucide="circle-alert" class="w-4 h-4 flex-none mt-0.5"></i><div><b>No se ha publicado: hay 3 cosas que arreglar.</b>
+    <ul class="mt-1 list-disc pl-4 space-y-0.5"><li><a href="#seo-t" class="underline underline-offset-2">Título SEO (ES): 78 caracteres, el máximo es 70</a></li><li><a href="#langTabs" class="underline underline-offset-2">Inglés a medias: hay título en inglés pero no cuerpo. Complétalo o vacía el título EN</a></li><li><a href="#upd" class="underline underline-offset-2">Última actualización: la fecha no puede ser futura</a></li></ul></div></div></div>`;
+  return b;
+}
+function toolbar(p){
+  const rich=!p.legal;
+  return `<div class="sticky top-[104px] md:top-12 z-20 bg-bg/95 backdrop-blur border-b border-line">
+    <div role="toolbar" aria-label="Formato" class="max-w-[760px] mx-auto px-2 md:px-6 h-11 flex items-center gap-0.5 overflow-x-auto">
+      <button class="icon-btn" aria-label="Deshacer"><i data-lucide="undo-2"></i></button><button class="icon-btn" aria-label="Rehacer"><i data-lucide="redo-2"></i></button>
+      <span class="w-px h-5 bg-line mx-1 flex-none"></span>
+      <button class="btn btn-quiet !px-2 flex-none" aria-haspopup="menu">Párrafo<i data-lucide="chevron-down" class="!w-3.5 !h-3.5"></i></button>
+      <button class="icon-btn" aria-label="Negrita" aria-pressed="false"><i data-lucide="bold"></i></button><button class="icon-btn" aria-label="Cursiva" aria-pressed="false"><i data-lucide="italic"></i></button><button class="icon-btn" aria-label="Enlace" aria-pressed="false"><i data-lucide="link"></i></button>
+      <span class="w-px h-5 bg-line mx-1 flex-none"></span>
+      <button class="icon-btn" aria-label="Lista"><i data-lucide="list"></i></button><button class="icon-btn" aria-label="Lista numerada"><i data-lucide="list-ordered"></i></button><button class="icon-btn" aria-label="Cita"><i data-lucide="quote"></i></button>
+      ${rich?'<button class="icon-btn" aria-label="Imagen de la biblioteca" data-open="picker"><i data-lucide="image"></i></button><button class="icon-btn" aria-label="Vídeo de YouTube"><i data-lucide="youtube"></i></button><button class="icon-btn" aria-label="Tarjeta de ficha"><i data-lucide="mountain"></i></button>':'<span class="text-2xs text-muted pl-2 flex-none hidden sm:inline" title="Duda 8">Legal: sin imágenes, vídeo ni fichas</span>'}
+      <span class="ml-auto text-xs text-muted flex-none hidden sm:inline num pl-2">${p.k==='transparency'?'0 palabras':p.legal?'92 palabras':'310 palabras'}</span>
+    </div></div>`;
+}
+function canvas(s,p){
+  const kicker=p.legal?'<i data-lucide="scale" class="w-3.5 h-3.5"></i>Página legal':'<i data-lucide="file" class="w-3.5 h-3.5"></i>Página · Sobre ChalkGuide';
+  const url=(s.lang==='en'?p.en:p.es);
+  const empty=!s.body;
+  return `<article class="max-w-[760px] mx-auto px-5 md:px-8 pt-8 pb-32" id="canvas">
+    <p class="text-xs font-medium text-meta flex items-center gap-1.5">${kicker}</p>
+    <div class="mt-1 ${s.lang==='en'&&s.changes?'':''}">
+      <label for="title" class="sr-only">Título (${s.lang.toUpperCase()})</label>
+      <textarea id="title" rows="1" style="field-sizing:content" class="w-full resize-none overflow-hidden bg-transparent text-[28px] md:text-[34px] leading-[1.15] font-semibold tracking-tight focus:outline-none">${s.title}</textarea>
+    </div>
+    <p class="mt-2 text-sm text-meta flex flex-wrap items-center gap-1.5"><i data-lucide="link-2" class="w-3.5 h-3.5"></i><span class="mono text-xs break-all text-fg">chalkguide.com${url}</span><span class="text-xs inline-flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i>ruta fija del sitio</span></p>
+    ${p.legal?`<p class="mt-1 text-sm text-meta"><i data-lucide="calendar-check" class="inline w-3.5 h-3.5 mr-1 -mt-0.5"></i>Así sale en la página: «Última actualización: ${s.errors?'<span class="text-danger">30 de octubre de 2026</span>':'24 de octubre de 2026'}» <button class="ml-1 text-xs underline underline-offset-2 hover:text-fg" onclick="document.getElementById('upd').focus()">Cambiar</button></p>`:''}
+    <hr class="my-6 border-line">
+    ${empty?`<div class="rounded-lg border border-dashed border-line-strong p-6 text-center"><span class="ico mx-auto w-10 h-10 rounded-[10px] grid place-items-center bg-subtle text-meta"><i data-lucide="file-pen-line" class="w-5 h-5"></i></span><h3 class="mt-3 text-sm font-semibold">Esta página está vacía</h3><p class="mt-1 text-sm text-meta max-w-sm mx-auto">Escribe aquí o pega el borrador de loro-lola (F7.4b). Pulsa <span class="kbd">/</span> para insertar bloques. No se puede publicar sin cuerpo.</p></div>
+      <div class="prose-ed mt-4" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Cuerpo de la página (ES)"><p class="text-muted">Escribe o pulsa <span class="kbd">/</span> para insertar…</p></div>`
+     :`<div class="prose-ed" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Cuerpo de la página (${s.lang.toUpperCase()})" ${s.lang==='en'?'lang="en"':''}>${s.body}</div>`}
+  </article>`;
+}
+function sec(title,body,extra='',open=true){return `<details class="sec border-b border-line" ${open?'open':''}><summary class="h-11 px-4 flex items-center gap-2 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-muted"></i>${title}${extra}</summary><div class="px-4 pb-4 space-y-3 text-sm">${body}</div></details>`;}
+const SEO_FALLBACK={about:['Quién escribe ChalkGuide y por qué: un escalador de Barcelona que visita, mide y puntúa rocódromos y material.','Who writes ChalkGuide and why: a Barcelona climber who visits, measures and scores climbing gyms and gear.'],privacy:['Qué datos trata ChalkGuide, para qué los usa, durante cuánto tiempo los conserva y cómo ejercer tus derechos de protección de datos.',''],transparency:['Cómo valoro rocódromos y material, cómo se calculan los índices, qué enlaces son de afiliado y qué visitas son invitadas.','']};
+const LINKS={about:['Pie del sitio','Firma y tarjeta de autor de cada artículo (11)'],transparency:['Leyenda y fichas de rocódromo (7)','Reseñas del autor','Enlaces de afiliado de pies de gato (15)','Cabecera de artículos con visita invitada o afiliado','Sobre mí'],privacy:['Pie del sitio','Casilla de consentimiento de la newsletter','Formulario de opiniones'],cookies:['Pie del sitio','Aviso de vídeos de YouTube (cuando haya)'],legal_notice:['Pie del sitio']};
+function inspector(s,p){
+  const L=s.lang.toUpperCase(), en=s.lang==='en', rev=s.live&&s.changes;
+  const impact=p.k==='about'?'Hoy esta página se genera al desplegar: un cambio publicado se ve tras el siguiente despliegue (osset-op lo resuelve).':'Se publica al momento; el sitio la sirve desde caché y puede tardar hasta 24 h salvo que se regenere al publicar (osset-op).';
+  let pub=`<div class="flex items-center justify-between gap-2"><span class="text-meta">Estado</span>${s.live?'<span class="chip st-pub"><span class="dot"></span>Publicada · 8 oct</span>':'<span class="chip st-draft"><span class="dot"></span>Borrador</span>'}</div>
+    ${rev?`<div class="flex items-center justify-between gap-2"><span class="text-meta">Sin publicar</span><button class="chip st-rev hover:underline" data-open="pub">${s.changes} cambios · ver</button></div>`:''}
+    <div class="flex items-center justify-between gap-2"><span class="text-meta">En inglés</span>${p.lang==='ok'?'<span class="lang lang-ok">EN publicado</span>':'<span class="text-meta">No · /en'+p.en.slice(3)+' da 404</span>'}</div>
+    <p class="help !mt-1 flex gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 flex-none mt-0.5"></i>${impact}</p>`;
+  let upd='';
+  if(p.legal) upd=sec('Última actualización',`<div><label class="lbl" for="upd">Fecha que ve el lector</label><input id="upd" type="date" class="input ${s.errors?'!border-danger':''}" value="${s.errors?'2026-10-30':'2026-10-24'}" ${s.errors?'aria-invalid="true" aria-describedby="upd-e"':'aria-describedby="upd-h"'}>
+     ${s.errors?'<p id="upd-e" class="err"><i data-lucide="circle-alert" class="w-3.5 h-3.5"></i>No puede ser posterior a hoy (24 oct 2026).</p>':'<p id="upd-h" class="help">Se propone la fecha de publicación cada vez que cambias el título o el texto. Al publicar puedes conservar la anterior si solo corriges una errata.</p>'}</div>`);
+  const fb=SEO_FALLBACK[p.k]||['',''];
+  let seo=`<div class="rounded-md border border-line bg-elev p-3"><p class="text-xs text-meta truncate">chalkguide.com › ${(en?p.en:p.es).slice(1).replace('/',' › ')}</p><p class="text-[15px] leading-5 text-[#1a0dab] mt-0.5">${s.seoChg?'Sobre mí · Xavi, escalador en Barcelona':(en?'About me':p.t)} · ChalkGuide</p><p class="text-xs text-meta mt-1 line-clamp-2">${en?fb[1]:fb[0]}</p></div>
+    <div class="${s.seoChg?'changed ml-3':''}"><div class="lbl"><label for="seo-t">Título SEO</label>${s.seoChg?'<span class="chg-mark">Cambiado</span>':''}<span class="counter ${s.errors?'err':''}" id="seo-t-c">${s.errors?'78':s.seoChg?'39':'0'} / 70</span></div><input id="seo-t" class="input ${s.errors?'!border-danger':''}" ${s.errors?'aria-invalid="true"':''} value="${s.errors?'Política de privacidad de ChalkGuide: qué datos tratamos y cómo ejercer derechos':s.seoChg?'Sobre mí · Xavi, escalador en Barcelona':''}" placeholder="Se usa el título" aria-describedby="seo-t-c ${s.errors?'seo-t-e':''}"><div class="meter ${s.errors?'err':''}"><span style="width:${s.errors?100:s.seoChg?56:0}%"></span></div>${s.errors?'<p id="seo-t-e" class="err"><i data-lucide="circle-alert" class="w-3.5 h-3.5"></i>Sobran 8 caracteres.</p>':''}</div>
+    <div><div class="lbl"><label for="seo-d">Descripción</label><span class="counter" id="seo-d-c">0 / 160</span></div><textarea id="seo-d" rows="3" class="input" placeholder="Vacía: se usa «${(en?fb[1]:fb[0])||'la descripción por defecto de la página'}»" aria-describedby="seo-d-c seo-d-h"></textarea><p id="seo-d-h" class="help">Vacía, se usa la descripción por defecto de esta página (no la del sitio).</p></div>`;
+  seo+= p.legal
+    ?'<div class="flex items-center justify-between gap-2"><span class="text-meta">Indexación</span><span class="chip st-hidden"><i data-lucide="eye-off"></i>Nunca (legal)</span></div><p class="help !mt-0">Las páginas legales siempre salen con noindex, follow.</p>'
+    :'<div class="flex items-center justify-between"><span class="text-meta" id="lbl-noidx">No indexar</span><button role="switch" aria-checked="false" aria-labelledby="lbl-noidx" class="switch"></button></div>';
+  if(!p.legal) seo+=`<div><p class="lbl">Imagen para compartir</p><p class="text-xs text-meta mb-2">Se usa la de Ajustes.</p><button class="btn btn-ghost btn-sm" data-open="picker"><i data-lucide="image"></i>Elegir imagen</button></div>`;
+  const links=sec('Dónde se enlaza',`<ul class="space-y-1.5">${(LINKS[p.k]||[]).map(l=>`<li class="flex gap-2"><i data-lucide="corner-down-right" class="w-3.5 h-3.5 text-muted flex-none mt-0.5"></i>${l}</li>`).join('')}</ul>`,'',false);
+  const ck=checklist(s,p);
+  const hist=p.legal
+    ?sec('Versiones publicadas',`<p class="text-meta">Aún no se ha publicado ninguna versión.</p><p class="help !mt-0">Cada publicación de una página legal guarda una copia fechada (duda 7): sirve para saber qué texto estaba vigente cuando alguien se suscribió.</p>`,'',false)
+    :sec('Historial',`<ol class="space-y-2">${rev?'<li class="flex gap-2"><span class="mt-1.5 w-2 h-2 rounded-full bg-st-rev flex-none"></span><span>Borrador de cambios<span class="block text-xs text-muted">hoy, 09:12 · '+s.changes+' campos</span></span></li>':''}<li class="flex gap-2"><span class="mt-1.5 w-2 h-2 rounded-full bg-ok flex-none"></span><span>Publicada<span class="block text-xs text-muted">8 oct, 19:40</span></span></li><li class="flex gap-2"><span class="mt-1.5 w-2 h-2 rounded-full bg-line-strong flex-none"></span><span>Creada<span class="block text-xs text-muted">5 oct, 10:02</span></span></li></ol>`,'',false);
+  return `<div class="grab md:!hidden"></div>
+   <div class="xl:hidden h-12 px-4 flex items-center border-b border-line sticky top-0 bg-elev z-10"><p class="text-sm font-semibold">Ajustes de la página</p><button id="closeInsp" class="icon-btn ml-auto" aria-label="Cerrar ajustes"><i data-lucide="x"></i></button></div>
+   ${sec('Publicación',pub)}${upd}${sec('SEO',seo,`<span class="ml-auto lang-tag">${L}</span>`)}${ck}${links}${hist}
+   <div class="px-4 py-4 text-xs text-meta pb-24 md:pb-4 flex gap-2"><i data-lucide="lock" class="w-3.5 h-3.5 flex-none mt-0.5"></i>Las páginas fijas no se duplican ni se eliminan.</div>`;
+}
+function checklist(s,p){
+  const it=[];
+  const ok=(t)=>it.push(['ok',t]),bad=(t,h)=>it.push(['bad',t,h]),warn=(t,h)=>it.push(['warn',t,h]);
+  s.title?ok('Título'):bad('Título');
+  s.body?ok('Cuerpo (ES)'):bad('Cuerpo (ES)','Escribe el texto para poder publicar.');
+  if(s.lang==='en') bad('Imágenes con alt EN','1 imagen sin texto alternativo en inglés. <a href="#img-en" class="underline">Ir a la imagen</a>'); else if(!p.legal) ok('Imágenes con alt ES');
+  s.errors?bad('Inglés completo o vacío','Hay título EN sin cuerpo.'):ok('Inglés completo o vacío');
+  s.errors?bad('Campos sin errores','Título SEO y fecha.'):ok('Campos sin errores');
+  if(s.body&&s.body.includes('mark-x')) warn(p.legal?'Quedan 2 marcas de texto provisional':'Queda 1 marca [XAVI: …]','Se publicarían tal cual. <a href="#canvas" class="underline">Ver</a>');
+  if(!s.seoChg) warn('Descripción SEO propia','Se usa la de por defecto.');
+  const done=it.filter(i=>i[0]==='ok').length, blocking=it.some(i=>i[0]==='bad');
+  return sec('Listo para publicar',`<ul class="space-y-2" id="why-block">${it.map(([k,t,h])=>`<li class="flex gap-2"><i data-lucide="${k==='ok'?'circle-check':k==='bad'?'circle-x':'triangle-alert'}" class="w-4 h-4 flex-none mt-0.5 ${k==='ok'?'text-ok':k==='bad'?'text-danger':'text-warn-icon'}"></i><span>${t}<span class="sr-only">: ${k==='ok'?'correcto':k==='bad'?'falta, impide publicar':'recomendado'}</span>${h?`<span class="block text-xs text-meta mt-0.5">${h}</span>`:''}</span></li>`).join('')}</ul>`,`<span class="ml-auto text-xs font-normal num ${blocking?'text-danger':'text-ok'}">${done} / ${it.length}</span>`);
+}
+function bottomBar(s){
+  return `<div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-bg border-t border-line px-3 pt-2 pb-[calc(8px+env(safe-area-inset-bottom))] flex gap-2">
+    <button class="btn btn-ghost flex-1" id="openInspM" aria-controls="insp" aria-expanded="false"><i data-lucide="sliders-horizontal"></i>Ajustes</button>
+    ${s.live?`<button class="btn btn-rev flex-1" ${s.changes&&s.lang!=='en'?'data-open="pub"':'disabled'}><i data-lucide="upload"></i>Publicar cambios</button>`:`<button class="btn btn-primary flex-1" id="pubBtnM" ${!s.body?'disabled':''}><i data-lucide="upload"></i>Publicar</button>`}
+  </div>`;
+}
+function pubDialog(s,p){
+  if(s.live) return `<div class="dialog-h flex items-start gap-3"><div><h2 id="pub-h">Publicar 2 cambios</h2><p class="text-sm text-meta mt-1">Frente a la versión publicada el 8 oct a las 19:40.</p></div><button class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+   <div class="dialog-b"><ul class="divide-y divide-line text-sm border border-line rounded-lg">
+     <li class="p-3"><div class="flex items-center gap-2"><span class="font-medium">Título SEO</span><span class="lang-tag">ES</span><button class="ml-auto text-xs text-meta underline underline-offset-2 hover:text-fg">Revertir</button></div><p class="mt-1.5 leading-6"><span class="diff-del">Sobre mí</span><span class="diff-add">Sobre mí · Xavi, escalador en Barcelona</span></p></li>
+     <li class="p-3"><details><summary class="flex items-center gap-2 cursor-pointer list-none"><span class="font-medium">Cuerpo</span><span class="lang-tag">ES</span><span class="text-xs text-meta">1 párrafo nuevo · 1 cambiado · 1 imagen quitada</span><span class="ml-auto text-xs text-meta underline underline-offset-2">Ver texto</span></summary>
+       <div class="mt-3 space-y-2 text-[13px] leading-6 border-l-2 border-line pl-3"><p>…es lo que me habría gustado encontrar<span class="diff-add"> el primer mes</span>.</p><p class="bg-[var(--diff-add)] rounded px-2"><span class="sr-only">Añadido: </span>Si ves un dato que ha cambiado, escríbeme: lo compruebo y actualizo la ficha con la fecha.</p><p class="bg-[var(--diff-del)] rounded px-2"><span class="sr-only">Quitado: </span>[imagen] En La Paret de Gràcia, 2025.</p></div></details></li>
+   </ul>
+   <div class="mt-4 banner banner-info"><i data-lucide="clock" class="w-4 h-4 flex-none mt-0.5"></i><div>Sobre mí se genera al desplegar: verás el cambio en /sobre-mi tras el siguiente despliegue. La versión en inglés no cambia.</div></div>
+   <div class="mt-3 flex items-center gap-2 text-sm"><i data-lucide="triangle-alert" class="w-4 h-4 text-warn-icon"></i>Listo para publicar · 1 aviso: sin descripción SEO propia</div></div>
+   <div class="dialog-f"><button class="btn btn-quiet mr-auto !text-danger hidden sm:inline-flex" data-open="discard">Descartar todos…</button><button class="btn btn-ghost" data-close>Seguir editando</button><button class="btn btn-rev" data-close data-toast="Cambios publicados en «Sobre mí»">Publicar cambios</button></div>`;
+  return `<div class="dialog-h flex items-start gap-3"><div><h2 id="pub-h">Publicar «${p.t}»</h2><p class="text-sm text-meta mt-1">Primera publicación. Después, cada edición será un borrador de cambios.</p></div><button class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+   <div class="dialog-b space-y-4 text-sm">
+     <ul class="space-y-2">
+       <li class="flex gap-2"><i data-lucide="globe" class="w-4 h-4 flex-none mt-0.5 text-meta"></i><span><span class="mono text-xs">${p.es}</span> deja de decir «en preparación» y muestra este texto.</span></li>
+       <li class="flex gap-2"><i data-lucide="eye-off" class="w-4 h-4 flex-none mt-0.5 text-meta"></i><span>Sigue sin indexarse: las páginas legales son siempre noindex, follow.</span></li>
+       <li class="flex gap-2"><i data-lucide="languages" class="w-4 h-4 flex-none mt-0.5 text-meta"></i><span>Solo en español. En /en, el pie enlaza a esta versión.</span></li>
+       <li class="flex gap-2"><i data-lucide="lock" class="w-4 h-4 flex-none mt-0.5 text-meta"></i><span>Una vez publicada, una página legal no se despublica: se corrige con cambios.</span></li>
+     </ul>
+     <fieldset class="rounded-lg border border-line p-3"><legend class="px-1 text-xs font-medium">Última actualización</legend>
+       <label class="flex gap-2 items-start min-h-8"><input type="radio" name="upd" class="radio mt-0.5" checked><span>Hoy, 24 de octubre de 2026<span class="block text-xs text-meta">Recomendado: es la primera versión publicada.</span></span></label>
+       <label class="flex gap-2 items-start min-h-8 mt-2 opacity-60"><input type="radio" name="upd" class="radio mt-0.5" disabled><span>Mantener la fecha anterior<span class="block text-xs text-meta">Solo para erratas. No hay fecha anterior: desactivado en este caso.</span></span></label>
+     </fieldset>
+     <div class="banner banner-warn"><i data-lucide="triangle-alert" class="w-4 h-4 flex-none mt-0.5 text-warn-icon"></i><div>Quedan <b>2 marcas de texto provisional</b>. Se publicarían tal cual. <a href="#canvas" data-close class="underline underline-offset-2">Revisarlas</a></div></div>
+     <p class="text-meta flex gap-2"><i data-lucide="info" class="w-4 h-4 flex-none mt-0.5"></i>Si cambias cómo tratas los datos de los suscriptores, sube también la versión del texto de consentimiento en Ajustes › Newsletter.</p>
+   </div>
+   <div class="dialog-f"><button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-primary" data-close data-toast="«${p.t}» publicada · se guarda la versión del 24 oct" data-action="Ver en el sitio">Publicar</button></div>`;
+}
+function renderEditor(key){
+  const s=S[key], p=P(s.p), ed=document.getElementById('editor');
+  if(s.loading){ed.innerHTML=`<div aria-busy="true" aria-label="Cargando la página"><div class="h-12 border-b border-line px-4 flex items-center gap-3"><span class="sk w-8 h-8"></span><span class="sk h-3 w-40"></span><span class="sk h-5 w-20"></span><span class="sk h-8 w-32 ml-auto"></span></div><div class="flex"><div class="flex-1 max-w-[760px] mx-auto px-8 pt-10 space-y-4"><span class="sk h-3 w-28 block"></span><span class="sk h-8 w-1/2 block"></span><span class="sk h-3 w-64 block"></span><div class="pt-6 space-y-3">${Array.from({length:7},(_,i)=>`<span class="sk h-3 block" style="width:${95-i*6}%"></span>`).join('')}</div></div><div class="hidden xl:block w-[340px] border-l border-line bg-side h-[80vh] p-4 space-y-4">${Array.from({length:5},()=>'<span class="sk h-4 w-2/3 block"></span><span class="sk h-8 w-full block"></span>').join('')}</div></div></div>`;return;}
+  if(s.failed){ed.innerHTML=`<header class="h-12 px-2 md:px-4 flex items-center gap-2 border-b border-line text-sm"><a href="#listado" class="icon-btn" aria-label="Volver a páginas"><i data-lucide="arrow-left"></i></a><span class="font-medium">Sobre mí</span></header><div class="empty"><span class="ico !bg-danger-soft !text-danger"><i data-lucide="cloud-off"></i></span><h3>No se ha podido abrir «Sobre mí»</h3><p>Lo publicado no ha cambiado. Comprueba la conexión y vuelve a intentarlo. Código: PGRST301.</p><div class="flex gap-2 mt-2"><button class="btn btn-ghost" onclick="location.hash='editor-es'"><i data-lucide="rotate-cw"></i>Reintentar</button><a href="#listado" class="btn btn-quiet">Volver a páginas</a></div></div>`;return;}
+  ed.innerHTML=header(s,p)+bands(s,p)+`<div class="flex items-start"><div class="flex-1 min-w-0">${toolbar(p)}${canvas(s,p)}</div><div id="inspScrim" aria-hidden="true"></div><aside id="insp" aria-label="Ajustes de la página">${inspector(s,p)}</aside></div>`+bottomBar(s);
+  document.getElementById('pub-in').innerHTML=pubDialog(s,p);
+  wireEditor(s);
+}
+function wireEditor(s){
+  const insp=document.getElementById('insp'),scrim=document.getElementById('inspScrim'),ti=document.getElementById('toggleInsp'),om=document.getElementById('openInspM');
+  const wide=()=>matchMedia('(min-width:1280px)').matches;
+  const openI=()=>{insp.classList.add('open');scrim.classList.add('open');om.setAttribute('aria-expanded','true');ti.setAttribute('aria-expanded','true');insp.querySelector('button,summary').focus();};
+  const closeI=()=>{insp.classList.remove('open');scrim.classList.remove('open');om.setAttribute('aria-expanded','false');if(!wide())ti.setAttribute('aria-expanded','false');};
+  ti.onclick=()=>{if(wide()){const c=insp.classList.toggle('closed');ti.setAttribute('aria-expanded',!c);}else openI();};
+  om.onclick=openI;document.getElementById('closeInsp').onclick=closeI;scrim.onclick=closeI;
+  if(!wide())ti.setAttribute('aria-expanded','false');
+  const pm=document.getElementById('pubMenu'),pmb=document.getElementById('pubMore');
+  if(pmb){pmb.onclick=e=>{e.stopPropagation();const o=pm.classList.toggle('hidden');pmb.setAttribute('aria-expanded',!o);};}
+  const pb=[document.getElementById('pubBtn'),document.getElementById('pubBtnM')];
+  pb.forEach(b=>b&&(b.onclick=()=>{if(s.errors){const e=document.getElementById('errBanner');e.focus();CG.toast('No se ha publicado: revisa los 3 errores',{type:'err',action:'Ver'});}else CG.open('pub',b);}));
+  document.querySelectorAll('#langTabs [role=tab]').forEach(b=>b.onclick=()=>{
+    const l=b.dataset.l; if(s.p==='about'){location.hash=l==='en'?'editor-en':'editor-es';}
+    else CG.toast(l==='en'?'Sin versión en inglés: escribe título y cuerpo para crearla':'Español',{type:'info',action:null});
+  });
+  if(s.errors) setTimeout(()=>document.getElementById('errBanner').focus(),50);
+}
+
+/* ================= router y estados del mockup ================= */
+const STATES=[['listado','Listado'],['cargando','Listado · cargando'],['error','Listado · error'],['editor-es','Editor ES (publicada)'],['editor-en','Editor EN incompleto'],['cambios','Cambios sin publicar'],['publicar','Publicar (legal)'],['errores','Errores al publicar'],['vacio','Página vacía'],['editor-cargando','Editor · cargando'],['editor-error','Editor · error']];
+function route(){
+  const h=(location.hash||'#listado').slice(1);
+  if(!STATES.some(s=>s[0]===h)&&route.cur){return;} /* anclas internas (#seo-t, #canvas…) no cambian de estado */
+  const key=STATES.some(s=>s[0]===h)?h:'listado'; route.cur=key;
+  const list=['listado','cargando','error'].includes(key);
+  document.body.classList.toggle('v-list',list);document.body.classList.toggle('v-editor',!list);
+  if(list){document.getElementById('l-data').hidden=key!=='listado';document.getElementById('l-loading').hidden=key!=='cargando';document.getElementById('l-error').hidden=key!=='error';}
+  else renderEditor(key);
+  document.querySelectorAll('select.demo').forEach(sel=>{sel.innerHTML=STATES.map(([v,l])=>`<option value="${v}" ${v===key?'selected':''}>${l}</option>`).join('');sel.onchange=()=>location.hash=sel.value;});
+  CG.icons(); window.scrollTo(0,0);
+  if(key==='cambios'&&sessionStorage.getItem('pg-open')!=='1'){}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  renderList();
+  const rm=document.getElementById('rowmenu');
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('.rm');
+    if(b){e.stopPropagation();const r=b.getBoundingClientRect();rm.innerHTML=rowMenu(P(b.dataset.k));rm.style.top=(r.bottom+4)+'px';rm.style.left=Math.max(8,r.right-256)+'px';rm.classList.remove('hidden');CG.icons();rm.querySelector('.menu-i').focus();return;}
+    if(!e.target.closest('#rowmenu'))rm.classList.add('hidden');
+    if(!e.target.closest('#pubMenu')){const pm=document.getElementById('pubMenu');pm&&pm.classList.add('hidden');}
+  });
+  addEventListener('keydown',e=>{if(e.key==='Escape'){rm.classList.add('hidden');const i=document.getElementById('insp');if(i&&i.classList.contains('open'))document.getElementById('closeInsp').click();}});
+  addEventListener('hashchange',route);
+  setTimeout(route,0);
+});
+</script>
+</body>
+</html>
