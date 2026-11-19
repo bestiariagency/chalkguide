@@ -14,6 +14,7 @@ const slug = computed(() => String(route.params.slug))
 
 const { data } = await useResoler(slug)
 await useSlugRedirect(data.value, 'resoler', 'climbing-shoe-resoling-slug')
+useTrackContext().setTrackContext({ contentType: 'resoler', contentSlug: data.value?.slug }) // analytics (D69)
 useDetailLocales(data.value, 'climbing-shoe-resoling')
 const resoler = computed(() => data.value as ResolerSummary)
 

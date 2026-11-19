@@ -167,6 +167,7 @@ function usageHref(row: MediaUsageRow): string | undefined {
   if (!row.owner_id) return undefined
   if (row.owner_table === 'articles') return `/administrador/articulos/${row.owner_id}`
   if (row.owner_table === 'pages') return `/administrador/paginas/${row.owner_id}`
+  if (row.owner_table === 'news') return `/administrador/noticias?noticia=${row.owner_id}`
   if (row.owner_table === 'items') {
     const base = ITEM_ROUTES[row.item_category ?? '']
     return base ? `${base}${row.owner_id}` : undefined

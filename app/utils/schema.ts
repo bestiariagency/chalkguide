@@ -105,6 +105,57 @@ export function articleLd(input: {
   }
 }
 
+/**
+ * `Article` of an indexable news page (noticias-seo-spec §19.5): the author is the Organization (the routine drafts and Xavi
+ * edits, so crediting him as a Person would not be true), Xavi is the `editor`, and the original is `isBasedOn` + `citation`.
+ * `about` is the first related ChalkGuide page and `mentions` the related ones (up to 3). No `NewsArticle`, no `articleBody`.
+ */
+export function newsArticleLd(input: {
+  url: string
+  siteUrl: string
+  headline: string
+  description?: string
+  image?: string
+  publishedAt: string | null
+  modifiedAt: string
+  section?: string
+  language: 'es' | 'en'
+  aboutUrl?: string
+  source: { url: string; name: string; title?: string | null; publishedOn?: string | null }
+  related: { name: string; url?: string }[]
+}): JsonLd {
+  const thing = (r: { name: string; url?: string }) => compactLd({ '@type': 'Thing', name: r.name, url: r.url })
+  const [about, ...rest] = input.related
+  return {
+    '@context': 'https://schema.org',
+    ...compactLd({
+      '@type': 'Article',
+      '@id': `${input.url}#article`,
+      headline: input.headline,
+      description: input.description,
+      image: input.image ? [input.image] : undefined,
+      datePublished: input.publishedAt,
+      dateModified: input.modifiedAt,
+      articleSection: input.section,
+      inLanguage: input.language,
+      mainEntityOfPage: input.url,
+      author: { '@id': organizationId(input.siteUrl) },
+      editor: personLd(input.aboutUrl),
+      publisher: { '@id': organizationId(input.siteUrl) },
+      isBasedOn: compactLd({
+        '@type': 'CreativeWork',
+        url: input.source.url,
+        name: input.source.title ?? undefined,
+        publisher: { '@type': 'Organization', name: input.source.name },
+        datePublished: input.source.publishedOn ?? undefined,
+      }),
+      citation: input.source.url,
+      about: about ? thing(about) : undefined,
+      mentions: input.related.length ? [...(about ? [thing(about)] : []), ...rest.map(thing)] : undefined,
+    }),
+  }
+}
+
 export function itemListLd(items: { name: string; url: string }[]): JsonLd {
   return {
     '@context': 'https://schema.org',

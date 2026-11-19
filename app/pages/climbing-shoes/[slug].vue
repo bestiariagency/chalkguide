@@ -9,6 +9,7 @@ const slug = computed(() => String(route.params.slug))
 
 const { data } = await useShoe(slug)
 await useSlugRedirect(data.value, 'shoe', 'climbing-shoes-slug')
+useTrackContext().setTrackContext({ contentType: 'shoe', contentSlug: data.value?.slug }) // analytics (D69)
 useDetailLocales(data.value, 'climbing-shoes')
 const title = computed(() => data.value?.name ?? slug.value)
 

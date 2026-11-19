@@ -1,0 +1,176 @@
+/*
+ * Cookie banner and preferences (D85, D86, README §16). Loaded with the consent library chunk
+ * (composables/useConsent.ts), never with the site CSS, so it adds no blocking CSS to the LCP.
+ * CSS fallback: the library (vanilla-cookieconsent) renders its own markup under #cc-main; Tailwind
+ * utilities cannot reach it, so its variables and a few rules are mapped to the design tokens here.
+ */
+@import 'vanilla-cookieconsent/dist/cookieconsent.css';
+@reference './main.css';
+
+#cc-main {
+  --cc-font-family: var(--font-sans);
+  --cc-bg: var(--color-board);
+  --cc-primary-color: var(--color-foreground);
+  --cc-secondary-color: var(--color-meta);
+  --cc-link-color: var(--color-accent);
+  --cc-z-index: 45; /* above the dock (40), below the mobile menu and dialogs (>= 50) */
+  --cc-modal-border-radius: var(--radius-slab);
+  --cc-btn-border-radius: var(--radius-md);
+  --cc-overlay-bg: rgb(15 15 15 / 0.55);
+  --cc-separator-border-color: var(--color-line);
+  /* The three buttons of each layer are identical ghost buttons (AEPD: same weight). */
+  --cc-btn-primary-bg: transparent;
+  --cc-btn-primary-color: var(--color-foreground);
+  --cc-btn-primary-border-color: var(--color-control);
+  --cc-btn-primary-hover-bg: var(--color-elevated);
+  --cc-btn-primary-hover-color: var(--color-foreground);
+  --cc-btn-primary-hover-border-color: var(--color-meta);
+  --cc-btn-secondary-bg: transparent;
+  --cc-btn-secondary-color: var(--color-foreground);
+  --cc-btn-secondary-border-color: var(--color-control);
+  --cc-btn-secondary-hover-bg: var(--color-elevated);
+  --cc-btn-secondary-hover-color: var(--color-foreground);
+  --cc-btn-secondary-hover-border-color: var(--color-meta);
+  /* Switch: off = paper + 4:1 border, on = accent fill + accent border (README §16.3). */
+  --cc-toggle-off-bg: var(--color-elevated);
+  --cc-toggle-off-knob-bg: var(--color-meta);
+  --cc-toggle-on-bg: var(--color-accent-fill);
+  --cc-toggle-on-knob-bg: var(--color-on-accent);
+  --cc-toggle-readonly-bg: var(--color-success-muted);
+  --cc-toggle-readonly-knob-bg: var(--color-success-text);
+  --cc-toggle-readonly-knob-icon-color: var(--color-success-muted);
+  --cc-toggle-enabled-icon-color: var(--color-accent-fill);
+  --cc-toggle-disabled-icon-color: var(--color-board);
+  --cc-cookie-category-block-bg: transparent;
+  --cc-cookie-category-block-border: transparent;
+  --cc-cookie-category-block-hover-bg: transparent;
+  --cc-cookie-category-block-hover-border: transparent;
+  --cc-cookie-category-expanded-block-bg: transparent;
+  --cc-cookie-category-expanded-block-hover-bg: transparent;
+  --cc-section-category-border: var(--color-line);
+  --cc-footer-bg: var(--color-board);
+  --cc-footer-color: var(--color-meta);
+  --cc-footer-border-color: var(--color-line);
+}
+
+/* Layer one: paper bar fixed at the bottom, full width (direction A). Not rendered on the server. */
+#cc-main .cm.cm {
+  background: var(--color-board);
+  border-top: 1px solid var(--color-line-strong);
+  border-radius: 0;
+  box-shadow: 0 -14px 32px -18px rgb(28 26 23 / 0.45);
+  padding-bottom: env(safe-area-inset-bottom);
+  max-width: none;
+  width: 100%;
+}
+#cc-main .cm.cm .cm__body {
+  display: grid;
+  gap: 12px;
+  margin: 0 auto;
+  max-width: var(--container-page);
+  padding: 16px;
+}
+#cc-main .cm.cm .cm__texts { padding: 0; }
+#cc-main .cm.cm .cm__title { font-size: 15px; font-weight: 500; line-height: 1.35; padding: 0; }
+#cc-main .cm.cm .cm__desc { color: var(--color-meta); font-size: 14px; line-height: 1.45; margin-top: 4px; max-width: 78ch; padding: 0; }
+/* The library splits the buttons into two groups; one grid makes them three equal columns. */
+#cc-main .cm.cm .cm__btns { max-width: none; min-width: 0; display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0; border: 0; }
+#cc-main .cm.cm .cm__btn-group { display: contents; }
+@media (min-width: 640px) {
+  #cc-main .cm.cm .cm__body { padding: 20px 24px; }
+  #cc-main .cm.cm .cm__btns { width: 456px; }
+}
+@media (min-width: 1024px) {
+  #cc-main .cm.cm .cm__body { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 40px; padding: 16px 24px; }
+  #cc-main .cm.cm .cm__btns { width: 432px; }
+}
+
+/* Buttons: same size, 44 px target, ghost, in both layers. */
+/* Selectors are doubled (.cm.cm) to beat the library's layout rules, which are more specific. */
+#cc-main .cm.cm .cm__btn.cm__btn,
+#cc-main .pm.pm .pm__btn.pm__btn {
+  align-items: center;
+  margin: 0;
+  min-width: 0;
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: 500;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 12px;
+  width: 100%;
+}
+
+
+/* Panel footer: reject all, accept all, save selection; three columns from 640, stacked below. */
+#cc-main .pm.pm .pm__footer { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); }
+#cc-main .pm.pm .pm__btn-group { display: contents; }
+#cc-main .pm__btn[data-role='necessary'] { order: 1; }
+#cc-main .pm__btn[data-role='all'] { order: 2; }
+#cc-main .pm__btn[data-role='save'] { order: 3; }
+@media (min-width: 640px) {
+  #cc-main .pm.pm .pm__footer { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* The library forces its own phone layout with !important under 640 px; these win it back. */
+@media screen and (max-width: 640px) {
+  #cc-main .cm.cm { margin: 0; width: 100% !important; }
+  #cc-main .cm.cm .cm__body { display: grid !important; gap: 12px; padding: 16px !important; }
+  #cc-main .cm.cm .cm__title,
+  #cc-main .cm.cm .cm__desc,
+  #cc-main .cm.cm .cm__btns { padding-left: 0 !important; padding-right: 0 !important; }
+  #cc-main .cm.cm .cm__btns { border: 0 !important; display: grid !important; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #cc-main .cm.cm .cm__btn-group { display: contents !important; }
+  #cc-main .cm.cm .cm__btn.cm__btn { margin: 0 !important; }
+  #cc-main .pm.pm { border-radius: 12px 12px 0 0; bottom: 0; height: auto; max-height: 92dvh; top: auto; }
+  #cc-main .pm.pm .pm__footer { display: grid !important; flex-direction: row !important; }
+  #cc-main .pm.pm .pm__btn-group { display: contents !important; }
+  #cc-main .pm.pm .pm__btn.pm__btn { margin: 0 !important; }
+}
+
+/* Focus ring of the paper system. */
+#cc-main button:focus-visible,
+#cc-main a:focus-visible,
+#cc-main summary:focus-visible,
+#cc-main .section__toggle:focus-visible ~ .toggle__icon {
+  box-shadow: 0 0 0 2px var(--color-board), 0 0 0 4px var(--color-accent);
+  outline: none;
+}
+
+/* Layer two: modal panel, 640 px, bottom sheet under 640. */
+#cc-main .pm.pm { background: var(--color-board); border-radius: var(--radius-slab); max-width: 640px; }
+#cc-main .pm.pm .pm__title { font-size: 20px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; }
+#cc-main .pm__header { flex-wrap: wrap; }
+#cc-main [data-cc-saved] { color: var(--color-meta); flex-basis: 100%; font-size: 13px; margin: 4px 0 0; order: 3; }
+/* Touch target of the switches: the track stays 50x23, the clickable input grows to 44 px high. */
+#cc-main .section__toggle { height: 44px; min-height: 44px; min-width: 50px; }
+/* Links are underlined at rest (not only on hover). */
+#cc-main .cm__desc a,
+#cc-main .pm__section-desc a,
+#cc-main .pm__section-desc .cc__link {
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+#cc-main .section__toggle ~ .toggle__icon { border: 1px solid var(--color-control); }
+#cc-main .section__toggle:checked ~ .toggle__icon { border-color: var(--color-accent); }
+#cc-main .section__toggle:disabled ~ .toggle__icon { border-color: var(--color-success-text); }
+#cc-main .pm__section-arrow { background: var(--color-elevated); }
+#cc-main .pm__section-title { font-size: 17px; font-weight: 500; }
+#cc-main .pm__section-desc { color: var(--color-meta); font-size: 15px; line-height: 1.5; }
+#cc-main .pm__close-btn { min-height: 44px; min-width: 44px; }
+#cc-main .pm__table-td,
+#cc-main .pm__table-th { font-size: 14px; line-height: 1.45; }
+
+/* Space for the banner at the end of the page, so the newsletter and the footer scroll above it (CLS 0). */
+html { scroll-padding-bottom: var(--cc-h, 0px); }
+body { padding-bottom: var(--cc-h, 0px); }
+
+/* Status line for screen readers: visually hidden, still announced. */
+#cc-root [data-cc-status] {
+  border: 0; clip: rect(0, 0, 0, 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cc-main, #cc-main * { animation: none !important; transition: none !important; }
+}

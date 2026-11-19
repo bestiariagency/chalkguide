@@ -2,11 +2,13 @@ import type { LocaleRouteTo } from '~/types/ui'
 import type { NewsRelatedKind, NewsScope, NewsSummary } from '~/types/news'
 import { intlLocale } from './dates'
 
-export const NEWS_PAGE_SIZE = 20
+/** 21 = 1 + 2 + 18 on page 1 and 7 full rows of 3 on the rest (§18.1). */
+export const NEWS_PAGE_SIZE = 21
 export const NEWS_SCOPES: readonly NewsScope[] = ['cat', 'es', 'intl']
 const NEWS_TIME_ZONE = 'Europe/Madrid'
 const DAY_MS = 24 * 3600 * 1000
-const HOME_FRESH_DAYS = 7
+/** The opener is the latest item with a photo of the last 7 days (§18.3). */
+const LEAD_DAYS = 7
 
 /** `?pagina=` is untrusted: anything that is not a positive integer is page 1. */
 export function parseNewsPage(raw: unknown): number {
@@ -117,15 +119,34 @@ export function formatWeekRange(week: Pick<NewsWeek, 'start' | 'end'>, locale: s
     : `${startDay} ${startMonth} – ${endDay} ${endMonth}`
 }
 
+export type NewsPos = 'lead' | 'side' | 'grid'
+
 /**
- * Home block (D77, B): the latest `limit`, but the items with a note from the last 7 days go first.
- * `items` arrives newest first; both groups keep that order.
+ * Size of each piece of the front page by position (§18.1). Page 1 only, and with at least 3 items; otherwise everything is
+ * grid. The opener is the latest item with a photo of the last 7 days, else the latest one; the two sides are the next two.
+ * `items` arrives newest first and keeps that order in the DOM (the list view reads by date); the grid view moves the opener first.
  */
-export function pickHomeNews(items: NewsSummary[], limit = 4, now = new Date()): NewsSummary[] {
-  const since = now.getTime() - HOME_FRESH_DAYS * DAY_MS
-  const fresh = items.filter((item) => item.note && new Date(item.publishedAt).getTime() >= since)
-  const ids = new Set(fresh.map((item) => item.id))
-  return [...fresh, ...items.filter((item) => !ids.has(item.id))].slice(0, limit)
+export function newsPositions(items: NewsSummary[], page: number, now = new Date()): Map<string, NewsPos> {
+  const positions = new Map<string, NewsPos>()
+  const front = page === 1 && items.length >= 3
+  const since = now.getTime() - LEAD_DAYS * DAY_MS
+  const lead = front
+    ? (items.find((item) => item.image && new Date(item.publishedAt).getTime() >= since) ?? items[0])
+    : undefined
+  let sides = 0
+  for (const item of items) {
+    if (item === lead) positions.set(item.id, 'lead')
+    else if (front && sides < 2) {
+      positions.set(item.id, 'side')
+      sides += 1
+    } else positions.set(item.id, 'grid')
+  }
+  return positions
+}
+
+/** Dek of a piece: the start of the insight (the whole text, the CSS clamps it to 2 lines); without insight, the summary. */
+export function newsDek(news: Pick<NewsSummary, 'insight' | 'summary'>): string {
+  return (news.insight ?? news.summary).replace(/\s+/g, ' ').trim()
 }
 
 /** "15 nov" in mono (the date column of the rows). */
@@ -167,9 +188,21 @@ export function newsRelatedTo(kind: NewsRelatedKind, slug: string | null): Local
   }
 }
 
-/** Meta description of a news page: the first sentence of the note if there is one, otherwise the summary. */
-export function newsSeoDescription(news: Pick<NewsSummary, 'note' | 'summary'>): string {
-  const note = news.note?.replace(/\s+/g, ' ').trim()
-  if (note) return note.split(/(?<=[.!?…])\s/)[0] ?? note
-  return news.summary
+const DESCRIPTION_MAX = 158
+
+/** First 1-2 sentences of a text, as many as fit in 158 characters (at least the first one, cut at a word if it is longer). */
+function leadingSentences(text: string): string {
+  const sentences = text.split(/(?<=[.!?…])\s+/)
+  let out = sentences[0] ?? text
+  if (out.length > DESCRIPTION_MAX) return `${out.slice(0, DESCRIPTION_MAX - 1).replace(/\s+\S*$/, '')}…`
+  if (sentences[1] && `${out} ${sentences[1]}`.length <= DESCRIPTION_MAX) out = `${out} ${sentences[1]}`
+  return out
+}
+
+/** Meta description of a news page (§19): the one Xavi wrote, else the first 1-2 sentences of the insight (<= 158), else the summary. */
+export function newsSeoDescription(news: { metaDescription?: string | null; insight: string | null; summary: string }): string {
+  const meta = news.metaDescription?.replace(/\s+/g, ' ').trim()
+  if (meta) return meta
+  const insight = news.insight?.replace(/\s+/g, ' ').trim()
+  return leadingSentences(insight || news.summary.replace(/\s+/g, ' ').trim())
 }

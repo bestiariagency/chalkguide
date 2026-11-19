@@ -1,6 +1,6 @@
 # Spec SEO de /noticias (F8 · tarea 8.4)
 
-Autor: lince-max. Fecha: 2026-11-13. Solo especificación: no hay código. La implementa lince-max en 8.11 sobre lo que entregue coneja-lucky en 8.10.
+Autor: lince-max. Fecha: 2026-11-13. **Actualización 2026-11-19 (D91): la sección 19 sustituye a la «Nota de Xavi» como criterio de indexación y de valor; donde las secciones 1, 3, 4, 6, 8, 12 y 17 hablen de «nota de Xavi» o «≥ 60 palabras», manda la sección 19 (aporte).** Solo especificación: no hay código. La implementa lince-max en 8.11 sobre lo que entregue coneja-lucky en 8.10.
 
 Base: D3 (sin versión en inglés no se publica en `/en`), D14 (un sitemap con alternates), D67 (`chalkguide.es`), D69 (eventos propios en `guide.events`), D71 (siempre con fuente, resumen propio, imagen solo con licencia), D73 (ficha `noindex` salvo «Nota de Xavi»), D74 (nada se publica solo). Se reutiliza lo que ya hace el blog: `usePageSeo`, `useListingSeo`, `useSiteSeo` (canonical y hreflang salen de la ruta), `useJsonLd`, `articleLd` en `app/utils/schema.ts`, reglas compartidas en `app/utils/seo.ts` y fuente de sitemap en `server/api/__sitemap__/urls.ts`.
 
@@ -287,3 +287,159 @@ Operación
 - loro-lola (8.3 y 8.12): titular propio, regla de resumen sin copia, textos `seo.*` es/en, texto introductorio de /noticias y de categorías, aviso de newsletter en español.
 - buho-pixel (8.2): ubicación visual de la nota de Xavi, del bloque de newsletter y del enlace de fuente (visible, con confianza).
 - Decisión de Xavi: confirmar longitud mínima de la nota para indexar (propuesta: ~60 palabras) y el umbral de 6 noticias para indexar el índice.
+
+## 19. Aporte propio (D91, tarea 8.20a)
+
+Sustituye a la «Nota de Xavi» de D73/D79. /noticias es un agregador: el valor para el lector es descubrir y saltar a la fuente. El valor para Google es el **aporte**: contexto propio, útil para quien escala en Barcelona y Cataluña, que no existe en la fuente. La rutina de IA lo redacta; Xavi lo revisa y lo edita al aprobar (D74). Sin aporte válido, la ficha no se indexa.
+
+### 19.1 Qué es un aporte válido
+
+Política de Google sobre «scaled content abuse»: produce penalización el contenido generado a escala (con IA o sin ella) cuyo fin principal es posicionar y que no aporta valor al usuario, incluido reescribir o resumir fuentes sin añadir nada. No penaliza que lo redacte una IA, sino que sea genérico, repetible y sin supervisión. Defensas de ChalkGuide: aporte con información que la fuente no trae, revisión humana de cada pieza, volumen bajo y enlace visible a la fuente.
+
+Un aporte es válido solo si cumple **todos** estos criterios:
+
+1. **Información nueva respecto a la fuente.** Contiene al menos un dato o relación que el lector no encuentra en la noticia: una ficha de ChalkGuide relacionada, una comparación con otra vía o zona, un grado de referencia, un dato práctico (acceso, época, horarios, precio).
+2. **Anclaje local.** Explica por qué importa a quien escala en Barcelona o Cataluña: distancia, rocódromo donde entrenar algo parecido, zona de vías equivalentes, evento cercano. Si la noticia es internacional y no hay relación local honesta, el aporte dice qué se puede aprender o entrenar, sin forzar un vínculo falso. Si ni así hay valor, la noticia se publica sin indexar (19.4) o no se publica.
+3. **Verificable.** Cada dato sale de (a) la propia fuente (con atribución: «según Desnivel», «según el comunicado de la federación»), o (b) una ficha de ChalkGuide publicada (rocódromos, artículos, eventos, resoladores). Nada más. La rutina no inventa, no completa de memoria y no usa otras webs como fuente de contexto.
+4. **Propio en la forma.** Ninguna frase de más de 8 palabras idéntica a la fuente (mismo control que el resumen, sección 12.3). El aporte no repite el resumen con otras palabras: el resumen dice qué ha pasado; el aporte dice qué significa para el lector.
+5. **Útil sin ser opinión disfrazada de hecho.** Valoraciones permitidas solo si Xavi las ha editado y firma el criterio; la rutina redacta contexto, no juicios.
+6. **Distinto de otras fichas.** No es una plantilla con huecos. Dos aportes de la misma semana no pueden compartir el mismo esqueleto de frases. Se vigila en revisión (si tres fichas seguidas empiezan igual, Xavi pide variar).
+
+Fuentes de contexto permitidas: fichas publicadas de ChalkGuide (rocódromos, resoladores, pies de gato, artículos, eventos, categorías) y los datos verificables que figuran en la fuente original. Prohibido: otras webs, memoria del modelo, rumores, cifras sin respaldo, y cualquier dato de personas que no esté en la fuente.
+
+Ejemplos. Los hechos entre corchetes son marcadores: en producción salen de la fuente real y se comprueban; no copiar cifras de este ejemplo.
+
+Noticia A (internacional): «Ainhize Belar encadena una vía de 9b [dato y lugar según la fuente]».
+
+- Aporte malo 1 (copia): «Ainhize Belar ha encadenado una vía de 9b, un hito para la escalada femenina». Repite la fuente, sin dato nuevo ni anclaje.
+- Aporte malo 2 (relleno genérico): «Esta noticia es muy importante para el mundo de la escalada. Los escaladores deben seguir de cerca los avances de las deportistas. La escalada deportiva sigue creciendo». Vale para cualquier noticia, sin hechos: es exactamente lo que Google llama contenido a escala sin valor.
+- Aporte malo 3 (inventado): añade cifras de la vía, año de apertura o historia de intentos que la fuente no da. Dato no verificable: prohibido.
+- Aporte bueno: «Ainhize Belar [según la fuente: fecha, vía, sector] firma un 9b en [zona]. Para ponerlo en perspectiva: el 9b es [explicación breve del grado según la fuente], lejos del rango habitual en las vías de deportiva de Cataluña, donde la mayoría de proyectos de referencia se mueven en [dato solo si hay ficha o artículo de ChalkGuide que lo respalde]. Si quieres trabajar la resistencia en panel antes de salir a la roca, en Barcelona [ficha de rocódromo X] tiene [característica comprobable en su ficha, p. ej. zona de pan extraplomada]. La noticia completa, en [fuente].»
+
+Noticia B (local): «Festival de escalada en Barcelona [fecha y lugar según la fuente]».
+
+- Aporte malo: «Un festival imperdible para todos los amantes de la escalada. ¡No te lo pierdas!». Publicidad vacía y sin dato.
+- Aporte bueno: «El festival se celebra en [lugar] el [fecha] [según la organización]. Cómo llegar y dónde entrenar antes: [ficha del rocódromo más cercano, con su distancia o barrio]. Si quieres ver más citas del mes, la [agenda de ChalkGuide] reúne las de Barcelona. Entrada y programa completo, en la web de la organización [enlace de fuente].»
+
+Regla práctica para la rutina y para Xavi: si borrando la noticia el aporte sigue valiendo para cualquier otra, es genérico y se reescribe. Si no hay ficha ni dato que respalde un aporte útil, la rutina lo deja vacío y marca la noticia como «sin aporte» en lugar de rellenar: queda `noindex` (19.4).
+
+### 19.2 Longitud y estructura
+
+- Recomendado: **80 a 180 palabras**. Mínimo editorial 80 (por debajo no hay sitio para contexto verificable más enlaces). Máximo 180: más largo compite con la propia fuente, se parece a una reescritura y se recorta en la cuadrícula. Límite duro en BD: 1.400 caracteres.
+- Estructura: 1 o 2 párrafos, o una frase de arranque más 2 a 4 viñetas. Un párrafo de 2 a 4 frases es lo normal.
+- Orden: (1) primera frase con el término principal y el hecho clave; (2) el contexto local o práctico; (3) enlaces internos de 19.6; (4) cierre breve que remite a la fuente. Sin llamada a la acción comercial.
+- La **primera frase** debe sostenerse sola: es la que aparece recortada en la cuadrícula y la que alimenta la meta description. Entre 20 y 28 palabras, sin empezar por «Esta noticia».
+- La cuadrícula de /noticias muestra el arranque: hasta ~160 caracteres, cortado en límite de palabra, con «…». Como sale de la misma frase de arranque, no hace falta un campo aparte.
+- Cuenta de palabras: el texto sin marcado, igual que `noteWordCount` hoy. La rutina apunta a 100–150; el panel avisa fuera de 80–180.
+
+### 19.3 Keywords
+
+Cómo elegirlas (la rutina propone, Xavi corrige):
+
+1. **Término principal** = la entidad que alguien buscaría: atleta, vía o proyecto, competición o evento, rocódromo, zona de escalada, marca o lanzamiento. Una sola por noticia.
+2. **Modificador local** cuando aplique y sea cierto: «Barcelona», «Cataluña», «Montserrat», el barrio o la zona. Ej.: `festival de escalada Barcelona`, `Ainhize Belar 9b`. Si la noticia no tiene relación local real, sin modificador: no forzarlo.
+3. **Forma exacta** como la escribiría un usuario: nombre propio completo y grado en su notación habitual (9b, 7c+). Singular o plural según la demanda típica; no inventar variantes.
+4. Opcional una secundaria (grado, disciplina o tipo de contenido) que la rutina puede usar una vez.
+5. Búsqueda previa: comprobar en Search Console, y en su defecto en el autocompletado de Google, que el término existe como búsqueda. Si es una exclusiva sin demanda, el término principal es el nombre propio que aparece en la fuente.
+
+Dónde va la keyword (en español y en inglés, cada uno con la suya):
+
+| Lugar | Regla |
+| --- | --- |
+| `title` | Al principio o cerca, dentro de los 60 caracteres; es el titular propio, no el de la fuente |
+| H1 | Mismo titular, con la keyword; un H1 por página |
+| H2 | Como mucho uno, natural, si el aporte lleva estructura; opcional |
+| Primer párrafo del aporte | Una vez, en las primeras 25 palabras, con la forma exacta |
+| Resto del aporte | Como mucho una variante o repetición más; el resto, sinónimos y nombres propios |
+| `alt` de la foto | Describe la imagen con la keyword solo si es verdad lo que se ve; si no, alt descriptivo normal (D27) |
+| Meta description | Va si cabe de forma natural en la primera frase |
+| Slug | Lo genera el sistema; no se edita para meter keywords |
+
+Contra el keyword stuffing: la keyword exacta aparece **2 veces como máximo** en el aporte (3 en aportes cercanos a 180 palabras), nunca en dos frases seguidas, nunca en enlaces repetidos, nunca como lista de términos. Densidad objetivo por debajo del 2 %. Prueba de lectura: si suena raro dicho en voz alta, sobra. No ocultar texto, no usar keywords en atributos ajenos, no añadir tags de keywords visibles.
+
+### 19.4 Regla de indexación (sustituye a «nota ≥ 60 palabras»)
+
+- **Ficha indexable** = publicada Y aporte del idioma de la página con **≥ 80 palabras** (N = 80). Si no, `noindex, follow`, fuera del sitemap. El mismo N que el mínimo editorial de 19.2, para que lo que el panel exige y lo que Google ve coincidan.
+- Por idioma: `/noticias/{slug}` mira `insight_es`; `/en/news/{slug}` mira `insight_en`. Con aporte en inglés de menos de 80 palabras, la ficha `en` va `noindex` y no entra en el sitemap `en`.
+- Tope superior sin efecto en indexación: un aporte de 300 palabras indexa, pero el panel avisa.
+- **Descartada por Xavi (D92, 2026-11-19):** no se exige enlace interno para indexar. Texto original de la propuesta: para indexar, el aporte **debe llevar al menos un enlace interno** de `news_links`. Una ficha sin ningún vínculo con ChalkGuide no aporta contexto propio comprobable. Es una decisión de Xavi; mi recomendación es adoptarla. Si la rechaza, basta el N de palabras.
+- Aviso de similitud: la columna `similarity` actual compara resumen y extracto; ampliar a aporte frente a extracto. Con similitud ≥ 0,35 (umbral ya existente en la UI) el panel avisa y se recomienda no indexar hasta que Xavi reescriba.
+
+Impacto en el código (para 8.11 y coneja-lucky; yo toco `app/utils/seo.ts`):
+
+- `app/utils/seo.ts`: `MIN_NEWS_NOTE_WORDS = 60` pasa a `MIN_NEWS_INSIGHT_WORDS = 80`; `noteWordCount` pasa a `insightWordCount`; `isNewsIndexable({ note, published })` pasa a `isNewsIndexable({ insight, published, linkCount })` y devuelve `published && insightWordCount(insight) >= MIN_NEWS_INSIGHT_WORDS && linkCount >= 1` (la última condición solo si Xavi la aprueba). Se mantienen exportados `MIN_NEWS_INDEX` e `isNewsIndexIndexable`.
+- BD: la columna generada `indexable` / `indexable_en` pasa a contar palabras de `insight_es` / `insight_en` con N = 80. El servidor y la app usan el mismo umbral (una sola constante y un comentario que cite la otra).
+- Sitemap (`server/api/__sitemap__/urls.ts`): entran fichas publicadas con `indexable` (por idioma); `lastmod` = máx. de `updated_at` del aporte y del resumen, nunca cambios de ingesta. Los alternates `en` solo si `indexable_en`.
+- Índice `/noticias` (≥ 6) y categorías (≥ 3 y texto propio): sin cambios. Nota: con D91 el `ItemList` solo lista fichas indexables, como antes; el índice sigue siendo la página fuerte, y puede indexarse con fichas `noindex` porque el aporte recortado en la cuadrícula suma contenido propio a la página, pero la cuadrícula no debe duplicar el aporte entero.
+- Las fichas existentes con «nota de Xavi» migran: `author_note_*` pasa a ser `insight_*` (ver 19.7).
+
+### 19.5 Title, meta description y schema
+
+**Title.** Titular propio (≤ 60 caracteres con sufijo si cabe) que empieza o contiene la keyword principal y no copia el de la fuente. Si la rutina genera `seo_title`, es ese; si está vacío, el titular. Ej. es: `Ainhize Belar encadena un 9b: contexto para escaladores de Barcelona` (ajustado a ≤ 60; los textos finales los afina loro-lola).
+
+**Meta description** (≤ 158, `clampDescription`). Prioridad:
+1. `meta_description_es/en` si Xavi la ha escrito.
+2. Si no, las primeras 1 o 2 frases del aporte hasta ~150 caracteres, cortadas en frase completa (nunca a mitad de palabra).
+3. Si el aporte está vacío (ficha `noindex`), el inicio del resumen propio.
+La primera frase del aporte debe valer como description porque la rutina la redacta con esa doble función (19.2). Única por ficha; no repetir la del resumen del índice.
+
+**Schema `Article`** (solo fichas indexables; sin `Article` en `noindex`, igual que 6):
+- `headline` = titular propio; `description` = la meta description; `articleBody` no se emite.
+- `author`: **`Organization` ChalkGuide** (`@id` del layout). Motivo: el aporte lo redacta la rutina y lo edita Xavi; ponerlo como `Person` Xavi sería atribuirle un texto que no escribe entero, y Google exige que la autoría sea veraz. `editor`: `Person` Xavi (revisa y aprueba; consistente con D74). Los artículos del blog siguen con `author` Xavi. Si Xavi decide reescribirlo entero, el panel podría marcar `author_reviewed` y pasar a `Person`; no lo pido ahora (ver 19.7).
+- `isBasedOn`: `NewsArticle` o `CreativeWork` de la fuente, con `url` (`source_url`), `name` (`source_title`), `publisher` (`source_name`) y `datePublished` (`source_published_on`). `citation`: la misma URL. Ya definido en 6; se mantiene.
+- `about`: la entidad principal (la de la keyword): `Person` (atleta), `Event` (festival, competición), `Place` o `SportsActivityLocation` (rocódromo, zona). Solo `name`, y `url` si existe una ficha de ChalkGuide de esa entidad. Sin `sameAs` inventados: solo si el dato figura en la fuente o en la ficha.
+- `mentions`: las fichas de `news_links` (rocódromos, artículos, eventos de ChalkGuide) como `Thing` con `name` y `url` de ChalkGuide. Máximo 3.
+- `datePublished` (aprobación de Xavi), `dateModified` (cambio real del aporte), `inLanguage`, `articleSection`, `mainEntityOfPage`, `image` (solo con licencia), `publisher` (el del layout). Se mantienen `BreadcrumbList` y los demás puntos de 6.
+- Prohibido: `NewsArticle` propio, `Review`, `AggregateRating`, `speakable`.
+
+### 19.6 Enlazado interno
+
+- El aporte enlaza **solo** a fichas de ChalkGuide publicadas, hasta **3** (`news_links`, `position` 1–3): rocódromo, artículo, evento, resolador o pies de gato. Anclaje natural (nombre del rocódromo, título del artículo), sin keywords repetidas y sin autolinking por palabra.
+- Los enlaces del aporte y el bloque «Relacionado» son los **mismos** `news_links`; no se duplican con un segundo conjunto. El aporte los cita en el texto y «Relacionado» los lista.
+- **Nunca enlaces externos en el aporte.** La única salida es el botón «Leer en {fuente}» (sección 7), con sus atributos. Un enlace externo en el cuerpo diluiría la señal y compite con el botón.
+- Los enlaces salen en HTML servido (`<a href>`), no por JS.
+- La rutina sugiere los candidatos a partir de las fichas existentes por zona, rocódromo y etiquetas; Xavi aprueba. El servidor valida que existan y estén publicados.
+
+### 19.7 Campos que pido al backend (jabali-javi)
+
+Sobre `guide.news` (ver J27 y la ampliación de F8.6):
+
+| Campo | Tipo y reglas | Notas |
+| --- | --- | --- |
+| `insight_es` / `insight_en` | `text` null; ≤ 1.400 caracteres; `_en` exige `_es` o es independiente según `has_en`; sin HTML (texto plano con saltos de línea; las viñetas como líneas con guion que el front convierte) | Sustituyen a `author_note_es/en`. **Recomiendo renombrar** (`rename column`) para conservar datos y las columnas generadas; el nuevo mínimo es 80, no 60. Exponer a `anon` (hoy se expone `author_note_*`) |
+| `indexable` / `indexable_en` | generadas, redefinir | ≥ 80 palabras de `insight_es` / `insight_en` y publicada; sin `exists(news_links)` (D92 la descarta).4 (una columna generada no puede leer otra tabla: en ese caso calcularlo en vista o RPC, o dejar el chequeo de enlaces solo en la app) |
+| `seo_keyword_es` / `seo_keyword_en` | `text` null; 2–60 caracteres | **Opcional pero recomendado**: la rutina la propone y el panel la muestra para que Xavi la edite. Sin uso público: no exponer a `anon`. Sirve de control de calidad (¿aparece en título y primer párrafo?) |
+| `meta_description_es` / `meta_description_en` | `text` null; ≤ 160 | **Opcional.** Si la vacía, la app usa la primera frase del aporte. Lo podría pedir la rutina, pero la regla del 19.5 evita escribir otra pieza. Recomiendo dejarlo para Xavi (override) |
+| `seo_title_es` / `seo_title_en` | `text` null; ≤ 70 | Ya existe el patrón `[seo]` del modelo para otros contenidos. **Opcional**: sin él, el titular propio sirve |
+| `insight_status` (`ok` / `empty`) | no hace falta | Se deduce de si `insight_*` está vacío o sin palabras suficientes |
+
+Campos que **sobran** o se retiran: `author_note_es/en` (los sustituye `insight_*`), la insignia «con nota de Xavi» y `has_note` en `search_news` (D90 ya los quita del frente: sustituir por `has_insight` solo si el panel lo necesita, no el sitio público). No pido tabla ni campo nuevo para el recorte de la cuadrícula: se calcula en la app.
+
+`news_links` ya existe (máx. 3): sin cambios. `search_news` / `admin_search`: indexar `insight_es/en` en el FTS (peso C, como la nota) y devolver el arranque; `author_note` deja de buscarse. La rutina (docs/copy/f8/prompt-rutina.md, loro-lola) añade `insight_es`, `insight_en`, `seo_keyword_*` y `link_candidates` (ids de fichas) a su contrato de salida; leona-lia revisa la ampliación (el aporte pasa por saneado como el resto de textos del agente, F1).
+
+### 19.8 Riesgos y medición
+
+Riesgos:
+1. **Contenido escalado sin valor.** Mayor riesgo: la política de spam trata la reescritura masiva con IA como infracción. Mitigaciones: criterios 19.1, revisión humana obligatoria, indexación por umbral y por enlace interno, volumen bajo (decenas al mes), y `noindex` para lo débil. Si Search Console muestra una caída o una acción manual por «contenido de baja calidad», pasar todas las fichas a `noindex` (basta subir N a un valor inalcanzable) mientras Xavi revisa.
+2. **Plantilla repetida.** Aportes con la misma estructura ⇒ huella de contenido a escala. Control: Xavi y la rutina varían el arranque; revisión mensual de 10 aportes al azar.
+3. **Duplicado con la fuente.** Control: regla de 8 palabras y `similarity` ≥ 0,35.
+4. **Datos erróneos.** Riesgo reputacional y de confianza si la rutina «completa de memoria». Control: solo datos de fuente o de fichas; Xavi verifica al aprobar; la rutina señala en `agent_meta` de dónde sale cada dato.
+5. **Canibalización con la fuente o el blog.** Las fichas compiten con la propia fuente por el nombre del atleta. Hay poco que ganar en queries de gran demanda (el atleta): se espera tráfico de cola larga local (`… Barcelona`, `… Cataluña`, `rocódromo … ` + noticia). No competir por el nombre pelado.
+6. **Cuadrícula duplicando el aporte.** El arranque recortado en la cuadrícula es contenido propio de la ficha; no es duplicado dañino (mismo sitio), pero no mostrar el aporte completo fuera de la ficha ni en la newsletter sin recortar.
+7. **Fichas sin tráfico indexadas.** Un exceso de URLs finas diluye el dominio nuevo. Control: la regla de 19.4 y el seguimiento de «Rastreada, actualmente sin indexar».
+8. **Atribución de autoría.** `author` Organization más `editor` Xavi, veraz. Si la ficha dice «de Xavi» y no lo es, riesgo de confianza (y de transparencia ante el lector). El texto de `/transparencia` explica que el aporte lo redacta una IA y lo revisa Xavi (loro-lola).
+
+Medición (Search Console y analítica propia, sin cookies ni scripts nuevos):
+- Search Console, propiedad de dominio: filtro de página `/noticias/` y `/en/news/`. Seguir impresiones, clics, CTR y posición media por semana; consultas con modificador local; páginas con impresiones pero sin clics (title o description flojos). Informes de indexación: «Indexada», «Rastreada, actualmente sin indexar» y «Excluida por noindex» (esperada para las fichas bajo N).
+- Comparar a 4 y 8 semanas: fichas con aporte ≥ 80 y enlace interno frente a las que no, para validar N y la regla del enlace.
+- Eventos propios (sección 14): `news_source_click` por noticia (calidad de la selección y objetivo del agregador); `news_note_view` pasa a `news_insight_view` (el aporte entra en pantalla); `ficha_click` desde noticias (¿el aporte empuja a rocódromos y artículos?); `newsletter_submit` con origen `noticias`.
+- KPI de negocio: altas de newsletter por 1.000 visitas de /noticias y de fichas indexadas.
+- Calidad editorial: porcentaje de aportes editados por Xavi al aprobar (proxy de lo bien que redacta la rutina), porcentaje de noticias sin aporte, y media de palabras. Objetivo: ≥ 80 % de aportes indexables sin retoque de fondo tras 8 semanas.
+- Umbrales de alarma: caída del 30 % de impresiones de /noticias/* en 2 semanas, o subida de «Rastreada, actualmente sin indexar» a más del 40 % de las fichas indexables ⇒ revisar plantilla de aporte y subir N.
+
+### 19.9 Decisiones para Xavi
+
+1. N = 80 palabras para indexar (alternativa: 100 si prefieres filtrar más).
+2. ~~Exigir al menos un enlace interno para indexar~~: descartado (D92).
+3. `author` Organization ChalkGuide con `editor` Xavi (recomendado) o `Person` Xavi.
+4. `seo_keyword` y `meta_description` opcionales: recomendados `seo_keyword`, y `meta_description` como override.

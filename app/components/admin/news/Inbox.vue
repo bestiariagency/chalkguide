@@ -10,12 +10,13 @@ const selectedId = defineModel<string | undefined>('selectedId')
 const checked = defineModel<string[]>('checked', { default: () => [] })
 const emit = defineEmits<{
   approve: [news: AdminNews, next: string | undefined]
-  edit: [news: AdminNews, focus?: 'note']
+  edit: [news: AdminNews, focus?: 'insight']
   reject: [news: AdminNews, reason: string | null, next: string | undefined]
+  videosChanged: []
 }>()
 
 /** From the sheet the selection is dropped first, so the editor does not open on top of another dialog. */
-function edit(n: AdminNews, focus?: 'note') {
+function edit(n: AdminNews, focus?: 'insight') {
   if (!desktop.value) selectedId.value = undefined
   emit('edit', n, focus)
 }
@@ -52,24 +53,29 @@ const { desktop, rejectOpen, selected, neighbour, step, sheetOpen, toggle } = us
     <section class="hidden min-w-0 lg:flex lg:min-h-0 lg:flex-col lg:overflow-y-auto">
       <!-- Only the title is announced when the selection changes, not the whole detail. -->
       <p class="sr-only" aria-live="polite" aria-atomic="true">{{ selected && desktop ? selected.titleEs : '' }}</p>
-      <AdminNewsDetail
-        v-if="selected && desktop"
-        :key="selected.id"
-        v-model:reject-open="rejectOpen"
-        :news="selected"
-        :busy="busy"
-        :labels="labels"
-        @approve="approve(selected)"
-        @edit="(focus) => edit(selected!, focus)"
-        @reject="(reason) => reject(selected!, reason)"
-        @prev="step(-1)"
-        @next="step(1)"
-      />
+      <!-- If a child throws, Vue keeps painting the previous detail: the boundary shows the failure instead. -->
+      <NuxtErrorBoundary v-if="selected && desktop" :key="selected.id">
+        <AdminNewsDetail
+          v-model:reject-open="rejectOpen"
+          :news="selected"
+          :busy="busy"
+          :labels="labels"
+          @approve="approve(selected)"
+          @edit="(focus) => edit(selected!, focus)"
+          @reject="(reason) => reject(selected!, reason)"
+          @prev="step(-1)"
+          @next="step(1)"
+          @videos-changed="emit('videosChanged')"
+        />
+        <template #error="{ error }">
+          <AdminStateBlock kind="error" title="No se ha podido mostrar el detalle" :description="`${selected.titleEs}: ${String((error as Error)?.message ?? error)}`" />
+        </template>
+      </NuxtErrorBoundary>
       <p v-else class="p-6 text-sm text-adm-meta">Elige una noticia de la lista para ver su detalle.</p>
     </section>
 
     <AdminModal v-if="selected && !desktop" v-model:open="sheetOpen" placement="right" wide :title="selected.titleEs">
-      <AdminNewsDetail :news="selected" :busy="busy" :labels="labels" sheet @approve="approve(selected)" @edit="(focus) => edit(selected!, focus)" @reject="(reason) => reject(selected!, reason)" />
+      <AdminNewsDetail :news="selected" :busy="busy" :labels="labels" sheet @videos-changed="emit('videosChanged')" @approve="approve(selected)" @edit="(focus) => edit(selected!, focus)" @reject="(reason) => reject(selected!, reason)" />
       <template #footer>
         <AdminNewsActions :news="selected" :busy="busy" sheet @approve="approve(selected)" @edit="edit(selected)" @reject="(reason) => reject(selected!, reason)" />
       </template>

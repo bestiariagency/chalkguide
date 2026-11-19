@@ -9,13 +9,15 @@ export interface NewsSummary {
   slug: string
   title: string
   summary: string
-  /** "Nota de Xavi" (plain text) or null. */
-  note: string | null
+  /** «Aporte propio» (why it matters, plain text) or null. */
+  insight: string | null
   categoryKey: string | null
   categoryName: string | null
   scope: NewsScope | null
   sourceName: string
   publishedAt: string
+  /** Licensed photo of the item (list thumbnail), when there is one. */
+  image?: MediaRef | null
 }
 
 export interface NewsCategory {
@@ -32,7 +34,20 @@ export interface NewsCategoryNavItem {
   count: number
 }
 
+/** YouTube video of a news item (D84/D88). `title` and `channel` are third-party text: interpolate, never HTML. */
+export interface NewsVideo {
+  youtubeId: string
+  title: string | null
+  channel: string | null
+  /** Two-letter language code of the video, when Xavi set it. */
+  lang: string | null
+}
+
 export interface NewsDetail extends NewsSummary {
+  /** At most 2, already revalidated (FV3). */
+  videos: NewsVideo[]
+  /** Optional override Xavi writes (<= 160); without it the SEO description comes from the insight. */
+  metaDescription: string | null
   updatedAt: string
   hasEn: boolean
   sourceUrl: string
@@ -61,8 +76,7 @@ export interface NewsSearchHit {
   summary: string
   categoryName: string | null
   scope: NewsScope | null
-  /** There is an author note in the requested language («Con nota de Xavi»). */
-  hasNote: boolean
+  categoryKey: string | null
   sourceName: string
   publishedAt: string
   /** Plain text with the matches between U+0002 and U+0003. */

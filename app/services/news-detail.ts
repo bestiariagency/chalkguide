@@ -1,14 +1,19 @@
 import type { Locale } from '~/types/domain'
 import type { NewsDetail, NewsRelated, NewsRelatedKind } from '~/types/news'
 import { type GuideClient, one, pick, unwrap, unwrapMaybe } from './client'
-import { MEDIA_COLUMNS, toMediaRef } from './media'
+import { toMediaRef } from './media'
+import { toNewsVideos } from '~/utils/news-videos'
 import { NEWS_SUMMARY_COLUMNS, type NewsSummaryRow, toNewsSummary } from './news'
 
-const DETAIL_COLUMNS = `${NEWS_SUMMARY_COLUMNS}, updated_at, has_en, source_url, source_title, source_published_on,
-  source_lang, source:news_sources!news_source_id_fkey(trusted),
-  image:media!news_media_id_fkey(${MEDIA_COLUMNS}), image_license, image_credit`
+const DETAIL_COLUMNS = `${NEWS_SUMMARY_COLUMNS}, meta_description_es, meta_description_en, updated_at, has_en, source_url, source_title, source_published_on,
+  source_lang, source:news_sources!news_source_id_fkey(trusted), image_license, image_credit,
+  videos:news_videos(position, youtube_id, title, channel, lang)`
+
+type VideoRow = { position: number; youtube_id: string; title: string | null; channel: string | null; lang: string | null }
 
 type DetailRow = NewsSummaryRow & {
+  meta_description_es: string | null
+  meta_description_en: string | null
   updated_at: string
   has_en: boolean | null
   source_url: string
@@ -19,6 +24,7 @@ type DetailRow = NewsSummaryRow & {
   image: unknown
   image_license: string | null
   image_credit: string | null
+  videos: VideoRow[] | null
 }
 
 /** News by slug; null if missing, not published, or (under /en) without an English version (D3). */
@@ -27,12 +33,18 @@ export async function getNewsBySlug(
   locale: Locale,
   slug: string,
 ): Promise<NewsDetail | null> {
-  let query = db.from('news').select(DETAIL_COLUMNS).eq('status', 'published').eq('slug', slug)
+  let query = db
+    .from('news')
+    .select(DETAIL_COLUMNS)
+    .eq('status', 'published')
+    .eq('slug', slug)
+    .order('position', { referencedTable: 'videos' })
   if (locale === 'en') query = query.eq('has_en', true)
   const row = unwrapMaybe(await query.maybeSingle()) as unknown as DetailRow | null
   if (!row || !row.published_at) return null
   return {
     ...toNewsSummary(row, locale),
+    metaDescription: pick(locale, row.meta_description_es, row.meta_description_en)?.trim() || null,
     updatedAt: row.updated_at,
     hasEn: row.has_en === true,
     sourceUrl: row.source_url,
@@ -44,6 +56,7 @@ export async function getNewsBySlug(
     image: toMediaRef(one(row.image as Parameters<typeof toMediaRef>[0]), locale),
     imageLicense: row.image_license,
     imageCredit: row.image_credit,
+    videos: toNewsVideos(row.videos),
   }
 }
 

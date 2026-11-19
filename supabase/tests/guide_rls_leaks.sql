@@ -66,7 +66,14 @@
 -- token, dedupe del servidor y J18b, topes 40/80/1/3/150, dry_run, ventana R1, contexto sin borradores, columnas de news,
 -- agent_meta reducido, registro by=agent, carta semanal +1 h y vuelta a borrador D77).
 -- y F8 huecos 8.9/8.10 (origen 'noticias', events.run_id solo de la ingesta e inmutable, search_news con p_scope y
--- has_note, tipo 'news' en admin_search y módulo 'news' en admin_export/admin_export_count sin columnas internas).
+-- has_insight (antes has_note), tipo 'news' en admin_search y módulo 'news' en admin_export/admin_export_count sin
+-- columnas internas).
+-- y F8 foto de la noticia (media_is_public con rama news, uso en media_usage/media_usages/delete_media, D27 alt_es).
+-- y F8.18 vídeos de YouTube en noticias (D88, V1–V16 de docs/security/F8.18-videos-spec.md: youtube_video_id interno,
+-- CHECK puros de news_videos, ingesta con `videos`, visibilidad heredada de la noticia, admin_set_news_videos, J27b)
+-- y F8.20b aporte propio (D91/D92: insight_* en lugar de author_note_*, seo_keyword_* interna, meta_description_* solo
+-- de Xavi, CHECK J13/J14 + NFC, indexable con ≥ 80 palabras, FTS, has_insight, ingesta J11–J17, guarda J21) y
+-- la foto de una noticia rechazada desde borrador, invisible para anon.
 -- Se ejecuta entero como postgres (execute_sql o psql) dentro de BEGIN … ROLLBACK: no deja datos
 -- (los usuarios de prueba de auth.users y el objeto de Storage también se descartan).
 -- Si algo falla, lanza una excepción LEAK/FAIL y la transacción se aborta.
@@ -10558,7 +10565,7 @@ begin
              where table_schema = 'guide' and table_name = 'news' and grantee in ('anon', 'authenticated')
                and privilege_type = 'SELECT'
                and column_name in ('dedupe_key', 'url_key', 'agent_meta', 'run_id', 'source', 'reject_reason',
-                                   'approved_by', 'similarity', 'created_at')) then
+                                   'approved_by', 'similarity', 'created_at', 'seo_keyword_es', 'seo_keyword_en')) then
     raise exception 'LEAK F8 J27: columna interna de news con SELECT para la API'; end if;
 end $$;
 
@@ -10719,6 +10726,7 @@ begin
   if v ->> 'reason' is distinct from 'source' then raise exception 'LEAK F8 J24: fuente fuera de la allowlist'; end if;
   v := guide.ingest_submit_news(ta, run1, jsonb_build_object('title_es', 'F8 otra', 'summary_es', 'x', 'category', 'material',
          'published_on_source', today, 'source_url', 'https://f8test.org/n2', 'confidence', 0.8, 'author_note', 'x'));
+  -- F8.20b: author_note ya no existe; sigue fuera de la lista blanca (el aporte va en insight_*, ver bloque F8.20b)
   if v ->> 'reason' is distinct from 'unknown_key' then raise exception 'LEAK F8 J11: author_note aceptado'; end if;
   v := guide.ingest_submit_news(ta, run1, jsonb_build_object('title_es', 'F8 otra', 'summary_es', 'x', 'category', 'material',
          'published_on_source', '2020-01-01', 'source_url', 'https://f8test.org/n3', 'confidence', 0.8));
@@ -10992,7 +11000,7 @@ begin
     raise exception 'FAIL F8.6 O2: contexto fuera de jueves'; end if;
 end $$;
 reset role;
--- ── F8 huecos 8.9/8.10 (guide_f8_backend_gaps): origen 'noticias', events.run_id, search_news p_scope/has_note,
+-- ── F8 huecos 8.9/8.10 (guide_f8_backend_gaps): origen 'noticias', events.run_id, search_news p_scope/has_insight,
 --    ⌘K 'news' y exportar noticias. Sigue a los bloques anteriores: usa «F8 evento base» (run1) y «F8 noticia» (cat).
 do $$
 declare
@@ -11088,19 +11096,19 @@ begin
   if (select x.run_id from guide.admin_list_events(p_id => man) x) is not null then
     raise exception 'LEAK F8 gaps: el admin falsea run_id al crear'; end if;
 
-  -- 3. search_news: p_scope y has_note
+  -- 3. search_news: p_scope y has_insight (F8.20b: antes has_note)
   reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
-  select x.id, x.scope, x.has_note into r from guide.search_news('F8 noticia', 'es') x where x.title = 'F8 noticia';
-  if r.id is null or r.scope <> 'cat' or r.has_note then raise exception 'FAIL F8 gaps: search_news sin scope/has_note %', r; end if;
+  select x.id, x.scope, x.has_insight into r from guide.search_news('F8 noticia', 'es') x where x.title = 'F8 noticia';
+  if r.id is null or r.scope <> 'cat' or r.has_insight then raise exception 'FAIL F8 gaps: search_news sin scope/has_insight %', r; end if;
   nw := r.id;
   if not exists (select 1 from guide.search_news('F8 noticia', 'es', p_scope => 'cat') x where x.id = nw)
      or exists (select 1 from guide.search_news('F8 noticia', 'es', p_scope => 'intl') x where x.id = nw) then
     raise exception 'FAIL F8 gaps: search_news no filtra por p_scope'; end if;
   reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
-  update guide.news set author_note_es = 'Nota de Xavi F8.' where id = nw;
+  update guide.news set insight_es = 'Aporte F8.' where id = nw;
   reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
-  if not coalesce((select x.has_note from guide.search_news('F8 noticia', 'es') x where x.id = nw), false) then
-    raise exception 'FAIL F8 gaps: has_note no refleja la nota'; end if;
+  if not coalesce((select x.has_insight from guide.search_news('F8 noticia', 'es') x where x.id = nw), false) then
+    raise exception 'FAIL F8 gaps: has_insight no refleja el aporte'; end if;
 
   -- 4. ⌘K: tipo news (solo admin, sin descartadas)
   reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_user, true);
@@ -11108,7 +11116,7 @@ begin
   exception when insufficient_privilege then null; end;
   perform set_config('request.jwt.claims', c_admin, true);
   select x.kind, x.key, x.status, x.data into r from guide.admin_search('F8 noticia', array['news']) x where x.id = nw;
-  if r.kind is distinct from 'news' or r.status <> 'published' or not (r.data ->> 'has_note')::boolean
+  if r.kind is distinct from 'news' or r.status <> 'published' or not (r.data ->> 'has_insight')::boolean
      or r.data ->> 'scope' <> 'cat' then
     raise exception 'FAIL F8 gaps: admin_search sin la noticia %', r; end if;
   if exists (select 1 from guide.admin_search('F8 noticia', array['news']) x
@@ -11130,7 +11138,7 @@ begin
   n := (select count(*) from guide.activity_log l where l.action = 'export' and l.entity_table = 'export_news');
   v := guide.admin_export('news', 'json', jsonb_build_object('ids', jsonb_build_array(nw)));
   if (v -> 'export' ->> 'row_count')::integer <> 1 or (v -> 'export' ->> 'personal_data')::boolean
-     or (v -> 'rows' -> 0) ?| c_hidden or v -> 'rows' -> 0 ->> 'author_note_es' <> 'Nota de Xavi F8.' then
+     or (v -> 'rows' -> 0) ?| c_hidden or v -> 'rows' -> 0 ->> 'insight_es' <> 'Aporte F8.' then
     raise exception 'FAIL F8 gaps: admin_export news %', v -> 'export'; end if;
   if (select count(*) from guide.activity_log l where l.action = 'export' and l.entity_table = 'export_news') <> n + 1 then
     raise exception 'FAIL F8 gaps: la exportación de news no queda registrada'; end if;
@@ -11144,6 +11152,737 @@ begin
 end $$;
 reset role;
 select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+-- ── F8 foto de la noticia (guide_f8_news_media_public): media_is_public con rama news, uso en media_usage /
+--    media_usages / delete_media, y D27 (alt_es al publicar con foto y al vaciar el alt de la foto de una publicada).
+do $$
+declare
+  c_admin constant text := '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+  c_user  constant text := '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated"}';
+  c_anon  constant text := '{"role":"anon"}';
+  m_pub   constant uuid := 'b8000000-0000-4000-8000-000000000001';  -- foto de la noticia que se publica
+  m_draft constant uuid := 'b8000000-0000-4000-8000-000000000002';  -- foto de un borrador
+  m_noalt constant uuid := 'b8000000-0000-4000-8000-000000000003';  -- foto sin alt_es
+  n_pub uuid; n_draft uuid; n_noalt uuid; v_cat uuid; v_ver integer; v_detail text; r record;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos'; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+
+  -- Estático: media_is_public DEFINER con search_path vacío; EXECUTE exactos
+  if not exists (select 1 from pg_proc p where p.oid = 'guide.media_is_public(uuid)'::regprocedure
+                 and p.prosecdef and p.proconfig = array['search_path=""']) then
+    raise exception 'FAIL F8 media: media_is_public sin DEFINER o con search_path'; end if;
+  if exists (select 1 from pg_proc p, aclexplode(p.proacl) a
+             where p.oid = 'guide.media_is_public(uuid)'::regprocedure and a.grantee = 0) then
+    raise exception 'LEAK F8 media: media_is_public ejecutable por PUBLIC'; end if;
+  if has_function_privilege('anon', 'guide.media_usages(uuid)', 'execute')
+     or has_function_privilege('anon', 'guide.media_committed_owners(uuid, text)', 'execute')
+     or has_table_privilege('anon', 'guide.media_usage', 'select') then
+    raise exception 'LEAK F8 media: anon con acceso a media_usages/media_committed_owners/media_usage'; end if;
+
+  -- Objetos y filas de medios (el objeto va antes que la fila)
+  insert into storage.objects (bucket_id, name, metadata) values
+    ('media', m_pub::text || '/1-f8-pub.jpg', '{"mimetype":"image/jpeg","size":1000}'),
+    ('media', m_draft::text || '/1-f8-draft.jpg', '{"mimetype":"image/jpeg","size":1000}'),
+    ('media', m_noalt::text || '/1-f8-noalt.jpg', '{"mimetype":"image/jpeg","size":1000}');
+  insert into guide.media (id, storage_path, original_filename, mime_type, size_bytes, alt_es) values
+    (m_pub, m_pub::text || '/1-f8-pub.jpg', 'f8-pub.jpg', 'image/jpeg', 1000, 'Foto F8 publicada'),
+    (m_draft, m_draft::text || '/1-f8-draft.jpg', 'f8-draft.jpg', 'image/jpeg', 1000, 'Foto F8 borrador'),
+    (m_noalt, m_noalt::text || '/1-f8-noalt.jpg', 'f8-noalt.jpg', 'image/jpeg', 1000, null);
+  v_cat := (select c.id from guide.news_categories c order by c.id limit 1);
+
+  -- Admin crea dos borradores con foto y publica uno
+  perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  insert into guide.news (title_es, summary_es, category_id, source_name, source_url, status, media_id, image_license, image_credit)
+  values ('F8 foto publicada', 'Resumen F8 foto.', v_cat, 'F8 fuente', 'https://f8test.org/foto-1', 'draft', m_pub, 'own', 'F8 crédito')
+  returning id into n_pub;
+  insert into guide.news (title_es, summary_es, category_id, source_name, source_url, status, media_id, image_license, image_credit)
+  values ('F8 foto borrador', 'Resumen F8 foto.', v_cat, 'F8 fuente', 'https://f8test.org/foto-2', 'draft', m_draft, 'own', 'F8 crédito')
+  returning id into n_draft;
+  update guide.news set status = 'published' where id = n_pub;
+
+  -- anon ve la media de la noticia publicada y no la del borrador
+  reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  if not exists (select 1 from guide.media m where m.id = m_pub) then
+    raise exception 'FAIL F8 media: anon no ve la foto de una noticia publicada'; end if;
+  if exists (select 1 from guide.media m where m.id = m_draft) then
+    raise exception 'LEAK F8 media: anon ve la foto de un borrador de noticia'; end if;
+  reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_user, true);
+  if exists (select 1 from guide.media m where m.id = m_draft) then
+    raise exception 'LEAK F8 media: un usuario ve la foto de un borrador de noticia'; end if;
+
+  -- Retirar la noticia vuelve privada la foto
+  perform set_config('request.jwt.claims', c_admin, true);
+  update guide.news set status = 'draft' where id = n_pub;
+  reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  if exists (select 1 from guide.media m where m.id = m_pub) then
+    raise exception 'LEAK F8 media: anon ve la foto de una noticia retirada'; end if;
+  reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  update guide.news set status = 'published' where id = n_pub;
+
+  -- Uso: media_usage/media_usages cuentan la noticia (también en borrador)
+  select u.owner_table, u.owner_id, u.role, u.label into r from guide.media_usages(m_pub) u;
+  if r.owner_table is distinct from 'news' or r.owner_id is distinct from n_pub or r.role <> 'cover'
+     or r.label <> 'F8 foto publicada' then
+    raise exception 'FAIL F8 media: media_usages sin la noticia %', r; end if;
+  if not exists (select 1 from guide.media_usages(m_draft) u where u.owner_table = 'news' and u.owner_id = n_draft) then
+    raise exception 'FAIL F8 media: media_usages sin el borrador de noticia'; end if;
+  if not exists (select 1 from guide.search_media('f8-pub', 'in_use') s where s.id = m_pub and s.usage_count = 1) then
+    raise exception 'FAIL F8 media: search_media no cuenta el uso en noticia'; end if;
+
+  -- No se puede borrar la media en uso por una noticia (publicada o borrador)
+  v_ver := (select m.version from guide.media m where m.id = m_pub);
+  begin perform guide.delete_media(m_pub, v_ver); raise exception 'LEAK F8 media: delete_media borra la foto de una noticia publicada';
+  exception when foreign_key_violation then
+    if sqlerrm <> 'media in use' then raise exception 'FAIL F8 media: error inesperado %', sqlerrm; end if; end;
+  v_ver := (select m.version from guide.media m where m.id = m_draft);
+  begin perform guide.delete_media(m_draft, v_ver); raise exception 'LEAK F8 media: delete_media borra la foto de un borrador';
+  exception when foreign_key_violation then null; end;
+  begin delete from guide.media where id = m_pub; raise exception 'LEAK F8 media: DELETE directo de la foto de una noticia';
+  exception when foreign_key_violation then null; end;
+  if not exists (select 1 from guide.media m where m.id in (m_pub, m_draft) having count(*) = 2) then
+    raise exception 'FAIL F8 media: se perdió una foto en uso'; end if;
+
+  -- D27: no se publica una noticia con foto sin alt_es (alta directa ni paso de borrador a publicada)
+  begin
+    insert into guide.news (title_es, summary_es, category_id, source_name, source_url, status, media_id, image_license, image_credit)
+    values ('F8 foto sin alt', 'Resumen F8 foto.', v_cat, 'F8 fuente', 'https://f8test.org/foto-3', 'published', m_noalt, 'own', 'F8 crédito');
+    raise exception 'LEAK F8 D27: alta publicada con foto sin alt_es';
+  exception when check_violation then
+    if sqlerrm <> 'news_media_alt' then raise exception 'FAIL F8 D27: error inesperado %', sqlerrm; end if; end;
+  insert into guide.news (title_es, summary_es, category_id, source_name, source_url, status, media_id, image_license, image_credit)
+  values ('F8 foto sin alt', 'Resumen F8 foto.', v_cat, 'F8 fuente', 'https://f8test.org/foto-3', 'draft', m_noalt, 'own', 'F8 crédito')
+  returning id into n_noalt;
+  begin update guide.news set status = 'published' where id = n_noalt;
+    raise exception 'LEAK F8 D27: publica noticia con foto sin alt_es';
+  exception when check_violation then null; end;
+  begin update guide.news set media_id = m_noalt where id = n_pub;
+    raise exception 'LEAK F8 D27: cambia la foto de una publicada a una sin alt_es';
+  exception when check_violation then null; end;
+  update guide.media set alt_es = '   ' where id = m_noalt;   -- sin dueños publicados: sigue permitido
+  -- D27: no se vacía el alt_es de la foto de una noticia publicada; alt_en sí (news no exige alt_en)
+  begin update guide.media set alt_es = '' where id = m_pub;
+    raise exception 'LEAK F8 D27: vacía el alt_es de la foto de una noticia publicada';
+  exception when sqlstate 'PT422' then
+    get stacked diagnostics v_detail = pg_exception_detail;
+    if not (v_detail::jsonb -> 'used_by') @> jsonb_build_array(jsonb_build_object('entity', 'news', 'entity_id', n_pub)) then
+      raise exception 'FAIL F8 D27: used_by sin la noticia %', v_detail; end if; end;
+  update guide.media set alt_en = 'F8 photo' where id = m_pub;
+  update guide.media set alt_en = null where id = m_pub;
+  update guide.media set alt_es = '' where id = m_draft;      -- borrador: no bloquea
+  reset role; perform set_config('request.jwt.claims', '', true);
+end $$;
+-- ── F8.18 vídeos de YouTube en noticias (guide_f818_news_videos, docs/security/F8.18-videos-spec.md V1–V16, D88):
+--    normalizador sin EXECUTE, CHECK puros de news_videos, ingesta con `videos` (V4/V8/J17/V14), visibilidad heredada
+--    de la noticia, escritura solo por admin_set_news_videos, J27b sin agent_meta.videos, crédito exigido al publicar.
+--    Además (pendiente de la revisión de la foto): una noticia rechazada desde borrador no deja ver su foto a anon.
+do $$
+declare
+  c_admin constant text := '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+  c_user  constant text := '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated"}';
+  c_anon  constant text := '{"role":"anon"}';
+  c_id1   constant text := 'dQw4w9WgXcQ';
+  c_id2   constant text := 'abcDEF_-123';
+  m_rej   constant uuid := 'b8000000-0000-4000-8000-000000000018';
+  today text := to_char((now() at time zone 'Europe/Madrid')::date, 'YYYY-MM-DD');
+  tk text; r1 uuid; r2 uuid; v jsonb; base jsonb; vid jsonb; nw uuid; man uuid; rej uuid; v_cat uuid; n integer;
+  v_p regprocedure; v_bad text; r record;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos'; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+
+  -- Estático (V3, V5, V6): internas sin EXECUTE; RPC del admin solo authenticated; sin escritura directa ni grant de tabla
+  foreach v_p in array array['guide.youtube_video_id(text)'::regprocedure, 'guide.news_videos_before_write()'::regprocedure] loop
+    if has_function_privilege('anon', v_p, 'execute') or has_function_privilege('authenticated', v_p, 'execute')
+       or has_function_privilege('service_role', v_p, 'execute')
+       or exists (select 1 from pg_proc p, aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+                  where p.oid = v_p and a.grantee = 0 and a.privilege_type = 'EXECUTE') then
+      raise exception 'LEAK F8.18 V3: interna % ejecutable desde la API', v_p; end if;
+    if not coalesce((select p.proconfig from pg_proc p where p.oid = v_p) @> array['search_path=""'], false) then
+      raise exception 'FAIL F8.18: % sin search_path vacío', v_p; end if;
+  end loop;
+  if (select p.provolatile from pg_proc p where p.oid = 'guide.youtube_video_id(text)'::regprocedure) <> 'i' then
+    raise exception 'FAIL F8.18 V3: youtube_video_id no es IMMUTABLE'; end if;
+  v_p := 'guide.admin_set_news_videos(uuid, jsonb)'::regprocedure;
+  if not (select p.prosecdef and p.proconfig @> array['search_path=""'] from pg_proc p where p.oid = v_p)
+     or pg_get_functiondef(v_p) not ilike '%assert_admin()%' then
+    raise exception 'FAIL F8.18: admin_set_news_videos sin DEFINER, search_path o assert_admin'; end if;
+  if has_function_privilege('anon', v_p, 'execute') or has_function_privilege('service_role', v_p, 'execute')
+     or not has_function_privilege('authenticated', v_p, 'execute')
+     or exists (select 1 from pg_proc p, aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+                where p.oid = v_p and a.grantee = 0 and a.privilege_type = 'EXECUTE') then
+    raise exception 'LEAK F8.18: EXECUTE de admin_set_news_videos'; end if;
+  if not (select c.relrowsecurity from pg_class c where c.oid = 'guide.news_videos'::regclass) then
+    raise exception 'LEAK F8.18: news_videos sin RLS'; end if;
+  if exists (select 1 from information_schema.role_table_grants
+             where table_schema = 'guide' and table_name = 'news_videos'
+               and grantee in ('anon', 'authenticated', 'service_role', 'PUBLIC')) then
+    raise exception 'LEAK F8.18 V5: grant de tabla en news_videos'; end if;
+  if exists (select 1 from information_schema.column_privileges
+             where table_schema = 'guide' and table_name = 'news_videos' and grantee in ('anon', 'authenticated')
+               and (privilege_type <> 'SELECT' or column_name = 'created_at')) then
+    raise exception 'LEAK F8.18 V5: escritura o columna de más en news_videos'; end if;
+  if pg_get_functiondef('guide.ingest_submit_news(text, uuid, jsonb)'::regprocedure) ilike '%net.%' then
+    raise exception 'LEAK F8.18 V9: la ingesta hace red'; end if;
+
+  -- Normalizador (V3): formas aceptadas y rechazadas
+  foreach v_bad in array array['https://www.youtube.com/watch?feature=share&v=' || c_id1 || '&t=42s&si=x#frag',
+      'https://youtube.com/watch?v=' || c_id1, 'https://m.youtube.com/watch?v=' || c_id1, 'https://youtu.be/' || c_id1 || '?si=x',
+      'https://www.youtube.com/shorts/' || c_id1, c_id1] loop
+    if guide.youtube_video_id(v_bad) is distinct from c_id1 then
+      raise exception 'FAIL F8.18 V3: no normaliza %', v_bad; end if;
+  end loop;
+  foreach v_bad in array array['http://www.youtube.com/watch?v=' || c_id1, 'https://youtube.com.evil.tld/watch?v=' || c_id1,
+      'https://evil.tld/watch?v=' || c_id1, 'https://user@youtube.com/watch?v=' || c_id1,
+      'https://youtube.com:443/watch?v=' || c_id1, 'https://www.youtube.com/playlist?list=PL' || c_id1,
+      'https://www.youtube.com/embed/' || c_id1, 'https://www.youtube-nocookie.com/embed/' || c_id1,
+      'https://music.youtube.com/watch?v=' || c_id1, 'https://www.youtube.com/v/' || c_id1,
+      'https://www.youtube.com/live/' || c_id1, 'https://www.youtube.com/@handle', 'https://bit.ly/abc',
+      'https://www.youtube.com/watch?v=' || c_id1 || '&v=' || c_id2, left(c_id1, 10), c_id1 || 'Q', '<script>x</script>',
+      'https://www.youtube.com/watch?v=' || c_id1 || '&x=' || repeat('a', 200)] loop
+    if guide.youtube_video_id(v_bad) is not null then
+      raise exception 'LEAK F8.18 V3: acepta %', v_bad; end if;
+  end loop;
+
+  -- Fixtures: runs viejos fuera del tope de 24 h, tokens reales neutralizados, fuente f8test.org
+  update guide.ingest_runs set started_at = now() - interval '25 hours' where started_at > now() - interval '24 hours';
+  update guide.ingest_runs set status = 'abandoned', finished_at = now() where status = 'open';
+  update guide.ingest_tokens set revoked_at = coalesce(revoked_at, now()) where revoked_at is null;
+  v_cat := (select c.id from guide.news_categories c where c.key = 'material');
+
+  -- Admin: token, ventana, noticia manual en borrador
+  perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  tk := guide.admin_create_ingest_token('rls F818', 1) ->> 'token';
+  perform guide.admin_set_ingest_window(true);
+  insert into guide.news (title_es, summary_es, category_id, source_name, source_url, status)
+  values ('F818 manual', 'Resumen F818.', v_cat, 'F8 fuente', 'https://f8test.org/f818-manual', 'draft') returning id into man;
+
+  -- V2 (CHECK puros), como postgres en mantenimiento para que solo decidan los CHECK
+  reset role; perform set_config('request.jwt.claims', '', true);
+  perform set_config('guide.draft_op', 'maintenance', true);
+  foreach v_bad in array array[left(c_id1, 10), c_id1 || 'Q', 'https://youtu.be/' || c_id1, '<script>ab', c_id1 || ' ',
+                               'dQw4w9WgXc' || chr(225)] loop
+    begin insert into guide.news_videos (news_id, position, youtube_id) values (man, 1, v_bad);
+      raise exception 'LEAK F8.18 V2: youtube_id % aceptado', v_bad;
+    exception when check_violation then null; end;
+  end loop;
+  begin insert into guide.news_videos (news_id, position, youtube_id) values (man, 1, null);
+    raise exception 'LEAK F8.18 V2: youtube_id nulo';
+  exception when not_null_violation then null; end;
+  begin insert into guide.news_videos (news_id, position, youtube_id) values (man, 3, c_id1);
+    raise exception 'LEAK F8.18 V2: tercer vídeo (position 3)';
+  exception when check_violation then null; end;
+  begin insert into guide.news_videos (news_id, position, youtube_id) values (man, 0, c_id1);
+    raise exception 'LEAK F8.18 V2: position 0';
+  exception when check_violation then null; end;
+  foreach v_bad in array array['F818 ' || chr(8238) || 'bidi', 'F818 ' || chr(8203) || 'zw', 'F818 ' || chr(7) || 'bel',
+                               'F818 ' || chr(10) || 'salto', 'F818 ' || chr(8207) || 'rlm', 'F818 ' || chr(65279), repeat('x', 201)] loop
+    begin insert into guide.news_videos (news_id, position, youtube_id, title) values (man, 1, c_id1, v_bad);
+      raise exception 'LEAK F8.18 V2: title % aceptado', v_bad;
+    exception when check_violation then null; end;
+    begin insert into guide.news_videos (news_id, position, youtube_id, channel) values (man, 1, c_id1, v_bad);
+      raise exception 'LEAK F8.18 V2: channel % aceptado', v_bad;
+    exception when check_violation then null; end;
+  end loop;
+  begin insert into guide.news_videos (news_id, position, youtube_id, channel) values (man, 1, c_id1, repeat('x', 121));
+    raise exception 'LEAK F8.18 V2: channel de 121';
+  exception when check_violation then null; end;
+  begin insert into guide.news_videos (news_id, position, youtube_id, lang) values (man, 1, c_id1, 'cat');
+    raise exception 'LEAK F8.18 V2: lang de 3 letras';
+  exception when check_violation then null; end;
+  insert into guide.news_videos (news_id, position, youtube_id, title, channel, lang)
+  values (man, 1, c_id1, '  Cafe' || chr(769) || '  ', ' Canal ', ' ES ');
+  if not exists (select 1 from guide.news_videos where news_id = man and title = 'Caf' || chr(233)
+                 and channel = 'Canal' and lang = 'es') then
+    raise exception 'FAIL F8.18: la guarda no normaliza (NFC, btrim, lower)'; end if;
+  begin insert into guide.news_videos (news_id, position, youtube_id) values (man, 2, c_id1);
+    raise exception 'LEAK F8.18 V2: ID repetido en la misma noticia';
+  exception when unique_violation then null; end;
+  delete from guide.news_videos where news_id = man;
+  perform set_config('guide.draft_op', '', true);
+  -- Sin mantenimiento ni admin (p. ej. un DEFINER ajeno): la guarda no deja escribir
+  begin insert into guide.news_videos (news_id, position, youtube_id) values (man, 1, c_id1);
+    raise exception 'LEAK F8.18: postgres sin admin escribe vídeos de una noticia manual';
+  exception when insufficient_privilege then null; end;
+
+  -- Ingesta (anon): V4, V8, J17, V14 en dry_run
+  base := jsonb_build_object('title_es', 'F818 noticia con video', 'summary_es', 'Resumen F818 propio.', 'category', 'material',
+                             'published_on_source', today, 'source_url', 'https://f8test.org/f818/1', 'confidence', 0.9);
+  vid := jsonb_build_object('url', 'https://www.youtube.com/watch?v=' || c_id1 || '&t=10s', 'title', 'F818 final',
+                            'channel', 'F818 Canal', 'lang', 'CA');
+  reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  v := guide.ingest_start_run(tk, 'news', true);
+  if v ->> 'result' <> 'ok' then raise exception 'FAIL F8.18: start_run dry %', v; end if;
+  r1 := (v ->> 'run_id')::uuid;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('videos', jsonb_build_array(vid || '{"url":"http://youtu.be/x"}'::jsonb)));
+  if v ->> 'reason' is distinct from 'video' then raise exception 'LEAK F8.18 V14: dry_run acepta vídeo malo (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('videos', jsonb_build_array(vid)));
+  if v ->> 'result' <> 'would_insert' then raise exception 'FAIL F8.18 V14: dry_run válido %', v; end if;
+  perform guide.ingest_finish_run(tk, r1, '{}'::jsonb, null);
+
+  v := guide.ingest_start_run(tk, 'news', false);
+  if v ->> 'result' <> 'ok' then raise exception 'FAIL F8.18: start_run %', v; end if;
+  r2 := (v ->> 'run_id')::uuid;
+  v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('video_ids', jsonb_build_array(c_id1)));
+  if v ->> 'reason' is distinct from 'unknown_key' then raise exception 'LEAK F8.18 V4: video_ids aceptado (%)', v; end if;
+  foreach vid in array array[
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'note', 'x'))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'title', jsonb_build_object('a', 'b')))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'channel', 5))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', 5))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('title', 'sin url'))),
+      jsonb_build_object('videos', jsonb_build_array(5)),
+      jsonb_build_object('videos', 5),
+      jsonb_build_object('videos', jsonb_build_object('url', c_id1)),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1), jsonb_build_object('url', c_id2),
+                                                     jsonb_build_object('url', 'zzzzzzzzzzz'))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1),
+                                                     jsonb_build_object('url', 'https://youtu.be/' || c_id1))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', 'https://www.youtube-nocookie.com/embed/' || c_id1))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', 'https://vimeo.com/123'))),
+      jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'lang', 'c1')))] loop
+    v := guide.ingest_submit_news(tk, r2, base || vid);
+    if v ->> 'result' <> 'invalid' or v ->> 'reason' is distinct from 'video' then
+      raise exception 'LEAK F8.18 V4/V8: % aceptado (%)', vid, v; end if;
+  end loop;
+  foreach v_bad in array array['F818 ' || chr(8238) || 'bidi', 'F818 ' || chr(8203) || 'zw'] loop
+    v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'title', v_bad))));
+    if v ->> 'reason' is distinct from 'bad_chars' or v ->> 'field' is distinct from 'videos' then
+      raise exception 'LEAK F8.18 V8: title con bidi/zero-width (%)', v; end if;
+  end loop;
+  v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'channel', repeat('x', 121)))));
+  if v ->> 'reason' is distinct from 'too_long' then raise exception 'LEAK F8.18 V8: channel > 120 (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'title', 'Escribe a pepe@example.com'))));
+  if v ->> 'reason' is distinct from 'pii' then raise exception 'LEAK F8.18 V8: email en title (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'channel', 'Llama al 612 345 678'))));
+  if v ->> 'reason' is distinct from 'pii' then raise exception 'LEAK F8.18 V8: teléfono en channel (%)', v; end if;
+  foreach v_bad in array array[tk, 'x sb_secret_abc', 'eyJ' || repeat('a', 10) || '.' || repeat('b', 10)] loop
+    v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('videos', jsonb_build_array(jsonb_build_object('url', c_id1, 'title', v_bad))));
+    if v ->> 'reason' is distinct from 'secret' then raise exception 'LEAK F8.18 J17: secreto en title (%)', v; end if;
+  end loop;
+  if exists (select 1 from guide.news n where n.source_url like 'https://f8test.org/f818/%') then
+    raise exception 'LEAK F8.18: una fila inválida llegó a news'; end if;
+  -- Válido: dos vídeos → borrador con news_videos y agent_meta.videos
+  v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('videos', jsonb_build_array(
+         jsonb_build_object('url', 'https://www.youtube.com/watch?v=' || c_id1 || '&t=10s', 'title', '  F818 final ',
+                            'channel', 'F818 Canal', 'lang', 'CA'),
+         jsonb_build_object('url', 'https://youtu.be/' || c_id2, 'title', null))));
+  if v ->> 'result' <> 'inserted' then raise exception 'FAIL F8.18: noticia con vídeos válida %', v; end if;
+  -- V12: mismo vídeo en otra noticia, permitido
+  v := guide.ingest_submit_news(tk, r2, base || jsonb_build_object('title_es', 'F818 otra con video', 'source_url', 'https://f8test.org/f818/2',
+         'videos', jsonb_build_array(jsonb_build_object('url', c_id1))));
+  if v ->> 'result' <> 'inserted' then raise exception 'FAIL F8.18 V12: vídeo repetido entre noticias %', v; end if;
+  -- anon no escribe directamente
+  begin insert into guide.news_videos (news_id, position, youtube_id) values (man, 1, c_id1);
+    raise exception 'LEAK F8.18 V5: anon inserta en news_videos';
+  exception when insufficient_privilege then null; end;
+  begin perform guide.admin_set_news_videos(man, '[]'::jsonb); raise exception 'LEAK F8.18: anon llama a admin_set_news_videos';
+  exception when insufficient_privilege then null; end;
+  begin perform guide.youtube_video_id(c_id1); raise exception 'LEAK F8.18 V3: anon ejecuta youtube_video_id';
+  exception when insufficient_privilege then null; end;
+
+  reset role; perform set_config('request.jwt.claims', '', true);
+  nw := (select n.id from guide.news n where n.source_url = 'https://f8test.org/f818/1');
+  if (select count(*) from guide.news_videos where news_id = nw) <> 2
+     or not exists (select 1 from guide.news_videos where news_id = nw and position = 1 and youtube_id = c_id1
+                    and title = 'F818 final' and channel = 'F818 Canal' and lang = 'ca')
+     or not exists (select 1 from guide.news_videos where news_id = nw and position = 2 and youtube_id = c_id2
+                    and title is null and channel is null and lang is null) then
+    raise exception 'FAIL F8.18: news_videos del agente incorrectos'; end if;
+  if (select n.agent_meta -> 'videos' from guide.news n where n.id = nw) is distinct from jsonb_build_array(c_id1, c_id2) then
+    raise exception 'FAIL F8.18 V10: agent_meta.videos %', (select n.agent_meta from guide.news n where n.id = nw); end if;
+  if coalesce((select (ir.invalid ->> 'video')::integer from guide.ingest_runs ir where ir.id = r2), 0) < 13
+     or coalesce((select (ir.invalid ->> 'video')::integer from guide.ingest_runs ir where ir.id = r1), 0) < 1 then
+    raise exception 'FAIL F8.18 V8/J28: invalid:video sin contar'; end if;
+
+  -- Lectura (V5): borrador del agente invisible para anon y no admin; el admin lo ve en admin_list_news
+  perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  if exists (select 1 from guide.news_videos where news_id = nw) then
+    raise exception 'LEAK F8.18 V5: anon ve vídeos de un borrador'; end if;
+  reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_user, true);
+  if exists (select 1 from guide.news_videos where news_id in (nw, man)) then
+    raise exception 'LEAK F8.18 V5: un usuario ve vídeos de un borrador'; end if;
+  begin perform guide.admin_set_news_videos(nw, '[]'::jsonb); raise exception 'LEAK F8.18: no admin cambia vídeos';
+  exception when insufficient_privilege then null; end;
+  begin update guide.news_videos set title = 'hack' where news_id = nw; raise exception 'LEAK F8.18 V5: no admin edita vídeos';
+  exception when insufficient_privilege then null; end;
+  perform set_config('request.jwt.claims', c_admin, true);
+  v := (select l.videos from guide.admin_list_news(p_id => nw) l);
+  if jsonb_array_length(v) <> 2 or v -> 0 ->> 'youtube_id' <> c_id1 or v -> 1 ->> 'youtube_id' <> c_id2 then
+    raise exception 'FAIL F8.18 V6: admin_list_news sin vídeos %', v; end if;
+  -- El admin tampoco escribe directo (solo por la RPC)
+  begin delete from guide.news_videos where news_id = nw; raise exception 'LEAK F8.18 V5: DELETE directo del admin';
+  exception when insufficient_privilege then null; end;
+
+  -- Publicar exige título y canal en cada vídeo (D88)
+  begin update guide.news set status = 'published' where id = nw;
+    raise exception 'LEAK F8.18: publica con un vídeo sin título ni canal';
+  exception when check_violation then
+    if sqlerrm <> 'news_video_meta' then raise exception 'FAIL F8.18: error inesperado %', sqlerrm; end if; end;
+
+  -- Escritura del admin: validación
+  foreach vid in array array[
+      jsonb_build_array(jsonb_build_object('youtube_id', c_id1), jsonb_build_object('youtube_id', c_id2),
+                        jsonb_build_object('youtube_id', 'zzzzzzzzzzz')),
+      jsonb_build_array(jsonb_build_object('youtube_id', c_id1), jsonb_build_object('youtube_id', 'https://youtu.be/' || c_id1)),
+      jsonb_build_array(jsonb_build_object('youtube_id', 'https://evil.tld/watch?v=' || c_id1)),
+      jsonb_build_array(jsonb_build_object('youtube_id', c_id1, 'origin', 'agent')),
+      jsonb_build_array(jsonb_build_object('youtube_id', c_id1, 'title', 5)),
+      jsonb_build_array(jsonb_build_object('youtube_id', c_id1, 'lang', 'cat')),
+      jsonb_build_array(jsonb_build_object('youtube_id', c_id1, 'title', repeat('x', 201))),
+      jsonb_build_object('youtube_id', c_id1)] loop
+    begin perform guide.admin_set_news_videos(nw, vid); raise exception 'LEAK F8.18: admin_set_news_videos acepta %', vid;
+    exception when invalid_parameter_value then null; end;
+  end loop;
+  begin perform guide.admin_set_news_videos(nw, jsonb_build_array(jsonb_build_object('youtube_id', c_id1, 'title', 'F818 ' || chr(8238) || 'x')));
+    raise exception 'LEAK F8.18: admin_set_news_videos acepta bidi';
+  exception when check_violation then null; end;
+  if (select count(*) from guide.news_videos where news_id = nw) <> 2 then
+    raise exception 'FAIL F8.18: una llamada fallida cambió los vídeos'; end if;
+
+  -- El admin edita (normaliza el ID, reemplaza y registra sin agent_meta)
+  select count(*) into n from guide.admin_set_news_videos(nw, jsonb_build_array(
+    jsonb_build_object('youtube_id', 'https://youtu.be/' || c_id2 || '?si=x', 'title', 'F818 segundo', 'channel', 'F818 Club'),
+    jsonb_build_object('youtube_id', c_id1, 'title', 'F818 final', 'channel', 'F818 Canal', 'lang', 'ca'))) s
+  where (s.position = 1 and s.youtube_id = c_id2) or (s.position = 2 and s.youtube_id = c_id1);
+  if n <> 2 then raise exception 'FAIL F8.18: admin_set_news_videos no devuelve las filas'; end if;
+  select * into r from guide.activity_log a
+  where a.entity_table = 'news' and a.entity_id = nw::text and a.changed_columns = array['videos'] order by a.id desc limit 1;
+  if r.id is null or r.actor_id is distinct from 'a0000000-0000-4000-8000-000000000001'::uuid
+     or r.details ->> 'by' <> 'admin' or jsonb_array_length(r.details -> 'videos') <> 2
+     or r.details::text ilike '%agent_meta%' or r.old_row::text ilike '%agent_meta%'
+     or r.details::text ilike '%confidence%' then
+    raise exception 'FAIL F8.18 V7: registro del cambio de vídeos %', r; end if;
+
+  -- Aprobar: J27b quita agent_meta.videos; los vídeos se quedan
+  v := guide.approve_news(array[nw]);
+  if jsonb_array_length(v -> 'ok') <> 1 then raise exception 'FAIL F8.18: approve_news %', v; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+  if (select n.agent_meta from guide.news n where n.id = nw) ? 'videos' then
+    raise exception 'LEAK F8.18 V11: agent_meta.videos tras aprobar'; end if;
+  perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  -- Publicada: no se deja un vídeo sin crédito; vaciar sí
+  begin perform guide.admin_set_news_videos(nw, jsonb_build_array(jsonb_build_object('youtube_id', c_id1, 'title', 'F818 final')));
+    raise exception 'LEAK F8.18: vídeo sin canal en una publicada';
+  exception when check_violation then null; end;
+  select count(*) into n from guide.admin_set_news_videos(nw, '[]'::jsonb);
+  if n <> 0 or exists (select 1 from guide.news_videos where news_id = nw) then
+    raise exception 'FAIL F8.18: el admin no vacía los vídeos'; end if;
+  perform guide.admin_set_news_videos(nw, jsonb_build_array(
+    jsonb_build_object('youtube_id', c_id1, 'title', 'F818 final', 'channel', 'F818 Canal', 'lang', 'ca'),
+    jsonb_build_object('youtube_id', c_id2, 'title', 'F818 segundo', 'channel', 'F818 Club')));
+
+  -- Lectura pública (V5): anon y no admin ven los vídeos de la publicada, ordenados, sin created_at
+  reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  if (select string_agg(x.youtube_id || '|' || x.title || '|' || x.channel, ',' order by x.position)
+      from guide.news_videos x where x.news_id = nw) is distinct from c_id1 || '|F818 final|F818 Canal,' || c_id2 || '|F818 segundo|F818 Club' then
+    raise exception 'FAIL F8.18 V5: anon no ve los vídeos de una publicada'; end if;
+  begin perform (select x.created_at from guide.news_videos x limit 1); raise exception 'LEAK F8.18: anon lee created_at';
+  exception when insufficient_privilege then null; end;
+  begin update guide.news_videos set title = 'hack' where news_id = nw; raise exception 'LEAK F8.18 V5: anon UPDATE';
+  exception when insufficient_privilege then null; end;
+  begin delete from guide.news_videos where news_id = nw; raise exception 'LEAK F8.18 V5: anon DELETE';
+  exception when insufficient_privilege then null; end;
+  reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_user, true);
+  if (select count(*) from guide.news_videos x where x.news_id = nw) <> 2 then
+    raise exception 'FAIL F8.18 V5: un usuario no ve los vídeos de una publicada'; end if;
+  begin update guide.news_videos set title = 'hack' where news_id = nw; raise exception 'LEAK F8.18 V5: usuario UPDATE';
+  exception when insufficient_privilege then null; end;
+
+  -- Retirada (vuelve a borrador) y rechazada: 0 filas para anon y no admin
+  perform set_config('request.jwt.claims', c_admin, true);
+  perform guide.reopen_news(array[nw]);
+  perform guide.admin_set_news_videos(man, jsonb_build_array(jsonb_build_object('youtube_id', c_id1)));
+  v := guide.reject_news(array[man], 'not_relevant');
+  if jsonb_array_length(v -> 'ok') <> 1 then raise exception 'FAIL F8.18: reject_news %', v; end if;
+  reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  if exists (select 1 from guide.news_videos where news_id in (nw, man)) then
+    raise exception 'LEAK F8.18 V5: anon ve vídeos de una retirada o rechazada'; end if;
+  reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_user, true);
+  if exists (select 1 from guide.news_videos where news_id in (nw, man)) then
+    raise exception 'LEAK F8.18 V5: un usuario ve vídeos de una retirada o rechazada'; end if;
+
+  -- Pendiente de la revisión de la foto: noticia rechazada (de borrador a rechazada) → anon no ve su foto
+  reset role; perform set_config('request.jwt.claims', '', true);
+  insert into storage.objects (bucket_id, name, metadata)
+  values ('media', m_rej::text || '/1-f818-rej.jpg', '{"mimetype":"image/jpeg","size":1000}');
+  insert into guide.media (id, storage_path, original_filename, mime_type, size_bytes, alt_es)
+  values (m_rej, m_rej::text || '/1-f818-rej.jpg', 'f818-rej.jpg', 'image/jpeg', 1000, 'Foto F818 rechazada');
+  perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  insert into guide.news (title_es, summary_es, category_id, source_name, source_url, status, media_id, image_license, image_credit)
+  values ('F818 foto rechazada', 'Resumen F818.', v_cat, 'F8 fuente', 'https://f8test.org/f818-rej', 'draft', m_rej, 'own', 'F8 crédito')
+  returning id into rej;
+  v := guide.reject_news(array[rej], 'not_relevant');
+  if jsonb_array_length(v -> 'ok') <> 1 then raise exception 'FAIL F8 media: reject_news %', v; end if;
+  reset role; perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  if exists (select 1 from guide.media m where m.id = m_rej) then
+    raise exception 'LEAK F8 media: anon ve la foto de una noticia rechazada'; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+end $$;
+
+reset role;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+-- ── F8.20b aporte propio (guide_f820b_news_insight, D91/D92, spec docs/marketing/noticias-seo-spec.md §19.7):
+--    author_note_* renombrada a insight_*; seo_keyword_* interna (sin SELECT para la API); meta_description_* pública
+--    y solo de Xavi; CHECK J13/J14 + NFC; indexable = publicada + aporte ≥ 80 palabras; FTS con el aporte (peso C);
+--    search_news.has_insight; admin_list_news y ⌘K; ingesta J11 ampliada con J12–J17; guarda J21; registro.
+do $$
+declare
+  c_admin constant text := '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+  c_user  constant text := '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated"}';
+  c_anon  constant text := '{"role":"anon"}';
+  w80 constant text := 'Aporte ' || array_to_string(array_fill('zxqaporte'::text, array[79]), ' ');
+  w79 constant text := array_to_string(array_fill('zxqaporte'::text, array[79]), ' ');
+  today text := to_char((now() at time zone 'Europe/Madrid')::date, 'YYYY-MM-DD');
+  tk text; r1 uuid; v jsonb; base jsonb; nw uuid; ag uuid; v_cat uuid; v_bad text; r record; n integer;
+  v_p regprocedure; v_op text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos'; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+
+  -- Estático: columnas, grants por columna (J27), firmas y EXECUTE exactos
+  if exists (select 1 from pg_attribute a where a.attrelid = 'guide.news'::regclass and a.attnum > 0
+             and not a.attisdropped and a.attname::text like 'author_note%')
+     or exists (select 1 from pg_attribute a where a.attrelid = 'guide.export_news'::regclass and a.attname::text like 'author_note%')
+     or not exists (select 1 from pg_attribute a where a.attrelid = 'guide.export_news'::regclass and a.attname = 'insight_es') then
+    raise exception 'FAIL F8.20b: siguen columnas author_note_* o falta insight_* en export_news'; end if;
+  foreach v_bad in array array['insight_es', 'insight_en', 'meta_description_es', 'meta_description_en'] loop
+    if not has_column_privilege('anon', 'guide.news', v_bad, 'select')
+       or not has_column_privilege('authenticated', 'guide.news', v_bad, 'select') then
+      raise exception 'FAIL F8.20b: % sin SELECT para la API', v_bad; end if;
+  end loop;
+  foreach v_bad in array array['seo_keyword_es', 'seo_keyword_en'] loop
+    if has_column_privilege('anon', 'guide.news', v_bad, 'select')
+       or has_column_privilege('authenticated', 'guide.news', v_bad, 'select') then
+      raise exception 'LEAK F8.20b: % legible desde la API', v_bad; end if;
+  end loop;
+  foreach v_bad in array array['insight_es', 'insight_en', 'seo_keyword_es', 'seo_keyword_en', 'meta_description_es', 'meta_description_en'] loop
+    if has_column_privilege('anon', 'guide.news', v_bad, 'insert') or has_column_privilege('anon', 'guide.news', v_bad, 'update') then
+      raise exception 'LEAK F8.20b: anon con escritura en %', v_bad; end if;
+  end loop;
+  if not exists (select 1 from pg_proc p
+                 where p.oid = 'guide.search_news(text, guide.locale, uuid, integer, integer, guide.news_scope)'::regprocedure
+                   and 'has_insight' = any (p.proargnames) and not ('has_note' = any (p.proargnames))) then
+    raise exception 'FAIL F8.20b: search_news sin has_insight'; end if;
+  if exists (select 1 from pg_proc p where p.pronamespace = 'guide'::regnamespace
+             and (p.prosrc ~ 'n[.]author_note|has_note')) then
+    raise exception 'FAIL F8.20b: alguna función de guide sigue leyendo author_note/has_note'; end if;
+  foreach v_p in array array[
+    'guide.admin_list_news(guide.news_status, uuid, guide.news_scope, uuid, uuid, text, uuid, integer, integer)'::regprocedure,
+    'guide.search_news(text, guide.locale, uuid, integer, integer, guide.news_scope)'::regprocedure,
+    'guide.ingest_submit_news(text, uuid, jsonb)'::regprocedure, 'guide.news_before_write()'::regprocedure] loop
+    if not coalesce((select p.proconfig from pg_proc p where p.oid = v_p) @> array['search_path=""'], false) then
+      raise exception 'FAIL F8.20b: % sin search_path vacío', v_p; end if;
+    if has_function_privilege('service_role', v_p, 'execute')
+       or exists (select 1 from pg_proc p, aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+                  where p.oid = v_p and a.grantee = 0 and a.privilege_type = 'EXECUTE') then
+      raise exception 'LEAK F8.20b: EXECUTE de PUBLIC/service_role en %', v_p; end if;
+  end loop;
+  if has_function_privilege('anon', 'guide.admin_list_news(guide.news_status, uuid, guide.news_scope, uuid, uuid, text, uuid, integer, integer)', 'execute')
+     or not has_function_privilege('authenticated', 'guide.admin_list_news(guide.news_status, uuid, guide.news_scope, uuid, uuid, text, uuid, integer, integer)', 'execute')
+     or has_function_privilege('authenticated', 'guide.ingest_submit_news(text, uuid, jsonb)', 'execute')
+     or not has_function_privilege('anon', 'guide.search_news(text, guide.locale, uuid, integer, integer, guide.news_scope)', 'execute') then
+    raise exception 'LEAK F8.20b: EXECUTE inesperado en admin_list_news / ingest_submit_news / search_news'; end if;
+
+  -- Fixtures: runs viejos fuera del tope de 24 h, tokens reales neutralizados
+  update guide.ingest_runs set started_at = now() - interval '25 hours' where started_at > now() - interval '24 hours';
+  update guide.ingest_runs set status = 'abandoned', finished_at = now() where status = 'open';
+  update guide.ingest_tokens set revoked_at = coalesce(revoked_at, now()) where revoked_at is null;
+  v_cat := (select c.id from guide.news_categories c where c.key = 'material');
+
+  -- Admin: CHECK puros J13/J14 y NFC en los campos nuevos
+  perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  tk := guide.admin_create_ingest_token('rls F820b', 1) ->> 'token';
+  perform guide.admin_set_ingest_window(true);
+  insert into guide.news (title_es, summary_es, category_id, source_name, source_url, status, insight_es, seo_keyword_es)
+  values ('F820b manual', 'Resumen F820b.', v_cat, 'F8 fuente', 'https://f8test.org/f820b-manual', 'draft',
+          '  Cafe' || chr(769) || ' F820b  ', ' zxqclave ')
+  returning id into nw;
+  reset role; perform set_config('request.jwt.claims', '', true);
+  select n.insight_es, n.seo_keyword_es, n.indexable into r from guide.news n where n.id = nw;
+  if r.insight_es is distinct from 'Caf' || chr(233) || ' F820b' or r.seo_keyword_es is distinct from 'zxqclave' or r.indexable then
+    raise exception 'FAIL F8.20b: la guarda no normaliza (NFC + btrim) %', r; end if;
+  perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  foreach v_bad in array array[repeat('a', 1401), 'x' || chr(8238) || 'y', 'x' || chr(8203) || 'y', 'x' || chr(8232) || 'y',
+                               'x' || chr(1) || 'y', 'x' || chr(133) || 'y'] loop
+    begin update guide.news set insight_es = v_bad where id = nw; raise exception 'LEAK F8.20b: insight_es acepta %', left(v_bad, 20);
+    exception when check_violation then null; end;
+    begin update guide.news set insight_en = v_bad where id = nw; raise exception 'LEAK F8.20b: insight_en acepta %', left(v_bad, 20);
+    exception when check_violation then null; end;
+  end loop;
+  update guide.news set insight_es = 'Linea uno' || chr(10) || '- linea dos' where id = nw;
+  foreach v_bad in array array['a', repeat('k', 61), 'clave' || chr(10) || 'dos', 'cla' || chr(173) || 've', 'x' || chr(8238) || 'y'] loop
+    begin update guide.news set seo_keyword_es = v_bad where id = nw; raise exception 'LEAK F8.20b: seo_keyword_es acepta %', left(v_bad, 20);
+    exception when check_violation then null; end;
+    begin update guide.news set seo_keyword_en = v_bad where id = nw; raise exception 'LEAK F8.20b: seo_keyword_en acepta %', left(v_bad, 20);
+    exception when check_violation then null; end;
+  end loop;
+  foreach v_bad in array array[repeat('m', 161), 'meta' || chr(10) || 'dos', 'x' || chr(8203) || 'y'] loop
+    begin update guide.news set meta_description_es = v_bad where id = nw; raise exception 'LEAK F8.20b: meta_description_es acepta %', left(v_bad, 20);
+    exception when check_violation then null; end;
+    begin update guide.news set meta_description_en = v_bad where id = nw; raise exception 'LEAK F8.20b: meta_description_en acepta %', left(v_bad, 20);
+    exception when check_violation then null; end;
+  end loop;
+
+  -- indexable (D92): publicada + ≥ 80 palabras en su idioma; indexable_en además con title_en y summary_en
+  update guide.news set insight_es = w79, meta_description_es = 'Meta F820b propia.' where id = nw;
+  perform guide.approve_news(array[nw]);
+  if (select n.indexable from guide.news n where n.id = nw) then
+    raise exception 'FAIL F8.20b: indexable con 79 palabras'; end if;
+  update guide.news set insight_es = w80, insight_en = w80 where id = nw;
+  select n.status, n.indexable, n.indexable_en into r from guide.news n where n.id = nw;
+  if r.status <> 'published' or not r.indexable or r.indexable_en then
+    raise exception 'FAIL F8.20b: indexable/indexable_en con 80 palabras %', r; end if;
+  update guide.news set title_en = 'F820b manual en', summary_en = 'Summary F820b.' where id = nw;
+  if not (select n.indexable_en from guide.news n where n.id = nw) then
+    raise exception 'FAIL F8.20b: indexable_en con inglés completo y 80 palabras'; end if;
+  perform guide.reopen_news(array[nw]);
+  if (select n.indexable or n.indexable_en from guide.news n where n.id = nw) then
+    raise exception 'FAIL F8.20b: indexable en un borrador'; end if;
+  perform guide.approve_news(array[nw]);
+
+  -- Registro: el cambio de aporte queda en activity_log
+  update guide.news set insight_es = w80 || ' fin' where id = nw;
+  if not exists (select 1 from guide.activity_log l where l.entity_table = 'news' and l.entity_id = nw::text
+                 and 'insight_es' = any (l.changed_columns)) then
+    raise exception 'FAIL F8.20b: el cambio de insight_es no se registra'; end if;
+
+  -- admin_list_news y ⌘K
+  select x.insight_es, x.seo_keyword_es, x.meta_description_es into r from guide.admin_list_news(p_id => nw) x;
+  if r.insight_es is distinct from w80 || ' fin' or r.seo_keyword_es <> 'zxqclave' or r.meta_description_es <> 'Meta F820b propia.' then
+    raise exception 'FAIL F8.20b: admin_list_news sin aporte/keyword/meta %', r; end if;
+  select x.data, x.matched_field into r from guide.admin_search('zxqaporte', array['news']) x where x.id = nw;
+  if r.data is null or not (r.data ->> 'has_insight')::boolean or r.data ? 'has_note' or r.matched_field <> 'insight_es' then
+    raise exception 'FAIL F8.20b: admin_search sin has_insight / insight_es %', r; end if;
+  perform set_config('request.jwt.claims', c_user, true);
+  begin perform guide.admin_list_news(p_id => nw); raise exception 'LEAK F8.20b: no admin llama a admin_list_news';
+  exception when insufficient_privilege then null; end;
+  update guide.news set insight_es = 'hack', meta_description_es = 'hack' where id = nw;
+  reset role; perform set_config('request.jwt.claims', '', true);
+  if (select n.meta_description_es from guide.news n where n.id = nw) <> 'Meta F820b propia.' then
+    raise exception 'LEAK F8.20b: un usuario no admin edita el aporte'; end if;
+
+  -- anon: aporte y meta públicos con la noticia publicada; keyword nunca; FTS con el aporte (peso C)
+  perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  if (select n.insight_es from guide.news n where n.id = nw) is null
+     or (select n.meta_description_es from guide.news n where n.id = nw) is null then
+    raise exception 'FAIL F8.20b: anon no lee aporte/meta de una publicada'; end if;
+  begin perform (select n.seo_keyword_es from guide.news n limit 1); raise exception 'LEAK F8.20b: anon lee seo_keyword_es';
+  exception when insufficient_privilege then null; end;
+  select x.has_insight, x.indexable into r from guide.search_news('zxqaporte', 'es') x where x.id = nw;
+  if not coalesce(r.has_insight, false) or not r.indexable then
+    raise exception 'FAIL F8.20b: search_news no busca en el aporte o sin has_insight %', r; end if;
+  if not exists (select 1 from guide.search_news('zxqaporte', 'en') x where x.id = nw and x.has_insight) then
+    raise exception 'FAIL F8.20b: search_news en inglés sin el aporte'; end if;
+  reset role; perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_user, true);
+  begin perform (select n.seo_keyword_en from guide.news n limit 1); raise exception 'LEAK F8.20b: un usuario lee seo_keyword_en';
+  exception when insufficient_privilege then null; end;
+
+  -- J21: sin admin (agente o rol que salte RLS) no escribe meta_description_*; el aporte y la keyword sí, en borrador
+  reset role; perform set_config('request.jwt.claims', '', true);
+  v_op := coalesce(current_setting('guide.draft_op', true), '');
+  perform set_config('guide.draft_op', '', true);
+  insert into guide.news (slug, status, source, title_es, summary_es, category_id, source_name, source_url,
+                          dedupe_key, url_key, agent_meta, insight_es, seo_keyword_es)
+  values ('x', 'draft', 'agent', 'F820b agente aporte', 'Resumen.', v_cat, 'F8', 'https://f8test.org/f820b-j21ok',
+          'f820b-j21ok', 'f820b-j21ok', '{"confidence":0.9}', w80, 'zxqclave');
+  begin
+    insert into guide.news (slug, status, source, title_es, summary_es, category_id, source_name, source_url,
+                            dedupe_key, url_key, agent_meta, meta_description_en)
+    values ('x', 'draft', 'agent', 'F820b agente meta en', 'Resumen.', v_cat, 'F8', 'https://f8test.org/f820b-j21en',
+            'f820b-j21en', 'f820b-j21en', '{"confidence":0.9}', 'Meta del agente');
+    raise exception 'LEAK F8.20b J21: el agente escribe meta_description_en';
+  exception when insufficient_privilege then null; end;
+  begin
+    insert into guide.news (slug, status, source, title_es, summary_es, category_id, source_name, source_url,
+                            dedupe_key, url_key, agent_meta, meta_description_es)
+    values ('x', 'draft', 'agent', 'F820b agente meta', 'Resumen.', v_cat, 'F8', 'https://f8test.org/f820b-j21',
+            'f820b-j21', 'f820b-j21', '{"confidence":0.9}', 'Meta del agente');
+    raise exception 'LEAK F8.20b J21: el agente escribe meta_description_es';
+  exception when insufficient_privilege then null; end;
+  perform set_config('guide.draft_op', v_op, true);
+
+  -- Ingesta (anon): J11 ampliada, J12–J17 sobre el aporte y la keyword
+  base := jsonb_build_object('title_es', 'F820b noticia con aporte', 'summary_es', 'Resumen F820b propio.', 'category', 'material',
+                             'published_on_source', today, 'source_url', 'https://f8test.org/f820b/1', 'confidence', 0.9);
+  perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  v := guide.ingest_start_run(tk, 'news', false);
+  if v ->> 'result' <> 'ok' then raise exception 'FAIL F8.20b: start_run %', v; end if;
+  r1 := (v ->> 'run_id')::uuid;
+  foreach v_bad in array array['meta_description_es', 'meta_description_en', 'author_note_es', 'author_note', 'insight', 'seo_title_es'] loop
+    v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object(v_bad, 'x'));
+    if v ->> 'reason' is distinct from 'unknown_key' then raise exception 'LEAK F8.20b J11: % aceptada (%)', v_bad, v; end if;
+  end loop;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_es', 'Escribe a nadie' || chr(64) || 'f8test.org'));
+  if v ->> 'reason' is distinct from 'pii' then raise exception 'LEAK F8.20b J16: email en insight_es (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('seo_keyword_en', 'tel 612 345 678'));
+  if v ->> 'reason' is distinct from 'pii' then raise exception 'LEAK F8.20b J16: teléfono en seo_keyword_en (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_en', 'see ' || tk));
+  if v ->> 'reason' is distinct from 'secret' then raise exception 'LEAK F8.20b J17: token en insight_en (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_es', 'x sb_secret_abc'));
+  if v ->> 'reason' is distinct from 'secret' then raise exception 'LEAK F8.20b J17: secreto en insight_es (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_es', 'a' || chr(8238) || 'b'));
+  if v ->> 'reason' is distinct from 'bad_chars' then raise exception 'LEAK F8.20b J14: bidi en insight_es (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_en', 'a' || chr(9) || 'b'));
+  if v ->> 'reason' is distinct from 'bad_chars' then raise exception 'LEAK F8.20b J14: tab en insight_en (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('seo_keyword_es', 'a' || chr(10) || 'b'));
+  if v ->> 'reason' is distinct from 'bad_chars' then raise exception 'LEAK F8.20b J14: salto en seo_keyword_es (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_es', repeat('a', 1401)));
+  if v ->> 'reason' is distinct from 'too_long' or v ->> 'field' <> 'insight_es' then
+    raise exception 'LEAK F8.20b J13: insight_es > 1400 (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('seo_keyword_es', repeat('k', 61)));
+  if v ->> 'reason' is distinct from 'too_long' then raise exception 'LEAK F8.20b J13: seo_keyword_es > 60 (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('seo_keyword_en', ' k '));
+  if v ->> 'reason' is distinct from 'too_short' or v ->> 'field' <> 'seo_keyword_en' then
+    raise exception 'LEAK F8.20b J13: seo_keyword_en < 2 (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_es', 42));
+  if v ->> 'reason' is distinct from 'invalid_type' then raise exception 'LEAK F8.20b J12: insight_es numérico (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_es', jsonb_build_object('a', 'b')));
+  if v ->> 'reason' is distinct from 'invalid_type' then raise exception 'LEAK F8.20b J12: insight_es objeto (%)', v; end if;
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object('insight_es', 'a' || chr(8232) || 'b'));
+  if v ->> 'reason' is distinct from 'constraint' then raise exception 'LEAK F8.20b J14: U+2028 en insight_es (%)', v; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+  if exists (select 1 from guide.news n where n.source_url like 'https://f8test.org/f820b/%') then
+    raise exception 'LEAK F8.20b: una fila inválida llegó a news'; end if;
+  if coalesce(((select r2.invalid from guide.ingest_runs r2 where r2.id = r1) ->> 'too_short')::integer, 0) <> 1 then
+    raise exception 'FAIL F8.20b: invalid:too_short sin contar'; end if;
+
+  -- Válida: aporte y keyword (NFC) en el borrador del agente; meta_description vacía; anon no lo ve
+  perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  v := guide.ingest_submit_news(tk, r1, base || jsonb_build_object(
+         'insight_es', w80 || chr(10) || '- Cafe' || chr(769), 'insight_en', w80,
+         'seo_keyword_es', ' Cafe' || chr(769) || ' Barcelona ', 'seo_keyword_en', 'cafe Barcelona'));
+  if v ->> 'result' <> 'inserted' then raise exception 'FAIL F8.20b: noticia con aporte válida %', v; end if;
+  if exists (select 1 from guide.news n where n.source_url like 'https://f8test.org/f820b/%') then
+    raise exception 'LEAK F8.20b: anon ve el borrador del agente'; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+  select n.id, n.status, n.source, n.insight_es, n.insight_en, n.seo_keyword_es, n.seo_keyword_en,
+         n.meta_description_es, n.indexable into r
+  from guide.news n where n.source_url like 'https://f8test.org/f820b/%';
+  ag := r.id;
+  if ag is null or r.status <> 'draft' or r.source <> 'agent' or r.indexable or r.meta_description_es is not null
+     or r.insight_es <> w80 || chr(10) || '- Caf' || chr(233) or r.insight_en <> w80
+     or r.seo_keyword_es <> 'Caf' || chr(233) || ' Barcelona' or r.seo_keyword_en <> 'cafe Barcelona' then
+    raise exception 'FAIL F8.20b: borrador del agente con aporte %', r; end if;
+
+  -- Xavi edita el aporte al aprobar; la ficha queda indexable
+  perform set_config('role', 'authenticated', true); perform set_config('request.jwt.claims', c_admin, true);
+  update guide.news set insight_es = w80 || ' editado', meta_description_es = 'Meta de Xavi.' where id = ag;
+  v := guide.approve_news(array[ag]);
+  if jsonb_array_length(v -> 'ok') <> 1 then raise exception 'FAIL F8.20b: approve_news %', v; end if;
+  reset role; perform set_config('request.jwt.claims', '', true);
+  select n.status, n.indexable, n.insight_es, n.agent_meta into r from guide.news n where n.id = ag;
+  if r.status <> 'published' or not r.indexable or r.insight_es <> w80 || ' editado' or r.agent_meta ?| array['note', 'excerpt'] then
+    raise exception 'FAIL F8.20b: aprobación con aporte editado %', r; end if;
+  perform set_config('role', 'anon', true); perform set_config('request.jwt.claims', c_anon, true);
+  perform guide.ingest_finish_run(tk, r1, '{}'::jsonb, null);
+  reset role; perform set_config('request.jwt.claims', '', true);
+end $$;
+reset role;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+
 -- Fin F8
 
 -- public intacto tras todo lo anterior

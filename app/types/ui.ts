@@ -42,7 +42,7 @@ export interface DataRow {
 /** One card of the home hero carousel (already localised; the view only renders it). */
 export interface HeroCardData {
   key: string
-  kind: 'photo' | 'shoe' | 'event' | 'gym' | 'article'
+  kind: 'photo' | 'shoe' | 'event' | 'gym' | 'article' | 'news'
   /** Gyms and articles sit on the near-black base. */
   strong: boolean
   /** Null: plain card with no link (the two photos). */
@@ -54,4 +54,8 @@ export interface HeroCardData {
   title?: string
   note?: string
   date?: { day: string; month: string }
+  /** Outlet of a news card, after `note` («Fuente:»). */
+  source?: string
+  /** News card (D89): category (tone, ink and glyph of the tile without photo) and dominant colour of the photo (`#rrggbb`, validated). */
+  news?: { categorySlug: string | null; dominant: string | null }
 }

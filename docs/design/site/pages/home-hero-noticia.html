@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero · tarjeta de noticia (8.19a) · ChalkGuide</title>
+<meta name="description" content="Propuesta de hero de la home: entrada con las barras del logo y carrusel cilíndrico manual con lo más relevante del sitio.">
+<!--
+  Propuesta 8.19a (2026-11-19): la última noticia publicada entra SIEMPRE en el carrusel (cambia D41).
+  Copia de home-hero-carrusel.html + tarjeta de noticia en la posición 1 (la que se ve al cargar). 9 tarjetas.
+  Escenas: ?news=photo (con foto, por defecto) · ?news=text (sin foto) · ?news=none (sin noticias: 8 tarjetas, como hoy).
+  Contenido DUMMY. Propuesta original del 2026-10-30 abajo.
+  Propuesta para Xavi (2026-10-30). No es código de producción.
+  Referencia pedida por Xavi: dg-cinema.com (entrada y carrusel cóncavo). Contenido real de guide.*.
+  Pruebas: ?intro=0 quita la entrada · ?lang=en · ?at=N centra la tarjeta N.
+-->
+<script>
+  document.documentElement.classList.add('js')
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && new URLSearchParams(location.search).get('intro') !== '0') {
+    document.documentElement.classList.add('has-intro')
+  }
+</script>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wall: #0b0b0b;
+    --paper: #f4f1ea;
+    --chalk: #f0ede8;
+    --meta: #a19d94;
+    --ink: #1c1a17;
+    --accent: #e8923a;
+    --accent-hover: #c4721f;
+    --on-accent: #1a0a00;
+    --head-h: 76px;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--wall); scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.6 Inter, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus { outline: none; }
+  :focus-visible { box-shadow: 0 0 0 2px var(--wall), 0 0 0 4px var(--accent); border-radius: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* ===== Entrada: las cuatro barras del logo crecen, tapan la pantalla y suben ===== */
+  .intro { display: none; }
+  .has-intro .intro { display: block; position: fixed; inset: 0; z-index: 50; background: var(--wall); overflow: hidden; cursor: pointer; }
+  .intro.is-open { background: transparent; }
+  .intro-mark { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--chalk); transition: opacity .15s; }
+  .intro-mark img { width: 56px; height: 56px; display: block; }
+  .intro-count { font: 700 22px/1 Archivo, sans-serif; font-stretch: 125%; font-variant-numeric: tabular-nums; min-width: 3ch; text-align: center; }
+  .intro-bars { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .intro-bars i { display: block; height: 130%; margin-inline: -1px; background: var(--accent); border-radius: 12.5vw 12.5vw 0 0; transform: translateY(100%); transition: transform .5s var(--ease); }
+  .intro-bars i:nth-child(1) { transition-delay: .05s; }
+  .intro-bars i:nth-child(2) { transition-delay: 0s; }
+  .intro-bars i:nth-child(3) { transition-delay: .08s; }
+  .intro-bars i:nth-child(4) { transition-delay: .13s; }
+  .intro.is-up .intro-bars i { transform: translateY(-12%); }
+  .intro.is-up .intro-mark { opacity: 0; }
+  .intro.is-open .intro-bars i { transform: translateY(-115%); border-radius: 0 0 12.5vw 12.5vw; transition: transform .62s cubic-bezier(.7, 0, .2, 1); }
+
+  /* ===== Cabecera ===== */
+  .site-head { position: relative; z-index: 3; height: var(--head-h); display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-inline: clamp(16px, 5.8vw, 84px); color: var(--chalk); }
+  .site-head img { display: block; height: 26px; width: auto; }
+  .site-nav { display: flex; gap: clamp(24px, 4vw, 56px); font-size: 15px; }
+  .site-nav a { text-decoration: none; color: #d5d1c9; transition: color .15s; }
+  .site-nav a:hover { color: #fff; }
+  .lang { display: flex; gap: 2px; font-size: 14px; }
+  .lang button { min-width: 44px; min-height: 44px; border-radius: 8px; color: var(--meta); transition: color .15s; }
+  .lang button:hover { color: #fff; }
+  .lang button[aria-pressed='true'] { color: var(--chalk); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--accent); }
+
+  /* ===== Hero ===== */
+  .hero { position: relative; isolation: isolate; overflow-x: clip; overflow-y: visible; min-height: 100svh; display: flex; flex-direction: column; background: var(--wall); color: var(--chalk); }
+  /* Polvo de magnesio sobre la pizarra */
+  .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .26; pointer-events: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  /* Bandas laterales: el acento de marca donde la referencia tiene su telón rojo */
+  .edge { position: absolute; z-index: 2; top: 0; bottom: 0; width: clamp(24px, 11vw, 190px); pointer-events: none; opacity: .7; transition: opacity .5s var(--ease); }
+  .edge--l { left: 0; background: linear-gradient(90deg, rgb(232 146 58 / .15), rgb(232 146 58 / 0) 62%), linear-gradient(90deg, #0b0b0b 4%, rgb(11 11 11 / 0) 100%); }
+  .edge--r { right: 0; background: linear-gradient(270deg, rgb(232 146 58 / .15), rgb(232 146 58 / 0) 62%), linear-gradient(270deg, #0b0b0b 4%, rgb(11 11 11 / 0) 100%); }
+  .hero.is-moving .edge { opacity: 1; }
+
+  .title { position: relative; z-index: 1; margin: clamp(4px, 2.2svh, 28px) 0 0; padding-inline: 16px; text-align: center; font: 700 clamp(44px, 5.05vw, 92px)/1 Archivo, Inter, sans-serif; white-space: nowrap; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; color: #fff; }
+  .title span { display: inline-block; }
+
+  /* Escena cilíndrica: vemos el interior de la pared curva */
+  .ring { position: relative; z-index: 1; flex: 1 1 auto; min-height: 320px; margin: clamp(4px, 1.5svh, 18px) 0 clamp(64px, 11svh, 108px); perspective: var(--p, 1000px); perspective-origin: 50% 50%; touch-action: pan-y; cursor: grab; user-select: none; }
+  .ring.is-drag { cursor: grabbing; }
+  .ring-scene { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .cardx { position: absolute; left: 50%; top: 50%; width: var(--w); height: var(--h); margin: calc(var(--h) / -2) 0 0 calc(var(--w) / -2); display: block; border-radius: 6px; color: var(--chalk); text-decoration: none; backface-visibility: hidden; will-change: transform; -webkit-user-drag: none; }
+  .cardx img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+  .cardx:focus-visible { box-shadow: none; }
+  .cardx:focus-visible .face { box-shadow: 0 0 0 2px var(--wall), 0 0 0 4px var(--accent); }
+  .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 72px 16px 14px; background: linear-gradient(180deg, rgb(11 11 11 / 0), rgb(11 11 11 / .88) 62%); opacity: var(--cap, 1); }
+  .kind { display: block; font: 400 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .cap strong { display: block; margin-top: 8px; font-size: 19px; line-height: 1.3; font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
+  .cap small { display: block; margin-top: 5px; font-size: 14px; line-height: 1.35; color: #d5d1c9; }
+  /* Todas las tarjetas: el grosor son copias redondeadas apiladas hacia atrás */
+  .slab { position: absolute; inset: 0; border-radius: inherit; transform-style: preserve-3d; transform: rotateX(var(--rx, -4deg)) rotateY(var(--ry, 9deg)); transition: transform .5s var(--ease); }
+  .ply { position: absolute; inset: 0; display: block; border-radius: inherit; transform: translateZ(calc(var(--i) * -1.25px)); background: color-mix(in srgb, #1f1f21 calc(100% - var(--i) * 3%), #111112); }
+  .face { position: absolute; inset: 0; overflow: hidden; container-type: inline-size; border-radius: inherit; background: #1a1a1c; }
+  .face img { left: -9%; width: 118%; max-width: none; transform: translateX(var(--par, 0%)); transition: none; }
+  /* Capas de la foto: gradación con su propio color, reflejo que sigue el giro y filo de luz */
+  .grade { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / 0) 66%, rgb(20 20 22 / .85) 118%); }
+  .sheen { position: absolute; inset: -20% -60%; background: linear-gradient(112deg, rgb(255 255 255 / 0) 38%, rgb(255 255 255 / .11) 49%, rgb(255 255 255 / .03) 54%, rgb(255 255 255 / 0) 62%); mix-blend-mode: screen; transform: translateX(var(--sheen, 0%)); transition: transform .5s var(--ease); }
+  .face::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 1px 0 rgb(255 255 255 / .13), inset 0 -1px 0 rgb(0 0 0 / .3), inset 1px 0 0 rgb(255 255 255 / .045), inset -1px 0 0 rgb(255 255 255 / .045); }
+
+  /* Rocódromos y artículos: base casi negra, para que el texto mande sobre cualquier foto */
+  .cardx--strong .cap { padding-top: 104px; background: linear-gradient(180deg, rgb(0 0 0 / 0), rgb(0 0 0 / .84) 46%, rgb(0 0 0 / .97) 100%); }
+
+  /* Pie de gato sobre el naranja de marca: la foto de producto se funde con multiply */
+  .cardx--shoe { color: var(--on-accent); }
+  .cardx--shoe .face { background: var(--accent); }
+  .cardx--shoe .face img { inset: 4% 4% auto; width: 92%; height: auto; aspect-ratio: 1; object-fit: contain; mix-blend-mode: multiply; }
+  .cardx--shoe .cap { background: none; }
+  .cardx--shoe .kind, .cardx--shoe small { color: var(--on-accent); }
+  /* Agenda: cartel tipográfico, los eventos no tienen foto */
+  .cardx--event { color: var(--ink); }
+  .cardx--event .face { background: var(--paper); }
+  .cardx--event .sheen { mix-blend-mode: multiply; background: linear-gradient(112deg, rgb(0 0 0 / 0) 38%, rgb(0 0 0 / .07) 49%, rgb(0 0 0 / .02) 54%, rgb(0 0 0 / 0) 62%); }
+  .date { position: absolute; left: 16px; top: 14px; font: 700 31cqw/.92 Archivo, sans-serif; font-stretch: 125%; letter-spacing: -.03em; text-transform: uppercase; }
+  .date em { display: block; font-style: normal; }
+  .cardx--event .cap { background: none; }
+  .cardx--event .kind { color: #9a4a16; }
+  .cardx--event small { color: #5e584e; }
+
+  /* Cuerda: sale de debajo de la tarjeta central y al hacer scroll baja a la sección siguiente */
+  .rope { position: absolute; z-index: 0; left: 50%; bottom: calc(14px - var(--drop, 0px)); height: calc(var(--rest, 120px) - 14px + var(--drop, 0px)); width: 0; pointer-events: none; transform-origin: 50% 0; }
+  .rope-cord { position: absolute; top: 0; bottom: 56px; left: -2.5px; width: 5px; border-radius: 3px; background: repeating-linear-gradient(-58deg, #e8923a 0 3px, #8f5013 3px 5px); }
+  .rope-end { position: absolute; left: -22px; bottom: 0; display: block; width: 44px; height: 64px; color: var(--accent); pointer-events: auto; }
+  .rope-end svg { display: block; width: 44px; height: 64px; transform-origin: 50% 8%; transition: transform .3s var(--ease); }
+  .rope-end:hover svg { transform: translateY(5px) rotate(-6deg); }
+  .rope-end:active svg { transform: translateY(2px); }
+
+  .next { scroll-margin-top: 24px; max-width: 1200px; margin: 0 auto; padding: 72px 24px 96px; }
+  .next h2 { margin: 0; font-size: clamp(28px, 2.6vw, 36px); line-height: 1.12; font-weight: 500; letter-spacing: -.025em; }
+  .next ul { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .next a { display: block; height: 100%; padding: 24px; background: #fbf9f5; border-radius: 12px; font-size: 20px; line-height: 1.35; font-weight: 500; text-decoration: none; transition: background-color .2s; }
+  .next a:hover { background: #ebe6dc; }
+
+  /* Entrada de los contenidos, en cuanto suben las barras */
+  @media (prefers-reduced-motion: no-preference) {
+    .has-intro .title { clip-path: inset(0 100% 0 0); }
+    .has-intro .rope { opacity: 0; translate: 0 -48px; }
+    .has-intro.is-in .title { clip-path: inset(-10% -2% -10% -2%); transition: clip-path .85s var(--ease) .05s; }
+    .has-intro.is-in .rope { opacity: 1; translate: 0 0; transition: opacity .4s var(--ease) .75s, translate .9s var(--ease) .75s; }
+    .rope { animation: sway 3.8s ease-in-out infinite alternate; }
+    @keyframes sway { from { rotate: -.7deg; } to { rotate: .7deg; } }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: 0s !important; transition-delay: 0s !important; }
+  }
+
+  /* ===== Menú móvil: las barras del logo suben, el título manda y el mosquetón marca la sección ===== */
+  .burger { display: none; place-items: center; width: 44px; height: 44px; margin-right: -10px; border-radius: 8px; color: #fff; }
+  .burger-bars { display: grid; justify-items: end; gap: 5px; width: 24px; }
+  .burger-bars i { display: block; height: 3px; border-radius: 2px; background: currentColor; transition: transform .35s var(--ease), width .35s var(--ease), opacity .2s; }
+  .burger-bars i:nth-child(1) { width: 24px; }
+  .burger-bars i:nth-child(2) { width: 15px; }
+  .burger-bars i:nth-child(3) { width: 20px; }
+  .burger:active .burger-bars { transform: scale(.92); }
+  .menu.is-open .burger-bars i:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .menu.is-open .burger-bars i:nth-child(2) { opacity: 0; }
+  .menu.is-open .burger-bars i:nth-child(3) { width: 24px; transform: translateY(-8px) rotate(-45deg); }
+  .menu { position: fixed; inset: 0; z-index: 40; visibility: hidden; overflow: hidden; color: #fff; transition: visibility 0s linear .32s; }
+  .menu.is-open { visibility: visible; transition-delay: 0s; }
+  .menu-wall { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); pointer-events: none; }
+  .menu-wall i { display: block; height: 128%; margin-inline: -1px; background: var(--wall); border-radius: 12.5vw 12.5vw 0 0; transform: translateY(100%); transition: transform .3s cubic-bezier(.5, 0, .9, .4); }
+  .menu.is-open .menu-wall i { transform: translateY(-14%); transition: transform .52s var(--ease); }
+  .menu.is-open .menu-wall i:nth-child(1) { transition-delay: .04s; }
+  .menu.is-open .menu-wall i:nth-child(3) { transition-delay: .07s; }
+  .menu.is-open .menu-wall i:nth-child(4) { transition-delay: .11s; }
+  .menu-inner { position: relative; height: 100%; display: flex; flex-direction: column; }
+  .menu-head { flex: none; height: var(--head-h); display: flex; align-items: center; justify-content: space-between; padding-inline: clamp(16px, 5.8vw, 84px); opacity: 0; transition: opacity .15s; }
+  .menu.is-open .menu-head { opacity: 1; transition: opacity .25s .18s; }
+  .menu-head img { display: block; height: 26px; width: auto; }
+  .menu-head .burger { display: grid; }
+  .menu-nav { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; padding: 8px clamp(16px, 5.8vw, 84px) 8px 52px; overscroll-behavior: contain; }
+  .menu-list { list-style: none; margin: auto 0; padding: 0; width: 100%; display: grid; gap: clamp(8px, 2.1svh, 20px); }
+  .menu-link { display: block; text-decoration: none; padding-block: 4px; border-radius: 4px; }
+  .menu-link b { display: block; font: 700 clamp(25px, 8vw, 46px)/1.04 Archivo, Inter, sans-serif; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; transition: color .2s; }
+  .menu-link span { display: block; margin-top: 3px; font-size: 15px; line-height: 1.35; color: var(--meta); }
+  .menu-link:is(:hover, :active, [aria-current='page'], .is-clipped) b { color: var(--accent); }
+  .menu-item { clip-path: inset(0 0 100% 0); transform: translateY(14px); }
+  .menu.is-open .menu-item { clip-path: inset(-4px -4px -8px -4px); transform: none; transition: clip-path .5s var(--ease) calc(.2s + var(--i) * 45ms), transform .5s var(--ease) calc(.2s + var(--i) * 45ms); }
+  /* La misma cuerda del hero, bajando por el margen hasta la sección activa */
+  .menu-rope { position: absolute; left: 26px; top: 0; width: 0; height: var(--y, 0px); pointer-events: none; transition: height .5s var(--ease); }
+  .menu-rope i { position: absolute; left: -2px; top: 0; bottom: 18px; width: 4px; border-radius: 2px; background: repeating-linear-gradient(-58deg, #e8923a 0 3px, #8f5013 3px 5px); transform-origin: 50% 0; transform: scaleY(0); }
+  .menu.is-open .menu-rope i { transform: none; transition: transform .55s var(--ease) .14s; }
+  .menu-rope svg { position: absolute; left: -15px; bottom: -22px; width: 30px; height: 44px; color: var(--accent); opacity: 0; }
+  .menu.is-open .menu-rope svg { opacity: 1; transition: opacity .2s .4s; }
+  .menu-foot { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px clamp(16px, 5.8vw, 84px) calc(14px + env(safe-area-inset-bottom)); opacity: 0; transition: opacity .12s; }
+  .menu.is-open .menu-foot { opacity: 1; transition: opacity .3s .5s; }
+  .menu-foot .link { color: #fff; font-size: 16px; }
+  .menu-foot .lang { flex: none; }
+  html.menu-lock { overflow: hidden; }
+  @media (prefers-reduced-motion: reduce) {
+    .menu-wall i, .menu.is-open .menu-wall i { transition: none; }
+    .menu-item { clip-path: none; transform: none; }
+    .menu-rope i { transform: none; }
+  }
+
+  /* Sin JS: fila con scroll nativo, todo visible y enlazable */
+  html:not(.js) .ring { display: flex; align-items: center; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 16px; perspective: none; }
+  html:not(.js) .ring-scene { position: static; display: flex; gap: 12px; }
+  html:not(.js) .slab { transform: none; }
+  html:not(.js) .rope-cord { top: -40px; }
+  html:not(.js) .ply { display: none; }
+  html:not(.js) .cardx { position: relative; left: auto; top: auto; margin: 0; flex: none; scroll-snap-align: center; width: min(68vw, 280px); height: min(88vw, 360px); }
+
+  @media (max-width: 899px) {
+    :root { --head-h: 64px; }
+    .site-nav { display: none; }
+    .site-head .lang { display: none; }
+    .burger { display: grid; }
+    .ring { min-height: 300px; margin-bottom: 76px; }
+    .next { padding: 48px 16px 72px; }
+    .next ul { grid-template-columns: 1fr; }
+    .title { font-size: clamp(30px, 10vw, 76px); line-height: 1.04; }
+    .title span { display: block; }
+  }
+  @media (max-width: 599px) {
+    .cap { padding: 56px 14px 12px; }
+  }
+
+  /* ===== 8.19a · Tarjeta de noticia ===== */
+  .stamp { position: absolute; z-index: 1; left: 14px; top: 14px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px 5px; border-radius: 4px; background: var(--accent); color: var(--on-accent); font: 400 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; box-shadow: 0 1px 0 rgb(0 0 0 / .25); }
+  .stamp i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  /* Con foto: la base del pie toma el color dominante de la foto (D22), oscurecido para que el texto siempre pase AA */
+  .cardx--news .cap { padding-top: 104px; background: linear-gradient(180deg, rgb(0 0 0 / 0), color-mix(in oklab, var(--dom, #141414) 26%, #000 74%) 50%, color-mix(in oklab, var(--dom, #141414) 22%, #000 78%) 100%); }
+  .cardx--news .cap small b { font-weight: 500; color: var(--chalk); }
+  /* Sin foto: la misma baldosa de color de la cuadrícula de /noticias (tono de la categoría) */
+  .cardx--newstext { color: var(--ink); }
+  .cardx--newstext .face { background: var(--tone, #f7e4d0); }
+  .cardx--newstext .face::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--tink, #8a3f10); }
+  .cardx--newstext .sheen { mix-blend-mode: multiply; background: linear-gradient(112deg, rgb(0 0 0 / 0) 38%, rgb(0 0 0 / .07) 49%, rgb(0 0 0 / .02) 54%, rgb(0 0 0 / 0) 62%); }
+  .ntext { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 58px 16px 14px; }
+  .ntext .kind { color: var(--tink, #8a3f10); }
+  .ntext strong { display: block; margin-top: 10px; font-size: clamp(21px, 9.6cqw, 28px); line-height: 1.16; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; }
+  .ntext small { margin-top: auto; position: relative; font-size: 14px; line-height: 1.35; color: #5e584e; }
+  .ntext small b { font-weight: 500; color: var(--ink); }
+  .nglyph { position: absolute; right: -14%; bottom: -10%; width: 72%; color: var(--tink, #8a3f10); opacity: .14; }
+  .scenes { position: fixed; z-index: 60; right: 12px; bottom: 12px; display: flex; gap: 4px; padding: 4px; border-radius: 10px; background: #fff; color: #1c1a17; font-size: 13px; box-shadow: 0 4px 18px rgb(0 0 0 / .35); }
+  .scenes a { padding: 8px 10px; border-radius: 7px; text-decoration: none; }
+  .scenes a[aria-current] { background: #1c1a17; color: #fff; }
+  .annexh { background: #fff; color: #1c1a17; border-top: 4px solid #1c1a17; }
+  .annexh .wrap { max-width: 1200px; margin: 0 auto; padding: 40px 24px 72px; }
+  .annexh h2 { margin: 0; font-size: 22px; font-weight: 500; }
+  .annexh p, .annexh li { font-size: 15px; line-height: 1.55; color: #34302a; max-width: 76ch; }
+  .flat { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; padding: 28px; border-radius: 12px; background: #0f0f0f; }
+  .flat figure { margin: 0; }
+  .flat figcaption { margin-top: 10px; font-size: 13px; color: #a19d94; }
+  .flat .cardx { position: relative; left: auto; top: auto; margin: 0; width: 248px; height: 335px; }
+  .flat .slab { transform: none; }
+  .ring-order { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding: 0; list-style: none; }
+  .ring-order li { padding: 6px 10px; border-radius: 6px; background: #efebe3; font-size: 13px; color: #34302a; }
+  .ring-order li.is-new { background: #e8923a; color: #1a0a00; font-weight: 500; }
+  @media (max-width: 599px) { .flat { padding: 16px; } .flat .cardx { width: min(74vw, 280px); height: calc(min(74vw, 280px) / .76); } .scenes { left: 12px; right: 12px; justify-content: center; } }
+</style>
+</head>
+<body>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-mark">
+    <img src="../../../../public/brand/iso-chalk-white.svg" alt="" width="56" height="56">
+    <span class="intro-count" id="count">4a</span>
+  </div>
+  <div class="intro-bars"><i></i><i></i><i></i><i></i></div>
+</div>
+
+<main>
+<section class="hero" id="hero" aria-labelledby="hero-title">
+  <i class="edge edge--l"></i><i class="edge edge--r"></i>
+
+  <header class="site-head">
+    <a href="#" aria-label="ChalkGuide"><img src="../../../../public/brand/logo-white.svg" alt="chalkguide" width="140" height="26"></a>
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a href="#" data-t="navGuides">Guías</a><a href="#">Blog</a><a href="#" data-t="navAgenda">Agenda</a><a href="#" data-t="navAbout">Sobre mí</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Idioma">
+      <button type="button" data-lang="es" aria-pressed="true">ES</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button type="button" class="burger" id="menu-open" aria-label="Abrir el menú" aria-controls="menu" aria-expanded="false"><span class="burger-bars" aria-hidden="true"><i></i><i></i><i></i></span></button>
+  </header>
+
+  <h1 class="title" id="hero-title"><span data-t="h1a">Escalar en</span> <span data-t="h1b">Barcelona</span></h1>
+
+  <div class="ring" id="ring" role="group" aria-roledescription="carrusel" aria-label="Destacados" tabindex="-1">
+    <div class="ring-scene" id="scene">
+
+
+      <!-- 8.19a · Noticia (siempre la última publicada). Con foto: base del pie con el color dominante (D22) -->
+      <a class="cardx cardx--news" data-news="photo" href="/noticias/nuevo-rocodromo-bloque-sabadell" draggable="false" data-label="Noticia: Un nuevo rocódromo de bloque abrirá en Sabadell en enero" style="--dom:#8a6a12">
+        <div class="slab"><div class="face">
+            <img fetchpriority="high" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg" alt="" width="1600" height="1067" draggable="false">
+            <span class="stamp"><i></i><span data-t="kNews">Noticia</span></span>
+            <div class="cap"><span class="kind"><span data-t="newsMeta">Rocódromos · 18 nov</span></span><strong data-t="newsTitle">Un nuevo rocódromo de bloque abrirá en Sabadell en enero</strong><small><span data-t="newsSrc">Fuente:</span> <b>Diari de Sabadell</b></small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+      <!-- Sin foto: baldosa del tono de la categoría (Roca y acceso) -->
+      <a class="cardx cardx--newstext" data-news="text" href="/noticias/montserrat-restricciones-nidificacion" draggable="false" data-label="Noticia: Montserrat actualiza las restricciones por nidificación en seis sectores" style="--tone:#e2eadb;--tink:#3b5a2c">
+        <div class="slab"><div class="face">
+            <svg class="nglyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="m2.5 20 6.5-11 3.5 5 2.5-3.5L21.5 20Z"/><path d="m7.3 12 1.9 1.4 1.4-1.2"/></svg>
+            <span class="stamp"><i></i><span data-t="kNews2">Noticia</span></span>
+            <div class="ntext"><span class="kind" data-t="newsMeta2">Roca y acceso · 15 nov</span><strong data-t="newsTitle2">Montserrat actualiza las restricciones por nidificación en seis sectores</strong><small><span data-t="newsSrc2">Fuente:</span> <b>Parcs Naturals de Catalunya</b></small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--shoe" href="/pies-de-gato/la-sportiva-tarantulace" draggable="false" data-label="La Sportiva Tarantulace">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg" alt="" width="650" height="650" draggable="false">
+            <div class="cap"><span class="kind" data-t="kReview">Reseña</span><strong>La Sportiva Tarantulace</strong><small data-t="shoeNote">«Justos pero sin dolor en sesiones de dos horas.»</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--event" href="/agenda" draggable="false" data-label="Liga interna de bloque · 2.ª jornada">
+        <div class="slab"><div class="face">
+            <div class="date"><em>7</em><em data-t="month">nov</em></div>
+            <div class="cap"><span class="kind" data-t="kEvent">Agenda</span><strong data-t="evt1">Liga interna de bloque · 2.ª jornada</strong><small data-t="evtNote">Sábado, 20:00</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--strong" href="/rocodromos/magnesi-poblenou" draggable="false" data-label="Magnesi Poblenou">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg" alt="" width="1600" height="1067" draggable="false">
+            <div class="cap"><span class="kind" data-t="kGym">Rocódromo</span><strong>Magnesi Poblenou</strong><small data-t="gymNote2">Poblenou · 62 €/mes · bloque</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <div class="cardx cardx--photo" data-label="Techo de roca sobre el mar">
+        <div class="slab">
+          <div class="face"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000004/1-techo-roca-mar.jpg" alt="Techo de roca sobre el mar" width="1600" height="1156" draggable="false"><i class="grade"></i><i class="sheen"></i></div>
+        </div>
+      </div>
+
+      <a class="cardx cardx--shoe" href="/pies-de-gato/la-sportiva-skwama" draggable="false" data-label="La Sportiva Skwama">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg" alt="" width="550" height="550" draggable="false">
+            <div class="cap"><span class="kind" data-t="kShoe">Pies de gato</span><strong>La Sportiva Skwama</strong><small>145–170 €</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--strong" href="/rocodromos/la-paret-de-gracia" draggable="false" data-label="La Paret de Gràcia">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000008/1-escalador-desde-abajo.jpg" alt="" width="1600" height="2400" draggable="false">
+            <div class="cap"><span class="kind" data-t="kGym">Rocódromo</span><strong>La Paret de Gràcia</strong><small data-t="gymNote">Gràcia · 69 €/mes · hasta 15 m</small></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+      <a class="cardx cardx--strong" href="/blog/como-elegir-pies-de-gato" draggable="false" data-label="Cómo elegir pies de gato según tu nivel y estilo">
+        <div class="slab"><div class="face">
+            <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg" alt="" width="1600" height="1067" draggable="false">
+            <div class="cap"><span class="kind" data-t="kArticle">Artículo</span><strong data-t="art2">Cómo elegir pies de gato según tu nivel y estilo</strong></div>
+        <i class="sheen"></i></div></div>
+      </a>
+
+
+      <div class="cardx cardx--photo" data-label="Escalador en una pared de roca roja desplomada">
+        <div class="slab">
+          <div class="face"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000002/1-pared-roja-desplomada.jpg" alt="Escalador en una pared de roca roja desplomada" width="1600" height="2000" draggable="false"><i class="grade"></i><i class="sheen"></i></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="rope" id="rope">
+    <i class="rope-cord"></i>
+    <a class="rope-end" href="#paths" id="rope-link" aria-label="Ir a la sección siguiente">
+      <svg viewBox="0 0 44 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path stroke="currentColor" stroke-width="3.6" d="M18 6h7c9 0 14 7 13 15l-3 28c-1 6-6 10-12 10h-3c-6 0-11-5-11-11V15c0-5 4-9 9-9Z"/>
+        <path stroke="#8f5013" stroke-width="3.6" d="m38 21-3 28"/>
+        <path fill="currentColor" stroke="currentColor" stroke-width="1" d="m34.6 33 4.6.5-1.2 11.6-4.6-.5z"/>
+      </svg>
+    </a>
+  </div>
+  <p class="sr" id="live" aria-live="polite"></p>
+</section>
+
+<section class="next" id="paths" aria-labelledby="next-title">
+  <h2 id="next-title" data-t="nextTitle">¿Por dónde empiezas?</h2>
+  <ul>
+    <li><a href="#" data-t="next1">Qué rocódromo me conviene si estoy empezando</a></li>
+    <li><a href="#" data-t="next2">Bono o cuota mensual: qué conviene</a></li>
+    <li><a href="#" data-t="next3">Cómo elegir tus primeros pies de gato</a></li>
+  </ul>
+</section>
+</main>
+
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menú">
+  <div class="menu-wall" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="menu-inner">
+    <div class="menu-head">
+      <a href="#" aria-label="ChalkGuide"><img src="../../../../public/brand/logo-white.svg" alt="chalkguide" width="140" height="26"></a>
+      <button type="button" class="burger" id="menu-close" aria-label="Cerrar el menú"><span class="burger-bars" aria-hidden="true"><i></i><i></i><i></i></span></button>
+    </div>
+    <nav class="menu-nav" id="menu-nav" aria-label="Navegación del menú móvil">
+      <div class="menu-rope" id="menu-rope" aria-hidden="true">
+        <i></i>
+        <svg viewBox="0 0 44 64" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="currentColor" stroke-width="3.8" d="M18 6h7c9 0 14 7 13 15l-3 28c-1 6-6 10-12 10h-3c-6 0-11-5-11-11V15c0-5 4-9 9-9Z"/><path stroke="#8f5013" stroke-width="3.8" d="m38 21-3 28"/></svg>
+      </div>
+      <ul class="menu-list">
+        <li class="menu-item" style="--i:0"><a class="menu-link" href="#"><b data-t="mGyms">Rocódromos</b><span data-t="mGymsD">Fichas con precios y mi reseña</span></a></li>
+        <li class="menu-item" style="--i:1"><a class="menu-link" href="#"><b data-t="mShoes">Pies de gato</b><span data-t="mShoesD">Comparador lado a lado</span></a></li>
+        <li class="menu-item" style="--i:2"><a class="menu-link" href="#"><b data-t="mResole">Resolar</b><span data-t="mResoleD">Precio por par, plazo y calidad</span></a></li>
+        <li class="menu-item" style="--i:3"><a class="menu-link" href="#"><b data-t="mBlog">Blog</b><span data-t="mBlogD">Lo que he aprendido escalando</span></a></li>
+        <li class="menu-item" style="--i:4"><a class="menu-link" href="#"><b data-t="mEvents">Agenda</b><span data-t="mEventsD">Qué pasa este mes en los rocódromos</span></a></li>
+        <li class="menu-item" style="--i:5"><a class="menu-link" href="#"><b data-t="mAbout">Sobre mí</b><span data-t="mAboutD">Quién escribe esto y por qué</span></a></li>
+      </ul>
+    </nav>
+    <div class="menu-foot">
+      <a class="link" href="#newsletter" id="menu-news" data-t="mNews">Newsletter</a>
+      <div class="lang" role="group" aria-label="Idioma">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<section class="annexh" aria-labelledby="ax-title">
+  <div class="wrap">
+    <h2 id="ax-title">Anexo · tarjeta de noticia en el carrusel (8.19a)</h2>
+    <p>La última noticia publicada entra <b>siempre</b>, en la <b>posición 1</b>: es la que está de frente al cargar, en 1440 y en 390. Nada cede su sitio: el anillo pasa de 8 a 9. Sin noticias publicadas (o, en <code>/en</code>, sin ninguna con versión inglesa), la tarjeta no existe y el anillo vuelve a las 8 de D41.</p>
+    <ol class="ring-order" aria-label="Orden del anillo">
+      <li class="is-new">1 · Noticia</li><li>2 · Pie de gato 1</li><li>3 · Evento</li><li>4 · Rocódromo 2</li><li>5 · Foto 2</li><li>6 · Pie de gato 2</li><li>7 · Rocódromo 1</li><li>8 · Artículo</li><li>9 · Foto 1</li>
+    </ol>
+    <div class="flat">
+      <figure>
+        <a class="cardx cardx--news" href="#" style="--dom:#8a6a12"><div class="slab"><div class="face">
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg" alt="" width="1600" height="1067">
+          <span class="stamp"><i></i>Noticia</span>
+          <div class="cap"><span class="kind">Rocódromos · 18 nov</span><strong>Un nuevo rocódromo de bloque abrirá en Sabadell en enero</strong><small>Fuente: <b>Diari de Sabadell</b></small></div>
+        </div></div></a>
+        <figcaption>Con foto · pie teñido con <code>dominant_color</code></figcaption>
+      </figure>
+      <figure>
+        <a class="cardx cardx--newstext" href="#" style="--tone:#e2eadb;--tink:#3b5a2c"><div class="slab"><div class="face">
+          <svg class="nglyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="m2.5 20 6.5-11 3.5 5 2.5-3.5L21.5 20Z"/><path d="m7.3 12 1.9 1.4 1.4-1.2"/></svg>
+          <span class="stamp"><i></i>Noticia</span>
+          <div class="ntext"><span class="kind">Roca y acceso · 15 nov</span><strong>Montserrat actualiza las restricciones por nidificación en seis sectores</strong><small>Fuente: <b>Parcs Naturals de Catalunya</b></small></div>
+        </div></div></a>
+        <figcaption>Sin foto · tono de la categoría</figcaption>
+      </figure>
+      <figure>
+        <a class="cardx cardx--newstext" href="#" style="--tone:#e2e8f0;--tink:#2f4a6b"><div class="slab"><div class="face">
+          <svg class="nglyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6.5 9.5c0-3 2.6-5.5 6-5.5 3.7 0 5.5 2.6 5.5 5.2 0 2.2-1.4 3.4-1.4 5.3 0 2.5-1.9 4.5-4.6 4.5-3.6 0-5.5-3-5.5-5.6 0-1.6 0-2.4 0-3.9Z"/><circle cx="12" cy="10.5" r="1.6"/></svg>
+          <span class="stamp"><i></i>News</span>
+          <div class="ntext"><span class="kind">Climbing gyms · 18 Nov</span><strong>A new bouldering gym will open in Sabadell in January</strong><small>Source: <b>Diari de Sabadell</b></small></div>
+        </div></div></a>
+        <figcaption>EN, sin foto · título largo en 3 líneas</figcaption>
+      </figure>
+    </div>
+    <ul>
+      <li><b>Sello «Noticia»:</b> placa naranja arriba a la izquierda (mono 12, <code>#1a0a00</code> sobre <code>#e8923a</code>, 7,91:1). Es lo único que la separa a primera vista de artículo y rocódromo: el resto de tarjetas no llevan placa.</li>
+      <li><b>Pie:</b> «Categoría · fecha» en la etiqueta, título y «Fuente: X». Sin resumen ni nota: la tarjeta lleva a la ficha.</li>
+      <li><b>Con foto:</b> el degradado del pie toma <code>media.dominant_color</code> mezclado con negro (26/74 %), de modo que una foto amarilla da un pie marrón muy oscuro y no negro plano. Texto tiza ≥ 12:1 en el peor caso.</li>
+      <li><b>Sin foto:</b> la baldosa de la cuadrícula (tono + filete + glifo de la categoría). Contrasta con la pared (≈ 14:1) y no se confunde con el evento (papel con fecha gigante).</li>
+    </ul>
+  </div>
+</section>
+<nav class="scenes" aria-label="Escenas del mockup"><a href="?intro=0&amp;news=photo" data-s="photo">Con foto</a><a href="?intro=0&amp;news=text" data-s="text">Sin foto</a><a href="?intro=0&amp;news=none" data-s="none">Sin noticias</a></nav>
+<script>
+  /* Solo mockup: deja una sola variante de noticia (o ninguna) antes de que el carrusel cuente las tarjetas */
+  (function () {
+    const want = new URLSearchParams(location.search).get('news') || 'photo'
+    document.querySelectorAll('#scene [data-news]').forEach((c) => { if (c.dataset.news !== want) c.remove() })
+    if (want !== 'photo') { const f = document.querySelector('#scene img[loading="lazy"]'); if (f) { f.removeAttribute('loading'); f.setAttribute('fetchpriority', 'high') } }
+    document.querySelectorAll('.scenes a').forEach((a) => { if (a.dataset.s === want) a.setAttribute('aria-current', 'true') })
+  })()
+</script>
+<script>
+  const params = new URLSearchParams(location.search)
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  /* ---------- Textos ---------- */
+  const en = {
+    navGuides: 'Guides', navAgenda: 'Events', navAbout: 'About',
+    h1a: 'Climbing in', h1b: 'Barcelona',
+    kReview: 'Review', kGym: 'Climbing gym', kArticle: 'Article', kEvent: 'Events', kShoe: 'Climbing shoes',
+    shoeNote: '“Snug but painless over two-hour sessions.”',
+    gymNote: 'Gràcia · €69 a month · up to 15 m',
+    gymNote2: 'Poblenou · €62 a month · bouldering',
+    art2: 'How to choose climbing shoes for your level and style',
+    evt1: 'Bouldering league · round 2', evtNote: 'Saturday, 8 pm', month: 'nov',
+    mGyms: 'Climbing gyms', mGymsD: 'Profiles with prices and my review',
+    mShoes: 'Climbing shoes', mShoesD: 'Side-by-side comparison',
+    mResole: 'Resoling', mResoleD: 'Price per pair, turnaround and quality',
+    mBlog: 'Blog', mBlogD: 'What climbing has taught me',
+    mEvents: 'Events', mEventsD: 'What is on at the gyms this month',
+    mAbout: 'About', mAboutD: 'Who writes this and why',
+    mNews: 'Newsletter',
+    kNews: 'News', kNews2: 'News', newsMeta: 'Climbing gyms · 18 Nov', newsMeta2: 'Rock and access · 15 Nov',
+    newsTitle: 'A new bouldering gym will open in Sabadell in January', newsTitle2: 'Montserrat updates nesting restrictions in six sectors',
+    newsSrc: 'Source:', newsSrc2: 'Source:',
+    nextTitle: 'Where do you start?', next1: 'Which gym suits me if I am just starting out',
+    next2: 'Pass or monthly membership: which makes sense', next3: 'How to choose your first climbing shoes',
+  }
+  const nodes = [...document.querySelectorAll('[data-t]')]
+  const es = Object.fromEntries(nodes.map((n) => [n.dataset.t, n.textContent]))
+  const ui = { es: { region: 'Destacados', rope: 'Ir a la sección siguiente', open: 'Abrir el menú', close: 'Cerrar el menú', menu: 'Menú' }, en: { region: 'Highlights', rope: 'Go to the next section', open: 'Open the menu', close: 'Close the menu', menu: 'Menu' } }
+
+  /* ---------- Carrusel: interior de un cilindro. Solo se mueve si lo mueve el usuario ---------- */
+  const ring = document.getElementById('ring')
+  const scene = document.getElementById('scene')
+  const cards = [...scene.children]
+  const n = cards.length
+  // Grosor: copias redondeadas hacia atrás, así el canto sigue la forma de la tarjeta
+  document.querySelectorAll('.slab').forEach((slab) => {
+    for (let i = 18; i >= 1; i--) {
+      const ply = document.createElement('i')
+      ply.className = 'ply'
+      ply.style.setProperty('--i', i)
+      slab.prepend(ply)
+    }
+  })
+  const hero = document.getElementById('hero')
+  const rope = document.getElementById('rope')
+  const live = document.getElementById('live')
+  let pos = 0, target = 0, step = .3, radius = 1000, cardW = 280, raf = 0, lang = 'es'
+
+  function wrap(v) { return ((v % n) + n) % n }
+  function offset(i) { let d = wrap(i - pos); if (d > n / 2) d -= n; return d }
+
+  function measure() {
+    const W = ring.clientWidth, H = ring.clientHeight
+    const phone = W < 900
+    cardW = Math.round(phone ? Math.min(W * (W < 600 ? .74 : .46), H * .94 * .76) : Math.min(W * .21, H * .96 * .74))
+    const h = cardW / (phone ? .76 : .74)
+    const gap = cardW * (phone ? .1 : .09)
+    radius = Math.max(W * (phone ? 1.05 : .85), cardW * 2.4)
+    step = (cardW + gap) / radius
+    ring.style.setProperty('--w', cardW + 'px')
+    ring.style.setProperty('--h', Math.round(h) + 'px')
+    ring.style.setProperty('--p', Math.round(radius * (phone ? 1.05 : .95)) + 'px')
+    const heroBox = hero.getBoundingClientRect(), ringBox = ring.getBoundingClientRect()
+    rope.style.setProperty('--rest', Math.round(heroBox.bottom - (ringBox.top + H / 2 + h / 2) + 28) + 'px')
+    maxDrop = phone ? 30 : 92
+    pay()
+    render()
+  }
+
+  let tiltCard = null, tiltXY = [0, 0], vel = 0
+  // La cuerda se suelta con el scroll y entra en la sección siguiente
+  let maxDrop = 92
+  function pay() {
+    const y = scrollY
+    rope.style.setProperty('--drop', Math.min(y * .35, maxDrop).toFixed(1) + 'px')
+  }
+  addEventListener('scroll', pay, { passive: true })
+
+  function render() {
+    cards.forEach((card, i) => {
+      const d = offset(i)
+      const a = d * step
+      if (Math.abs(a) > 1.05) { card.style.visibility = 'hidden'; return }
+      card.style.visibility = 'visible'
+      card.style.transform = `translateZ(${radius}px) rotateY(${-a}rad) translateZ(${-radius}px)`
+      card.style.setProperty('--cap', Math.max(0, Math.min(1, 2.2 - Math.abs(d))).toFixed(2))
+      if (!reduced) {
+        const kick = Math.max(-8, Math.min(8, vel * 5))
+        const tilt = card === tiltCard ? tiltXY : [0, 0]
+        const ry = 9 - d * 7 + kick + tilt[0] * 8
+        card.style.setProperty('--ry', ry.toFixed(2) + 'deg')
+        card.style.setProperty('--rx', (-4 - tilt[1] * 6).toFixed(2) + 'deg')
+        card.style.setProperty('--par', (-d * 6).toFixed(2) + '%')
+        card.style.setProperty('--sheen', (ry * 2.6 - 16).toFixed(1) + '%')
+      }
+    })
+  }
+
+  function tickLoop() {
+    const diff = target - pos
+    if (Math.abs(diff) < .001) { pos = target; render(); raf = 0; hero.classList.remove('is-moving'); return }
+    pos += diff * (reduced ? 1 : .11)
+    render()
+    raf = requestAnimationFrame(tickLoop)
+  }
+  function moveTo(value, announce = true) {
+    target = value
+    hero.classList.add('is-moving')
+    if (!raf) raf = requestAnimationFrame(tickLoop)
+    if (announce) live.textContent = cards[wrap(Math.round(value))].dataset.label
+  }
+  // Ir a la tarjeta i por el camino corto
+  function goTo(i) {
+    let d = wrap(i - target); if (d > n / 2) d -= n
+    moveTo(Math.round(target) + d)
+  }
+
+  cards.forEach((card, i) => {
+    card.addEventListener('focus', () => { if (card.matches(':focus-visible')) goTo(i) })
+    // Una tarjeta lateral primero se centra; la central ya navega
+    card.addEventListener('click', (e) => {
+      if (moved) { e.preventDefault(); return }
+      if (Math.abs(offset(i)) > .5) { e.preventDefault(); goTo(i) }
+    })
+    if (!reduced) {
+      card.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse' || dragging) return
+        const box = card.getBoundingClientRect()
+        tiltCard = card
+        tiltXY = [(e.clientX - box.left) / box.width * 2 - 1, (e.clientY - box.top) / box.height * 2 - 1]
+        render()
+      })
+      card.addEventListener('pointerleave', () => { tiltCard = null; render() })
+    }
+  })
+
+  // Arrastre con ratón o dedo, con inercia y parada en una tarjeta
+  let dragging = false, moved = false, startX = 0, startPos = 0, lastX = 0, lastT = 0
+  ring.addEventListener('pointerdown', (e) => {
+    if (e.button) return
+    dragging = true; moved = false
+    startX = lastX = e.clientX; startPos = pos; lastT = e.timeStamp; vel = 0
+    if (raf) { cancelAnimationFrame(raf); raf = 0 }
+  })
+  addEventListener('pointermove', (e) => {
+    if (!dragging) return
+    const dx = e.clientX - startX
+    if (!moved && Math.abs(dx) > 6) { moved = true; ring.classList.add('is-drag'); hero.classList.add('is-moving') }
+    if (!moved) return
+    const dt = Math.max(1, e.timeStamp - lastT)
+    vel = (e.clientX - lastX) / dt; lastX = e.clientX; lastT = e.timeStamp
+    pos = startPos - dx / (cardW * 1.16)
+    target = pos
+    render()
+  })
+  function endDrag() {
+    if (!dragging) return
+    dragging = false
+    ring.classList.remove('is-drag')
+    const throwBy = vel * 180 / (cardW * 1.16)
+    vel = 0
+    if (moved) moveTo(Math.round(pos - throwBy))
+    else moveTo(Math.round(pos), false)
+    setTimeout(() => { moved = false }, 60)
+  }
+  addEventListener('pointerup', endDrag)
+  addEventListener('pointercancel', endDrag)
+
+  // Trackpad horizontal; el scroll vertical de la página no se toca
+  let wheelTimer = 0
+  ring.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+    e.preventDefault()
+    pos += e.deltaX / (cardW * 1.16); target = pos; render()
+    clearTimeout(wheelTimer)
+    wheelTimer = setTimeout(() => moveTo(Math.round(pos)), 120)
+  }, { passive: false })
+
+  hero.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') moveTo(Math.round(target) + 1)
+    if (e.key === 'ArrowLeft') moveTo(Math.round(target) - 1)
+  })
+  addEventListener('resize', measure)
+
+  /* ---------- Idioma ---------- */
+  function setLang(value) {
+    lang = value
+    document.documentElement.lang = value === 'en' ? 'en-GB' : 'es'
+    nodes.forEach((node) => { node.textContent = (value === 'en' ? en : es)[node.dataset.t] ?? es[node.dataset.t] })
+    document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === value)))
+    ring.setAttribute('aria-label', ui[value].region)
+    document.getElementById('rope-link').setAttribute('aria-label', ui[value].rope)
+    document.getElementById('menu-open').setAttribute('aria-label', ui[value].open)
+    document.getElementById('menu-close').setAttribute('aria-label', ui[value].close)
+    document.getElementById('menu').setAttribute('aria-label', ui[value].menu)
+  }
+  document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.lang)))
+
+  /* ---------- Menú móvil ---------- */
+  const menu = document.getElementById('menu')
+  const menuOpenBtn = document.getElementById('menu-open')
+  const menuCloseBtn = document.getElementById('menu-close')
+  const menuRope = document.getElementById('menu-rope')
+  const menuNav = document.getElementById('menu-nav')
+  const menuLinks = [...menu.querySelectorAll('.menu-link')]
+  const mainEl = document.querySelector('main')
+  // El mosquetón baja hasta el enlace; la sección actual es su sitio de partida
+  function clipTo(link) {
+    const nav = menuNav.getBoundingClientRect()
+    const box = link.getBoundingClientRect()
+    menuRope.style.setProperty('--y', Math.round(box.top - nav.top + menuNav.scrollTop + box.height / 2 + 22) + 'px')
+    menuLinks.forEach((l) => l.classList.toggle('is-clipped', l === link))
+  }
+  function homeLink() { return menu.querySelector('.menu-link[aria-current="page"]') || menuLinks[0] }
+  function openMenu() {
+    menu.classList.add('is-open')
+    document.documentElement.classList.add('menu-lock')
+    mainEl.inert = true
+    menuOpenBtn.setAttribute('aria-expanded', 'true')
+    clipTo(homeLink())
+    menuCloseBtn.focus({ preventScroll: true })
+  }
+  function closeMenu() {
+    if (!menu.classList.contains('is-open')) return
+    menu.classList.remove('is-open')
+    document.documentElement.classList.remove('menu-lock')
+    mainEl.inert = false
+    menuOpenBtn.setAttribute('aria-expanded', 'false')
+    menuOpenBtn.focus({ preventScroll: true })
+  }
+  menuOpenBtn.addEventListener('click', openMenu)
+  menuCloseBtn.addEventListener('click', closeMenu)
+  menuLinks.forEach((link) => {
+    link.addEventListener('pointerenter', () => clipTo(link))
+    link.addEventListener('focus', () => clipTo(link))
+    link.addEventListener('click', (e) => { e.preventDefault(); clipTo(link); setTimeout(closeMenu, 420) })
+  })
+  document.getElementById('menu-news').addEventListener('click', () => closeMenu())
+  menuNav.addEventListener('pointerleave', () => { if (menu.classList.contains('is-open')) clipTo(homeLink()) })
+  addEventListener('resize', () => { if (menu.classList.contains('is-open')) clipTo(homeLink()) })
+  addEventListener('keydown', (e) => {
+    if (!menu.classList.contains('is-open')) return
+    if (e.key === 'Escape') { closeMenu(); return }
+    if (e.key !== 'Tab') return
+    const focusable = [...menu.querySelectorAll('a[href], button')]
+    const first = focusable[0], last = focusable[focusable.length - 1]
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+  })
+
+  /* ---------- Arranque ---------- */
+  if (params.get('lang') === 'en') setLang('en')
+  const start = Number(params.get('at') || 0)
+  pos = target = start
+  measure()
+  // Las fuentes cambian el alto del título y, con él, el de la escena
+  document.fonts?.ready.then(measure)
+
+  /* ---------- Entrada: grados hasta 7b, barras del logo arriba y la pared ya girando ---------- */
+  const root = document.documentElement
+  const intro = document.getElementById('intro')
+  if (root.classList.contains('has-intro')) {
+    const grades = ['4a', '5a', '5c', '6a', '6b', '6c', '7a', '7b']
+    const count = document.getElementById('count')
+    let g = 0, finished = false
+    const timers = []
+    const later = (fn, ms) => timers.push(setTimeout(fn, ms))
+    const counter = setInterval(() => { if (g < grades.length - 1) count.textContent = grades[++g] }, 80)
+    function reveal() {
+      root.classList.add('is-in')
+      pos = start - 1.7; target = start
+      if (!raf) raf = requestAnimationFrame(tickLoop)
+    }
+    function finish() {
+      if (finished) return
+      finished = true
+      clearInterval(counter); timers.forEach(clearTimeout)
+      intro.classList.add('is-up', 'is-open')
+      if (!root.classList.contains('is-in')) reveal()
+      setTimeout(() => intro.remove(), 700)
+    }
+    later(() => intro.classList.add('is-up'), 660)
+    later(() => { intro.classList.add('is-open'); reveal() }, 1180)
+    later(finish, 1200)
+    intro.addEventListener('pointerdown', finish)
+    addEventListener('keydown', finish, { once: true })
+  }
+</script>
+</body>
+</html>

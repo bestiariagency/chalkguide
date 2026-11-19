@@ -7,14 +7,16 @@ import type {
   NewsSearchHit,
   NewsSummary,
 } from '~/types/news'
-import { pickHomeNews } from '~/utils/news'
+import { MEDIA_COLUMNS, toMediaRef } from './media'
 import { type GuideClient, one, pick, ServiceError, unwrap, unwrapMaybe } from './client'
 
 /** Columns of the anon grant on guide.news (J27): never anything outside it. */
-export const NEWS_SUMMARY_COLUMNS = `id, slug, title_es, title_en, summary_es, summary_en, author_note_es, author_note_en,
+export const NEWS_SUMMARY_COLUMNS = `id, slug, title_es, title_en, summary_es, summary_en, insight_es, insight_en,
   scope, source_name, published_at,
-  category:news_categories!news_category_id_fkey(key, label_es, label_en)`
+  category:news_categories!news_category_id_fkey(key, label_es, label_en),
+  image:media!news_media_id_fkey(${MEDIA_COLUMNS})`
 
+type MediaEmbed = Parameters<typeof toMediaRef>[0] & object
 type CategoryEmbed = { key: string; label_es: string; label_en: string }
 
 export type NewsSummaryRow = {
@@ -24,16 +26,17 @@ export type NewsSummaryRow = {
   title_en: string | null
   summary_es: string
   summary_en: string | null
-  author_note_es: string | null
-  author_note_en: string | null
+  insight_es: string | null
+  insight_en: string | null
   scope: NewsScope | null
   source_name: string
   published_at: string | null
   category: CategoryEmbed | CategoryEmbed[] | null
+  image?: MediaEmbed | MediaEmbed[] | null
 }
 
-/** Empty or whitespace-only notes count as no note. */
-function cleanNote(text: string | null): string | null {
+/** Empty or whitespace-only insights count as no insight. */
+function cleanInsight(text: string | null): string | null {
   return text?.trim() ? text.trim() : null
 }
 
@@ -44,12 +47,13 @@ export function toNewsSummary(row: NewsSummaryRow, locale: Locale): NewsSummary 
     slug: row.slug,
     title: pick(locale, row.title_es, row.title_en) ?? row.title_es,
     summary: pick(locale, row.summary_es, row.summary_en) ?? row.summary_es,
-    note: cleanNote(pick(locale, row.author_note_es, row.author_note_en)),
+    insight: cleanInsight(pick(locale, row.insight_es, row.insight_en)),
     categoryKey: category?.key ?? null,
     categoryName: category ? pick(locale, category.label_es, category.label_en) : null,
     scope: row.scope,
     sourceName: row.source_name,
     publishedAt: row.published_at ?? '',
+    image: toMediaRef(one(row.image ?? null), locale),
   }
 }
 
@@ -91,33 +95,14 @@ export async function listNews(
   return { items: rows.map((row) => toNewsSummary(row, locale)), total: count ?? rows.length }
 }
 
-/** The latest item with a "Nota de Xavi" published in the last `days` days (featured block). */
-export async function getFeaturedNews(
-  db: GuideClient,
-  locale: Locale,
-  days = 7,
-): Promise<NewsSummary | null> {
-  const since = new Date(Date.now() - days * 24 * 3600 * 1000).toISOString()
-  const noteColumn = locale === 'en' ? 'author_note_en' : 'author_note_es'
-  const rows = unwrap(
-    await publishedNews(db, NEWS_SUMMARY_COLUMNS, locale)
-      .not(noteColumn, 'is', null)
-      .gte('published_at', since)
-      .order('published_at', { ascending: false })
-      .limit(5),
-  ) as unknown as NewsSummaryRow[]
-  const item = rows.map((row) => toNewsSummary(row, locale)).find((news) => news.note)
-  return item ?? null
-}
-
-/** Latest news for the home block: the ones with a note first when they are from the last 7 days. */
-export async function listHomeNews(db: GuideClient, locale: Locale, limit = 4): Promise<NewsSummary[]> {
+/** The latest `limit` published news: the first goes to the hero (D89), the next ones to the home block. */
+export async function listHomeNews(db: GuideClient, locale: Locale, limit = 5): Promise<NewsSummary[]> {
   const rows = unwrap(
     await publishedNews(db, NEWS_SUMMARY_COLUMNS, locale)
       .order('published_at', { ascending: false })
-      .limit(24),
+      .limit(limit),
   ) as unknown as NewsSummaryRow[]
-  return pickHomeNews(rows.map((row) => toNewsSummary(row, locale)), limit)
+  return rows.map((row) => toNewsSummary(row, locale))
 }
 
 type CategoryRow = {
@@ -209,7 +194,8 @@ export async function searchNews(
     summary: string | null
     category_label: string | null
     scope: NewsScope | null
-    has_note: boolean | null
+    category_key: string | null
+    has_insight: boolean | null
     source_name: string | null
     published_at: string | null
     headline: string | null
@@ -225,7 +211,7 @@ export async function searchNews(
             summary: row.summary ?? '',
             categoryName: row.category_label || null,
             scope: row.scope,
-            hasNote: row.has_note === true,
+            categoryKey: row.category_key || null,
             sourceName: row.source_name ?? '',
             publishedAt: row.published_at ?? '',
             headline: row.headline ?? '',

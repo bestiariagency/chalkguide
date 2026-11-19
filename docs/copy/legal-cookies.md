@@ -21,14 +21,16 @@ Para leer ChalkGuide no hace falta aceptar nada: si rechazas, la web funciona ig
 
 | Qué | Proveedor | Para qué | Cuándo | Duración |
 | --- | --- | --- | --- | --- |
-| `cc_cookie` [D86] | ChalkGuide | Guardar tu elección de cookies | Al elegir | [PENDIENTE XAVI: duración; se propone renovar la elección a los 24 meses; confirmar en la configuración de `vanilla-cookieconsent`] |
+| `cc_cookie` [D86] | ChalkGuide | Guardar tu elección de cookies | Al elegir | [D86] 365 días si aceptas y 182 días si rechazas. Pasado ese plazo, te vuelvo a preguntar |
 | Sesión de Supabase (cookie o almacenamiento local) | Supabase | Mantenerte conectado si entras con Google para opinar | Solo si inicias sesión | [PENDIENTE XAVI: duración real; comprobarla en la configuración de Supabase Auth] |
+| `cg_news_view` | ChalkGuide | Recordar si prefieres ver las noticias en cuadrícula o en lista | Solo si cambias la vista | 1 año |
 | Idioma | ChalkGuide | Recordar si prefieres español o inglés | [PENDIENTE XAVI: confirmar si la web guarda esta preferencia y cómo, p. ej. cookie de `@nuxtjs/i18n`] | [PENDIENTE XAVI] |
 | `_ga`, `_ga_<id>` [D86] | Google (Google Analytics 4) | Distinguir visitas para saber qué páginas se leen y desde dónde llegan | Solo si aceptas «Analítica» | [PENDIENTE: confirmar en el escaneo; Google indica 2 años por defecto] |
 | `_gcl_*` [D86] | Google (Google Ads) | Medir si un anuncio de Google ha llevado a una visita | Solo si aceptas «Publicidad y remarketing» | [PENDIENTE: confirmar en el escaneo; Google indica 90 días por defecto] |
 | `_fbp` [D86] | Meta (píxel de Meta) | Reconocer tu navegador para crear listas de remarketing | Solo si aceptas «Publicidad y remarketing» | [PENDIENTE: confirmar en el escaneo; Meta indica 90 días por defecto] |
+| `_fbc` [D86] | Meta (píxel de Meta) | Guardar de qué anuncio de Meta vienes, si llegas desde uno, para medir si ha llevado a una visita | Solo si aceptas «Publicidad y remarketing» y llegas desde un anuncio de Meta | [PENDIENTE: confirmar en el escaneo; Meta indica 90 días por defecto] |
 
-Las tres primeras filas de la tabla (`cc_cookie`, sesión, idioma) son técnicas: no requieren tu consentimiento, pero te las cuento. Las tres últimas solo existen si las aceptas.
+Las cuatro primeras filas de la tabla (`cc_cookie`, sesión, `cg_news_view`, idioma) son técnicas: no requieren tu consentimiento, pero te las cuento. Las cuatro últimas solo existen si las aceptas.
 
 **Qué hace cada categoría que pide permiso** [D86]
 
@@ -58,7 +60,7 @@ Los vídeos no dependen del banner: aceptar o rechazar cookies no los carga ni l
 
 **Cómo cambiar o retirar tu elección** [D86]
 
-[Aquí va el bloque «Tu elección» (`id="preferencias"`), con tu estado actual y el botón para cambiarla.] Desde el enlace «Preferencias de cookies», al pie de cada página, puedes cambiar tu elección o retirarla cuando quieras; retirarla es tan fácil como darla. Al retirarla dejan de enviarse datos a Google y a Meta y se borran las cookies `_ga*`, `_gcl_*` y `_fbp` de este sitio. Para oponerte a los anuncios personalizados también puedes usar los ajustes de anuncios de [Google](https://myadcenter.google.com) y de [Meta](https://www.facebook.com/adpreferences). Fecha de la última actualización de esta política: [PENDIENTE XAVI: fecha al publicar].
+[Aquí va el bloque «Tu elección» (`id="preferencias"`), con tu estado actual y el botón para cambiarla.] Desde el enlace «Preferencias de cookies», al pie de cada página, puedes cambiar tu elección o retirarla cuando quieras; retirarla es tan fácil como darla. Al retirarla dejan de enviarse datos a Google y a Meta y se borran las cookies `_ga*`, `_gcl_*`, `_fbp` y `_fbc` de este sitio. Para oponerte a los anuncios personalizados también puedes usar los ajustes de anuncios de [Google](https://myadcenter.google.com) y de [Meta](https://www.facebook.com/adpreferences). Fecha de la última actualización de esta política: [PENDIENTE XAVI: fecha al publicar].
 
 También puedes borrar o bloquear cookies y almacenamiento local desde los ajustes de tu navegador. Si bloqueas el de la sesión, no podrás entrar para opinar.
 
@@ -83,14 +85,16 @@ You do not need to accept anything to read ChalkGuide: if you reject, the site w
 
 | What | Provider | Purpose | When | Duration |
 | --- | --- | --- | --- | --- |
-| `cc_cookie` [D86] | ChalkGuide | To store your cookie choice | When you choose | [PENDING XAVI: duration; renewing the choice every 24 months is proposed; confirm in the `vanilla-cookieconsent` configuration] |
+| `cc_cookie` [D86] | ChalkGuide | To store your cookie choice | When you choose | [D86] 365 days if you accept and 182 days if you reject. After that I ask you again |
 | Supabase session (cookie or local storage) | Supabase | To keep you signed in if you sign in with Google to leave a review | Only if you sign in | [PENDING XAVI: actual duration; check in the Supabase Auth settings] |
+| `cg_news_view` | ChalkGuide | To remember whether you prefer to see the news as a grid or as a list | Only if you change the view | 1 year |
 | Language | ChalkGuide | To remember whether you prefer Spanish or English | [PENDING XAVI: confirm whether the site stores this preference and how, e.g. an `@nuxtjs/i18n` cookie] | [PENDING XAVI] |
 | `_ga`, `_ga_<id>` [D86] | Google (Google Analytics 4) | To tell visits apart so I know which pages are read and where readers come from | Only if you accept "Analytics" | [PENDING: confirm in the scan; Google states 2 years by default] |
 | `_gcl_*` [D86] | Google (Google Ads) | To measure whether a Google ad led to a visit | Only if you accept "Advertising and remarketing" | [PENDING: confirm in the scan; Google states 90 days by default] |
 | `_fbp` [D86] | Meta (Meta pixel) | To recognise your browser for remarketing lists | Only if you accept "Advertising and remarketing" | [PENDING: confirm in the scan; Meta states 90 days by default] |
+| `_fbc` [D86] | Meta (Meta pixel) | To store which Meta ad you came from, if you arrive from one, to measure whether it led to a visit | Only if you accept "Advertising and remarketing" and arrive from a Meta ad | [PENDING: confirm in the scan; Meta states 90 days by default] |
 
-The first three rows (`cc_cookie`, session, language) are technical: they do not need your consent, but I tell you about them. The last three exist only if you accept them.
+The first four rows (`cc_cookie`, session, `cg_news_view`, language) are technical: they do not need your consent, but I tell you about them. The last four exist only if you accept them.
 
 **What each category that asks for permission does** [D86]
 
@@ -120,7 +124,7 @@ Videos do not depend on the banner: accepting or rejecting cookies neither loads
 
 **How to change or withdraw your choice** [D86]
 
-[The "Your choice" block (`id="preferences"`) goes here, with your current status and the button to change it.] From the "Cookie preferences" link at the foot of every page you can change or withdraw your choice whenever you like; withdrawing is as easy as giving. When you withdraw, no more data is sent to Google or Meta and the `_ga*`, `_gcl_*` and `_fbp` cookies are deleted from this site. To object to personalised ads you can also use the ad settings of [Google](https://myadcenter.google.com) and [Meta](https://www.facebook.com/adpreferences). Date this policy was last updated: [PENDING XAVI: date at publication].
+[The "Your choice" block (`id="preferences"`) goes here, with your current status and the button to change it.] From the "Cookie preferences" link at the foot of every page you can change or withdraw your choice whenever you like; withdrawing is as easy as giving. When you withdraw, no more data is sent to Google or Meta and the `_ga*`, `_gcl_*`, `_fbp` and `_fbc` cookies are deleted from this site. To object to personalised ads you can also use the ad settings of [Google](https://myadcenter.google.com) and [Meta](https://www.facebook.com/adpreferences). Date this policy was last updated: [PENDING XAVI: date at publication].
 
 You can also delete or block cookies and local storage from your browser settings. If you block the session data, you will not be able to sign in to leave a review.
 
@@ -136,7 +140,7 @@ If I change the tools I use or their cookies, I will update this page and ask yo
 2. Qué guarda de verdad la sesión de Supabase en el navegador (cookie o almacenamiento local) y cuánto dura. Comprobarlo en el navegador, no suponerlo.
 3. Si el idioma se recuerda y cómo.
 4. Que el formulario de newsletter no deja ninguna cookie (el alta no guarda nada en el navegador).
-5. [D86] Duraciones reales de `cc_cookie`, `_ga*`, `_gcl_*`, `_fbp`: salen del escaneo, no de lo que dicen los proveedores por defecto.
+5. [D86] Duraciones reales de `cc_cookie`, `_ga*`, `_gcl_*`, `_fbp`, `_fbc`: salen del escaneo, no de lo que dicen los proveedores por defecto.
 6. [D86] Que la coincidencia avanzada automática de Meta está desactivada en el Administrador de Eventos (lo hace Xavi; comprobarlo) y que no se sube ningún email a Google ni a Meta.
 7. [D86] Que el recuento propio (`guide.analytics_events`) trunca la hora y no guarda IP ni user agent, y su plazo de conservación (jabali-javi / leona-lia).
 8. [D86] Que las listas de remarketing excluyen los artículos sobre lesiones y que los plazos (540 / 180 días) son los que se configuran.

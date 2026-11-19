@@ -105,7 +105,7 @@ const FIELD_NOTE: Record<string, string> = {
   slug: 'coincide en la URL', slug_es: 'coincide en la URL', slug_en: 'coincide en la URL',
   excerpt_es: 'coincide en la entradilla', excerpt_en: 'coincide en la entradilla',
   summary_es: 'coincide en el resumen', summary_en: 'coincide en el resumen',
-  author_note_es: 'coincide en la nota de Xavi', author_note_en: 'coincide en la nota de Xavi', source_name: 'coincide en el medio',
+  insight_es: 'coincide en el aporte', insight_en: 'coincide en el aporte', source_name: 'coincide en el medio',
   address: 'coincide en la dirección', metro_stations: 'coincide en el metro',
   caption_es: 'coincide en el pie de foto', caption_en: 'coincide en el pie de foto', credit: 'coincide en el crédito', alt_en: 'coincide en el texto alternativo en inglés',
 }
@@ -169,7 +169,7 @@ function subOf(row: SearchRow, d: Record<string, unknown>): string {
     }
     case 'news': {
       const date = str(d.published_at) ? adminDate(str(d.published_at)) : ''
-      return join([date, str(d.category_label_es), str(d.source_name), bool(d.has_note) ? 'con nota' : ''])
+      return join([date, str(d.category_label_es), str(d.source_name), bool(d.has_insight) ? 'con aporte' : ''])
     }
     case 'media': {
       const uses = Number(d.usage_count) || 0

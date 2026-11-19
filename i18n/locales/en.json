@@ -71,7 +71,8 @@
     "chalkApp": "Chalk app",
     "language": "Language",
     "promise": "No review is bought. Anything paid is flagged.",
-    "copyright": "© {year} ChalkGuide"
+    "copyright": "© {year} ChalkGuide",
+    "cookiePreferences": "Cookie preferences"
   },
   "common": {
     "yes": "Yes",
@@ -490,15 +491,18 @@
         "shoe": "Climbing shoes",
         "gym": "Climbing gym",
         "article": "Article",
-        "event": "Event"
+        "event": "Event",
+        "news": "News"
       },
       "meta": {
         "gymLead": "{district} · €{price} a month · up to {height} m",
         "gymBoulder": "{district} · €{price} a month · bouldering",
         "gymNoPrice": "{district}",
         "shoePriceRange": "€{min}–{max}",
-        "shoePrice": "€{price}"
-      }
+        "shoePrice": "€{price}",
+        "newsSource": "Source:"
+      },
+      "newsLabel": "News: {title}"
     },
     "paths": {
       "title": "Where do you start?",
@@ -1080,9 +1084,6 @@
     "thisWeek": "This week",
     "previousWeek": "Last week",
     "weekOf": "Week of",
-    "featured": "With a note from Xavi",
-    "noteLabel": "Xavi’s note",
-    "withNote": "With a note from Xavi",
     "markSummary": "ChalkGuide summary",
     "markSource": "Source:",
     "listLabel": "News from {range}",
@@ -1116,15 +1117,17 @@
     },
     "detail": {
       "back": "Back to {name}",
-      "sourceTitle": "Original source",
       "readAt": "Read on {source}",
       "external": "(external site)",
       "publishedOn": "Published on {date}",
+      "videos": {
+        "titleOne": "Related video",
+        "titleMany": "Related videos",
+        "noticeOne": "It loads from YouTube (Google) only when you play it. Then YouTube receives your IP and may store data in your browser.",
+        "noticeMany": "They load from YouTube (Google) only when you play them. Then YouTube receives your IP and may store data in your browser."
+      },
       "inLanguage": "in {language}",
-      "transparency": "This text is ChalkGuide’s own summary, approved by Xavi before it is published. The facts come from the source; if something does not add up, the source rules.",
       "howWeDoIt": "How we do the news",
-      "more": "More news",
-      "related": "Related",
       "relatedKind": {
         "gym": "Climbing gym",
         "resoler": "Resoler",
@@ -1134,6 +1137,92 @@
       },
       "photoBy": "Photo: {credit}",
       "photoLicense": "Licence: {license}"
+    },
+    "latest": "Latest news",
+    "view": {
+      "label": "News view",
+      "grid": "Grid",
+      "list": "List"
+    },
+    "aporte": {
+      "title": "Why it matters"
+    },
+    "related": {
+      "title": "On ChalkGuide"
+    },
+    "source": {
+      "kicker": "The full story",
+      "cta": "Read on {source}",
+      "transparency": "This text is ChalkGuide’s own summary with added context. The facts come from the source; if something does not add up, go with the source."
+    }
+  },
+  "cookies": {
+    "banner": {
+      "title": "Cookies are your call",
+      "description": "With your permission, Google measures visits and Google and Meta show ChalkGuide on other sites. Rejecting changes nothing.",
+      "policyLink": "Cookie policy",
+      "accept": "Accept",
+      "reject": "Reject",
+      "settings": "Settings",
+      "announce": "Cookie notice. You can accept, reject or adjust settings.",
+      "revision": "I've changed the cookies I use or what they're for, so I'm asking again. Rejecting changes nothing."
+    },
+    "prefs": {
+      "title": "Cookie preferences",
+      "statusNone": "You haven't chosen yet. Until you do, no Google or Meta cookies are loaded.",
+      "statusSaved": "Your current choice, saved on {date}.",
+      "intro": "Choose what to allow. Anything you don't switch on isn't loaded. You can change it whenever you like from \"Cookie preferences\" at the foot of every page.",
+      "policyLink": "Cookie policy",
+      "close": "Close without saving",
+      "rejectAll": "Reject all",
+      "acceptAll": "Accept all",
+      "save": "Save selection",
+      "on": "On",
+      "off": "Off",
+      "alwaysOn": "Always on",
+      "details": "What they store and who by",
+      "videosNote": "YouTube videos don't depend on this: they only load when you press \"Play video\".",
+      "saved": "Cookie preferences saved."
+    },
+    "category": {
+      "necessary": {
+        "title": "Necessary",
+        "description": "They store this choice, your view preference in News if you change it and, if you sign in with Google, your session. The site doesn't work without them."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Google Analytics: which pages are read and where readers come from, so I know what to write. It isn't used for ads."
+      },
+      "ads": {
+        "title": "Advertising and remarketing",
+        "description": "Google Ads and the Meta pixel: remembering that you visited ChalkGuide so its ads can be shown to you on other sites and networks. I never upload your email."
+      }
+    },
+    "table": {
+      "cookie": "Cookie",
+      "provider": "Provider",
+      "purpose": "Purpose",
+      "duration": "Duration",
+      "tbc": "To be confirmed"
+    },
+    "purpose": {
+      "consent": "Stores your cookie choice",
+      "session": "Keeps you signed in, only if you sign in",
+      "newsView": "Remembers whether you prefer to see the news as a grid or a list; only if you change the view",
+      "ga": "Tells visits apart to measure what is read",
+      "gcl": "Measures whether a Google ad led to a visit",
+      "fbp": "Meta: recognises your browser for remarketing lists"
+    },
+    "choice": {
+      "anchor": "preferences",
+      "title": "Your choice",
+      "savedOn": "Saved on {date}.",
+      "none": "You haven't chosen yet. Until you do, no Google or Meta cookies are loaded.",
+      "noJs": "Without JavaScript no Google or Meta cookies are loaded, so there is nothing to choose. To change your preferences, turn JavaScript on.",
+      "change": "Change preferences",
+      "chooseNow": "Choose now",
+      "on": "On",
+      "off": "Off"
     }
   }
 }

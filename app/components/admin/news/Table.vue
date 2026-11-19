@@ -61,7 +61,7 @@ const canRelease = (n: AdminNews) => n.status === 'rejected' && n.source === 'ag
     <template #cell-scope="{ row }"><span class="text-adm-meta">{{ scopeLabel(row.scope) }}</span></template>
     <template #cell-reason="{ row }"><span class="text-adm-meta">{{ newsReasonLabel(row.rejectReason) }}</span></template>
     <template #cell-index="{ row }">
-      <span v-if="row.indexable" :class="[admChip, 'bg-adm-st-pub-bg text-adm-st-pub']"><Check aria-hidden="true" />Con nota · indexable</span>
+      <span v-if="row.indexable" :class="[admChip, 'bg-adm-st-pub-bg text-adm-st-pub']"><Check aria-hidden="true" />Con aporte · indexable</span>
       <span v-else :class="[admChip, 'bg-adm-subtle text-adm-meta']"><EyeOff aria-hidden="true" />noindex</span>
     </template>
     <template #cell-origin="{ row }"><AdminNewsOrigin :source="row.source" short /></template>

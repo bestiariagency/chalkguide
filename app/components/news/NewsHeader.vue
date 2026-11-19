@@ -5,7 +5,7 @@ import type { NewsCategoryNavItem, NewsScope } from '~/types/news'
 
 /**
  * Header of the index and of the categories (ListingHeader pattern of /blog, §15.2): breadcrumbs,
- * H1, lede and search (`/` from `lg`); below, category chips (routes) and the scope filter (state).
+ * H1, lede and search (`/` from `lg`); below, category chips (routes), the scope filter (state) and the grid/list switch.
  * Under `lg` a 44 px button opens the search field in place of the chips.
  */
 const props = defineProps<{
@@ -88,6 +88,10 @@ function onFocusOut() {
         <NewsCategoryNav :items="nav.items" :total="nav.total" :current="props.current" />
       </div>
     </div>
-    <NewsScopeFilter v-model="scope" class="mt-3" />
+    <div class="mt-3 flex items-center gap-2">
+      <NewsScopeFilter v-model="scope" class="min-w-0 flex-1" />
+      <!-- With a search the results are always a list: the switch does nothing, so it is hidden but keeps its place. -->
+      <NewsViewToggle :class="query ? 'invisible' : ''" :aria-hidden="query ? 'true' : undefined" />
+    </div>
   </section>
 </template>

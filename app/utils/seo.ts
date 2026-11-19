@@ -83,23 +83,23 @@ export const LISTING_QUERY_KEYS = [
   'pagina', 'alcance',
 ] as const
 
-/** Words a "Nota de Xavi" needs for its news page to be indexable (D79; the DB `indexable` column counts the same way). */
-export const MIN_NEWS_NOTE_WORDS = 60
+/** Words an «Aporte propio» needs for its news page to be indexable (D92; the DB `indexable` column counts the same way). */
+export const MIN_NEWS_INSIGHT_WORDS = 80
 /** The /noticias index is indexable from this many published news items (D79). */
 export const MIN_NEWS_INDEX = 6
 
-export function noteWordCount(text: string | null | undefined) {
+export function insightWordCount(text: string | null | undefined) {
   const clean = (text ?? '').trim()
   return clean ? clean.split(/\s+/).length : 0
 }
 
 /**
- * News page: indexable only when published and carrying a "Nota de Xavi" of >= ~60 words (D73, D79);
+ * News page: indexable only when published and carrying an «Aporte propio» of >= 80 words (D92);
  * a page that only summarises someone else's source adds nothing and goes `noindex, follow`.
  * Shared by the page head and (8.11) the sitemap, so they never disagree.
  */
-export function isNewsIndexable({ note, published = true }: { note: string | null | undefined; published?: boolean }) {
-  return published && noteWordCount(note) >= MIN_NEWS_NOTE_WORDS
+export function isNewsIndexable({ insight, published = true }: { insight: string | null | undefined; published?: boolean }) {
+  return published && insightWordCount(insight) >= MIN_NEWS_INSIGHT_WORDS
 }
 
 /** /noticias index (page 1, no query): indexable from 6 published items. */

@@ -1494,8 +1494,8 @@ export type Database = {
           title_en: string | null
           summary_es: string
           summary_en: string | null
-          author_note_es: string | null
-          author_note_en: string | null
+          insight_es: string | null
+          insight_en: string | null
           category_id: string
           scope: Database["guide"]["Enums"]["news_scope"]
           tags: string[]
@@ -1524,6 +1524,10 @@ export type Database = {
           indexable_en: boolean | null
           search_es: string | null
           search_en: string | null
+          seo_keyword_es: string | null
+          seo_keyword_en: string | null
+          meta_description_es: string | null
+          meta_description_en: string | null
         }
         Insert: {
           id?: string
@@ -1534,8 +1538,8 @@ export type Database = {
           title_en?: string | null
           summary_es: string
           summary_en?: string | null
-          author_note_es?: string | null
-          author_note_en?: string | null
+          insight_es?: string | null
+          insight_en?: string | null
           category_id: string
           scope?: Database["guide"]["Enums"]["news_scope"]
           tags?: string[]
@@ -1564,6 +1568,10 @@ export type Database = {
           indexable_en?: never
           search_es?: never
           search_en?: never
+          seo_keyword_es?: string | null
+          seo_keyword_en?: string | null
+          meta_description_es?: string | null
+          meta_description_en?: string | null
         }
         Update: {
           id?: string
@@ -1574,8 +1582,8 @@ export type Database = {
           title_en?: string | null
           summary_es?: string
           summary_en?: string | null
-          author_note_es?: string | null
-          author_note_en?: string | null
+          insight_es?: string | null
+          insight_en?: string | null
           category_id?: string
           scope?: Database["guide"]["Enums"]["news_scope"]
           tags?: string[]
@@ -1604,6 +1612,10 @@ export type Database = {
           indexable_en?: never
           search_es?: never
           search_en?: never
+          seo_keyword_es?: string | null
+          seo_keyword_en?: string | null
+          meta_description_es?: string | null
+          meta_description_en?: string | null
         }
         Relationships: [
           {
@@ -1778,6 +1790,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      news_videos: {
+        Row: {
+          news_id: string
+          position: number
+          youtube_id: string
+          title: string | null
+          channel: string | null
+          lang: string | null
+          created_at: string
+        }
+        Insert: {
+          news_id: string
+          position: number
+          youtube_id: string
+          title?: string | null
+          channel?: string | null
+          lang?: string | null
+          created_at?: string
+        }
+        Update: {
+          news_id?: string
+          position?: number
+          youtube_id?: string
+          title?: string | null
+          channel?: string | null
+          lang?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_videos_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       newsletter_issue_items: {
         Row: {
@@ -2870,8 +2920,8 @@ export type Database = {
           title_en: string | null
           summary_es: string | null
           summary_en: string | null
-          author_note_es: string | null
-          author_note_en: string | null
+          insight_es: string | null
+          insight_en: string | null
           has_en: boolean | null
           indexable: boolean | null
           indexable_en: boolean | null
@@ -2890,6 +2940,10 @@ export type Database = {
           first_published_at: string | null
           created_at: string | null
           updated_at: string | null
+          seo_keyword_es: string | null
+          seo_keyword_en: string | null
+          meta_description_es: string | null
+          meta_description_en: string | null
         }
         Relationships: []
       }
@@ -3054,7 +3108,7 @@ export type Database = {
       admin_item_publish_blockers: { Args: { p_category: string }; Returns: { item_id: string; published: boolean; blockers: string[] }[] }
       admin_list_events: { Args: { p_status?: Database["guide"]["Enums"]["event_status"]; p_source?: Database["guide"]["Enums"]["event_source"]; p_when?: string; p_from?: string; p_to?: string; p_item_id?: string; p_event_types?: string[]; p_query?: string; p_id?: string; p_sort?: string; p_limit?: number; p_offset?: number }; Returns: { id: string; status: Database["guide"]["Enums"]["event_status"]; source: Database["guide"]["Enums"]["event_source"]; event_type: string; title_es: string; title_en: string; description_es: string; description_en: string; starts_at: string; ends_at: string; all_day: boolean; location_text: string; url: string; price_text: string; item_id: string; item_name: string; item_slug: string; item_published: boolean; source_url: string; agent_meta: Json; run_id: string; run_started_at: string; duplicate_of: string; duplicate_of_status: Database["guide"]["Enums"]["event_status"]; reject_reason: string; has_en: boolean; is_past: boolean; approved_at: string; created_at: string; updated_at: string; total_count: number }[] }
       admin_list_ingest_tokens: { Args: never; Returns: { id: string; label: string; hint: string; status: string; created_at: string; created_by: string; expires_at: string; last_used_at: string; revoked_at: string; runs_count: number }[] }
-      admin_list_news: { Args: { p_status?: Database["guide"]["Enums"]["news_status"]; p_category_id?: string; p_scope?: Database["guide"]["Enums"]["news_scope"]; p_source_id?: string; p_run_id?: string; p_query?: string; p_id?: string; p_limit?: number; p_offset?: number }; Returns: { id: string; slug: string; status: Database["guide"]["Enums"]["news_status"]; source: Database["guide"]["Enums"]["event_source"]; title_es: string; title_en: string; summary_es: string; summary_en: string; author_note_es: string; author_note_en: string; category_id: string; category_key: string; scope: Database["guide"]["Enums"]["news_scope"]; tags: string[]; source_name: string; source_url: string; source_title: string; source_published_on: string; source_lang: string; source_id: string; source_trusted: boolean; source_approval_rate: number; media_id: string; image_license: string; image_credit: string; run_id: string; agent_meta: Json; similarity: number; warnings: string[]; reject_reason: string; indexable: boolean; indexable_en: boolean; has_en: boolean; published_at: string; first_published_at: string; created_at: string; updated_at: string; total_count: number }[] }
+      admin_list_news: { Args: { p_status?: Database["guide"]["Enums"]["news_status"]; p_category_id?: string; p_scope?: Database["guide"]["Enums"]["news_scope"]; p_source_id?: string; p_run_id?: string; p_query?: string; p_id?: string; p_limit?: number; p_offset?: number }; Returns: { id: string; slug: string; status: Database["guide"]["Enums"]["news_status"]; source: Database["guide"]["Enums"]["event_source"]; title_es: string; title_en: string; summary_es: string; summary_en: string; insight_es: string; insight_en: string; seo_keyword_es: string; seo_keyword_en: string; meta_description_es: string; meta_description_en: string; category_id: string; category_key: string; scope: Database["guide"]["Enums"]["news_scope"]; tags: string[]; source_name: string; source_url: string; source_title: string; source_published_on: string; source_lang: string; source_id: string; source_trusted: boolean; source_approval_rate: number; media_id: string; image_license: string; image_credit: string; run_id: string; agent_meta: Json; similarity: number; warnings: string[]; reject_reason: string; indexable: boolean; indexable_en: boolean; has_en: boolean; published_at: string; first_published_at: string; created_at: string; updated_at: string; videos: Json; total_count: number }[] }
       admin_list_news_sources: { Args: never; Returns: { id: string; name: string; domain: string; url: string; kind: Database["guide"]["Enums"]["ingest_kind"]; scope: Database["guide"]["Enums"]["news_scope"]; lang: string; instructions: string; trusted: boolean; active: boolean; last_seen_at: string; created_at: string; updated_at: string; news_total: number; news_published: number; news_rejected: number; news_pending: number; events_total: number; events_approved: number; approval_rate: number }[] }
       admin_list_review_photos: { Args: { p_status?: Database["guide"]["Enums"]["review_photo_status"]; p_review_id?: string; p_limit?: number; p_offset?: number }; Returns: { id: string; review_id: string; item_id: string; item_name: string; item_slug: string; category: string; item_published: boolean; review_status: Database["guide"]["Enums"]["review_status"]; author_name: string; sort_order: number; status: Database["guide"]["Enums"]["review_photo_status"]; storage_path: string; public_path: string; mime_type: string; size_bytes: number; width: number; height: number; reject_reason: string; rights_version: string; rights_accepted_at: string; created_at: string; moderated_at: string; total_count: number }[] }
       admin_list_subscribers: { Args: { p_view?: string; p_query?: string; p_sources?: string[]; p_locale?: Database["guide"]["Enums"]["locale"]; p_date_field?: string; p_from?: string; p_to?: string; p_versions?: number[]; p_statuses?: Database["guide"]["Enums"]["subscriber_status"][]; p_sort?: string; p_limit?: number; p_offset?: number; p_related?: Database["guide"]["Enums"]["related_consent_status"][] }; Returns: Json }
@@ -3071,6 +3125,7 @@ export type Database = {
       admin_revoke_ingest_token: { Args: { p_id: string }; Returns: Json }
       admin_search: { Args: { p_query: string; p_kinds?: string[]; p_limit?: number }; Returns: { kind: string; id: string; key: string; title: string; data: Json; status: string; matched_field: string; snippet: string; rank: number; total_in_kind: number }[] }
       admin_set_ingest_window: { Args: { p_open: boolean }; Returns: Json }
+      admin_set_news_videos: { Args: { p_news_id: string; p_videos: Json }; Returns: { news_id: string; "position": number; youtube_id: string; title: string; channel: string; lang: string }[] }
       admin_stats: { Args: { p_range?: string; p_granularity?: string; p_from?: string; p_to?: string }; Returns: Json }
       admin_subscribers_summary: { Args: never; Returns: Json }
       admin_timeseries: { Args: { p_metric: string; p_from: string; p_to: string; p_bucket?: string }; Returns: { bucket: string; value: number }[] }
@@ -3177,7 +3232,7 @@ export type Database = {
       save_draft: { Args: { p_entity: string; p_entity_id: string; p_payload: Json; p_base_updated_at?: string }; Returns: { id: string; base_updated_at: string; updated_at: string }[] }
       search_articles: { Args: { p_query: string; p_locale: Database["guide"]["Enums"]["locale"]; p_category_id?: string; p_limit?: number; p_offset?: number }; Returns: { id: string; slug: string; slug_es: string; slug_en: string; title: string; excerpt: string; category_id: string; category_slug: string; category_name: string; published_at: string; rank: number; headline: string; total_count: number; author_id: string }[] }
       search_media: { Args: { p_query?: string; p_filter?: string; p_limit?: number; p_offset?: number }; Returns: { id: string; storage_path: string; version: number; original_filename: string; mime_type: string; size_bytes: number; width: number; height: number; alt_es: string; alt_en: string; caption_es: string; caption_en: string; credit: string; dominant_color: string; created_at: string; updated_at: string; usage_count: number; total_count: number }[] }
-      search_news: { Args: { p_query: string; p_locale: Database["guide"]["Enums"]["locale"]; p_category_id?: string; p_limit?: number; p_offset?: number; p_scope?: Database["guide"]["Enums"]["news_scope"] }; Returns: { id: string; slug: string; title: string; summary: string; category_id: string; category_key: string; category_label: string; scope: Database["guide"]["Enums"]["news_scope"]; source_name: string; source_url: string; published_at: string; has_note: boolean; indexable: boolean; rank: number; headline: string; total_count: number }[] }
+      search_news: { Args: { p_query: string; p_locale: Database["guide"]["Enums"]["locale"]; p_category_id?: string; p_limit?: number; p_offset?: number; p_scope?: Database["guide"]["Enums"]["news_scope"] }; Returns: { id: string; slug: string; title: string; summary: string; category_id: string; category_key: string; category_label: string; scope: Database["guide"]["Enums"]["news_scope"]; source_name: string; source_url: string; published_at: string; has_insight: boolean; indexable: boolean; rank: number; headline: string; total_count: number }[] }
       search_plain_text: { Args: { p_excerpt: string; p_body_html: string }; Returns: string }
       set_event_status: { Args: { p_id: string; p_status: Database["guide"]["Enums"]["event_status"]; p_reject_reason?: string }; Returns: Json }
       set_events_status: { Args: { p_ids: string[]; p_status: Database["guide"]["Enums"]["event_status"]; p_reject_reason?: string }; Returns: Json }

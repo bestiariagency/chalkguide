@@ -21,7 +21,7 @@ const PAGES = [
   ['login','login.html','Login'],['inicio','inicio.html','Inicio'],['articulos','articulos.html','Artículos'],
   ['editor','articulo-editor.html','Editor'],['categorias','categorias.html','Categorías'],['paginas','paginas.html','Páginas'],['medios','medios.html','Medios'],
   ['rocodromo','rocodromo-editor.html','Rocódromo'],['pie','pie-de-gato-editor.html','Pie de gato'],['resolador','resolador-editor.html','Resolador'],['criterios','criterios.html','Criterios'],
-  ['opiniones','opiniones.html','Opiniones'],['agenda','agenda.html','Agenda'],['agenda-f8','agenda-f8.html','Agenda · F8'],['noticias','noticias.html','Noticias'],['newsletter','newsletter.html','Newsletter'],['ingesta','ingesta.html','Ingesta'],['suscriptores','suscriptores.html','Suscriptores'],['exportar','exportar.html','Exportar (modal)'],['importar','importar.html','Importar fichas'],
+  ['opiniones','opiniones.html','Opiniones'],['agenda','agenda.html','Agenda'],['agenda-f8','agenda-f8.html','Agenda · F8'],['noticias','noticias.html','Noticias'],['noticias-videos','noticias-videos.html','Noticias · vídeos'],['newsletter','newsletter.html','Newsletter'],['ingesta','ingesta.html','Ingesta'],['suscriptores','suscriptores.html','Suscriptores'],['exportar','exportar.html','Exportar (modal)'],['importar','importar.html','Importar fichas'],
   ['estadisticas','estadisticas.html','Estadísticas'],['actividad','actividad.html','Actividad'],['ajustes','ajustes.html','Ajustes'],['ds','design-system.html','Design system']
 ];
 const NAV = [
@@ -32,7 +32,7 @@ const NAV = [
   ['Biblioteca',[['medios','medios.html','image','Medios']]],
   ['Datos',[['estadisticas','estadisticas.html','chart-line','Estadísticas'],['actividad','actividad.html','history','Actividad'],['ingesta','ingesta.html','bot','Ingesta']]], /* D37: Exportar sale del menú (modal en cada módulo) */
 ];
-const ACTIVE_ALIAS = { editor:'articulos', 'agenda-f8':'agenda' };
+const ACTIVE_ALIAS = { editor:'articulos', 'agenda-f8':'agenda', 'noticias-videos':'noticias' };
 let page='', active='';
 const logoSrc = '../../../public/brand/logo-dark.svg';
 const iso = '<svg viewBox="0 22 315 338" class="w-5 h-5" fill="currentColor" aria-hidden="true"><rect x="0" y="22" width="69" height="338" rx="6"/><rect x="82" y="102" width="69" height="258" rx="6"/><rect x="164" y="182" width="69" height="178" rx="6"/><rect x="246" y="262" width="69" height="98" rx="6"/></svg>';

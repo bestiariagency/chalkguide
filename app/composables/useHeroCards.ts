@@ -1,4 +1,5 @@
 import type { GuideEvent, GymSummary, MediaRef, ShoeSummary, ArticleSummary } from '~/types/domain'
+import type { NewsSummary } from '~/types/news'
 import type { HeroCardData } from '~/types/ui'
 
 interface HeroSources {
@@ -7,14 +8,16 @@ interface HeroSources {
   event: GuideEvent | null
   gyms: GymSummary[]
   article: ArticleSummary | null
+  /** The latest published news (D89); none, and the ring goes back to the 8 cards. */
+  news?: NewsSummary | null
 }
 
 /** Card ratio (about 0.74 wide/high) times the image's 118% width (hero.css .hero-img). */
 const CARD_IMAGE_RATIO = 0.87
 
 /**
- * The 8 cards of the home carousel in ring order (photo 1, shoe 1, event, gym 2, photo 2,
- * shoe 2, gym 1, article), never starting on a photo; whatever is missing is skipped.
+ * The 9 cards of the home carousel in ring order (photo 1, news, shoe 1, event, gym 2, photo 2,
+ * shoe 2, gym 1, article), never starting on a photo (so it starts on the news); whatever is missing is skipped.
  * Texts are built here, once.
  */
 export function useHeroCards(sources: () => HeroSources) {
@@ -36,7 +39,7 @@ export function useHeroCards(sources: () => HeroSources) {
   }
 
   return computed<HeroCardData[]>(() => {
-    const { photos, shoes, event, gyms, article } = sources()
+    const { photos, shoes, event, gyms, article, news } = sources()
     const photo = (media: MediaRef | null, key: string): HeroCardData | null =>
       media
         ? {
@@ -133,10 +136,30 @@ export function useHeroCards(sources: () => HeroSources) {
           }
         : null
 
+    const latestNews = (item: NewsSummary | null | undefined): HeroCardData | null => {
+      if (!item) return null
+      const day = formatNewsDay(item.publishedAt, locale.value)
+      const dominant = item.image?.dominantColor
+      return {
+        key: `news-${item.id}`,
+        kind: 'news',
+        strong: false,
+        to: { name: 'news-slug', params: { slug: item.slug } },
+        label: t('home.hero.newsLabel', { title: item.title }),
+        image: image(item.image ?? null, '', CARD_IMAGE_RATIO),
+        eyebrow: [item.categoryName, day].filter(Boolean).join(' · '),
+        title: item.title,
+        note: t('home.hero.meta.newsSource'),
+        source: item.sourceName,
+        news: { categorySlug: item.categoryKey, dominant: dominant && /^#[0-9a-f]{6}$/i.test(dominant) ? dominant : null },
+      }
+    }
+
     const [shoe1, shoe2] = shoes
     const [gym1, gym2] = gyms
     const cards = [
       photo(photos[0] ?? null, 'photo-1'),
+      latestNews(news),
       shoe(shoe1),
       agenda(event),
       gym(gym2),

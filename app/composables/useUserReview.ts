@@ -26,6 +26,7 @@ export function useUserReview(itemId: MaybeRefOrGetter<string>, category: string
   const route = useRoute()
   const router = useRouter()
   const toast = useToast()
+  const { track } = useTrack()
   const { t } = useI18n()
   const { isSignedIn, userId, signInTarget } = useAuth()
 
@@ -93,6 +94,7 @@ export function useUserReview(itemId: MaybeRefOrGetter<string>, category: string
       await photos.settle()
       const id = await submitReview(db, { itemId: toValue(itemId), overall, scores, body, locale: locale.value })
       toast.success(t('reviews.sent'))
+      track('review_submitted')
       return await finishPhotos(id)
     } catch (error) {
       rateLimited.value = isRateLimited(error)

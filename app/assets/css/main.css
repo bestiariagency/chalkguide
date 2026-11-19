@@ -66,6 +66,35 @@
   --color-danger-text: #b02a25;
   --color-danger-muted: #f8e1de;
 
+  /* --- Noticias (README §18.2 y §18.14): tono y tinta por categoría, texto sobre foto y tinta de la placa de fuente --- */
+  --color-news-competicion: #f7e4d0;
+  --color-news-competicion-ink: #8a3f10;
+  --color-news-roca-vias: #dfe7e5;
+  --color-news-roca-vias-ink: #25564e;
+  --color-news-material: #eee2ea;
+  --color-news-material-ink: #6a3355;
+  --color-news-rocodromos: #e2e8f0;
+  --color-news-rocodromos-ink: #2f4a6b;
+  --color-news-seguridad: #f3e0dd;
+  --color-news-seguridad-ink: #8b2c24;
+  --color-news-acceso-entorno: #e2eadb;
+  --color-news-acceso-entorno-ink: #3b5a2c;
+  --color-news-federaciones: #e5e3f0;
+  --color-news-federaciones-ink: #443c78;
+  --color-news-comunidad: #f2ead0;
+  --color-news-comunidad-ink: #6b5212;
+  --color-news-none: #ebe6dc;
+  --color-news-none-ink: #5e584e;
+  --color-news-on-photo: #f7f5f0; /* titular sobre foto (9,5:1 en el peor píxel medido) */
+  --color-news-on-photo-meta: #e6e1d8; /* cabecera sobre foto (7,11:1) */
+  --color-news-photo-bg: #2a2724; /* fondo de la foto mientras carga */
+  --color-news-source: #1c1a17; /* placa de tinta de la fuente */
+  --color-news-source-text: #f0ede8;
+  --color-news-source-soft: #d5d1c9;
+  --color-news-source-meta: #b8b2a7;
+  --color-news-source-line: #3a362f;
+  --color-news-source-btn-hover: #f0a356;
+
   /* --- Tipografía --- */
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -443,6 +472,10 @@
     box-shadow: inset 0 -2px 0 var(--hl-line);
   }
 }
+
+/* Vista de /noticias (§18.6): el atributo lo pone en <html> el script de cabecera antes de pintar; el HTML es el mismo para todos. */
+@custom-variant news-list (html[data-news-view='list'] &);
+@custom-variant news-grid (html:not([data-news-view='list']) &);
 
 @utility ring-focus {
   box-shadow: var(--ring);

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Noticias · Vídeos (8.18a) · Panel · ChalkGuide</title>
+<!-- Mockup: NO carga nada de YouTube. Las miniaturas son marcadores que simulan i.ytimg.com/vi/{id}/mqdefault.jpg.
+     Vídeos, títulos y canales DUMMY. Spec: ../site/README.md §17 (incluye la parte del panel). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=10"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  .q{position:relative}
+  .q[aria-current="true"]{background:var(--acc-soft)}
+  .q[aria-current="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--acc)}
+  .inf{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--meta)} .inf svg{width:12px;height:12px}
+  .src{border:1px solid var(--line-strong);border-radius:8px;background:var(--elev)}
+  .det-actions{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line)}
+
+  /* NUEVO · fila de vídeo (NewsVideoRow) */
+  .vrow{display:grid;grid-template-columns:128px minmax(0,1fr) auto;gap:12px;align-items:start;padding:10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--elev)}
+  @media (max-width:639px){.vrow{grid-template-columns:96px minmax(0,1fr);}.vrow .v-act{grid-column:1 / -1;justify-content:flex-end;border-top:1px solid var(--line);padding-top:6px;margin-top:-2px}}
+  .vrow.is-removing{opacity:.5}
+  .thumb{position:relative;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:var(--subtle);display:block}
+  /* simulación de miniatura (en producción: <img src="https://i.ytimg.com/vi/{id}/mqdefault.jpg">) */
+  .thumb.sim-a{background:linear-gradient(135deg,#6b7b5e,#2f3a2a 60%,#1b2118)}
+  .thumb.sim-b{background:linear-gradient(160deg,#9aa6b2,#4a5663 55%,#22282f)}
+  .thumb.sim-c{background:linear-gradient(140deg,#b88a5a,#5a3d24 60%,#241910)}
+  .thumb .dur{position:absolute;right:4px;bottom:4px;padding:1px 4px;border-radius:3px;background:rgb(0 0 0/.8);color:#fff;font:500 11px/16px 'JetBrains Mono',monospace}
+  .thumb .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)} .thumb .ph svg{width:20px;height:20px}
+  .clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .state h4{font-size:12px;font-weight:600;color:var(--fg)} .state>p.cap{font-size:12px;color:var(--meta);margin-top:2px}
+  @keyframes sp{to{transform:rotate(360deg)}} .spin2{animation:sp .8s linear infinite}
+  @media (prefers-reduced-motion:reduce){.spin2{animation:none}}
+</style>
+</head>
+<body data-page="noticias-videos" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <nav aria-label="Migas de pan" class="flex items-center gap-1.5 min-w-0"><a href="noticias.html" class="text-meta hover:text-fg">Noticias</a><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-muted"></i><h1 class="font-medium truncate">Por revisar</h1></nav>
+    <span class="ml-auto text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1 hidden md:inline">Mockup 8.18a · solo cambia la sección «Vídeos»</span>
+  </header>
+
+  <section class="grid lg:grid-cols-[420px_minmax(0,1fr)] min-h-[640px]" aria-label="Por revisar">
+    <!-- bandeja (abreviada) -->
+    <div class="min-w-0 lg:border-r border-line">
+      <ul class="divide-y divide-line" aria-label="Noticias por revisar">
+        <li class="q" aria-current="true"><a href="#det" class="block px-4 py-3">
+          <p class="text-xs text-meta flex items-center gap-2"><span>Roca y acceso · Cataluña</span><span class="num ml-auto">15 nov</span></p>
+          <p class="mt-0.5 text-sm font-medium clamp2">Montserrat actualiza las restricciones por nidificación en seis sectores</p>
+          <p class="mt-1 flex items-center gap-2 text-xs text-meta">Parcs Naturals de Catalunya <span class="inf ml-auto" aria-label="2 vídeos propuestos"><i data-lucide="square-play"></i>2</span></p></a></li>
+        <li class="q"><a href="#" class="block px-4 py-3">
+          <p class="text-xs text-meta flex items-center gap-2"><span>Competición · Cataluña</span><span class="num ml-auto">14 nov</span></p>
+          <p class="mt-0.5 text-sm font-medium clamp2">La FEEC abre inscripciones para el Campeonato de Cataluña de bloque</p>
+          <p class="mt-1 flex items-center gap-2 text-xs text-meta">FEEC <span class="inf ml-auto" aria-label="1 vídeo propuesto"><i data-lucide="square-play"></i>1</span></p></a></li>
+        <li class="q"><a href="#" class="block px-4 py-3">
+          <p class="text-xs text-meta flex items-center gap-2"><span>Rocódromos · Cataluña</span><span class="num ml-auto">13 nov</span></p>
+          <p class="mt-0.5 text-sm font-medium clamp2">Un nuevo rocódromo de bloque abrirá en Sabadell en enero</p>
+          <p class="mt-1 text-xs text-meta">Diari de Sabadell</p></a></li>
+      </ul>
+      <p class="flex gap-2 border-t border-line px-4 py-3 text-xs text-meta"><i data-lucide="square-play" class="w-4 h-4 flex-none"></i>El número indica los vídeos propuestos. Ninguno sale si no apruebas la noticia.</p>
+    </div>
+
+    <!-- detalle -->
+    <div id="det" class="flex flex-col min-w-0 border-t border-line lg:border-t-0">
+      <div class="flex-1 p-4 md:p-6 space-y-5 max-w-[760px]">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="chip st-warn"><i data-lucide="circle-dashed"></i>Por revisar</span>
+          <span class="chip st-neutral"><i data-lucide="sparkles"></i>Propuesta por el agente</span>
+          <span class="chip st-neutral"><i data-lucide="map-pin"></i>Cataluña</span>
+        </div>
+        <h2 class="text-xl font-semibold tracking-tight [text-wrap:balance]">Montserrat actualiza las restricciones por nidificación en seis sectores</h2>
+
+        <section class="src p-3" aria-label="Fuente">
+          <p class="text-sm font-medium">Parcs Naturals de Catalunya</p>
+          <p class="mt-1 text-xs text-meta">Publicada el <b class="font-medium text-fg">14 nov 2026</b> · en catalán</p>
+        </section>
+
+        <details class="sec">
+          <summary class="inline-flex items-center gap-1.5 text-sm font-semibold"><i data-lucide="chevron-right" class="chev w-4 h-4 text-meta"></i>Resumen</summary>
+          <p class="mt-2 text-sm leading-6 max-w-[60ch]">El Parc Natural de la Muntanya de Montserrat ha actualizado el calendario de restricciones por nidificación de rapaces…</p>
+        </details>
+
+        <!-- ================= VÍDEOS (NUEVO) ================= -->
+        <section aria-labelledby="h-vid" id="vid-sec">
+          <div class="flex items-center gap-2">
+            <h3 id="h-vid" class="text-sm font-semibold">Vídeos</h3>
+            <span class="counter num" id="vid-count" aria-live="polite">2 / 2</span>
+            <span class="ml-auto text-xs text-meta hidden sm:inline">Salen bajo el resumen, con «clic para cargar»</span>
+          </div>
+
+          <ol class="mt-2 space-y-2" id="vid-list" aria-label="Vídeos de la noticia, en orden">
+            <li class="vrow" data-id="Xk3pT9mQa2L">
+              <a class="thumb sim-a" href="https://www.youtube.com/watch?v=Xk3pT9mQa2L" target="_blank" rel="noopener noreferrer" aria-label="Abrir en YouTube: Per què tanquem sectors d'escalada a Montserrat (otra pestaña)"><span class="dur">4:12</span></a>
+              <div class="min-w-0">
+                <p class="text-sm font-medium leading-5 clamp2" lang="ca">Per què tanquem sectors d'escalada a Montserrat</p>
+                <p class="mt-0.5 text-xs text-meta">Parcs Naturals de Catalunya · catalán</p>
+                <p class="mt-1.5 flex flex-wrap items-center gap-1.5"><span class="chip st-neutral"><i data-lucide="sparkles"></i>Agente</span><span class="text-xs text-meta">Canal oficial del parque; explica el calendario de cierres.</span></p>
+              </div>
+              <div class="v-act flex items-center gap-0.5">
+                <button type="button" class="icon-btn" aria-label="Bajar «Per què tanquem sectors…»" data-move="down"><i data-lucide="arrow-down"></i></button>
+                <button type="button" class="icon-btn" aria-label="Editar datos de «Per què tanquem sectors…»" data-edit><i data-lucide="pencil"></i></button>
+                <button type="button" class="icon-btn hover:!text-danger" aria-label="Quitar «Per què tanquem sectors…»" data-remove><i data-lucide="x"></i></button>
+              </div>
+            </li>
+            <li class="vrow" data-id="b7Rw0Ze4HcY">
+              <a class="thumb sim-b" href="https://www.youtube.com/watch?v=b7Rw0Ze4HcY" target="_blank" rel="noopener noreferrer" aria-label="Abrir en YouTube: Cómo consultar los cierres de escalada antes de salir a roca (otra pestaña)"><span class="dur">7:05</span></a>
+              <div class="min-w-0">
+                <p class="text-sm font-medium leading-5 clamp2">Cómo consultar los cierres de escalada antes de salir a roca</p>
+                <p class="mt-0.5 text-xs text-meta">FEEC Escalada · español</p>
+                <p class="mt-1.5 flex flex-wrap items-center gap-1.5"><span class="chip st-neutral"><i data-lucide="sparkles"></i>Agente</span><span class="text-xs text-meta">Tutorial práctico; publicado hace 8 meses.</span></p>
+              </div>
+              <div class="v-act flex items-center gap-0.5">
+                <button type="button" class="icon-btn" aria-label="Subir «Cómo consultar los cierres…»" data-move="up"><i data-lucide="arrow-up"></i></button>
+                <button type="button" class="icon-btn" aria-label="Editar datos de «Cómo consultar los cierres…»" data-edit><i data-lucide="pencil"></i></button>
+                <button type="button" class="icon-btn hover:!text-danger" aria-label="Quitar «Cómo consultar los cierres…»" data-remove><i data-lucide="x"></i></button>
+              </div>
+            </li>
+          </ol>
+
+          <!-- añadir pegando una URL -->
+          <form class="mt-3" id="vid-add" novalidate>
+            <label class="lbl" for="v-url">Añadir vídeo de YouTube <span class="opt">(pega la URL)</span></label>
+            <div class="flex gap-2">
+              <div class="input affix flex-1"><span class="pl-2.5 text-muted"><i data-lucide="link" class="w-4 h-4"></i></span><input id="v-url" class="!pl-2 bg-transparent outline-none w-full text-sm placeholder:text-muted" inputmode="url" autocomplete="off" placeholder="https://www.youtube.com/watch?v=… o youtu.be/…" aria-describedby="v-url-h" disabled></div>
+              <button type="submit" class="btn btn-ghost" id="v-add" disabled><i data-lucide="plus"></i>Añadir</button>
+            </div>
+            <p id="v-url-h" class="help">Máximo 2. Quita uno para añadir otro.</p>
+          </form>
+        </section>
+
+        <p class="text-xs text-meta flex gap-2"><i data-lucide="shield-check" class="w-4 h-4 flex-none"></i>Al aprobar, salen los vídeos de esta lista. Las miniaturas vienen de i.ytimg.com y solo se ven en el panel; en el sitio no se carga nada de YouTube hasta que el lector pulsa.</p>
+      </div>
+      <div class="det-actions px-4 md:px-6 py-3 flex flex-wrap items-center gap-2">
+        <button type="button" class="btn btn-ghost"><i data-lucide="x"></i>Rechazar<i data-lucide="chevron-down"></i></button>
+        <button type="button" class="btn btn-ghost ml-auto"><i data-lucide="pencil"></i>Editar</button>
+        <button type="button" class="btn btn-primary" data-toast="Publicada con 2 vídeos · sale en /noticias en unos minutos"><i data-lucide="check"></i>Aprobar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ESTADOS ================= -->
+  <section class="border-t border-line p-4 md:p-6" aria-labelledby="h-st">
+    <h2 id="h-st" class="text-sm font-semibold">Estados de la sección «Vídeos»</h2>
+    <p class="mt-1 text-xs text-meta">Mismo componente en el detalle de la bandeja y en el editor (cajón de 640, entre «Fuente» y «Clasificación»).</p>
+    <div class="mt-4 grid gap-6 md:grid-cols-2 max-w-[1200px]">
+
+      <div class="state"><h4>Vacío · el agente no propuso ninguno</h4><p class="cap">No es un error: la mayoría de noticias no llevará vídeo.</p>
+        <div class="mt-2 rounded-lg border border-dashed border-line-strong p-3 text-xs text-meta flex gap-2"><i data-lucide="square-play" class="w-4 h-4 flex-none"></i>Sin vídeos. El agente no encontró ninguno relacionado.</div>
+        <div class="mt-2 flex gap-2"><div class="input affix flex-1"><span class="pl-2.5 text-muted"><i data-lucide="link" class="w-4 h-4"></i></span><input aria-label="URL de YouTube (ejemplo de estado vacío)" class="!pl-2 bg-transparent outline-none w-full text-sm placeholder:text-muted" placeholder="https://www.youtube.com/watch?v=…"></div><button type="button" class="btn btn-ghost"><i data-lucide="plus"></i>Añadir</button></div>
+      </div>
+
+      <div class="state"><h4>Añadiendo · leyendo datos del vídeo</h4><p class="cap">El servidor pide título y canal a YouTube (oEmbed). La fila aparece con esqueleto.</p>
+        <div class="mt-2 vrow" aria-busy="true"><span class="thumb"><span class="ph"><i data-lucide="loader-circle" class="spin2"></i></span></span><div class="min-w-0 space-y-2 pt-1"><div class="sk h-3.5 w-4/5"></div><div class="sk h-3 w-1/2"></div></div><span></span></div>
+        <div class="mt-2 flex gap-2"><div class="input affix flex-1"><span class="pl-2.5 text-muted"><i data-lucide="link" class="w-4 h-4"></i></span><input aria-label="URL de YouTube (ejemplo cargando)" class="!pl-2 bg-transparent outline-none w-full text-sm" value="https://youtu.be/q9LmA2cVt0E" readonly></div><button type="button" class="btn btn-ghost" disabled aria-disabled="true"><i data-lucide="loader-circle" class="spin2"></i>Añadiendo…</button></div>
+      </div>
+
+      <div class="state"><h4>Error · no es una URL de YouTube</h4><p class="cap">Se valida al enviar, no mientras escribe.</p>
+        <div class="mt-2 flex gap-2"><div class="input affix flex-1" style="border-color:var(--danger)"><span class="pl-2.5 text-muted"><i data-lucide="link" class="w-4 h-4"></i></span><input aria-label="URL de YouTube (ejemplo con error)" class="!pl-2 bg-transparent outline-none w-full text-sm" value="https://vimeo.com/812345" aria-invalid="true" aria-describedby="e1"></div><button type="button" class="btn btn-ghost"><i data-lucide="plus"></i>Añadir</button></div>
+        <p id="e1" class="err"><i data-lucide="circle-alert"></i>No es un enlace de YouTube. Vale youtube.com/watch?v=…, youtu.be/…, /shorts/… o /embed/….</p>
+      </div>
+
+      <div class="state"><h4>Error · no se puede incrustar</h4><p class="cap">oEmbed responde 401/403 (incrustación desactivada) o 404 (privado o borrado).</p>
+        <div class="mt-2 flex gap-2"><div class="input affix flex-1" style="border-color:var(--danger)"><span class="pl-2.5 text-muted"><i data-lucide="link" class="w-4 h-4"></i></span><input aria-label="URL de YouTube (ejemplo no incrustable)" class="!pl-2 bg-transparent outline-none w-full text-sm" value="https://www.youtube.com/watch?v=Zp0Lr8sKd1Q" aria-invalid="true" aria-describedby="e2"></div><button type="button" class="btn btn-ghost"><i data-lucide="plus"></i>Añadir</button></div>
+        <p id="e2" class="err"><i data-lucide="circle-alert"></i>Este vídeo no se puede poner en otras webs (es privado, se borró o su autor lo bloquea).</p>
+      </div>
+
+      <div class="state"><h4>Error · repetido</h4>
+        <p id="e3" class="err !mt-2"><i data-lucide="circle-alert"></i>Este vídeo ya está en la lista.</p>
+      </div>
+
+      <div class="state"><h4>Quitar · sin diálogo, con Deshacer</h4><p class="cap">Quitar no borra nada publicado hasta que guardas o apruebas. Toast 5 s; el foco pasa a la fila siguiente o al campo URL.</p>
+        <div class="mt-2 toast toast-ok !static !shadow-none border border-line"><i data-lucide="check" class="ic"></i><span class="flex-1">Vídeo quitado</span><button type="button" class="ta font-medium">Deshacer</button></div>
+      </div>
+
+      <div class="state md:col-span-2"><h4>Editar datos · título, canal, idioma y duración</h4><p class="cap">Para corregir mayúsculas o un título truncado. El ID no se edita: para otro vídeo, quita y añade.</p>
+        <div class="mt-2 rounded-lg border border-line-strong p-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_200px]">
+          <div class="sm:col-span-2"><label class="lbl" for="ed-t">Título <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span><span class="counter">48 / 140</span></label><input id="ed-t" class="input" value="Per què tanquem sectors d'escalada a Montserrat" lang="ca"></div>
+          <div><label class="lbl" for="ed-c">Canal <span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span></label><input id="ed-c" class="input" value="Parcs Naturals de Catalunya"></div>
+          <div><label class="lbl" for="ed-d">Duración <span class="opt">(opcional)</span></label><input id="ed-d" class="input num" value="4:12" inputmode="numeric" aria-describedby="ed-d-h"><p id="ed-d-h" class="help">mm:ss. Sale redondeada: «4 min».</p></div>
+          <div><label class="lbl" for="ed-l">Idioma del vídeo</label><select id="ed-l" class="select"><option>Catalán</option><option>Español</option><option>Inglés</option><option>Otro / sin voz</option></select></div>
+          <div class="flex items-end justify-end gap-2"><button type="button" class="btn btn-ghost">Cancelar</button><button type="button" class="btn btn-primary">Guardar</button></div>
+        </div>
+      </div>
+
+      <div class="state md:col-span-2"><h4>Alternativa B · sin miniaturas de YouTube (si no aceptas i.ytimg.com en el panel)</h4><p class="cap">Marcador neutro con icono; la miniatura solo se pide si pulsas «Ver miniatura». Más seguro, pero revisas a ciegas o abres YouTube cada vez.</p>
+        <div class="mt-2 vrow max-w-[640px]">
+          <button type="button" class="thumb" aria-label="Ver miniatura de «Per què tanquem sectors…» (carga i.ytimg.com)"><span class="ph"><span class="flex flex-col items-center gap-1 text-xs"><i data-lucide="image"></i>Ver miniatura</span></span></button>
+          <div class="min-w-0"><p class="text-sm font-medium leading-5 clamp2" lang="ca">Per què tanquem sectors d'escalada a Montserrat</p><p class="mt-0.5 text-xs text-meta">Parcs Naturals de Catalunya · 4:12 · catalán</p></div>
+          <div class="v-act flex items-center gap-0.5"><a class="icon-btn" href="#" aria-label="Abrir en YouTube (otra pestaña)"><i data-lucide="external-link"></i></a><button type="button" class="icon-btn" aria-label="Quitar"><i data-lucide="x"></i></button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const list = document.getElementById('vid-list'), url = document.getElementById('v-url'), add = document.getElementById('v-add'),
+        help = document.getElementById('v-url-h'), count = document.getElementById('vid-count');
+  const sync = () => {
+    const n = list.children.length, full = n >= 2;
+    count.textContent = n + ' / 2'; url.disabled = full; add.disabled = full;
+    help.textContent = full ? 'Máximo 2. Quita uno para añadir otro.' : 'El título y el canal se leen de YouTube; puedes corregirlos después.';
+    [...list.children].forEach((li, i) => { const m = li.querySelector('[data-move]'); if (!m) return; m.hidden = n < 2;
+      m.dataset.move = i === 0 ? 'down' : 'up'; m.innerHTML = `<i data-lucide="arrow-${i === 0 ? 'down' : 'up'}"></i>`; });
+    CG.icons();
+  };
+  list.addEventListener('click', e => {
+    const li = e.target.closest('li'); if (!li) return;
+    if (e.target.closest('[data-remove]')) {
+      const next = li.nextElementSibling || li.previousElementSibling, parent = li.parentNode, ref = li.nextSibling;
+      li.remove(); sync(); (next?.querySelector('[data-remove]') || url).focus(); CG.announce('Vídeo quitado');
+      CG.toast('Vídeo quitado'); const ta = document.querySelector('#toasts .toast:last-child .ta'); if (ta) ta.onclick = () => { parent.insertBefore(li, ref); sync(); ta.closest('.toast').remove(); };
+    }
+    if (e.target.closest('[data-move]')) { li.dataset.move; const up = e.target.closest('[data-move]').dataset.move === 'up';
+      up ? list.insertBefore(li, li.previousElementSibling) : list.insertBefore(li.nextElementSibling, li); sync(); li.querySelector('[data-move]').focus(); CG.announce('Orden cambiado'); }
+    if (e.target.closest('[data-edit]')) CG.toast('Abre «Editar datos» en la propia fila (ver estados)', { type: 'info', action: null });
+  });
+  document.getElementById('vid-add').addEventListener('submit', e => { e.preventDefault(); CG.toast('Vídeo añadido', { action: null }); });
+  sync();
+});
+</script>
+</body>
+</html>

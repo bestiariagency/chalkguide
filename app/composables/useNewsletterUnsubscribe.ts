@@ -11,9 +11,16 @@ export function useNewsletterUnsubscribe() {
   const db = useGuideClient()
   const route = useRoute()
   const status = ref<UnsubscribeStatus>('loading')
+  let token: string | undefined
 
   async function run() {
-    const token = Array.isArray(route.query.token) ? route.query.token[0] : route.query.token
+    // The token leaves the address bar at once (analytics tags read the URL); it stays in memory for a retry.
+    token ??= (Array.isArray(route.query.token) ? route.query.token[0] : route.query.token) ?? undefined
+    if (window.location.search.includes('token=')) {
+      const clean = new URL(window.location.href)
+      clean.searchParams.delete('token')
+      window.history.replaceState(window.history.state, '', clean.pathname + clean.search + clean.hash)
+    }
     if (!isValidUnsubscribeToken(token)) {
       status.value = 'invalid'
       return

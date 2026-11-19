@@ -67,7 +67,7 @@ export function altPublishMessage(error: unknown, nameOf?: (id: string) => strin
   return `${head} Añádelo en Medios y vuelve a intentarlo.`
 }
 
-const ENTITY_LABEL: Record<string, [string, string]> = { article: ['artículo', 'artículos'], page: ['página', 'páginas'], item: ['ficha', 'fichas'], author: ['autor', 'autores'] }
+const ENTITY_LABEL: Record<string, [string, string]> = { article: ['artículo', 'artículos'], page: ['página', 'páginas'], item: ['ficha', 'fichas'], author: ['autor', 'autores'], news: ['noticia', 'noticias'] }
 const SETTINGS = 'site_settings'
 
 /** Emptying the alt of an image used by published content (or the default share image): where it is used. */

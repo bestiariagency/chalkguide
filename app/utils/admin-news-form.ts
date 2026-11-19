@@ -1,3 +1,4 @@
+import { videoIncomplete, type AdminNewsVideo } from './admin-news-videos'
 import type { Database } from '~/types/database.types'
 import { NEWS_LIMITS, type AdminNews, type NewsScope } from '~/utils/admin-news'
 
@@ -16,8 +17,12 @@ export interface NewsForm {
   titleEn: string
   summaryEs: string
   summaryEn: string
-  noteEs: string
-  noteEn: string
+  insightEs: string
+  insightEn: string
+  seoKeywordEs: string
+  seoKeywordEn: string
+  metaDescriptionEs: string
+  metaDescriptionEn: string
   sourceName: string
   sourceUrl: string
   /** `YYYY-MM-DD`. */
@@ -32,15 +37,17 @@ export interface NewsForm {
   imageLicense: string
   imageCredit: string
   links: RelatedLink[]
+  /** Up to 2 YouTube videos (saved with `admin_set_news_videos`, after the item). */
+  videos: AdminNewsVideo[]
 }
 
-export type NewsField = 'titleEs' | 'titleEn' | 'summaryEs' | 'summaryEn' | 'noteEs' | 'noteEn' | 'sourceName' | 'sourceUrl' | 'publishedOn' | 'categoryId' | 'image' | 'imageLicense' | 'imageCredit' | 'tags' | 'links'
+export type NewsField = 'titleEs' | 'titleEn' | 'summaryEs' | 'summaryEn' | 'insightEs' | 'insightEn' | 'seoKeywordEs' | 'seoKeywordEn' | 'metaDescriptionEs' | 'metaDescriptionEn' | 'sourceName' | 'sourceUrl' | 'publishedOn' | 'categoryId' | 'image' | 'imageLicense' | 'imageCredit' | 'tags' | 'links' | 'videos'
 export type NewsErrors = Partial<Record<NewsField, string>>
 
 export const MAX_LINKS = 3
 
 export function emptyNewsForm(categoryId = ''): NewsForm {
-  return { titleEs: '', titleEn: '', summaryEs: '', summaryEn: '', noteEs: '', noteEn: '', sourceName: '', sourceUrl: '', publishedOn: '', categoryId, scope: 'es', tags: [], withImage: false, mediaId: '', mediaName: '', imageLicense: '', imageCredit: '', links: [] }
+  return { titleEs: '', titleEn: '', summaryEs: '', summaryEn: '', insightEs: '', insightEn: '', seoKeywordEs: '', seoKeywordEn: '', metaDescriptionEs: '', metaDescriptionEn: '', sourceName: '', sourceUrl: '', publishedOn: '', categoryId, scope: 'es', tags: [], withImage: false, mediaId: '', mediaName: '', imageLicense: '', imageCredit: '', links: [], videos: [] }
 }
 
 export function newsToForm(n: AdminNews, links: RelatedLink[] = [], mediaName = ''): NewsForm {
@@ -49,8 +56,12 @@ export function newsToForm(n: AdminNews, links: RelatedLink[] = [], mediaName = 
     titleEn: n.titleEn ?? '',
     summaryEs: n.summaryEs,
     summaryEn: n.summaryEn ?? '',
-    noteEs: n.noteEs ?? '',
-    noteEn: n.noteEn ?? '',
+    insightEs: n.insightEs ?? '',
+    insightEn: n.insightEn ?? '',
+    seoKeywordEs: n.seoKeywordEs ?? '',
+    seoKeywordEn: n.seoKeywordEn ?? '',
+    metaDescriptionEs: n.metaDescriptionEs ?? '',
+    metaDescriptionEn: n.metaDescriptionEn ?? '',
     sourceName: n.sourceName,
     sourceUrl: n.sourceUrl,
     publishedOn: n.sourcePublishedOn ?? '',
@@ -63,6 +74,7 @@ export function newsToForm(n: AdminNews, links: RelatedLink[] = [], mediaName = 
     imageLicense: n.imageLicense ?? '',
     imageCredit: n.imageCredit ?? '',
     links,
+    videos: n.videos.map((v) => ({ ...v })),
   }
 }
 
@@ -75,16 +87,22 @@ export const fullSourceUrl = (value: string) => {
   return /^https?:\/\//i.test(v) ? v : v ? `https://${v}` : ''
 }
 
-export function validateNews(form: NewsForm, opts: { agent: boolean }): NewsErrors {
+export function validateNews(form: NewsForm, opts: { agent: boolean; publishing?: boolean }): NewsErrors {
   const e: NewsErrors = {}
+  if (opts.publishing && form.videos.some(videoIncomplete)) e.videos = 'Un vídeo publicado necesita título y canal. Complétalos en la sección Vídeos.'
   const title = form.titleEs.trim()
   if (!title) e.titleEs = 'Falta el título.'
   else if (title.length > NEWS_LIMITS.title) e.titleEs = `El título pasa de ${NEWS_LIMITS.title} caracteres.`
   const summary = form.summaryEs.trim()
   if (!summary) e.summaryEs = 'Falta el resumen. Con tus palabras, no copiado de la fuente.'
   else if (summary.length > NEWS_LIMITS.summary) e.summaryEs = `El resumen pasa de ${NEWS_LIMITS.summary} caracteres.`
-  if (form.noteEs.trim().length > NEWS_LIMITS.note) e.noteEs = `La nota pasa de ${NEWS_LIMITS.note} caracteres.`
-  if (form.noteEn.trim().length > NEWS_LIMITS.note) e.noteEn = `La nota pasa de ${NEWS_LIMITS.note} caracteres.`
+  if (form.insightEs.trim().length > NEWS_LIMITS.insight) e.insightEs = `El aporte pasa de ${NEWS_LIMITS.insight} caracteres.`
+  if (form.insightEn.trim().length > NEWS_LIMITS.insight) e.insightEn = `El aporte pasa de ${NEWS_LIMITS.insight} caracteres.`
+  for (const lang of ['Es', 'En'] as const) {
+    const keyword = form[`seoKeyword${lang}`].trim()
+    if (keyword && (keyword.length < 2 || keyword.length > NEWS_LIMITS.keyword)) e[`seoKeyword${lang}`] = `La keyword lleva entre 2 y ${NEWS_LIMITS.keyword} caracteres.`
+    if (form[`metaDescription${lang}`].trim().length > NEWS_LIMITS.metaDescription) e[`metaDescription${lang}`] = `La meta description pasa de ${NEWS_LIMITS.metaDescription} caracteres.`
+  }
   if (form.titleEn.trim().length > NEWS_LIMITS.title) e.titleEn = `El título pasa de ${NEWS_LIMITS.title} caracteres.`
   if (form.summaryEn.trim().length > NEWS_LIMITS.summary) e.summaryEn = `El resumen pasa de ${NEWS_LIMITS.summary} caracteres.`
   // Title and summary in English go together: one without the other keeps it out of /en/news.
@@ -116,8 +134,12 @@ export function newsWrite(form: NewsForm, opts: { agent: boolean }) {
     title_en: orNull(form.titleEn),
     summary_es: form.summaryEs.trim(),
     summary_en: orNull(form.summaryEn),
-    author_note_es: orNull(form.noteEs),
-    author_note_en: orNull(form.noteEn),
+    insight_es: orNull(form.insightEs),
+    insight_en: orNull(form.insightEn),
+    seo_keyword_es: orNull(form.seoKeywordEs),
+    seo_keyword_en: orNull(form.seoKeywordEn),
+    meta_description_es: orNull(form.metaDescriptionEs),
+    meta_description_en: orNull(form.metaDescriptionEn),
     source_name: form.sourceName.trim(),
     ...(opts.agent ? {} : { source_url: fullSourceUrl(form.sourceUrl) }),
     source_published_on: form.publishedOn || null,
@@ -155,6 +177,7 @@ export function newsError(error: unknown): NewsError {
   if (/news_en_incomplete/.test(message)) return { field: 'summaryEn', message: 'Título y resumen en inglés van juntos: o los dos o ninguno.' }
   if (/news_media_alt/.test(message)) return { field: 'image', message: 'La imagen no tiene texto alternativo en español. Complétalo en Medios.' }
   if (/news_image_rights/.test(message)) return { field: 'imageLicense', message: 'Una imagen necesita licencia y crédito.' }
+  if (/news_video_meta/.test(message)) return { field: 'videos', message: 'Un vídeo publicado necesita título y canal. Complétalos en la sección Vídeos.' }
   if (code === '23514') return { message: 'Algún dato no cumple las reglas (formato o longitud). Revisa los campos.' }
   if (code === '23505') return { message: 'Ya hay una noticia con esa dirección. Cambia un poco el título.' }
   if (code === '42501' && /provenance/.test(message)) return { message: 'El origen de una noticia del agente no se puede cambiar.' }

@@ -71,7 +71,8 @@
     "chalkApp": "Chalk app",
     "language": "Idioma",
     "promise": "Ninguna reseña se compra. Lo pagado se marca.",
-    "copyright": "© {year} ChalkGuide"
+    "copyright": "© {year} ChalkGuide",
+    "cookiePreferences": "Preferencias de cookies"
   },
   "common": {
     "yes": "Sí",
@@ -490,15 +491,18 @@
         "shoe": "Pies de gato",
         "gym": "Rocódromo",
         "article": "Artículo",
-        "event": "Agenda"
+        "event": "Agenda",
+        "news": "Noticia"
       },
       "meta": {
         "gymLead": "{district} · {price} €/mes · hasta {height} m",
         "gymBoulder": "{district} · {price} €/mes · bloque",
         "gymNoPrice": "{district}",
         "shoePriceRange": "{min}–{max} €",
-        "shoePrice": "{price} €"
-      }
+        "shoePrice": "{price} €",
+        "newsSource": "Fuente:"
+      },
+      "newsLabel": "Noticia: {title}"
     },
     "paths": {
       "title": "¿Por dónde empiezas?",
@@ -1080,9 +1084,6 @@
     "thisWeek": "Esta semana",
     "previousWeek": "Semana anterior",
     "weekOf": "Semana del",
-    "featured": "Con nota de Xavi",
-    "noteLabel": "Nota de Xavi",
-    "withNote": "Con nota de Xavi",
     "markSummary": "Resumen de ChalkGuide",
     "markSource": "Fuente:",
     "listLabel": "Noticias de {range}",
@@ -1116,15 +1117,17 @@
     },
     "detail": {
       "back": "Volver a {name}",
-      "sourceTitle": "Fuente original",
       "readAt": "Leer en {source}",
       "external": "(web externa)",
       "publishedOn": "Publicada el {date}",
+      "videos": {
+        "titleOne": "Vídeo relacionado",
+        "titleMany": "Vídeos relacionados",
+        "noticeOne": "Se carga desde YouTube (Google) solo al reproducirlo. Entonces YouTube recibe tu IP y puede guardar datos en tu navegador.",
+        "noticeMany": "Se cargan desde YouTube (Google) solo al reproducirlos. Entonces YouTube recibe tu IP y puede guardar datos en tu navegador."
+      },
       "inLanguage": "en {language}",
-      "transparency": "Este texto es un resumen propio de ChalkGuide, aprobado por Xavi antes de publicarse. Los datos son de la fuente; si algo no cuadra, manda la fuente.",
       "howWeDoIt": "Cómo hacemos las noticias",
-      "more": "Más noticias",
-      "related": "Relacionado",
       "relatedKind": {
         "gym": "Rocódromo",
         "resoler": "Resolador",
@@ -1134,6 +1137,92 @@
       },
       "photoBy": "Foto: {credit}",
       "photoLicense": "Licencia: {license}"
+    },
+    "latest": "Últimas noticias",
+    "view": {
+      "label": "Vista de las noticias",
+      "grid": "Cuadrícula",
+      "list": "Lista"
+    },
+    "aporte": {
+      "title": "Por qué importa"
+    },
+    "related": {
+      "title": "En ChalkGuide"
+    },
+    "source": {
+      "kicker": "La noticia completa",
+      "cta": "Leer en {source}",
+      "transparency": "Este texto es un resumen propio de ChalkGuide con contexto añadido. Los datos son de la fuente; si algo no cuadra, vale lo que diga la fuente."
+    }
+  },
+  "cookies": {
+    "banner": {
+      "title": "Las cookies, a tu elección",
+      "description": "Con tu permiso, Google mide las visitas y Google y Meta muestran ChalkGuide en otras webs. Rechazar no cambia nada.",
+      "policyLink": "Política de cookies",
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "settings": "Configurar",
+      "announce": "Aviso de cookies. Puedes aceptar, rechazar o configurar.",
+      "revision": "He cambiado las cookies o para qué las uso, así que te pregunto de nuevo. Rechazar no cambia nada."
+    },
+    "prefs": {
+      "title": "Preferencias de cookies",
+      "statusNone": "Todavía no has elegido. Hasta que lo hagas no se carga ninguna cookie de Google ni de Meta.",
+      "statusSaved": "Tu elección actual, guardada el {date}.",
+      "intro": "Elige qué permites. Lo que no actives no se carga. Puedes cambiarlo cuando quieras desde «Preferencias de cookies», al pie de cada página.",
+      "policyLink": "Política de cookies",
+      "close": "Cerrar sin guardar",
+      "rejectAll": "Rechazar todo",
+      "acceptAll": "Aceptar todo",
+      "save": "Guardar selección",
+      "on": "Sí",
+      "off": "No",
+      "alwaysOn": "Siempre activas",
+      "details": "Qué guardan y de quién",
+      "videosNote": "Los vídeos de YouTube no dependen de esto: solo se cargan cuando pulsas «Reproducir vídeo».",
+      "saved": "Preferencias de cookies guardadas."
+    },
+    "category": {
+      "necessary": {
+        "title": "Necesarias",
+        "description": "Guardan esta elección, tu preferencia de vista en Noticias si la cambias y, si inicias sesión con Google, tu sesión. Sin ellas la web no funciona."
+      },
+      "analytics": {
+        "title": "Analítica",
+        "description": "Google Analytics: qué páginas se leen y desde dónde llegan, para saber qué escribir. No sirve para anuncios."
+      },
+      "ads": {
+        "title": "Publicidad y remarketing",
+        "description": "Google Ads y el píxel de Meta: recordar que has visitado ChalkGuide para enseñarte sus anuncios en otras webs y redes. Nunca subo tu email."
+      }
+    },
+    "table": {
+      "cookie": "Cookie",
+      "provider": "Proveedor",
+      "purpose": "Finalidad",
+      "duration": "Duración",
+      "tbc": "Por confirmar"
+    },
+    "purpose": {
+      "consent": "Guarda tu elección de cookies",
+      "session": "Mantiene tu sesión, solo si inicias sesión",
+      "newsView": "Recuerda si prefieres ver las noticias en cuadrícula o en lista; solo si cambias la vista",
+      "ga": "Distingue visitas para medir qué se lee",
+      "gcl": "Mide si un anuncio de Google ha llevado a una visita",
+      "fbp": "Meta: reconoce tu navegador para listas de remarketing"
+    },
+    "choice": {
+      "anchor": "preferencias",
+      "title": "Tu elección",
+      "savedOn": "Guardada el {date}.",
+      "none": "Todavía no has elegido. Hasta que lo hagas no se carga ninguna cookie de Google ni de Meta.",
+      "noJs": "Sin JavaScript no se carga ninguna cookie de Google ni de Meta, así que no hay nada que elegir. Para cambiar tus preferencias, activa JavaScript.",
+      "change": "Cambiar preferencias",
+      "chooseNow": "Elegir ahora",
+      "on": "Activada",
+      "off": "Desactivada"
     }
   }
 }

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ficha de noticia como preview · propuesta 8.19a (D91) · ChalkGuide</title>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<!-- Propuesta 8.19a iteración 2 (2026-11-19, D90 + D91). Sustituye a noticia.html y reordena noticia-videos.html.
+     Orden: titular y fecha · foto · resumen · «Por qué importa» (aporte) · vídeos (D88) · En ChalkGuide · Leer en X ↗.
+     Contenido, foto y vídeo DUMMY. Este mockup NO contacta con YouTube (reproductor simulado).
+     Parámetros: ?embed=1 · ?photo=0 (sin foto) · ?video=0 (sin vídeo) · ?aporte=0 (sin aporte: no se pinta el bloque). Spec: ../README.md §18.9–18.10. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_editorial-v2/ev2.js"></script>
+<link rel="stylesheet" href="_editorial-v2/ev2.css">
+<style>
+  .n-title { font-size:clamp(1.875rem,1.45rem + 1.9vw,3rem); line-height:1.08; letter-spacing:-.028em; font-weight:500; text-wrap:balance; }
+  .mark { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; font-size:15px; color:var(--color-meta); }
+  .mark a { color:var(--color-foreground); font-weight:500; text-decoration:underline; text-decoration-color:var(--color-line-strong); text-underline-offset:3px; }
+  .mark a:hover { text-decoration-color:currentColor; }
+
+  /* 4 · Aporte: placa de papel con filete naranja a la izquierda y rótulo sobrio */
+  .aporte { position:relative; padding:24px 20px 24px 24px; border-radius:var(--radius-slab); background:var(--color-board); box-shadow:var(--shadow-slab); }
+  .aporte::before { content:''; position:absolute; left:0; top:16px; bottom:16px; width:3px; border-radius:0 2px 2px 0; background:var(--color-chalk); }
+  @media (min-width:768px) { .aporte { padding:32px 36px 32px 40px; } }
+  .aporte-k { font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.3; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent); }
+  .aporte-b { margin-top:12px; font-size:var(--text-read); line-height:1.62; color:var(--color-prose); }
+  .aporte-b p + p { margin-top:.9em; }
+  .aporte-b p:first-child { color:var(--color-foreground); }
+
+  /* 5 · En ChalkGuide */
+  .rel { display:grid; gap:8px; }
+  @media (min-width:640px) { .rel { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; } }
+  .rel a { position:relative; display:flex; flex-direction:column; justify-content:center; min-height:72px; padding:12px 44px 12px 16px; border:1px solid var(--color-line-strong); border-radius:8px; transition:background-color 150ms,border-color 150ms; }
+  .rel a:hover { background:var(--color-board); border-color:var(--color-control); }
+  .rel .k { font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-meta); }
+  .rel .t { margin-top:2px; font-size:17px; line-height:1.3; font-weight:500; color:var(--color-foreground); text-wrap:pretty; }
+  .rel svg { position:absolute; right:16px; top:50%; translate:0 -50%; color:var(--color-meta); transition:translate 150ms; }
+  .rel a:hover svg { translate:3px -50%; color:var(--color-foreground); }
+
+  /* 6 · Fuente: la pieza protagonista, en tinta, con el botón naranja */
+  .srcx { border-radius:12px; background:#1c1a17; color:#f0ede8; padding:24px 20px; }
+  @media (min-width:768px) { .srcx { padding:36px 40px; } }
+  .srcx .k { font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#b8b2a7; }
+  .srcx .m { margin-top:8px; font-size:26px; line-height:1.15; letter-spacing:-.02em; font-weight:500; }
+  .srcx .ot { margin-top:10px; font-size:17px; line-height:1.45; color:#d5d1c9; text-wrap:pretty; }
+  .srcx .d { margin-top:6px; font-size:14px; color:#b8b2a7; }
+  .btn-src { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:56px; margin-top:24px; padding:0 24px; border-radius:8px; background:var(--color-accent-fill); color:#1a0a00; font-size:17px; font-weight:500; transition:background-color 150ms, transform 150ms; }
+  .btn-src:hover { background:#f0a356; }
+  .btn-src:active { transform:scale(.99); }
+  .btn-src:focus-visible { box-shadow:0 0 0 2px #1c1a17, 0 0 0 4px #e8923a; }
+  @media (min-width:768px) { .btn-src { width:auto; display:inline-flex; } }
+  .srcx .tr { margin-top:20px; padding-top:16px; border-top:1px solid #3a362f; font-size:14px; line-height:1.5; color:#b8b2a7; }
+  .srcx .tr a { color:#f0ede8; text-decoration:underline; text-underline-offset:3px; }
+
+  /* Fachada de vídeo (D26, igual que noticia-videos.html; solo 1 vídeo aquí) */
+  .photo-placeholder { position:relative; overflow:hidden; box-shadow: inset 0 0 0 .5px rgb(0 0 0 / .12); background: linear-gradient(150deg, #3a2f27 0%, #1f1b18 55%, #121212 100%); }
+  .vf-btn:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }
+  .vf-pill { transition: background-color 150ms cubic-bezier(.4,0,.2,1); }
+  .vf-btn:hover .vf-pill { background:#c4721f; }
+  [data-video-play] { display:none; } .js [data-video-play] { display:block; } .js [data-video-nojs] { display:none; }
+  .embed .mock-bar, .embed .annex { display:none !important; }
+  @media (prefers-reduced-motion:reduce) { .rel a, .rel svg, .btn-src, .vf-pill { transition:none; } }
+</style>
+</head>
+<body>
+<div data-ev2="mockbar" data-title="/noticias/[slug] · preview (8.19a, D91)">
+  <button type="button" data-tog="nophoto" aria-pressed="false">Sin foto</button>
+  <button type="button" data-tog="novideo" aria-pressed="false">Sin vídeo</button>
+  <button type="button" data-tog="noaporte" aria-pressed="false">Sin aporte</button>
+  <a href="noticias-cuadricula.html">Portada de noticias</a>
+  <a href="#anexo">390 y diferencias</a>
+</div>
+<div data-ev2="header" data-active="noticias" data-news></div>
+
+<main>
+  <article aria-labelledby="news-title">
+    <!-- 1 · Titular y fecha -->
+    <header class="max-w-page mx-auto px-4 md:px-6 pt-6 md:pt-10">
+      <div class="max-w-prose mx-auto">
+        <nav class="crumbs has-back" aria-label="Migas de pan">
+          <ol><li><a href="#">Inicio</a></li><li><a href="noticias-cuadricula.html">Noticias</a></li><li><a href="#">Roca y acceso</a></li></ol>
+          <a href="#" class="crumb-back"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Roca y acceso</a>
+        </nav>
+        <p class="mt-5 md:mt-6 text-[15px] font-medium text-meta">Roca y acceso · Cataluña · <time datetime="2026-11-18">18 de noviembre de 2026</time></p>
+        <h1 id="news-title" class="n-title mt-2">Montserrat amplía hasta junio el cierre por nidificación en la cara norte</h1>
+        <p class="mark mt-5"><span class="badge badge-plain">Resumen de ChalkGuide</span><span>Fuente: <a href="#" rel="noopener">Parcs Naturals de Catalunya<span aria-hidden="true"> ↗</span><span class="sr-only"> (web externa)</span></a></span></p>
+      </div>
+    </header>
+
+    <div class="max-w-page mx-auto px-4 md:px-6 pt-8 md:pt-10">
+      <div class="max-w-prose mx-auto">
+        <!-- 2 · Foto (si la hay) -->
+        <figure id="photo" class="-mx-4 md:mx-0">
+          <img class="w-full aspect-[3/2] object-cover md:rounded-[6px]" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000003/1-bloque-granito-bosque.jpg" alt="Escaladores en un bloque de granito en el bosque" width="1600" height="1067">
+          <figcaption class="px-4 md:px-0 pt-2.5 text-[14px] leading-[1.45] text-meta">Sector de bloque en el bosque. <small class="text-[13px]">Foto: Parcs Naturals de Catalunya · CC BY 4.0</small></figcaption>
+        </figure>
+
+        <!-- 3 · Resumen breve -->
+        <div class="prose mt-8">
+          <p>El Parc Natural de la Muntanya de Montserrat mantiene cerrados hasta el 30 de junio tres sectores de la cara norte (Agulles, Frares Encantats y Plecs del Llibre) por la nidificación de rapaces, un mes más que el año pasado. Dos sectores de Sant Benet reabren el lunes 23.</p>
+        </div>
+
+        <!-- 4 · Aporte (D91): sin firma, sin «nota de Xavi» -->
+        <section id="aporte" class="aporte mt-10" aria-labelledby="aporte-k">
+          <h2 id="aporte-k" class="aporte-k">Por qué importa</h2>
+          <div class="aporte-b">
+            <p>Si pensabas estrenarte en multilargos esta primavera, la cara norte queda fuera hasta el verano: es donde están la mayoría de vías largas de grado moderado a una hora de Barcelona.</p>
+            <p>Las alternativas cercanas abiertas son Sant Llorenç del Munt, con vías de dos o tres largos entre el IV y el V+, y Montrebei si puedes dedicar el fin de semana. Si solo buscas roca de una tirada, Collbató y Can Sardà siguen abiertos y están a menos de una hora en tren o en coche.</p>
+            <p>El cierre también afecta al acceso a pie a la base de las vías, y el parque hará controles los fines de semana: no vale aproximarse «para mirar».</p>
+          </div>
+        </section>
+
+        <!-- Vídeos (D88): después del aporte -->
+        <section id="videos" class="mt-10" aria-labelledby="news-videos-title">
+          <h2 id="news-videos-title" class="text-[14px] leading-[1.45] font-medium text-meta">Vídeo relacionado</h2>
+          <p id="news-videos-note" class="mt-2 text-[13px] leading-[1.45] text-meta">Se carga desde YouTube (Google) solo al reproducirlo. Entonces YouTube recibe tu IP y puede guardar datos en tu navegador. <a href="#" class="link text-foreground">Cookies</a></p>
+          <figure class="mt-4" data-video-facade="Xk3pT9mQa2L">
+            <div class="relative aspect-video w-full rounded-[12px]">
+              <button type="button" data-video-play aria-describedby="news-videos-note" class="vf-btn photo-placeholder absolute inset-0 w-full rounded-[12px]">
+                <span class="absolute inset-0 flex items-center justify-center">
+                  <span class="label-mini absolute left-4 top-4 md:left-5 md:top-5" style="color:#a19d94">Vídeo · YouTube</span>
+                  <span class="vf-pill inline-flex min-h-12 items-center gap-2.5 rounded-[6px] bg-accent-fill px-5 text-[15px] font-medium text-[#1a0a00]"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Reproducir vídeo<span class="sr-only">: Per què tanquem sectors d'escalada a Montserrat</span></span>
+                </span>
+              </button>
+              <a data-video-nojs href="#" rel="noopener" class="photo-placeholder absolute inset-0 grid place-items-center rounded-[12px] text-[15px] font-medium text-[#f0ede8]">Ver en YouTube</a>
+            </div>
+            <figcaption class="mt-3">
+              <p class="text-[17px] leading-[1.35] font-medium text-foreground" lang="ca">Per què tanquem sectors d'escalada a Montserrat</p>
+              <p class="mt-1 text-[14px] leading-[1.45] text-meta">Parcs Naturals de Catalunya · <span class="font-mono text-[13px]">4 min</span> · en catalán · <a href="#" rel="noopener" class="link text-foreground">Ver en YouTube<span class="sr-only"> (abre youtube.com)</span></a></p>
+            </figcaption>
+          </figure>
+        </section>
+
+        <!-- 5 · Fichas de ChalkGuide relacionadas -->
+        <section class="mt-12" aria-labelledby="rel-title">
+          <h2 id="rel-title" class="text-[14px] leading-[1.45] font-medium text-meta">En ChalkGuide</h2>
+          <ul class="rel mt-3">
+            <li><a href="#"><span class="k">Artículo</span><span class="t">Primeras vías en roca: cinco escuelas cerca de Barcelona</span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+            <li><a href="#"><span class="k">Agenda</span><span class="t">Charla: escalada y fauna en espacios protegidos</span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+            <li><a href="#"><span class="k">Rocódromo</span><span class="t">La Paret de Gràcia</span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+          </ul>
+        </section>
+
+        <!-- 6 · Leer en la fuente: protagonista -->
+        <section id="source" class="srcx mt-12 scroll-mt-24" aria-labelledby="src-title">
+          <h2 id="src-title" class="k">La noticia completa</h2>
+          <p class="m">Parcs Naturals de Catalunya</p>
+          <p class="ot" lang="ca">«Montserrat amplia fins al 30 de juny les restriccions per nidificació a la cara nord»</p>
+          <p class="d">Publicada el 17 nov 2026 · en catalán</p>
+          <a href="#" rel="noopener" class="btn-src">Leer en Parcs Naturals de Catalunya<span aria-hidden="true">↗</span><span class="sr-only"> (web externa)</span></a>
+          <p class="tr">Este texto es un resumen propio de ChalkGuide con contexto añadido. Los datos son de la fuente; si algo no cuadra, manda la fuente. <a href="#">Cómo hacemos las noticias</a></p>
+        </section>
+      </div>
+    </div>
+  </article>
+
+  <section id="anexo" class="annex mt-20">
+    <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+      <h2>Anexo · 390 y diferencias con la ficha actual</h2>
+      <div class="mt-6 flex flex-wrap gap-8 items-start">
+        <figure class="min-w-0 max-w-full"><figcaption class="mb-2 text-[14px] text-meta">390 · con foto y vídeo</figcaption>
+          <iframe title="Ficha a 390" src="noticia-preview.html?embed=1" width="390" height="1700" class="max-w-full rounded-[6px] border border-line-strong bg-background"></iframe></figure>
+        <figure class="min-w-0 max-w-full"><figcaption class="mb-2 text-[14px] text-meta">390 · sin foto ni vídeo</figcaption>
+          <iframe title="Ficha a 390 sin foto ni vídeo" src="noticia-preview.html?embed=1&amp;photo=0&amp;video=0" width="390" height="1700" class="max-w-full rounded-[6px] border border-line-strong bg-background"></iframe></figure>
+      </div>
+      <ul class="sub mt-8 list-disc pl-5 space-y-1.5 !max-w-[72ch]">
+        <li><b>Orden nuevo:</b> titular y fecha · foto · resumen · «Por qué importa» · vídeos · En ChalkGuide · Leer en X ↗.</li>
+        <li><b>Antes (hoy en <code>[slug].vue</code>):</b> resumen · vídeos · Nota de Xavi · botón · Relacionado. Cambia: entra el aporte, sale la nota, los vídeos bajan tras el aporte, Relacionado sube antes del botón y el botón pasa a placa de tinta con botón naranja.</li>
+        <li><b>«Fuente: X» de la cabecera</b> enlaza ya a la web de la fuente (antes saltaba al bloque de abajo): quien solo quiere el original sale en un clic.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<div data-ev2="newsletter" data-weekly></div>
+<div data-ev2="footer"></div>
+
+<script>
+document.documentElement.classList.add('js')
+window.EV2_READY = () => {
+  const q = new URLSearchParams(location.search), b = document.body
+  if (q.get('embed')) b.classList.add('embed')
+  const apply = () => {
+    document.getElementById('photo').hidden = b.classList.contains('v-nophoto')
+    document.getElementById('videos').hidden = b.classList.contains('v-novideo')
+    document.getElementById('aporte').hidden = b.classList.contains('v-noaporte')
+  }
+  if (q.get('photo') === '0') b.classList.add('v-nophoto')
+  if (q.get('video') === '0') b.classList.add('v-novideo')
+  if (q.get('aporte') === '0') b.classList.add('v-noaporte')
+  document.querySelectorAll('[data-tog]').forEach(t => {
+    t.setAttribute('aria-pressed', b.classList.contains('v-' + t.dataset.tog))
+    t.addEventListener('click', () => { t.setAttribute('aria-pressed', b.classList.toggle('v-' + t.dataset.tog)); apply() })
+  })
+  apply()
+  document.querySelector('[data-video-play]').addEventListener('click', e => {
+    const box = e.currentTarget.parentElement
+    box.innerHTML = '<div class="absolute inset-0 grid place-items-center rounded-[12px] bg-black text-[15px] text-[#f0ede8]">Reproductor de YouTube (simulado)</div>'
+  })
+}
+</script>
+</body>
+</html>

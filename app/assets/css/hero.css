@@ -171,6 +171,31 @@
   );
 }
 
+/* News without photo (D89): the category tile of /noticias on paper, ink title, 4 px rule in the category ink. */
+.hero-card--news-text {
+  color: var(--color-ink);
+}
+.hero-card--news-text .hero-face {
+  background: var(--tone, var(--color-news-none));
+}
+.hero-card--news-text .hero-face::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--tink, var(--color-news-none-ink));
+}
+.hero-card--news-text .hero-sheen {
+  mix-blend-mode: multiply;
+  background: linear-gradient(
+    112deg,
+    rgb(0 0 0 / 0) 38%,
+    rgb(0 0 0 / 0.07) 49%,
+    rgb(0 0 0 / 0.02) 54%,
+    rgb(0 0 0 / 0) 62%
+  );
+}
+
 /* ===== Rope ===== */
 
 /* CSS fallback: braided rope (repeating diagonal gradient). */

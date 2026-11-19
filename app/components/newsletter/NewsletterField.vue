@@ -14,11 +14,14 @@ const { t } = useI18n()
 // "Una carta al mes. Nada más." breaks after the first sentence.
 const title = computed(() => t('newsletter.title').replace(/\.\s+/, '.\n'))
 const titleId = props.anchor ? 'newsletter-title' : 'newsletter-page-title'
+const section = ref<HTMLElement | null>(null)
+if (props.anchor) useTrackNewsletterView(section)
 </script>
 
 <template>
   <section
     :id="anchor ? 'newsletter' : undefined"
+    ref="section"
     class="field-orange dust scroll-mt-14"
     :aria-labelledby="titleId"
   >

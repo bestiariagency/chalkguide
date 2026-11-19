@@ -2,8 +2,8 @@
 import type { BreadcrumbItem } from '~/types/ui'
 
 /**
- * News index (F8, §15.2): header with category chips and scope, the featured item (latest with a
- * "Nota de Xavi" of the last 7 days), the list grouped by week, FTS search and `?pagina=` paging.
+ * News index (F8, §15.2, §18): header with category chips, scope and the grid/list switch, the newspaper front page
+ * (opener + 2 + grid, or the list by week), FTS search and `?pagina=` paging.
  * Indexable from 6 published items (D79); `?pagina`, `?alcance` and `?q` are `noindex, follow` with
  * the clean canonical. In English only items with an English version are listed (D3).
  */
@@ -43,7 +43,6 @@ useBreadcrumbJsonLd(crumbs)
       :total="search.total.value"
       :loading-more="search.loadingMore.value"
       :has-more="search.hasMore.value"
-      :featured="listing.featured.value"
       :items="listing.items.value"
       :page="listing.page.value"
       :pages="listing.pages.value"

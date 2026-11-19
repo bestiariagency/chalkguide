@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '~/types/database.types'
+import { parsableDate } from '~/utils/admin-dates'
 import type { EventType } from '~/types/domain'
 import type { AdminEvent, AgentMeta, EventQuery, EventsSummary, EventStatus } from '~/utils/admin-events'
 import type { EventInsert, EventWrite } from '~/utils/admin-events-form'
@@ -20,7 +21,8 @@ function toAgent(raw: unknown): AgentMeta | null {
     confidence: typeof m.confidence === 'number' ? m.confidence : 0,
     note: text(m.note),
     excerpt: text(m.excerpt),
-    foundAt: text(m.found_at),
+    // The DB only checks the prefix of `found_at`: anything Date cannot read would throw when formatted (Intl «Invalid time value»).
+    foundAt: parsableDate(text(m.found_at)),
     inferred: Array.isArray(m.inferred) ? m.inferred.filter((x): x is string => typeof x === 'string') : [],
     duplicateOf: text(m.duplicate_of),
   }

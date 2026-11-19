@@ -57,6 +57,7 @@ usePageSeo(() => {
       </div>
     </section>
     <section class="mx-auto max-w-page px-4 py-12 md:px-6 md:py-16">
+      <slot name="before" />
       <HomeSectionError v-if="error" :on-retry="onRetry" />
       <template v-else-if="page">
         <UiProse :html="page.bodyHtml" />

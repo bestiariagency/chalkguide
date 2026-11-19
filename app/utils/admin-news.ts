@@ -1,3 +1,4 @@
+import type { AdminNewsVideo } from './admin-news-videos'
 import type { Database } from '~/types/database.types'
 
 export type NewsStatus = Database['guide']['Enums']['news_status']
@@ -14,10 +15,14 @@ export interface NewsAgent {
   /** Fields the agent guessed: `title_en | summary_en | category | published_on | source_name`. */
   inferred: string[]
   duplicateOf: string | null
+  /** YouTube IDs the routine proposed (`agent_meta.videos`; gone once the item is decided, J27b). */
+  videos: string[]
 }
 
 /** One news item as the panel reads it (`admin_list_news`; provenance only arrives through that RPC). */
 export interface AdminNews {
+  /** Up to 2, in order (`news_videos`). Not published until the item is. */
+  videos: AdminNewsVideo[]
   id: string
   slug: string
   status: NewsStatus
@@ -26,8 +31,13 @@ export interface AdminNews {
   titleEn: string | null
   summaryEs: string
   summaryEn: string | null
-  noteEs: string | null
-  noteEn: string | null
+  insightEs: string | null
+  insightEn: string | null
+  /** Internal SEO keyword and optional meta description (F8.20b); the keyword only reaches the panel. */
+  seoKeywordEs: string | null
+  seoKeywordEn: string | null
+  metaDescriptionEs: string | null
+  metaDescriptionEn: string | null
   categoryId: string
   categoryKey: string
   scope: NewsScope
@@ -135,14 +145,14 @@ export function warningText(warning: NewsWarning, news: Pick<AdminNews, 'agent' 
 export const hasWarnings = (n: Pick<AdminNews, 'warnings'>) => n.warnings.length > 0
 
 // Indexing (D73 / D79) -----------------------------------------------------------------------------
-/** «Nota de Xavi» of at least this many words makes the card indexable (the database computes `indexable` the same way). */
-export const NOTE_MIN_WORDS = 60
+/** An «Aporte propio» of at least this many words makes the card indexable (D92; the database computes `indexable` the same way). */
+export const INSIGHT_MIN_WORDS = 80
 export const wordCount = (text: string) => (text.trim() ? text.trim().split(/\s+/).length : 0)
 
 /** `inferred` keys that map to a field of the editor. */
 export const newsInferred = (n: Pick<AdminNews, 'agent'>, key: string) => !!n.agent?.inferred.includes(key)
 
-export const NEWS_LIMITS = { title: 140, summary: 600, note: 600, tags: 10 } as const
+export const NEWS_LIMITS = { title: 140, summary: 600, insight: 1400, keyword: 60, metaDescription: 160, tags: 10 } as const
 
 export const IMAGE_LICENSES = [
   { value: 'own', label: 'Propia' },

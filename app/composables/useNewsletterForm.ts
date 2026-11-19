@@ -14,6 +14,7 @@ export function useNewsletterForm(source: NewsletterSource = 'footer') {
   const db = useGuideClient()
   const locale = useGuideLocale()
   const route = useRoute()
+  const { track } = useTrack()
 
   const email = ref('')
   const consent = ref(false)
@@ -58,6 +59,7 @@ export function useNewsletterForm(source: NewsletterSource = 'footer') {
       })
       subscribedRelated.value = related.value
       status.value = 'success'
+      track('newsletter_submit') // no email, no free text
     } catch {
       status.value = 'error' // network/server error: the user can retry with the same data
     }

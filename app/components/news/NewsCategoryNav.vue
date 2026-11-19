@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { NewsCategoryNavItem } from '~/types/news'
 
-/** News category chips (links, not filters): "Todo" + the categories that have news, with their count. */
+/** News category chips (links, not filters): "Todo" (no icon) + the categories that have news, with their icon (§18.14) and count. */
 defineProps<{ items: NewsCategoryNavItem[]; total: number; current?: string | null }>()
 const { t } = useI18n()
 
 const chip =
-  'inline-flex min-h-11 items-center gap-1.5 rounded-sm border px-[.85rem] text-body-sm font-medium transition-[background-color,border-color,color] duration-200 ease-standard'
+  'group/chip inline-flex min-h-11 items-center gap-2 rounded-sm border px-[.85rem] text-body-sm font-medium transition-[background-color,border-color,color] duration-200 ease-standard'
 const idle = 'border-control text-foreground hover:border-meta hover:bg-elevated'
 const active = 'border-accent bg-accent-muted text-accent'
 </script>
@@ -30,6 +30,11 @@ const active = 'border-accent bg-accent-muted text-accent'
           :class="[chip, item.slug === current ? active : idle]"
           :aria-current="item.slug === current ? 'page' : undefined"
         >
+          <NewsCategoryIcon
+            :slug="item.slug"
+            class="transition-colors duration-200"
+            :class="item.slug === current ? 'text-accent' : 'text-meta group-hover/chip:text-foreground'"
+          />
           {{ item.name }}
           <span class="font-mono text-note" :class="item.slug === current ? 'opacity-80' : 'text-meta'">{{ item.count }}</span>
         </NuxtLinkLocale>

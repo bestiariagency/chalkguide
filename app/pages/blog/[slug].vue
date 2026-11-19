@@ -25,6 +25,13 @@ const { progress, activeId } = useArticleReading({
   headings: allHeadings,
 })
 useDockReadingHide(bodyEl)
+// Analytics (D69): slug_es and the category's slug_es in every locale, so ES and EN add up.
+useTrackContext().setTrackContext({
+  contentType: 'article',
+  contentSlug: current.value.slugs.es,
+  pillar: current.value.category?.slugEs,
+})
+useTrackScroll(progress)
 
 const { items, related } = await useArticleRelations(current)
 

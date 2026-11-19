@@ -1,5 +1,5 @@
 import type { Database } from '~/types/database.types'
-import { createNews, saveNewsLinks, updateNews } from '~/services/admin/news'
+import { createNews, saveNewsLinks, saveNewsVideos, updateNews } from '~/services/admin/news'
 import type { AdminNews } from '~/utils/admin-news'
 import { newsError, type NewsError, type NewsForm } from '~/utils/admin-news-form'
 
@@ -24,7 +24,12 @@ export function useAdminNewsSave(reload: () => Promise<void>) {
       const publishing = action === 'publish' || action === 'save-publish'
       let id = news?.id
       if (!news) id = await createNews(client, form, publishing ? 'published' : 'draft')
-      else await updateNews(client, news.id, form, { agent: news.source === 'agent', status: action === 'save-publish' ? 'published' : undefined })
+      // Videos first on an existing item: a published one needs their credit, and publishing checks the saved ones.
+      else {
+        await saveNewsVideos(client, news.id, form.videos)
+        await updateNews(client, news.id, form, { agent: news.source === 'agent', status: action === 'save-publish' ? 'published' : undefined })
+      }
+      if (id && !news && form.videos.length) await saveNewsVideos(client, id, form.videos)
       if (id) await saveNewsLinks(client, id, form.links)
       success(
         publishing

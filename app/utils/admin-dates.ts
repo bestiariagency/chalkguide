@@ -19,3 +19,6 @@ export function adminDateTime(value: string): string {
   const time = new Intl.DateTimeFormat('es-ES', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(value))
   return `${adminDate(value)}, ${time}`
 }
+
+/** The value when `Date` can read it, otherwise `null` (formatting an unreadable date with Intl throws «Invalid time value»). */
+export const parsableDate = (v: string | null | undefined) => (v && !Number.isNaN(Date.parse(v)) ? v : null)

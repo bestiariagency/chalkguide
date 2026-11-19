@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Iconos de categoría de noticias · propuesta D93 · ChalkGuide</title>
+<!--
+  Propuesta para Xavi (2026-11-19, D93). No es código de producción. Contenido DUMMY.
+  Un icono por categoría de noticias (las 8 de guide.news_categories) y dónde aparece.
+  Iconos: Lucide 1.0 (lucide-vue-next, ya en el proyecto) salvo 2 propios (presa y pie de gato),
+  dibujados en la misma rejilla de 24 con el trazo del sistema (1.75, extremos y uniones redondos).
+  Parámetros: ?embed=1 · ?off=1 (sin iconos, para comparar el ruido visual).
+-->
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="_editorial-v2/ev2.js"></script>
+<link rel="stylesheet" href="_editorial-v2/ev2.css">
+<style>
+  /* Tonos de categoría (README §18.14). Tono = fondo de la baldosa; tinta = cabecera, filete y glifo */
+  [data-cat=competicion]{--tone:#f7e4d0;--tink:#8a3f10}
+  [data-cat=roca-vias]{--tone:#dfe7e5;--tink:#25564e}
+  [data-cat=material]{--tone:#eee2ea;--tink:#6a3355}
+  [data-cat=rocodromos]{--tone:#e2e8f0;--tink:#2f4a6b}
+  [data-cat=seguridad]{--tone:#f3e0dd;--tink:#8b2c24}
+  [data-cat=acceso-entorno]{--tone:#e2eadb;--tink:#3b5a2c}
+  [data-cat=federaciones]{--tone:#e5e3f0;--tink:#443c78}
+  [data-cat=comunidad]{--tone:#f2ead0;--tink:#6b5212}
+  [data-cat=none]{--tone:#ebe6dc;--tink:#5e584e}
+
+  /* El icono pequeño: siempre currentColor, siempre al lado de su nombre, siempre aria-hidden */
+  .ci { flex:none; display:inline-block; vertical-align:-2px; fill:none; stroke:currentColor; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; }
+  .ci-14 { width:14px; height:14px; }
+  .ci-16 { width:16px; height:16px; vertical-align:-3px; }
+  .ci-20 { width:20px; height:20px; }
+  .ci-24 { width:24px; height:24px; }
+  .off .ci { display:none !important; }
+
+  /* Lámina */
+  .sec { padding-top:56px; }
+  @media (min-width:768px) { .sec { padding-top:80px; } }
+  .sec-h { font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-meta); }
+  .sec-t { margin-top:8px; font-size:24px; line-height:1.2; letter-spacing:-.015em; font-weight:500; }
+  @media (min-width:768px) { .sec-t { font-size:28px; } }
+  .sec-p { margin-top:12px; max-width:68ch; font-size:16px; line-height:1.55; color:var(--color-prose); }
+  .note { font-size:14px; line-height:1.5; color:var(--color-meta); }
+
+  /* Mapa */
+  .map { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin-top:24px; list-style:none; }
+  @media (min-width:640px) { .map { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (min-width:1024px) { .map { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; } }
+  .mc { display:grid; grid-template-columns:88px minmax(0,1fr); gap:16px; align-items:center; padding:12px; border:1px solid var(--color-line-strong); border-radius:8px; background:var(--color-board); }
+  .sw { position:relative; overflow:hidden; aspect-ratio:1; border-radius:6px; background:var(--tone); }
+  .sw::before { content:''; position:absolute; inset:0 0 auto; height:3px; background:var(--tink); }
+  .sw .g { fill:none; stroke:currentColor; stroke-width:1; stroke-linecap:round; stroke-linejoin:round; position:absolute; right:-18%; top:-14%; width:78%; color:var(--tink); opacity:.13; }
+  .sw .ci { position:absolute; left:10px; bottom:10px; color:var(--tink); }
+  .mc .k { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--color-meta); }
+  .mc .nm { margin-top:2px; font-size:16px; font-weight:500; line-height:1.3; }
+  .mc .en { font-size:14px; color:var(--color-meta); }
+  .mc .sz { margin-top:8px; display:flex; align-items:end; gap:12px; color:var(--color-foreground); }
+  .src-tag { display:inline-block; margin-top:8px; padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--color-elevated); color:var(--color-meta); }
+  .src-tag.own { background:var(--color-accent-muted); color:var(--color-accent); }
+
+  /* Piezas de la portada (copiado de noticias-cuadricula.html, recortado) */
+  .np { list-style:none; display:grid; grid-template-columns:minmax(0,1fr); gap:32px 16px; margin-top:24px; }
+  @media (min-width:768px) { .np { grid-template-columns:repeat(2,minmax(0,1fr)); gap:40px 24px; } }
+  @media (min-width:1024px) { .np { grid-template-columns:repeat(4,minmax(0,1fr)); gap:40px 24px; } }
+  .np.three { }
+  @media (min-width:1024px) { .np.three { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  .nc { display:flex; min-width:0; }
+  .pc { position:relative; display:flex; flex-direction:column; width:100%; }
+  .pc a { color:inherit; }
+  .pc a::after { content:''; position:absolute; inset:0; z-index:3; }
+  .pc a:focus-visible { box-shadow:none; }
+  .pc:has(a:focus-visible) .pc-fig { box-shadow:var(--ring); }
+  .pc-fig { position:relative; isolation:isolate; overflow:hidden; border-radius:var(--radius-slab); aspect-ratio:16/9; background:#2a2724; }
+  @media (min-width:768px) { .pc-fig { aspect-ratio:3/2; } }
+  .pc-fig img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:-1; transition:transform 200ms var(--ease-out); }
+  .pc-ov { position:absolute; inset:auto 0 0; padding:72px 16px 14px; background:linear-gradient(180deg, rgb(12 11 10 / 0) 0, rgb(12 11 10 / .74) 64px, rgb(12 11 10 / .88) 100%); color:#f7f5f0; }
+  @media (min-width:768px) { .pc-ov { padding:76px 18px 16px; } }
+  .kick { display:block; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.3; letter-spacing:.1em; text-transform:uppercase; color:#e6e1d8; text-shadow:0 1px 2px rgb(0 0 0 / .35); }
+  .kick .sep { margin:0 .35em; }
+  .kick .ci { margin-right:6px; vertical-align:-2px; filter:drop-shadow(0 1px 1px rgb(0 0 0 / .35)); }
+  .pc-title { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden; margin-top:6px; font-size:19px; line-height:1.24; letter-spacing:-.012em; font-weight:500; text-wrap:balance; text-shadow:0 1px 2px rgb(0 0 0 / .35); }
+  .nc:not([data-photo]) .pc-fig { background:var(--tone); }
+  .nc:not([data-photo]) .pc-fig::before { content:''; position:absolute; inset:0 0 auto; height:3px; background:var(--tink); }
+  .nc:not([data-photo]) .pc-ov { background:none; color:#1c1a17; }
+  .nc:not([data-photo]) .kick { color:var(--tink); text-shadow:none; }
+  .nc:not([data-photo]) .kick .ci { filter:none; }
+  .nc:not([data-photo]) .pc-title { text-shadow:none; }
+  .glyph { display:none; }
+  .nc:not([data-photo]) .glyph { display:block; position:absolute; z-index:-1; right:-6%; top:-14%; width:46%; aspect-ratio:1; color:var(--tink); opacity:.13; pointer-events:none; fill:none; stroke:currentColor; stroke-width:1; stroke-linecap:round; stroke-linejoin:round; }
+  .pc-text { padding-top:12px; }
+  .dek { font-size:16px; line-height:1.45; color:var(--color-prose); display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+  .src { margin-top:6px; font-size:13px; line-height:1.4; color:var(--color-meta); }
+  .src b { font-weight:500; color:var(--color-foreground); }
+  @media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) { .pc:hover .pc-fig img { transform:scale(1.03); } }
+  .pc:hover .uline, .pc:has(a:focus-visible) .uline { background-size:100% 1.5px; }
+
+  /* Fila de lista (§15.2 + D87): cabecera en Inter 14 meta */
+  .lrow { display:grid; grid-template-columns:minmax(0,1fr); padding:20px 0; border-bottom:1px solid var(--color-line-strong); }
+  @media (min-width:768px) { .lrow { grid-template-columns:132px minmax(0,1fr); column-gap:32px; padding:24px 0; } }
+  .lrow .d { display:none; font-family:'JetBrains Mono',monospace; font-size:14px; line-height:1.6; color:var(--color-meta); }
+  @media (min-width:768px) { .lrow .d { display:block; } .lrow .dm { display:none; } }
+  .lrow .lk { display:flex; align-items:center; font-size:14px; font-weight:500; color:var(--color-meta); }
+  .lrow .lk .ci { margin-right:6px; }
+  .lrow .lk .dm { font-family:'JetBrains Mono',monospace; font-weight:400; }
+  .lrow h3 { margin-top:4px; font-size:19px; line-height:1.3; letter-spacing:-.012em; font-weight:500; }
+  @media (min-width:768px) { .lrow h3 { font-size:23px; } }
+
+  /* Chips con icono */
+  .chip .ci { color:var(--color-meta); transition:color 150ms; }
+  .chip:hover .ci { color:var(--color-foreground); }
+  .chip[aria-current=page] .ci { color:var(--color-accent); }
+  .chip:focus-visible { box-shadow:var(--ring); }
+
+  /* Ficha preview: línea de categoría */
+  .pv { max-width:640px; margin-top:24px; padding:24px 20px 28px; border-radius:12px; background:var(--color-background); border:1px solid var(--color-line-strong); }
+  @media (min-width:768px) { .pv { padding:32px 40px 36px; } }
+  .pv-meta { display:flex; flex-wrap:wrap; align-items:center; column-gap:.4em; font-size:15px; font-weight:500; color:var(--color-meta); }
+  .pv-meta a { display:inline-flex; align-items:center; gap:6px; min-height:24px; }
+  .pv-meta a:hover { color:var(--color-foreground); }
+  .pv-title { margin-top:8px; font-size:30px; line-height:1.12; letter-spacing:-.022em; font-weight:500; text-wrap:balance; }
+  @media (min-width:768px) { .pv-title { font-size:40px; } }
+
+  /* Hero: tarjetas de noticia (home-hero-noticia.html, fuera del anillo) */
+  .flat { display:flex; flex-wrap:wrap; gap:20px; margin-top:24px; padding:24px; border-radius:12px; background:#0f0f0f; }
+  .hc { position:relative; display:block; width:248px; height:335px; overflow:hidden; border-radius:14px; container-type:inline-size; box-shadow:0 18px 40px rgb(0 0 0 / .45); }
+  .hc img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .stamp { position:absolute; z-index:1; left:14px; top:14px; display:inline-flex; align-items:center; gap:6px; padding:6px 9px 5px; border-radius:4px; background:#e8923a; color:#1a0a00; font:400 12px/1 'JetBrains Mono',monospace; letter-spacing:.14em; text-transform:uppercase; }
+  .stamp i { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .hkind { display:block; font:400 12px/1.35 'JetBrains Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:#e8923a; }
+  .hcap { position:absolute; inset:auto 0 0; padding:104px 16px 14px; color:#f0ede8; background:linear-gradient(180deg, rgb(0 0 0 / 0), color-mix(in oklab, var(--dom, #141414) 26%, #000 74%) 50%, color-mix(in oklab, var(--dom, #141414) 22%, #000 78%) 100%); }
+  .hkind .ci { margin-right:6px; vertical-align:-2px; }
+  .hcap strong { display:block; margin-top:10px; font-size:19px; line-height:1.22; font-weight:500; text-wrap:balance; }
+  .hcap small { display:block; margin-top:8px; font-size:14px; color:#d5d1c9; }
+  .hcap small b { font-weight:500; color:#f0ede8; }
+  .hc--text { background:var(--tone); color:#1c1a17; }
+  .hc--text::before { content:''; position:absolute; inset:0 0 auto; height:4px; background:var(--tink); z-index:1; }
+  .hc--text .nglyph { position:absolute; right:-14%; bottom:-10%; width:72%; color:var(--tink); opacity:.14; fill:none; stroke:currentColor; stroke-width:1; stroke-linecap:round; stroke-linejoin:round; }
+  .ntext { position:absolute; inset:0; display:flex; flex-direction:column; padding:58px 16px 14px; }
+  .ntext .hkind { color:var(--tink); }
+  .ntext strong { display:block; margin-top:10px; font-size:clamp(21px, 9.6cqw, 28px); line-height:1.16; letter-spacing:-.02em; font-weight:500; text-wrap:balance; }
+  .ntext small { margin-top:auto; font-size:14px; line-height:1.35; color:#5e584e; }
+  .ntext small b { font-weight:500; color:#1c1a17; }
+  .flat figcaption { margin-top:10px; font-size:13px; color:#a19d94; max-width:248px; }
+
+  /* Tabla */
+  .tbl { width:100%; margin-top:20px; border-collapse:collapse; font-size:14px; }
+  .tbl th, .tbl td { padding:10px 12px 10px 0; border-bottom:1px solid var(--color-line-strong); text-align:left; vertical-align:top; }
+  .tbl th { font-weight:500; color:var(--color-meta); }
+  .tbl code { font-family:'JetBrains Mono',monospace; font-size:13px; }
+  .tbl-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .embed .mock-bar, .embed .annex { display:none !important; }
+  @media (prefers-reduced-motion:reduce) { .pc-fig img, .chip, .chip .ci { transition:none !important; } }
+</style>
+</head>
+<body>
+<div data-ev2="mockbar" data-title="Iconos de categoría de noticias (D93)">
+  <button type="button" id="tog-off" aria-pressed="false">Sin iconos (comparar)</button>
+  <a href="#anexo">390 y reglas</a>
+</div>
+
+<main class="max-w-page mx-auto px-4 md:px-6 pt-8 md:pt-12 pb-24">
+  <p class="sec-h">Propuesta · D93 · 19 nov 2026</p>
+  <h1 class="title-section mt-2">Un icono por categoría</h1>
+  <p class="sec-p">Ocho iconos de trazo, seis de Lucide (la librería que ya usa el sitio) y dos dibujados a medida en su misma rejilla: la presa y el pie de gato, que Lucide no tiene. El icono pequeño va siempre en el color del texto que acompaña; el color de la categoría solo vive en la baldosa sin foto. Así la portada no se convierte en un semáforo.</p>
+
+  <!-- 1 · Mapa -->
+  <section class="sec" aria-labelledby="h-map">
+    <p class="sec-h">1 · Mapa clave → icono</p>
+    <h2 id="h-map" class="sec-t">Las 8 categorías y el neutro</h2>
+    <ul class="map" id="map"></ul>
+    <p class="note mt-4">A la derecha de cada nombre: el icono a 14, 16, 20 y 24 px. En la muestra de color: el glifo grande recortado al 13 % y el icono de 20 px en la tinta de la categoría.</p>
+  </section>
+
+  <!-- 2 · Navegación -->
+  <section class="sec" aria-labelledby="h-nav">
+    <p class="sec-h">2 · Navegación de categorías</p>
+    <h2 id="h-nav" class="sec-t">Chips de /noticias, icono de 16</h2>
+    <p class="sec-p">Icono en <code>meta</code>, el nombre en <code>foreground</code>. En la activa, ambos en <code>accent</code>. «Todo» no lleva icono. El chip sigue midiendo 44 de alto; el icono añade 24 px de ancho (16 + 8 de hueco).</p>
+    <nav class="chips-scroll mt-5" aria-label="Categorías" id="chips"></nav>
+  </section>
+
+  <!-- 3 · Portada -->
+  <section class="sec" aria-labelledby="h-grid">
+    <p class="sec-h">3 · Cabecera de la pieza y baldosa sin foto</p>
+    <h2 id="h-grid" class="sec-t">Portada: icono de 14 en la cabecera, glifo grande en la baldosa</h2>
+    <p class="sec-p">Sobre la foto, el icono va en el mismo <code>#e6e1d8</code> que la cabecera y con su misma sombra. En la baldosa, en la tinta de la categoría. El glifo grande se queda donde estaba (arriba a la derecha, 13 %, trazo 1): lo nuevo es que cada categoría tiene el suyo.</p>
+    <ul class="np" id="grid"></ul>
+  </section>
+
+  <!-- 4 · Lista -->
+  <section class="sec" aria-labelledby="h-list">
+    <p class="sec-h">4 · Vista lista</p>
+    <h2 id="h-list" class="sec-t">Fila: icono de 16 junto a la categoría</h2>
+    <div class="mt-4 border-t border-foreground" id="list"></div>
+  </section>
+
+  <!-- 5 · Ficha -->
+  <section class="sec" aria-labelledby="h-pv">
+    <p class="sec-h">5 · Ficha preview</p>
+    <h2 id="h-pv" class="sec-t">Línea de categoría, icono de 16</h2>
+    <p class="sec-p">Solo junto a la categoría, no junto al alcance ni la fecha. La categoría pasa a ser un enlace al filtro (<code>/noticias?categoria=…</code>), con el icono dentro del enlace.</p>
+    <div class="pv">
+      <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="#">Inicio</a></li><li><a href="#">Noticias</a></li><li><span aria-current="page">Accesos y entorno</span></li></ol></nav>
+      <p class="pv-meta mt-5" data-cat="acceso-entorno"><a href="#"><span data-icon="acceso-entorno" data-s="16"></span>Accesos y entorno</a><span aria-hidden="true">·</span>Cataluña<span aria-hidden="true">·</span><time datetime="2026-11-18">18 de noviembre de 2026</time></p>
+      <h3 class="pv-title">Montserrat amplía hasta junio el cierre por nidificación en la cara norte</h3>
+    </div>
+  </section>
+
+  <!-- 6 · Hero -->
+  <section class="sec" aria-labelledby="h-hero">
+    <p class="sec-h">6 · Tarjeta de noticia del hero</p>
+    <h2 id="h-hero" class="sec-t">Etiqueta «Categoría · fecha», icono de 14</h2>
+    <p class="sec-p">Con foto, el icono va en naranja, como la etiqueta. Sin foto, en la tinta de la categoría, y el glifo grande abajo a la derecha (14 %) pasa a ser el de su categoría. El sello «Noticia» no lleva icono: su punto ya es la señal.</p>
+    <div class="flat">
+      <figure>
+        <a class="hc" href="#" style="--dom:#8a6a12" aria-label="Noticia: Un nuevo rocódromo de bloque abrirá en Sabadell en enero">
+          <img src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg" alt="" width="1600" height="1067" loading="lazy">
+          <span class="stamp"><i></i>Noticia</span>
+          <span class="hcap"><span class="hkind"><span data-icon="rocodromos" data-s="14"></span>Rocódromos · 18 nov</span><strong>Un nuevo rocódromo de bloque abrirá en Sabadell en enero</strong><small>Fuente: <b>Diari de Sabadell</b></small></span>
+        </a>
+        <figcaption>Con foto: icono en <code>#e8923a</code> (6,37:1 en el peor pie).</figcaption>
+      </figure>
+      <figure>
+        <a class="hc hc--text" href="#" data-cat="seguridad" aria-label="Noticia: La FEEC recuerda revisar los anclajes de Collegats tras las lluvias">
+          <span class="glyph-slot" data-glyph="seguridad" data-cls="nglyph"></span>
+          <span class="stamp"><i></i>Noticia</span>
+          <span class="ntext"><span class="hkind"><span data-icon="seguridad" data-s="14"></span>Seguridad · 17 nov</span><strong>La FEEC recuerda revisar los anclajes de Collegats tras las lluvias</strong><small>Fuente: <b>FEEC</b></small></span>
+        </a>
+        <figcaption>Sin foto: icono y glifo en la tinta de Seguridad.</figcaption>
+      </figure>
+      <figure>
+        <a class="hc hc--text" href="#" data-cat="federaciones" aria-label="Noticia: La FEDME aprueba el nuevo reglamento de licencias para 2027">
+          <span class="glyph-slot" data-glyph="federaciones" data-cls="nglyph"></span>
+          <span class="stamp"><i></i>Noticia</span>
+          <span class="ntext"><span class="hkind"><span data-icon="federaciones" data-s="14"></span>Federaciones y clubes · 16 nov</span><strong>La FEDME aprueba el nuevo reglamento de licencias para 2027</strong><small>Fuente: <b>FEDME</b></small></span>
+        </a>
+        <figcaption>Sin foto: con el nombre más largo la etiqueta baja a 2 líneas; el icono se queda en la primera.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 7 · Contraste -->
+  <section class="sec" aria-labelledby="h-cr">
+    <p class="sec-h">7 · Contraste (WCAG 2.x)</p>
+    <h2 id="h-cr" class="sec-t">Tinta sobre tono, todas por encima de 4,5</h2>
+    <div class="tbl-wrap"><table class="tbl" id="cr"><thead><tr><th scope="col">Clave</th><th scope="col">Tono</th><th scope="col">Tinta</th><th scope="col">Tinta / tono</th><th scope="col">Titular / tono</th><th scope="col">Tinta / papel</th></tr></thead><tbody></tbody></table></div>
+    <p class="note mt-3">Los iconos pequeños son decorativos (el nombre va al lado), pero aun así heredan el color de un texto que ya pasa 4,5:1, así que también superan el 3:1 de UI. El glifo grande al 13–14 % es textura: no transmite nada que no diga el texto y no entra en el cálculo.</p>
+  </section>
+</main>
+
+<section id="anexo" class="annex">
+  <div class="max-w-page mx-auto px-4 md:px-6 py-10">
+    <h2>Anexo · esta lámina a 390</h2>
+    <div class="mt-6 flex flex-wrap gap-8 items-start">
+      <figure class="min-w-0 max-w-full"><figcaption class="mb-2 text-[14px] text-meta">390</figcaption>
+        <iframe title="Lámina de iconos a 390" src="noticias-iconos.html?embed=1" width="390" height="1800" class="max-w-full rounded-[6px] border border-line-strong bg-background"></iframe></figure>
+      <figure class="min-w-0 max-w-full"><figcaption class="mb-2 text-[14px] text-meta">390 · sin iconos (comparar)</figcaption>
+        <iframe title="Lámina de iconos a 390 sin iconos" src="noticias-iconos.html?embed=1&amp;off=1" width="390" height="1800" class="max-w-full rounded-[6px] border border-line-strong bg-background"></iframe></figure>
+    </div>
+    <ul class="sub mt-8 list-disc pl-5 space-y-1.5 !max-w-[72ch]">
+      <li><b>Tamaños:</b> 14 junto a texto mono de 12 (cabecera de pieza y etiqueta del hero), 16 junto a texto de 14–15 (chips, fila de lista, ficha). El glifo grande no tiene tamaño fijo: es un porcentaje de la baldosa.</li>
+      <li><b>Siempre <code>aria-hidden="true"</code></b> y sin <code>&lt;title&gt;</code>: el nombre de la categoría va siempre escrito al lado.</li>
+      <li><b>Color:</b> el icono pequeño hereda <code>currentColor</code>. Solo la baldosa usa la tinta de la categoría.</li>
+      <li><b>Sin icono:</b> «Todo» en los chips, el sello «Noticia», el alcance, la fecha y la carta semanal (los SVG no se ven bien en todos los clientes de correo).</li>
+    </ul>
+  </div>
+</section>
+
+<script>
+/* Iconos. Lucide 1.0 (ISC), copiados de lucide-vue-next; presa y pie-de-gato son propios (rejilla 24, trazo 1.75). */
+const ICONS = {
+  competicion:      '<path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/>',
+  'roca-vias':      '<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>',
+  material:         '<path d="M2.5 18.6c0-2.6 2.2-4.2 5.4-5.1l3.8-1.1 2.6-5.4a1 1 0 0 1 .9-.6h4.5a1 1 0 0 1 1 .9l1 10.3a1 1 0 0 1-1 1.1H3.4a.9.9 0 0 1-.9-.9Z"/><path d="M2.8 16.8h6.4"/><path d="m11.3 12.4 1.5 2.7"/><path d="m14.7 10.9 1.5 2.7"/>',
+  rocodromos:       '<path d="M5.2 16.2c-1.8-2.4-1.6-5.9.6-8.2C7.6 6 10.4 4.7 13.3 5.1c2.4.3 3.6 1.9 5.2 2.6 1.7.8 2.3 2.6 1.6 4.4-.6 1.5-1.9 2.2-2.4 3.7-.6 1.9-1.9 3.6-4.3 3.9-3.3.4-6.4-1.1-8.2-3.5Z"/><circle cx="11.4" cy="11.6" r="1.75"/>',
+  seguridad:        '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+  'acceso-entorno': '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  federaciones:     '<path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/>',
+  comunidad:        '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/>',
+  none:             '<path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/>',
+}
+// [clave, nombre es, nombre en, origen, tono, tinta, nº dummy]
+const CATS = [
+  ['competicion','Competición','Competition','Lucide trophy','#f7e4d0','#8a3f10',38],
+  ['roca-vias','Roca y vías','Rock and routes','Lucide mountain','#dfe7e5','#25564e',12],
+  ['material','Material','Gear','Propio · pie de gato','#eee2ea','#6a3355',9],
+  ['rocodromos','Rocódromos','Climbing gyms','Propio · presa','#e2e8f0','#2f4a6b',21],
+  ['seguridad','Seguridad','Safety','Lucide shield','#f3e0dd','#8b2c24',4],
+  ['acceso-entorno','Accesos y entorno','Access and environment','Lucide leaf','#e2eadb','#3b5a2c',17],
+  ['federaciones','Federaciones y clubes','Federations and clubs','Lucide landmark','#e5e3f0','#443c78',6],
+  ['comunidad','Comunidad','Community','Lucide users','#f2ead0','#6b5212',5],
+  ['none','(sin entrada en el mapa)','(no map entry)','Lucide newspaper','#ebe6dc','#5e584e',0],
+]
+const svg = (k, s, cls = '') => `<svg class="ci ci-${s} ${cls}" viewBox="0 0 24 24" width="${s}" height="${s}" aria-hidden="true" focusable="false">${ICONS[k] || ICONS.none}</svg>`
+const glyph = (k, cls) => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[k] || ICONS.none}</svg>`
+
+const L = h => { const c = [1,3,5].map(i => parseInt(h.slice(i,i+2),16)/255).map(v => v <= .03928 ? v/12.92 : ((v+.055)/1.055)**2.4); return .2126*c[0]+.7152*c[1]+.0722*c[2] }
+const cr = (a, b) => { const x = L(a), y = L(b); return ((Math.max(x,y)+.05)/(Math.min(x,y)+.05)).toFixed(2).replace('.', ',') }
+
+// [clave, día, título, bajada, fuente, foto]
+const IMG = id => `https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/${id}`
+const PIECES = [
+  ['rocodromos','19','Un nuevo rocódromo de bloque abrirá en Sabadell en enero','Si vives en el Vallès, es el primer rocódromo solo de bloque de Sabadell.','Diari de Sabadell','d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg'],
+  ['material','18','Desnivel repasa las novedades de pies de gato para 2027','Si vas a comprar tus primeros pies de gato, hay más hormas planas.','Desnivel','3100d152-6fd6-47c4-a5e3-3488d36d4696/1-miura-vs.webp'],
+  ['competicion','17','La FEEC abre inscripciones para el Campeonato de Cataluña de bloque','Hay categoría de iniciación para quien entrena en un rocódromo de Barcelona.','FEEC',null],
+  ['roca-vias','17','Abren una vía nueva de 8a en la Pared de Finestres de Margalef','Es el primer sector nuevo de la temporada a menos de dos horas de Barcelona.','Desnivel',null],
+  ['material','16','Petzl retira un lote de cintas exprés por un fallo en el gatillo','Si compraste cintas en septiembre, mira el número de lote antes de tu próxima salida.','Petzl',null],
+  ['rocodromos','15','Sharma Climbing BCN amplía su zona de cuerda con 12 líneas nuevas','Vías largas de cuerda para progresar del 5 al 6 sin salir de la ciudad.','Sharma Climbing',null],
+  ['seguridad','15','Los Mossos explican el rescate en Montserrat y recuerdan revisar el nudo','Un recordatorio sobrio: el chequeo entre compañeros evita la mayoría de sustos.','Mossos d’Esquadra',null],
+  ['acceso-entorno','14','Montserrat amplía hasta junio el cierre por nidificación en la cara norte','Si pensabas estrenarte en multilargos, Sant Llorenç es la alternativa cercana.','Parcs Naturals de Catalunya',null],
+  ['federaciones','13','La FEDME aprueba el nuevo reglamento de licencias para 2027','La licencia autonómica cubre ahora la escalada en rocódromo sin suplemento.','FEDME',null],
+  ['comunidad','12','Nace en Gràcia un grupo de escalada para mujeres que empiezan','Una forma fácil de encontrar compañeras para salir a roca.','Betevé',null],
+  ['competicion','11','La IFSC publica el calendario de la Copa del Mundo 2027','La prueba más cercana para verla en directo vuelve a ser Briançon.','IFSC','d0d0d0d0-000a-4000-8000-000000000005/1-bloque-amarillo-presas.jpg'],
+  ['acceso-entorno','10','Siurana pide no aparcar en la pista del Racó de la Finestra','Cuenta 15 minutos más de aproximación desde el aparcamiento nuevo.','Ajuntament de Cornudella','d0d0d0d0-000a-4000-8000-000000000003/1-bloque-granito-bosque.jpg'],
+]
+const name = k => CATS.find(c => c[0] === k)
+
+window.EV2_READY = () => {
+  const q = new URLSearchParams(location.search)
+  if (q.get('embed')) document.body.classList.add('embed')
+  if (q.get('off')) document.body.classList.add('off')
+
+  document.getElementById('map').innerHTML = CATS.map(([k, es, en, src]) => `<li class="mc" data-cat="${k}">
+    <div class="sw">${glyph(k, 'g')}${svg(k, 20)}</div>
+    <div class="min-w-0"><p class="k">${k === 'none' ? 'neutro' : k}</p><p class="nm">${es}</p><p class="en">${en}</p>
+      <div class="sz" aria-hidden="true">${svg(k,14)}${svg(k,16)}${svg(k,20)}${svg(k,24)}</div>
+      <span class="src-tag${src.startsWith('Propio') ? ' own' : ''}">${src}</span></div></li>`).join('')
+
+  document.getElementById('chips').innerHTML = `<a href="#" class="chip" aria-current="page">Todo <span class="n">113</span></a>` +
+    CATS.filter(c => c[0] !== 'none').map(([k, es, , , , , n]) => `<a href="#" class="chip">${svg(k,16)}${es} <span class="n">${n}</span></a>`).join('')
+
+  document.getElementById('grid').innerHTML = PIECES.map(([k, d, t, dek, src, ph]) => `<li class="nc" data-cat="${k}"${ph ? ' data-photo' : ''}><article class="pc">
+    <div class="pc-fig">${ph ? `<img src="${IMG(ph)}" alt="" loading="lazy" width="1200" height="800">` : glyph(k, 'glyph')}
+      <div class="pc-ov"><p class="kick"><time datetime="2026-11-${d}">${d} nov</time><span class="sep" aria-hidden="true">·</span>${svg(k,14)}${name(k)[1]}</p>
+      <h3 class="pc-title"><a href="noticia-preview.html"><span class="uline">${t}</span></a></h3></div></div>
+    <div class="pc-text"><p class="dek">${dek}</p><p class="src">Fuente: <b>${src}</b></p></div></article></li>`).join('')
+
+  document.getElementById('list').innerHTML = PIECES.slice(6, 9).map(([k, d, t]) => `<article class="lrow">
+    <time class="d" datetime="2026-11-${d}">${d} nov</time>
+    <div><p class="lk"><span class="dm">${d} nov<span class="mx-1" aria-hidden="true">·</span></span>${svg(k,16)}${name(k)[1]}</p><h3>${t}</h3></div></article>`).join('')
+
+  document.querySelectorAll('[data-icon]').forEach(el => { el.outerHTML = svg(el.dataset.icon, el.dataset.s) })
+  document.querySelectorAll('[data-glyph]').forEach(el => { el.outerHTML = glyph(el.dataset.glyph, el.dataset.cls) })
+
+  document.querySelector('#cr tbody').innerHTML = CATS.map(([k, , , , t, i]) => `<tr><td><code>${k === 'none' ? 'neutro' : k}</code></td><td><code>${t}</code></td><td><code>${i}</code></td><td>${cr(i,t)}</td><td>${cr('#1c1a17',t)}</td><td>${cr(i,'#f4f1ea')}</td></tr>`).join('')
+
+  const b = document.getElementById('tog-off')
+  b.setAttribute('aria-pressed', document.body.classList.contains('off'))
+  b.addEventListener('click', () => b.setAttribute('aria-pressed', document.body.classList.toggle('off')))
+}
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@ export type ArticleSearchScope = 'category' | 'all'
  */
 export function useArticleSearch(categoryId?: MaybeRefOrGetter<string | undefined>) {
   const db = useGuideClient()
+  const { track } = useTrack()
   const locale = useGuideLocale()
   const { query, hasQuery, clearQuery } = useUrlSearch()
   const term = useDebouncedValue(query, 250)
@@ -50,6 +51,7 @@ export function useArticleSearch(categoryId?: MaybeRefOrGetter<string | undefine
       hits.value = offset === 0 ? page.hits : [...hits.value, ...page.hits]
       total.value = page.total
       status.value = 'ready'
+      if (offset === 0) track('search_blog') // never the text searched (D69)
     } catch {
       if (id !== request) return
       if (offset === 0) status.value = 'error'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, Pencil, X } from 'lucide-vue-next'
+import { Check, Pencil, SquarePlay, X } from 'lucide-vue-next'
 import { scopeLabel, type AdminNews } from '~/utils/admin-news'
 
 /**
@@ -35,6 +35,7 @@ const dateOf = (n: AdminNews) => (n.sourcePublishedOn ? adminDate(n.sourcePublis
               <AdminNewsOrigin :source="n.source" short />
               <span :class="[admChip, 'bg-adm-subtle text-adm-meta']">{{ scopeLabel(n.scope) }}</span>
               <AdminEventsConfidence v-if="n.agent" :value="n.agent.confidence" />
+              <span v-if="n.videos.length" :class="[admChip, 'bg-adm-subtle text-adm-meta']" :title="n.videos.length === 1 ? 'Con vídeo' : 'Con 2 vídeos'"><SquarePlay aria-hidden="true" />{{ n.videos.length }}<span class="sr-only"> {{ n.videos.length === 1 ? 'vídeo propuesto' : 'vídeos propuestos' }}</span></span>
               <AdminNewsFlags :news="n" />
               <AdminNewsLang :has="n.hasEn" />
             </span>

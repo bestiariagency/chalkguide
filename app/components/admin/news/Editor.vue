@@ -10,7 +10,7 @@ import { emptyNewsForm, fullSourceUrl, newsToForm, validateNews, type NewsError,
  * News drawer (640 px; sheet under 768, README §19.2). New: Guardar borrador / Publicar. Draft: Rechazar ▾, Guardar, Guardar y
  * publicar. Published: Retirar…, Guardar. Rejected: read only with Recuperar. Saved at once (no draft of changes, like events).
  */
-const props = defineProps<{ news?: AdminNews; categories: readonly NewsCategory[]; labels: Record<string, string>; busy: boolean; serverError?: NewsError; focus?: 'note' }>()
+const props = defineProps<{ news?: AdminNews; categories: readonly NewsCategory[]; labels: Record<string, string>; busy: boolean; serverError?: NewsError; focus?: 'insight' }>()
 const open = defineModel<boolean>('open', { default: true })
 const emit = defineEmits<{ save: [form: NewsForm, action: NewsSaveAction]; reject: [reason: string | null]; recover: []; retire: []; remove: [] }>()
 
@@ -30,7 +30,7 @@ const agent = computed(() => props.news?.source === 'agent')
 const title = computed(() => (props.news ? 'Editar noticia' : 'Nueva noticia'))
 const found = computed(() => (props.news?.agent?.foundAt ? runDay(props.news.agent.foundAt) : null))
 
-const FIELD_LABELS: Partial<Record<NewsField, string>> = { titleEs: 'título', titleEn: 'título en inglés', summaryEs: 'resumen', summaryEn: 'resumen en inglés', noteEs: 'nota', noteEn: 'nota en inglés', sourceName: 'medio', sourceUrl: 'enlace a la fuente', publishedOn: 'fecha', categoryId: 'categoría', image: 'imagen', imageLicense: 'licencia', imageCredit: 'crédito', tags: 'etiquetas' }
+const FIELD_LABELS: Partial<Record<NewsField, string>> = { titleEs: 'título', titleEn: 'título en inglés', summaryEs: 'resumen', summaryEn: 'resumen en inglés', insightEs: 'aporte', insightEn: 'aporte en inglés', seoKeywordEs: 'keyword', seoKeywordEn: 'keyword en inglés', metaDescriptionEs: 'meta description', metaDescriptionEn: 'meta description en inglés', sourceName: 'medio', sourceUrl: 'enlace a la fuente', publishedOn: 'fecha', categoryId: 'categoría', image: 'imagen', imageLicense: 'licencia', imageCredit: 'crédito', tags: 'etiquetas', videos: 'vídeos' }
 const errorFields = computed(() => (Object.keys(errors.value) as NewsField[]).filter((k) => errors.value[k]))
 
 function focusField(field: NewsField) {
@@ -43,7 +43,7 @@ function fail(next: NewsErrors) {
 }
 function submit(action: NewsSaveAction) {
   if (props.busy || locked.value) return
-  const result = validateNews(form.value, { agent: agent.value })
+  const result = validateNews(form.value, { agent: agent.value, publishing: action === 'publish' || action === 'save-publish' || status.value === 'published' })
   if (Object.keys(result).length) return fail(result)
   errors.value = {}
   emit('save', { ...form.value, links: [...form.value.links] }, action)
@@ -67,7 +67,7 @@ onMounted(async () => {
     }
   }
   snapshot.value = JSON.stringify(form.value)
-  if (props.focus === 'note') void nextTick(() => document.querySelector<HTMLElement>('#news-form [name="noteEs"]')?.focus())
+  if (props.focus === 'insight') void nextTick(() => document.querySelector<HTMLElement>('#news-form [name="insightEs"]')?.focus())
 })
 
 /** Closing with unsaved changes asks first. */
@@ -121,6 +121,7 @@ const bannerText = computed(() => props.serverError?.message)
 
         <AdminNewsEditorText v-model:form="form" :news="news" :errors="errors" />
         <AdminNewsEditorSource v-model:form="form" :news="news" :categories="categories" :errors="errors" />
+        <AdminNewsVideos v-model="form.videos" data-field="videos" :proposed-ids="news?.agent?.videos" :unverified="agent && status === 'draft'" :error="errors.videos" />
         <AdminNewsEditorImage v-model:form="form" :errors="errors" />
         <AdminNewsEditorLinks v-model:form="form" />
       </fieldset>

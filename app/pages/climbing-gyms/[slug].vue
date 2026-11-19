@@ -14,6 +14,7 @@ const slug = computed(() => String(route.params.slug))
 
 const { data } = await useGym(slug)
 await useSlugRedirect(data.value, 'gym', 'climbing-gyms-slug')
+useTrackContext().setTrackContext({ contentType: 'gym', contentSlug: data.value?.slug }) // analytics (D69)
 useDetailLocales(data.value, 'climbing-gyms')
 const gym = computed(() => data.value as GymSummary)
 

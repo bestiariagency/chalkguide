@@ -3,7 +3,7 @@ import type { NewsSearchStatus } from '~/composables/useNewsSearch'
 import type { NewsSearchHit, NewsSummary } from '~/types/news'
 
 /**
- * Body of the index and of the categories: search results, or featured + weeks + pager, with the
+ * Body of the index and of the categories: search results, or the front page (opener, sides and grid, or the list by weeks) + pager, with the
  * error and empty states. `emptyKind` picks the copy of the empty state (nothing yet, category, scope).
  */
 defineProps<{
@@ -14,7 +14,6 @@ defineProps<{
   total: number
   loadingMore: boolean
   hasMore: boolean
-  featured: NewsSummary | null
   items: NewsSummary[]
   page: number
   pages: number
@@ -44,11 +43,10 @@ const { t, locale } = useI18n()
       <HomeSectionError :on-retry="() => $emit('refresh')" />
     </div>
     <template v-else>
-      <NewsFeatured v-if="featured" :news="featured" />
-      <div v-if="items.length || featured" id="news-list" class="scroll-mt-4">
-        <NewsWeekList v-if="items.length" :items="items" />
+      <div v-if="items.length" id="news-list" class="scroll-mt-4" :class="pages <= 1 && locale !== 'en' ? 'pb-20 md:pb-28' : ''">
+        <NewsPieceList :items="items" :page="page" />
       </div>
-      <div v-if="!items.length && !featured" id="news-list" class="mx-auto max-w-page px-4 pt-12 pb-16 md:px-6">
+      <div v-else id="news-list" class="mx-auto max-w-page px-4 pt-12 pb-16 md:px-6">
         <UiEmptyState
           :title="scoped ? t('news.emptyScopeTitle') : isCategory ? t('news.emptyCategoryTitle') : t('news.emptyTitle')"
           :body="scoped ? t('news.emptyScopeBody') : isCategory ? t('news.emptyCategoryBody') : t('news.emptyBody')"
@@ -60,7 +58,7 @@ const { t, locale } = useI18n()
         </UiEmptyState>
       </div>
       <NewsPager :page="page" :pages="pages" />
-      <p v-if="locale === 'en'" class="mx-auto max-w-page px-4 pb-10 text-caption text-meta md:px-6" :class="pages > 1 ? '' : 'pt-10'">
+      <p v-if="locale === 'en'" class="mx-auto max-w-page px-4 pb-10 text-caption text-meta md:px-6" :class="pages > 1 ? '' : 'pt-10 pb-20 md:pb-28'">
         {{ t('news.newsletterSpanish') }}
       </p>
     </template>

@@ -1645,7 +1645,7 @@ Schema, canonical, hreflang y sitemap los cierra lince-max (8.4). El diseño no 
     - «Resumen de ChalkGuide · Fuente: **X**».
     - Insignia `badge-acc` «Con nota de Xavi».
   - Toda la fila es un único enlace a la ficha: una sola parada de tabulación. El enlace a la fuente vive en la ficha.
-  - **Sin miniaturas:** casi ninguna noticia tendrá imagen con licencia (D71), y una columna de huecos o de pizarras repetidas pesa más que el texto. La imagen, cuando exista, sale solo en la ficha.
+  - **Sin miniaturas (salvo D87: miniatura 3:2 en las filas de «Esta semana» cuando la noticia tiene foto):** casi ninguna noticia tendrá imagen con licencia (D71), y una columna de huecos o de pizarras repetidas pesa más que el texto. La imagen, cuando exista, sale solo en la ficha.
 - **Paginación:** 20 por página. «Más recientes / Anteriores» en botones de 44 con borde, y números mono (actual en tinta); en 390, «1 / 5». La flecha deshabilitada usa `muted` (5,13:1), no opacidad.
 - **Búsqueda (FTS):** sustituye a la destacada y a las semanas por «N resultados para “x”» con la misma fila. La cabecera no se mueve.
 - **Vacío:** «No hay noticias sobre “x”» + Quitar filtros + Ir al blog (anexo del mockup). Una categoría vacía no muestra «0»: muestra el vacío con enlace a «Todo».
@@ -1907,3 +1907,569 @@ El texto del mockup es provisional. Los límites salen de las medidas de §16.2:
 2. **¿X en el banner?** La spec la pide como «rechazar». **Recomiendo no ponerla:** «Rechazar» ya está visible y con el mismo peso, y una X se lee como «más tarde», lo que deja la elección ambigua. Si la queréis, X = Rechazar, con `aria-label` «Rechazar y cerrar». Necesita el visto bueno de leona-lia.
 3. **Orden de los botones:** propongo Aceptar · Rechazar · Configurar, los tres idénticos. La alternativa es empezar por Rechazar. No cambia la prominencia, solo el orden de lectura.
 4. **Nombrar a Google y Meta en el propio banner** (no solo en el panel). **Recomiendo sí:** encaja con la transparencia del sitio y cuesta unos 20 caracteres.
+
+---
+
+## 17 · Vídeos de YouTube en noticias (D84, tarea 8.18a) · propuesta (pendiente de Xavi)
+
+> El encargo pedía «§16», pero §16 ya es el consentimiento de cookies (D86). Esta sección es la §17.
+
+Mockups:
+- Sitio: [`pages/noticia-videos.html`](pages/noticia-videos.html). Conmutadores: «2 vídeos» (apagado = 1), «Rejilla (alternativa)», «Tras la nota (alternativa)» y «Sin JS». El anexo trae iframes a 390 con 1 y 2 vídeos. Al pulsar «Reproducir vídeo» se simula la carga sin red.
+- Panel: [`../admin/noticias-videos.html`](../admin/noticias-videos.html) (sección «Vídeos» en el detalle de la bandeja y anexo de estados). Está en el índice de mockups del panel como «Noticias · vídeos».
+
+Ninguno de los dos mockups pide nada a YouTube ni a `i.ytimg.com`: las miniaturas del panel son marcadores. Contenido de vídeo **dummy**.
+
+Medido con Chrome (Playwright) a 1440, 768 y 390: sin scroll horizontal en ninguna de las dos páginas. Marco 16:9 de 640 × 360 desde 768 y de 358 × 201 a 390.
+
+### 17.1 · Decisiones
+
+| Tema | Decisión | Por qué |
+| --- | --- | --- |
+| Dónde | **Bajo el resumen, antes de la «Nota de Xavi»** (A). Orden: cabecera · imagen · resumen · **vídeos** · nota · botón «Leer en X» · Relacionado | Es lo que dice D84. El vídeo ilustra el hecho, y la nota de Xavi puede comentarlo («mira el minuto 2»). El botón de la fuente se queda como cierre de la pieza. Alternativa B (tras la nota): deja la nota pegada al resumen, pero separa el botón de la fuente del texto con dos marcos oscuros |
+| 1 frente a 2 | **Pila** a una columna en todos los anchos, 32 px entre vídeos | En la columna de 640, la rejilla da marcos de 308 × 173: no cabe la etiqueta «Vídeo · YouTube», los títulos parten en 3 líneas y la pareja compite con el resumen. Con un máximo de 2, la pila tiene un largo acotado. La rejilla está en el mockup para compararla |
+| Fachada | **La de D26 tal cual** (marco `photo-placeholder`, pastilla `accent-fill`, sin JS = enlace). Sin miniatura de YouTube | Cero peticiones a Google antes del clic y misma pieza que en los artículos |
+| Aviso | **Uno para toda la sección**, bajo el título y antes de los marcos. Los dos botones lo referencian con `aria-describedby` | Con 2 vídeos, repetir el aviso bajo cada marco pesa demasiado. Arriba se lee antes de pulsar cualquiera de los dos |
+| Crédito | `figcaption` bajo cada marco: **título del vídeo** (17 px, 500, `foreground`) y una línea `meta` 14 px: «Canal · 4 min · en catalán · Ver en YouTube» | El título y el canal son de un tercero, así que van como crédito, no como titular nuestro. La duración y el idioma ayudan a decidir antes de pulsar. «Ver en YouTube» va aquí, por vídeo, porque el aviso es compartido |
+| Título de sección | H2 «Vídeos relacionados» / «Vídeo relacionado», con el mismo estilo que «Relacionado» (`text-caption`, 500, `meta`) | Sobrio y coherente con lo que ya hay. Deja claro que no son vídeos de ChalkGuide |
+| Listados | **Sin indicador de vídeo** en `/noticias`, la home ni la carta en v1 | Sobriedad. Si Xavi lo quiere, sería una línea `meta` «▶ Con vídeo» en `NewsRow` |
+
+### 17.2 · Anatomía y marcado (ficha)
+
+```
+section#news-videos[aria-labelledby]                      mt-10 (40), como los demás bloques
+├─ h2  «Vídeos relacionados» | «Vídeo relacionado»         text-caption 500 meta
+├─ p#news-videos-note  escudo 14 + aviso + «Cookies»       mt-2, text-note meta
+└─ ul (pila, gap 32)                                       mt-4
+   └─ li > figure[data-video-facade="{id}"]
+      ├─ div[data-video-frame]  16:9, radio 12            fachada D26 (botón + enlace sin JS + capa de carga)
+      └─ figcaption  mt-3
+         ├─ p  título  [lang si no coincide con la página]   17/1.35, 500, foreground, text-wrap: pretty
+         └─ p  canal · «4 min» (mono 13) · «en catalán» · enlace «Ver en YouTube»   14/1.45 meta, mt-1
+```
+
+- **Componente:** `NewsVideos` en `app/components/news/` (prop `videos: NewsVideo[]`; no pinta nada si la lista está vacía). La fachada sale como **componente Vue** (`UiVideoFacade`) con el mismo marcado que `renderVideoFacades()`; mejor aún, que ambos compartan la plantilla para no duplicarla. Lo decide coneja-lucky; el resultado en el DOM debe ser idéntico.
+- **El plugin `video-facade.client.ts` hoy solo actúa dentro de `[data-prose]`.** Hay que poner `data-prose` en la sección o ampliar el selector (por ejemplo, `[data-prose], [data-video-root]`). Decídelo con leona-lia.
+- **Nombre accesible del botón:** «Reproducir vídeo» visible + `<span class="sr-only">: {título}</span>`. Con dos vídeos, el lector de pantalla tiene que distinguirlos. Lo mismo en el enlace sin JS.
+- **`title` del iframe:** `{título} · YouTube` (se asigna con `setAttribute`, nunca con `innerHTML`). Si no hay título, `VIDEO_TITLE[locale]` como hoy.
+- **`lang`:** si el idioma del vídeo no coincide con el de la página, el título lleva `lang` (en el mockup, `ca`).
+- **Duración:** se muestra redondeada al minuto («4 min»; menos de 1 minuto, «<1 min»). Sin duración, se omite ese tramo, sin hueco ni «0 min».
+- **Idioma:** se muestra solo si no coincide con el de la página («en catalán», «en inglés»). En `/en` dice «in Catalan».
+- **Enlace «Ver en YouTube»:** `https://www.youtube.com/watch?v={id}`, `rel="noopener"`, misma pestaña (como en D26), con sr-only «(abre youtube.com)». Es un enlace dentro de una frase: va exento del mínimo de 44 px (WCAG 2.5.8, excepción en línea). El objetivo principal es el marco entero.
+- **EN (`/en/news/...`):** mismos vídeos; el título y el canal no se traducen (son del tercero). Solo se traducen las etiquetas.
+
+### 17.3 · Estados (sitio)
+
+Los de la fachada D26 (`video-facade.md` §6): reposo, hover, foco, activo, cargando, cargado y sin JS. Además:
+
+| Caso | Comportamiento |
+| --- | --- |
+| 0 vídeos | No se pinta la sección |
+| 1 vídeo | H2 y aviso en singular |
+| 2 vídeos | Pila; cada uno carga por separado; el otro no se toca |
+| ID que no valida (`YOUTUBE_ID`) | Ese vídeo no se pinta; si no queda ninguno, no hay sección |
+| Vídeo borrado en YouTube después de publicar | El reproductor de YouTube muestra su error dentro del marco. «Ver en YouTube» sigue ahí. Sin estado propio (como D26) |
+| `prefers-reduced-motion` | Ni escala ni giro (D26) |
+
+### 17.4 · Responsive
+
+- **390:** márgenes de 16. Marco de 358 × 201 dentro de la columna, **no a sangre** (a diferencia de la imagen): a sangre, el contorno de foco quedaría cortado por el borde de la pantalla. Etiqueta a 16 de las esquinas; pastilla de 48 de alto; título en 2 líneas como mucho con los ejemplos.
+- **768 y 1440:** columna de 640: marco de 640 × 360 y etiqueta a 20 de las esquinas.
+- La rejilla (alternativa, no recomendada) solo se activaría desde 768 y oculta la etiqueta.
+
+### 17.5 · Panel: sección «Vídeos»
+
+Va en el **detalle de la bandeja** (tras el resumen, antes de «Qué encontró el agente») y en el **editor** (cajón de 640, entre «Fuente» y «Clasificación»). Es el mismo componente en los dos sitios: `AdminNewsVideos`.
+
+- **Cabecera:** «Vídeos» + contador `n / 2` (`aria-live`) + ayuda «Salen bajo el resumen, con “clic para cargar”» (se oculta por debajo de 640).
+- **Fila (`ol`, en orden):** rejilla `128px · 1fr · auto`, con 12 de hueco y 10 de relleno, borde `line-strong` y radio 8.
+  - Miniatura 16:9 (128 × 72; 96 × 54 por debajo de 640) con la duración en una placa mono de 11 px, blanco sobre negro al 80 %. Toda la miniatura es un enlace a YouTube en otra pestaña (`noopener noreferrer`) con `aria-label` «Abrir en YouTube: {título} (otra pestaña)».
+  - Título (13 px, 500, 2 líneas como máximo), «Canal · idioma» (12 `meta`), chip `st-neutral` «Agente» o «Añadido por ti» y el motivo del agente (12 `meta`, solo interno).
+  - Acciones con `icon-btn` de 32 y `aria-label` que nombra el vídeo: **Subir/Bajar** (solo con 2), **Editar datos** y **Quitar**. Por debajo de 640, las acciones bajan a una fila propia alineada a la derecha.
+- **Añadir:** etiqueta visible «Añadir vídeo de YouTube (pega la URL)», campo con icono de enlace y botón ghost «Añadir». Enter envía.
+  - URLs aceptadas: `youtube.com/watch?v=`, `m.youtube.com/watch?v=`, `youtu.be/`, `youtube.com/shorts/`, `youtube.com/embed/` y `youtube-nocookie.com/embed/`. Del ID solo se guardan los 11 caracteres; se descartan la lista, el minuto de inicio y los parámetros de seguimiento.
+  - Al enviar, el **servidor** pide a YouTube oEmbed (`https://www.youtube.com/oembed?url=…&format=json`): rellena título y canal y comprueba que se puede incrustar. Mientras tanto, fila con esqueleto y botón «Añadiendo…» deshabilitado.
+- **Máximo 2:** con 2, el campo y el botón se deshabilitan y la ayuda dice «Máximo 2. Quita uno para añadir otro.». No hay ningún error al llegar al tope: simplemente no se puede.
+- **Quitar:** sin diálogo. Toast «Vídeo quitado» con Deshacer (5 s). El foco pasa a la fila siguiente o, si no hay, al campo. No se publica nada hasta «Guardar» o «Aprobar».
+- **Editar datos:** formulario en la fila con título (obligatorio, contador hasta 140), canal (obligatorio), duración opcional (`mm:ss`) e idioma. El ID no se edita: para cambiar de vídeo, se quita y se añade otro.
+- **Aprobar la noticia** publica los vídeos que estén en la lista en ese momento. No hay aprobación por vídeo: quitar es la forma de rechazarlo. El toast de aprobar dice cuántos salen.
+- **Bandeja:** cada fila con vídeos lleva un indicador `square-play` + número (`aria-label` «2 vídeos propuestos»).
+
+Errores (icono + texto + `aria-invalid` + `aria-describedby`; se validan al enviar):
+
+| Caso | Texto provisional |
+| --- | --- |
+| No es de YouTube | «No es un enlace de YouTube. Vale youtube.com/watch?v=…, youtu.be/…, /shorts/… o /embed/….» |
+| oEmbed 401/403/404 | «Este vídeo no se puede poner en otras webs (es privado, se borró o su autor lo bloquea).» |
+| Repetido | «Este vídeo ya está en la lista.» |
+| Fallo de red de oEmbed | Toast de error «No pudimos leer el vídeo. Prueba otra vez.»; el campo conserva la URL |
+| Vacío (el agente no propuso ninguno) | Bloque discontinuo «Sin vídeos. El agente no encontró ninguno relacionado.» + campo activo. No es un error |
+
+### 17.6 · Miniaturas en el panel: `i.ytimg.com`
+
+**Recomiendo aceptar `i.ytimg.com` solo en `/administrador`** (opción A del mockup):
+- `<img src="https://i.ytimg.com/vi/{id}/mqdefault.jpg" width="320" height="180" loading="lazy" referrerpolicy="no-referrer" alt="">`. Es decorativa: el título va al lado y el enlace lleva su `aria-label`.
+- El ID tiene que haber pasado por `YOUTUBE_ID`. La URL nunca sale de un dato libre.
+- Solo se ve en el panel: los lectores no la cargan nunca. Lo que recibe Google es la IP de Xavi, en su herramienta.
+- CSP: `img-src https://i.ytimg.com` **solo para las rutas `/administrador`**, nunca en el sitio público.
+- No se guarda ni se sube a Medios: se deriva del ID.
+- Si falla (404 o vídeo borrado), sale el marcador neutro con el icono `square-play`.
+
+**Por qué:** antes de aprobar, Xavi tiene que ver lo que aprueba. Una miniatura descubre en un segundo un vídeo equivocado o de clickbait.
+
+**Alternativa B** (si leona-lia o Xavi no la aceptan): un marcador neutro con «Ver miniatura» que la carga solo al pulsar. Es más estricto, pero se revisa a ciegas o abriendo YouTube cada vez.
+
+Lo decide leona-lia (8.18b) con Xavi.
+
+### 17.7 · Campos que necesito del backend (para jabali-javi, 8.18c)
+
+Por vídeo, ordenados, **máximo 2 por noticia**. Con `news.video_ids` (como dice el PLAN) **no basta**: el crédito necesita título y canal. Propongo una tabla hija `guide.news_videos`, o un `jsonb` validado; la decisión es de jabali-javi.
+
+| Campo | Tipo / regla | Público | Uso |
+| --- | --- | --- | --- |
+| `youtube_id` | `text`, `^[A-Za-z0-9_-]{11}$`, único por noticia | sí | Fachada, enlace, miniatura del panel |
+| `position` | `smallint` 0–1, único por noticia | sí | Orden |
+| `title` | `text`, 1–140, obligatorio | sí | Crédito, nombre accesible, `title` del iframe |
+| `channel` | `text`, 1–100, obligatorio | sí | Crédito |
+| `duration_s` | `int` nulo, 1–43200 | sí | «4 min». **Opcional:** oEmbed no la da. Que la aporte la rutina si la tiene, o Xavi a mano |
+| `lang` | `text` nulo (BCP 47 corto: `es`, `ca`, `en`…) | sí | `lang` del título y «en catalán» |
+| `origin` | `'agent' \| 'manual'` | no | Chip en el panel |
+| `agent_note` | `text` nulo, ≤ 300 | **no** | Motivo de la rutina, solo en el panel |
+| `created_at` | `timestamptz` | no | Auditoría |
+
+- **Vista pública / RPC de la ficha:** expone solo `youtube_id`, `position`, `title`, `channel`, `duration_s` y `lang`, y solo de noticias publicadas.
+- **Validación de inserción** (rutina y panel): el ID por regex, el máximo de 2 y la comprobación oEmbed de que se puede incrustar. En el panel la hace un endpoint de servidor; la rutina la hace antes de proponer. El título y el canal se guardan como texto plano y se pintan siempre interpolados, nunca con `v-html`.
+
+### 17.8 · Contraste (WCAG 2.x)
+
+| Par | Ratio |
+| --- | --- |
+| Título del vídeo `#1c1a17` sobre papel `#f4f1ea` | 15,39 |
+| Crédito y aviso `meta` `#5e584e` sobre papel | 6,24 |
+| Foco `#9a4a16` sobre papel (UI) | 5,53 |
+| Etiqueta `#a19d94` sobre la zona más clara del marco `#3a2f27` | 4,81 |
+| Pastilla `#1a0a00` sobre `#e8923a` | 7,91 |
+| Pastilla frente al marco `#1f1b18` (UI) | 7,01 |
+| Sin JS: borde `#75716a` sobre el marco (UI) / texto `#f0ede8` sobre `#3a2f27` | 3,52 / 11,13 |
+| Panel: título `#18181b` / `meta` `#52525b` / `muted` `#71717a` sobre blanco | 17,72 / 7,73 / 4,83 |
+| Panel: duración, blanco sobre negro al 80 % (peor caso ≈ `#2b2b2b`) | 14,16 |
+| Panel: error `#b91c1c` sobre blanco | 6,47 |
+| Panel: campo deshabilitado `#52525b` sobre `#f4f4f5` | 7,03 |
+| Panel: borde de campo `#8b8b94` sobre blanco (UI) | 3,38 |
+
+### 17.9 · Textos provisionales (para loro-lola, es y en)
+
+Claves: `news.videos.title` (singular y plural) y `news.videos.notice` (singular y plural; basado en `blog.video.notice`). También `news.videos.duration` («{n} min» / «<1 min»), `news.videos.lang` («en {idioma}») y los textos del panel de §17.5. Se reutilizan `blog.video.play`, `watch`, `external`, `kicker`, `cookies` y `loading`.
+
+### 17.10 · Decisiones para Xavi
+
+1. **Posición:** bajo el resumen, antes de la nota (**recomendada**), o tras la nota.
+2. **1 frente a 2:** pila (**recomendada**) o rejilla de 2 columnas desde 768.
+3. **Miniaturas en el panel:** aceptar `i.ytimg.com` solo en `/administrador` (**recomendada**, con el visto bueno de leona-lia) o marcador con «Ver miniatura».
+
+---
+
+## 18 · `/noticias` como portada de periódico, ficha como preview y noticia en el hero (tarea 8.19a, D89–D91) · iteración 2 (pendiente de Xavi, salvo el hero)
+
+Mockups:
+- [`pages/noticias-cuadricula.html`](pages/noticias-cuadricula.html), **rehecho en la iteración 2**. Formato periódico: abridor + 2 segundas + rejilla de 3, con título y fecha dentro de la foto y la bajada debajo. El conmutador funciona y recuerda la elección. Barra del mockup: «Abridor sin foto», «Cabeceras de semana (alternativa)», «Página 2» y «Olvidar preferencia». El anexo trae iframes a 1024, 768 y 390 (portada y lista). Parámetros: `?view=grid|list`, `?lead=text`, `?weeks=1`, `?p=2`, `?measure=1` (oculta el texto para medir el fondo) y `?embed=1`.
+- [`pages/noticia-preview.html`](pages/noticia-preview.html), **nuevo**. La ficha como preview (D91). Sustituye a `noticia.html` y reordena `noticia-videos.html`. Conmutadores «Sin foto», «Sin vídeo» y «Sin aporte»; anexo a 390.
+- [`pages/home-hero-noticia.html`](pages/home-hero-noticia.html): el hero, **aprobado por Xavi (D89)**, sin cambios.
+
+Fotos de prueba reales del bucket (dummy), claras y oscuras: sala de bloque luminosa, pies de gato sobre fondo blanco, bloque amarillo, bosque, techo sobre el mar y atardecer. Medido con Chrome (Playwright) a 1440, 1024, 768 y 390: sin scroll horizontal, controles nuevos de 44 px o más (los enlaces dentro de una frase van exentos por WCAG 2.5.8) y ningún texto por debajo de 12 px.
+
+**Qué cambia respecto a la iteración 1:** fuera la baldosa con resumen de 3–4 líneas y la tarjeta `board` con sombra. Ahora la foto lleva el titular y debajo solo quedan dos líneas y la fuente. La destacada deja de ser una placa aparte: es el abridor de la portada. Y desaparece todo lo de la «Nota de Xavi» (D90).
+
+### 18.1 · Portada: tres tamaños por posición
+
+El tamaño lo da la **posición** en la página, nunca el contenido. Solo hay una excepción, que es qué noticia ocupa el abridor (§18.3).
+
+| Posición | Qué es | 1024 y 1440 | 768 | 390 |
+| --- | --- | --- | --- | --- |
+| 1 · **Abridor** | La pieza grande | 2 columnas × 2 filas; la foto se estira hasta igualar la altura de las 2 segundas (mínimo 380) | Todo el ancho, 16:9 | 4:3 |
+| 2–3 · **Segundas** | Las dos de al lado | Columna derecha, una sobre otra, 3:2 | Dos columnas, 3:2 | 16:9 |
+| 4 en adelante · **Rejilla** | El resto | 3 columnas, 3:2 | 2 columnas, 3:2 | 16:9 |
+
+- **Huecos (fila · columna):** 32 · 16 en 390, 40 · 24 desde 768 y 48 · 28 desde 1280.
+- **Páginas 2 y siguientes:** todo es rejilla, sin abridor ni segundas. El abridor es la portada del día, no un adorno de cada página.
+- **Con búsqueda:** lista (§18.5).
+- **Con filtro de categoría o de alcance:** misma portada sobre el conjunto filtrado. Con menos de 3 noticias, todas van a la rejilla.
+- **Tamaño de página: 21 en vez de 20.** En la página 1 son 1 + 2 + 18 (6 filas completas de 3); en las demás, 21 (7 filas de 3). En 768, si la última pieza de la rejilla queda sola en su fila, ocupa las 2 columnas: `li[data-pos=grid]:last-child:nth-child(odd of [data-pos=grid])`.
+
+**Anatomía de la pieza** (un solo enlace, el del título, con `::after` sobre toda la pieza; una parada de tabulación):
+
+```
+li.nc[data-pos][data-cat][data-photo?]
+└─ article.pc
+   ├─ div.pc-fig            foto (o baldosa) con radio 6
+   │  ├─ img alt=""          decorativa: el titular va encima
+   │  └─ div.pc-ov           scrim + texto, abajo
+   │     ├─ p.kick           «19 NOV · ROCÓDROMOS», mono 12, 0.1em, mayúsculas, #e6e1d8
+   │     └─ h3.pc-title > a  titular #f7f5f0, 500, balance
+   └─ div.pc-text
+      ├─ p.dek              bajada: arranque del aporte, 2 líneas como máximo
+      └─ p.src              «Fuente: X», 13 px, meta; X en foreground 500
+```
+
+| | Abridor | Segunda | Rejilla |
+| --- | --- | --- | --- |
+| Titular | 28 → 36 → 40 → 44 (390 / 768 / 1024 / 1280), 1,1, `-0.022em`, máximo 24ch | 21, 1,2 | 19, 1,24 |
+| Relleno del texto en la foto | 88/20/18 · 120/28/24 desde 768 | 76/18/16 | 72/16/14 · 76/18/16 desde 768 |
+| Bajada | 18/1,45, `prose`, 64ch | 16/1,45, `prose` | igual |
+
+- **Ligera:** sin tarjeta, sin fondo y sin sombra. La foto y el texto van directamente sobre el papel, como en un periódico. Lo único con forma es la foto.
+- **La foto aporta:** ocupa de 2/3 a 3/4 de la pieza y lleva el titular. Debajo solo quedan dos líneas de contexto y la fuente.
+- **Categoría y fecha** van en la cabecera de la foto. El alcance (Cataluña, España…) no sale en la portada: ya está en el filtro y en la ficha.
+- **Sin insignias.** Desaparece «Con nota de Xavi» y no hay nada que la sustituya.
+
+### 18.2 · Texto sobre la foto: scrim y contraste medido
+
+- **Scrim:** degradado de negro cálido `rgb(12 11 10)`: `0` arriba → `.74` a 64 px (96 px en el abridor desde 768) → `.88` abajo. El texto **empieza siempre por debajo** de ese punto (relleno superior de 72–120 px), así que nunca hay letras sobre un fondo con menos del 74 % de negro. Además, `text-shadow: 0 1px 2px rgb(0 0 0 / .35)`.
+- **Peor caso teórico** (foto blanca pura bajo el 74 %): fondo ≈ `#424140`. Contraste del titular, 9,5:1; de la cabecera, 8,2:1.
+- **Medido en el navegador** (`?measure=1` oculta el texto; se toma el píxel **más claro** de cada caja de texto sobre la captura real, en los 4 anchos):
+
+| Foto de prueba | Tipo | Cabecera, peor píxel | Titular, peor píxel |
+| --- | --- | --- | --- |
+| Pies de gato sobre blanco (Solution) | muy clara | 7,11 | 9,64 |
+| Pies de gato sobre blanco (Miura) | muy clara | 7,23 | 9,50 |
+| Sala de bloque luminosa (abridor) | clara | 7,35 | 10,47 |
+| Bloque amarillo | clara y saturada | 7,82 | 10,42 |
+| Atardecer en el acantilado | oscura con cielo | 7,78 | 9,90 |
+| Bosque de granito | oscura | 8,84 | 10,19 |
+
+**Mínimo absoluto: 7,11:1** (AA pide 4,5; también cumple AAA, que pide 7). Si una foto futura diera menos, la causa sería un texto que sube por encima de los 64 px, por ejemplo un titular de 5 líneas. Por eso el titular va con `line-clamp: 4` en la rejilla y `3` en el abridor.
+
+- **Sin foto:** la baldosa del tono de la categoría ocupa el mismo hueco y el titular va en el mismo sitio, en tinta `#1c1a17` (≥ 13,8:1) con la cabecera en la tinta de la categoría (≥ 5,66:1). No lleva scrim. El glifo de la categoría (13 %) asoma arriba a la derecha, lejos del texto. El ritmo de la rejilla no se rompe: mismo tamaño, mismo titular abajo, misma bajada debajo.
+
+### 18.2b · Tonos de categoría (sin cambios desde la iteración 1)
+
+> **Sustituida por §18.14 (D93).** La tabla de abajo usaba 5 categorías de prueba (`roca-y-acceso`…). Las claves, tonos, tintas y glifos válidos son los de §18.14, con las 8 categorías reales de `guide.news_categories`.
+
+No hace falta tocar el backend. Es un mapa en el front por `category.slug` (`NEWS_CATEGORY_TONES`, en `app/utils/`). Una categoría nueva sin entrada en el mapa toma el neutro. Si Xavi quiere elegir el tono desde el panel, se haría más adelante con una columna `tone` en `guide.news_categories` (jabali-javi); no lo propongo ahora.
+
+| Clave | Categoría (dummy) | Tono (`--tone`) | Tinta (`--tink`) | Glifo |
+| --- | --- | --- | --- | --- |
+| `competicion` | Competición | `#f7e4d0` (= `accent-muted`) | `#8a3f10` | trofeo |
+| `rocodromos` | Rocódromos | `#e2e8f0` | `#2f4a6b` | presa |
+| `roca-y-acceso` | Roca y acceso | `#e2eadb` | `#3b5a2c` | montaña |
+| `material` | Material | `#eee2ea` | `#6a3355` | pie de gato |
+| `comunidad` | Comunidad | `#f2ead0` | `#6b5212` | personas |
+| (cualquier otra) | — | `#ebe6dc` (= `elevated`) | `#5e584e` (= `meta`) | hoja |
+
+- Tokens nuevos en `@theme`: `--color-news-{clave}` y `--color-news-{clave}-ink`, 10 en total más el neutro, que reutiliza tokens existentes.
+- Los glifos son SVG en línea, `aria-hidden`. Pueden salir de Lucide (`trophy`, `mountain`, `users`, `newspaper`) o dibujarse a mano (presa, pie de gato).
+- Los tonos son claros a propósito: la página es papel, y un tono saturado competiría con el naranja de la marca (bloque newsletter, sellos).
+
+### 18.3 · Abridor (antes «destacada»)
+
+- **Regla recomendada:** la última noticia **con foto** de los últimos 7 días. Si no hay ninguna, la última publicada, en baldosa (escena «Abridor sin foto»). El resto sigue por fecha, sin repetirla.
+- **Alternativa:** siempre la última publicada, tenga foto o no. Es más simple y fiel al orden cronológico, pero como la mayoría de noticias no tendrán foto (D71), el abridor sería a menudo una baldosa enorme sin imagen. La portada pierde justo lo que Xavi pide, que la foto aporte.
+- **Ya no existe la destacada «con nota»** ni su placa `board` con la nota a la derecha. `NewsFeatured` desaparece.
+- **En la vista lista no hay abridor:** la lista es para repasar por fecha.
+
+### 18.4 · Semanas: sin cabeceras en la portada
+
+**Recomiendo ninguna cabecera de semana en la portada**, con la fecha en cada pieza.
+- En un periódico, la jerarquía la da la posición. Un «Esta semana» en medio de la rejilla partiría el bloque abridor + segundas o dejaría filas cojas antes de cada cabecera (en el mockup: 5 piezas en la primera semana, así que la fila 2 quedaría con un hueco).
+- La fecha ya va en cada foto («17 NOV»), así que el lector no pierde la referencia.
+- La semana sigue siendo la unidad de la **lista** y de la carta: ahí se mantienen los H2 de §15.2.
+- **Alternativa (escena «Cabeceras de semana»):** un separador discreto a todo el ancho (filete `line-strong` + «SEMANA ANTERIOR · 9–15 NOV» en mono 12, `meta`) antes de la primera pieza de cada semana. Ordena más, pero produce las filas cojas descritas.
+- **Accesibilidad:** la portada lleva un H2 `sr-only` «Últimas noticias» y cada pieza un H3. En la lista, los H2 de semana son visibles.
+
+### 18.5 · Estados, hover y teclado
+
+- **Hover** (solo `hover: hover` y `pointer: fine`): la foto escala a 1,03 (200 ms) y el titular gana `uline`. Sin desplazamientos ni sombras. Con `prefers-reduced-motion`, solo el subrayado.
+- **Foco:** `--ring` en la figura (`.pc:has(a:focus-visible) .pc-fig`). El enlace no pinta su propio anillo.
+- **Cargando:** el abridor lleva `fetchpriority="high"` (es el LCP de la página) y el resto `loading="lazy"` sobre el fondo `#2a2724`. El texto ya es legible sobre ese fondo antes de que llegue la foto.
+- **Búsqueda:** siempre en lista. El conmutador se oculta con `visibility: hidden`.
+- **Vacío, error y paginación:** como en §15.2.
+
+### 18.5b · Conmutador de vista
+
+Sin cambios respecto a la iteración 1: grupo de 2 botones de 44 con `aria-pressed`, icono + texto `sr-only` («Cuadrícula», «Lista»), a la derecha de la fila Alcance y con la cuadrícula por defecto. La lista conserva sus semanas y D87, pero ya **sin insignia de nota**.
+
+### 18.6 · Persistencia: cookie y sin salto visual
+
+**La cookie:** `cg_news_view`, con valores `grid` o `list`.
+- Atributos: `Max-Age=31536000` (1 año), `Path=/`, `SameSite=Lax` y `Secure` en producción. No lleva `HttpOnly`, porque se lee en el cliente.
+- **Solo se escribe cuando la persona pulsa el conmutador.** Nunca se pone por defecto.
+- Sin cookie, o con un valor que no sea `grid` o `list`, la vista es la cuadrícula.
+
+**¿Hace falta consentimiento? No.**
+- La guía de cookies de la AEPD exime las cookies de personalización de la interfaz que **elige el propio usuario**: el ejemplo típico es el idioma o el número de resultados por página. Aquí es igual: es técnica y la pide el usuario con un clic.
+- Encaja con D86 y §16: no es analítica ni publicidad, no sale a terceros y no identifica a nadie.
+- No entra en el banner ni en sus categorías de consentimiento.
+
+**¿Hay que listarla en `/cookies`? Sí**, por transparencia, como `cc_cookie` y la de idioma. La política ya dice que cuenta las técnicas aunque no pidan permiso.
+- Fila nueva para loro-lola: `cg_news_view` · ChalkGuide · «Recordar si prefieres ver las noticias en cuadrícula o en lista» · «Solo si cambias la vista» · «1 año».
+- También va en el desplegable «Qué guardan y de quién» de **Necesarias**, en el panel de preferencias (§16.3).
+
+**Sin salto visual con ISR.** Hay tres opciones:
+
+| Opción | Qué pasa | Veredicto |
+| --- | --- | --- |
+| Leer la cookie en el servidor | El HTML depende de la cookie. O se pierde la caché ISR de `/noticias` (Netlify cachea por URL), o hay que variar la caché por cookie | Descartada |
+| SSR en cuadrícula y cambio a lista al hidratar | Quien eligió lista ve la cuadrícula ~0,5–1 s y luego todo salta (CLS alto, en la página entera) | Descartada |
+| **Atributo en `<html>` antes de pintar + CSS** | Un script en línea en `<head>` lee la cookie y pone `data-news-view="list"`. El CSS ya conoce las dos formas. El HTML es el mismo para todos | **Recomendada** |
+
+**Cómo hacer la recomendada (para coneja-lucky):**
+
+1. **Script de cabecera.** Ya existe uno: `heroIntroHeadScript()` en `nuxt.config.ts`, que decide la entrada de la home antes de pintar. Se añade una línea:
+
+   ```js
+   var m=document.cookie.match(/(?:^|; )cg_news_view=(grid|list)(?:;|$)/);if(m)document.documentElement.setAttribute('data-news-view',m[1])
+   ```
+
+   Corre en todas las páginas, así que la navegación en cliente (de la home a `/noticias`) ya encuentra el atributo puesto. Cuesta menos de 150 bytes. La CSP actual no restringe los scripts en línea.
+
+2. **Una sola marca, dos formas.** Un componente de pieza (`NewsPiece`, con prop `pos`: `lead | side | grid`), que sustituye a `NewsRow` y a `NewsFeatured` en el índice. `NewsRow` sigue en la home y en la búsqueda. Las dos formas se escriben con una variante de Tailwind v4:
+
+   ```css
+   @custom-variant news-list (html[data-news-view="list"] &);
+   ```
+
+   Así, `grid-cols-3 news-list:block`, `news-list:hidden`, etc. En la lista, la figura, el scrim y el bloque de texto pasan a `display: contents`, de modo que la cabecera, el título, la bajada y la fuente se colocan en la rejilla de la fila. El resultado debe ser idéntico a `NewsRow` de §15.2 + D87 (columna de fecha de 132, miniatura solo en «Esta semana»), sin insignia de nota. Las cabeceras de semana son `li.wk` con su `h2`, visibles solo en la lista. El mockup lo hace así y se puede copiar.
+
+3. **Dos `<img>` con `loading="lazy"`.** La foto de la portada (`sizes` según la posición: abridor `(min-width:1024px) 776px, 100vw`; segundas y rejilla `(min-width:1024px) 368px, (min-width:768px) 50vw, 100vw`) y la miniatura de la lista (`96px / 144px`), cada una oculta con `display:none` en la vista que no le toca. El navegador no descarga una imagen lazy con `display:none`, así que solo baja la que se ve, y con el `sizes` correcto.
+
+4. **El estado en Vue.** `useState('newsView')` se inicializa al montar desde el atributo de `<html>`. Al pulsar: actualiza el atributo y escribe la cookie con `useCookie('cg_news_view', { maxAge: 31536000, sameSite: 'lax', secure: !import.meta.dev, path: '/' })` solo en el cliente.
+
+5. **`aria-pressed` y SSR.** El HTML del servidor sale con «Cuadrícula» pulsado. Lo que se **ve** pulsado sale del atributo de `<html>` (CSS: `html[data-news-view=list] [data-view=list]`), así que no parpadea. `aria-pressed` se corrige en `onMounted`, antes de que nadie pueda interactuar. No se lee en el render, para evitar el desajuste de hidratación.
+
+6. **Sin JS.** Se ve la cuadrícula y el conmutador no hace nada. Se puede ocultar con `html:not(.js)`; la clase `js` ya la pone el mismo script de cabecera.
+
+### 18.7 · Bajada y aporte (D91)
+
+- La bajada de la portada es **el arranque del aporte**: el texto completo, cortado con `line-clamp: 2`, sin cortar en servidor. Si una noticia no tiene aporte, se usa el resumen.
+- Para lince-max y la rutina: la primera frase del aporte es la que se ve en la portada. Conviene que funcione sola y que hable a quien escala en Barcelona («Si vives en el Vallès…», «Si pensabas estrenarte en multilargos…»). Unos 110–130 caracteres caben en 2 líneas de la rejilla en 1440.
+- En la lista, la bajada sale con 2 líneas desde 768, como el resumen de hoy.
+
+### 18.8 · Contraste nuevo (WCAG 2.x)
+
+| Par | Ratio |
+| --- | --- |
+| Titular sobre foto (peor píxel medido, §18.2) | 9,50 |
+| Cabecera sobre foto (peor píxel medido) | 7,11 |
+| Titular `#1c1a17` sobre los 6 tonos | 13,81–14,43 |
+| Tinta de categoría sobre su tono | 5,66–7,53 |
+| Bajada `prose` `#34302a` sobre papel / fuente `meta` sobre papel | 11,6 / 6,24 |
+| Ficha: rótulo «Por qué importa» `#9a4a16` sobre `board` | 5,93 |
+| Ficha: texto del aporte `prose` sobre `board` | 12,46 |
+| Ficha, bloque de la fuente: `#f0ede8` / `#d5d1c9` / `#b8b2a7` sobre `#1c1a17` | 14,87 / 11,40 / 8,24 |
+| Ficha, botón «Leer en X ↗»: `#1a0a00` sobre `#e8923a` (hover `#f0a356`) | 7,91 (9,27) |
+| Ficha, botón frente a la placa de tinta (UI) | 7,11 |
+| Conmutador activo / borde (UI) | 15,39 / 3,76 |
+
+### 18.9 · Ficha `/noticias/[slug]` como preview (D91) · `noticia-preview.html`
+
+La ficha deja de ser una pieza con voz de autor y pasa a ser un **preview que lleva a la fuente**: dice qué ha pasado, por qué te importa si escalas aquí y te manda a leerlo entero. Columna de 640, papel (§15.3).
+
+**Orden:**
+
+1. **Titular y fecha.** Miga, «Categoría · Alcance · 18 de noviembre de 2026» y H1 como en §15.3. Debajo, la marca: `badge-plain` «Resumen de ChalkGuide» + «Fuente: **X ↗**». **Cambio:** ese enlace va ya a la web de la fuente (`rel="noopener"`, sr-only «(web externa)», `nofollow` según D79), no al bloque de abajo. Quien solo quiere el original sale en un clic.
+2. **Foto**, si la hay: 3:2, como en §15.3 (pie, crédito y licencia). Sin foto, no hay hueco.
+3. **Resumen breve:** `prose`, 1–2 párrafos.
+4. **Aporte, con el rótulo «Por qué importa»** (EN: «Why it matters»). Lo recomiendo frente a «Contexto»: dice para qué sirve el bloque, no qué es, y es la promesa de D91. Es sobrio y no lleva firma.
+   - Placa `board` + `slab`, con un filete de 3 px en `chalk` a la izquierda (inset 16 px arriba y abajo). Relleno 24/20/24/24, y 32/36/32/40 desde 768.
+   - Rótulo: H2 en mono 12, `0.14em`, mayúsculas, `accent`. Sin Caveat: eso era la voz de Xavi.
+   - Texto a la escala de lectura (`--text-read`, 18 → 19), 1,62, `prose`. El primer párrafo va en `foreground`, porque es la frase que también sale en la portada.
+   - 80–180 palabras (D91) en párrafos de texto plano, separados por línea en blanco e interpolados, nunca con `v-html`. **Sin enlaces dentro del aporte en v1:** los enlaces internos van en el bloque 5. Si se quieren enlaces en el texto, haría falta un subconjunto de markdown saneado: consultar a leona-lia.
+   - Sin aporte, la placa no se pinta.
+5. **Vídeos (D88): después del aporte.** Es el mismo `NewsVideos` de §17, sin cambios internos.
+6. **«En ChalkGuide»:** fichas relacionadas (rocódromo, pie de gato, resolador, artículo, evento).
+   - Rótulo como el de los vídeos (14 px, 500, `meta`).
+   - Rejilla de 2 columnas desde 640. Cada enlace es una caja de 72 px de alto mínimo, borde `line-strong`, radio 8, tipo en mono 12 y nombre en 17/500, con flecha a la derecha que se desplaza 3 px en hover.
+   - Sin relacionadas, no se pinta.
+7. **«Leer en X ↗»: el protagonista.** Placa de tinta `#1c1a17` (radio 12) que corta el papel al final de la pieza.
+   - Rótulo «La noticia completa», el medio a 26 px, el titular original entre comillas con su `lang`, y «Publicada el · en catalán».
+   - **Botón naranja `accent-fill`** de 56 px, 17/500, «Leer en {medio} ↗». A todo el ancho en móvil y a su ancho desde 768.
+   - Debajo, separada por un filete, la línea de transparencia: «Este texto es un resumen propio de ChalkGuide con contexto añadido…» (texto nuevo para loro-lola) + «Cómo hacemos las noticias».
+   - Es el único naranja grande de la página, aparte del bloque de la newsletter que va después.
+
+**Después:** el bloque naranja de la newsletter y el pie. **Sale «Más noticias»** (las 3 filas de §15.3): la ficha termina en la fuente. Si lince-max quiere más enlazado interno, lo cubre el bloque 6.
+
+**Indexación:** D91 sustituye «solo con nota» (D73) por «indexable si el aporte cumple el mínimo». La regla exacta la fija lince-max en 8.20a.
+
+### 18.10 · Qué hay que quitar o cambiar en lo que ya existe (para coneja-lucky, después de que Xavi apruebe)
+
+**Spec (este README):**
+- §15.1: la ficha ya no es «indexable solo con Nota de Xavi» (D73), sino con aporte (D91, lince-max 8.20a).
+- §15.2: fuera la **destacada «con nota»** (la sustituye el abridor de §18.3) y la **insignia «Con nota de Xavi»** de la fila.
+- §15.3: fuera el bloque **«Nota de Xavi»** (placa, Caveat, firma con foto). El orden nuevo es el de §18.9. Fuera también «Más noticias».
+- §15.4 (home): «primero las que llevan nota» pasa a ser «las 4 siguientes a la del hero» (D89), sin «Con nota de Xavi» en la fila.
+- §15.5 (carta): fuera «Nota de Xavi» en `accent-muted` por noticia. Si la carta debe llevar el arranque del aporte, se decide en la iteración de la carta.
+- §15.6: fuera la fila de contraste «Con nota de Xavi».
+- §15.7: fuera las claves «Con nota de Xavi».
+- §17.1 y §17.10.1: «bajo el resumen, antes de la nota» pasa a ser **«tras el aporte, antes de En ChalkGuide»**. La alternativa «tras la nota» deja de existir.
+
+**Código** (solo la lista; no he tocado `app/`):
+
+| Archivo | Qué hacer |
+| --- | --- |
+| `app/components/news/NewsNote.vue` | Borrar. Su sitio en la ficha lo ocupa un `NewsAporte` nuevo (rótulo «Por qué importa», §18.9.4) |
+| `app/components/news/NewsFeatured.vue` | Borrar. El abridor es `NewsPiece` con `pos="lead"` |
+| `app/components/news/NewsRow.vue` | Quitar `withNote`, `hasNote`, `UiBadge kind="author"` y el `· Con nota de Xavi` de la variante `home`. Quitar la variante `compact` (ya no hay «Más noticias») si no se usa en otro sitio |
+| `app/components/news/NewsListing.vue` / `NewsWeekList.vue` | Pasan a pintar `NewsPiece` en una sola `ul` con `li.wk` (§18.6, punto 2). Sin `featured` |
+| `app/pages/news/[slug].vue` | Orden de §18.9: quitar `NewsNote` y «Más noticias»; `NewsVideos` pasa **después del aporte**; `NewsRelatedLinks` antes de la fuente; `NewsSourceCard` como placa de tinta con botón naranja; «Fuente: X» de la cabecera con enlace externo |
+| `app/components/news/NewsSourceCard.vue` | Nueva forma: placa de tinta, botón `accent-fill` de 56 y línea de transparencia nueva |
+| `app/components/news/NewsRelatedLinks.vue` | Rótulo «En ChalkGuide» y cajas de 72 en 2 columnas desde 640 |
+| `app/types/news.ts` | `note` deja de usarse en lo público; `NewsSearchHit.hasNote` fuera. Entra `aporte` (nombre a cerrar con jabali-javi) |
+| `app/services/news.ts` y el composable del listado | Fuera la consulta de «última con nota de los últimos 7 días». Entra la de abridor de §18.3 y el tamaño de página de 21 |
+| `i18n/locales/*.json` | Fuera `news.featured` («Con nota de Xavi»), `news.noteLabel` y `news.withNote`; entra `news.aporte.title` |
+| Panel (`admin-news*`) y columna `news.note` | No es mío: jabali-javi y Xavi deciden si `note` se reutiliza como `aporte` o se crea otra columna (D91) |
+
+**Vídeos, para coneja-lucky, que los está montando ahora:** el componente y su marcado no cambian. Solo cambia **dónde se monta** en `[slug].vue`: hoy va entre el resumen y la nota. Debe ir entre `NewsAporte` y `NewsRelatedLinks`. Si todavía no hay aporte, va justo después del resumen, que es la misma posición relativa.
+
+### 18.11 · Textos provisionales (para loro-lola, es y en)
+
+- `news.view.label`, `news.view.grid`, `news.view.list` (iteración 1).
+- `news.aporte.title`: «Por qué importa» / «Why it matters».
+- `news.related.title`: «En ChalkGuide» / «On ChalkGuide».
+- `news.source.kicker`: «La noticia completa» / «The full story».
+- `news.source.cta`: «Leer en {source}» / «Read on {source}».
+- `news.source.transparency`: línea nueva que mencione el contexto añadido.
+- Hero (D89): `home.hero.kind.news`, `home.hero.meta.newsSource`, `home.hero.newsLabel`.
+- Fila de `/cookies` para `cg_news_view` (§18.6).
+
+### 18.12 · Decisiones para Xavi
+
+1. **Abridor:** la última con foto de los últimos 7 días y, si no hay, la última (**recomendado**), o siempre la última publicada.
+2. **Semanas en la portada:** sin cabeceras, con la fecha en cada foto (**recomendado**), o separadores discretos de semana.
+
+Decidido por diseño, sin preguntar: tres tamaños por posición, título dentro de la foto con scrim medido (mínimo 7,11:1), la baldosa de color para las piezas sin foto, el rótulo «Por qué importa», los vídeos tras el aporte y el botón de la fuente como cierre protagonista.
+
+### 18.13 · Carrusel del hero: la última noticia, siempre (D89, aprobado)
+
+**Cuántas tarjetas: 9.** Nada cede su sitio.
+- Cada tarjeta de D41 tiene su motivo: las fotos son la marca, los pies de gato y los rocódromos son el producto, y el evento y el artículo son la agenda y la voz.
+- Quitar un rocódromo, lo más fácil de recortar, dejaría el producto principal con una sola tarjeta.
+- El anillo no depende del número de tarjetas (`useHeroRing` reparte el paso según `n`). Con 9, el radio crece un poco y en 1440 siguen viéndose 5 tarjetas.
+- El coste es una imagen lazy más.
+
+**Posición: 1.** Es la tarjeta que está **de frente al cargar**, en 1440 y en 390.
+- «Siempre» solo se cumple en móvil si es la del centro: en 390 las demás asoman por el borde.
+- Orden del anillo: **Noticia** · Pie de gato 1 · Evento · Rocódromo 2 · Foto 2 · Pie de gato 2 · Rocódromo 1 · Artículo · Foto 1.
+- En el código basta con ponerla delante de `shoe(shoe1)` en `useHeroCards`. `startOffPhoto` ya hace que se empiece por la primera que no es foto; la Foto 1 queda a su izquierda.
+- **LCP:** la tarjeta 1 pasa a ser la imagen `eager` + `fetchpriority=high` + `preload` (ya lo hace `HeroCard` con `i === 0`). Sin foto, la tarjeta es solo texto y el LCP es el H1 o ese texto, que son más rápidos.
+- **Alternativa:** posición 2 (a la derecha de la del centro). Se ve en escritorio, pero en móvil solo asoma.
+
+**Tarjeta con foto** (`kind: 'news'`):
+- La foto de la noticia (la que tiene licencia, D71/D87), recortada a la tarjeta como en rocódromos y artículos.
+- **Sello «Noticia»:** placa `accent-fill` arriba a la izquierda (14 px de margen) con un punto y «NOTICIA» en mono 12 / `0.14em`, `on-accent`, radio 4. Ninguna otra tarjeta del anillo lleva placa: es lo que la identifica sin leer.
+- **Pie:** la etiqueta `label-mini` en `accent` dice «Categoría · fecha corta». Debajo, el título (19 px, 500, `balance`) y una `small` con «Fuente: **X**». Sin resumen ni nota.
+- **Color dinámico (D22):** el degradado del pie no es negro plano. Se mezcla `media.dominant_color` con negro: `color-mix(in oklab, var(--dom) 26%, #000)` al 50 % de la altura y 22 % al final. Una foto amarilla da un pie marrón muy oscuro, y una azul, azul noche.
+  - `--dom` va en `style` como hoy en los demás usos: se valida con `^#[0-9a-f]{6}$` y, sin valor, se usa `#141414`.
+  - Peor caso (dominante blanco): tiza sobre el pie a 13,31:1 y la etiqueta naranja a 6,37:1 (mezcla calculada en OKLab).
+  - El suelo del hero sigue en `#0f0f0f`: el carrusel de D38–D41 sustituyó al hero «Ambiente», así que el color dinámico vive en la tarjeta, no en el fondo.
+
+**Tarjeta sin foto** (lo más habitual, D71):
+- La **baldosa de la cuadrícula**: tono de la categoría, filete de 4 px en su tinta y glifo de la categoría al 14 %, recortado abajo a la derecha.
+- El sello va arriba. Luego la etiqueta en la tinta y el título grande (`clamp(21px, 9.6cqw, 28px)`, 1,16), con «Fuente: X» abajo, en `meta`.
+- El reflejo usa `multiply`, como en el evento.
+- No se confunde con el evento: el evento es papel con la fecha en Archivo gigante, y la noticia es color con titular en Inter. Contra la pared, contrasta a ≈ 14:1.
+
+**Enlace y lectores de pantalla:**
+- La tarjeta enlaza a `/noticias/[slug]` (o `/en/news/[slug]`).
+- `label` (lo que anuncia el carrusel al centrarla): «Noticia: {título}». En inglés, «News: {title}».
+
+**Reglas de datos:**
+- Es la última publicada por `published_at`, tenga nota o no.
+- En `/en`, la última con versión inglesa (D3).
+- **Sin noticias publicadas:** la tarjeta no existe y el anillo vuelve a las 8 de D41, igual que hoy cuando falta cualquier otra.
+- No hay tope de antigüedad: Xavi pide «siempre».
+- **Sin duplicados en la home:** el bloque «Noticias» (§15.4 B) **salta la noticia del carrusel** y toma las 4 siguientes, igual que `splitHomeArticles` con el artículo. Si con eso quedan menos de 2, el bloque no se pinta (D77).
+
+**Para coneja-lucky:**
+- `HeroCardData.kind` suma `'news'`. Se añade el campo opcional `tone?: { bg: string; ink: string; glyph: string }` para la versión sin foto, y `dom?: string`.
+- Clases `.hero-card--news` y `.hero-card--news-text` en `hero.css`, copiadas del mockup.
+- Una consulta más en `pages/index.vue`: la última noticia (ya hay una de noticias para `HomeNews`, así que puede salir de ahí con `limit 5`).
+- `useMediaUrl` y `useImagePreload`, como en las demás tarjetas.
+
+### 18.14 · Iconos de categoría (D93) · propuesta (pendiente de Xavi)
+
+Lámina: [`pages/noticias-iconos.html`](pages/noticias-iconos.html). Muestra el mapa, los cinco sitios donde sale el icono, la vista lista y el contraste, a 1440 y a 390 (anexo). Con «Sin iconos (comparar)» o `?off=1` se ve la misma página sin ellos, para juzgar el ruido.
+
+**Idea:** un icono de trazo por categoría. Seis vienen de Lucide (`lucide-vue-next`, ya instalado, v1.0) y dos son propios, porque Lucide no tiene ni presa ni pie de gato. Los propios están dibujados en la misma rejilla de 24, con trazo 1.75 y extremos y uniones redondos, así que no se distinguen de los de Lucide. Esta sección sustituye la tabla de §18.2b: las claves son ya las 8 reales.
+
+#### Mapa clave → icono, tono y tinta
+
+| Clave (`category.slug`) | Nombre es / en | Icono | Origen | Tono (`--tone`) | Tinta (`--tink`) |
+| --- | --- | --- | --- | --- | --- |
+| `competicion` | Competición / Competition | trofeo | Lucide `Trophy` | `#f7e4d0` (= `accent-muted`) | `#8a3f10` |
+| `roca-vias` | Roca y vías / Rock and routes | montaña | Lucide `Mountain` | `#dfe7e5` | `#25564e` |
+| `material` | Material / Gear | pie de gato | **Propio** `IconClimbingShoe` | `#eee2ea` | `#6a3355` |
+| `rocodromos` | Rocódromos / Climbing gyms | presa con su agujero | **Propio** `IconHold` | `#e2e8f0` | `#2f4a6b` |
+| `seguridad` | Seguridad / Safety | escudo liso | Lucide `Shield` | `#f3e0dd` | `#8b2c24` |
+| `acceso-entorno` | Accesos y entorno / Access and environment | hoja | Lucide `Leaf` | `#e2eadb` | `#3b5a2c` |
+| `federaciones` | Federaciones y clubes / Federations and clubs | institución | Lucide `Landmark` | `#e5e3f0` | `#443c78` |
+| `comunidad` | Comunidad / Community | personas | Lucide `Users` | `#f2ead0` | `#6b5212` |
+| (cualquier otra) | — | periódico | Lucide `Newspaper` | `#ebe6dc` (= `elevated`) | `#5e584e` (= `meta`) |
+
+Por qué cada uno:
+- **Escudo liso, no `ShieldAlert` ni triángulo de aviso:** la categoría se redacta con sobriedad (categorias-noticias.md), y un icono de alarma en cada pieza la haría sonar a sucesos.
+- **Hoja para Accesos y entorno:** cubre restricciones, nidificación y cuidado de la roca. Un pájaro solo diría nidificación. La hoja era el glifo del neutro; el neutro pasa a ser el periódico.
+- **Montaña para Roca y vías:** es la roca. Lucide `Route` o `Flag` se leen como navegación o como competición.
+- **Presa propia y no `BrickWall`:** el muro de ladrillos se lee como obras. La presa con su agujero de tornillo es el objeto de un rocódromo. Está dibujada irregular a propósito para que, a 14 px, no parezca una diana.
+
+**SVG de los dos propios** (viewBox `0 0 24 24`, `fill="none"`, `stroke="currentColor"`, `stroke-width="1.75"`, `stroke-linecap="round"`, `stroke-linejoin="round"`):
+
+```html
+<!-- IconClimbingShoe (material) -->
+<path d="M2.5 18.6c0-2.6 2.2-4.2 5.4-5.1l3.8-1.1 2.6-5.4a1 1 0 0 1 .9-.6h4.5a1 1 0 0 1 1 .9l1 10.3a1 1 0 0 1-1 1.1H3.4a.9.9 0 0 1-.9-.9Z"/><path d="M2.8 16.8h6.4"/><path d="m11.3 12.4 1.5 2.7"/><path d="m14.7 10.9 1.5 2.7"/>
+<!-- IconHold (rocodromos) -->
+<path d="M5.2 16.2c-1.8-2.4-1.6-5.9.6-8.2C7.6 6 10.4 4.7 13.3 5.1c2.4.3 3.6 1.9 5.2 2.6 1.7.8 2.3 2.6 1.6 4.4-.6 1.5-1.9 2.2-2.4 3.7-.6 1.9-1.9 3.6-4.3 3.9-3.3.4-6.4-1.1-8.2-3.5Z"/><circle cx="11.4" cy="11.6" r="1.75"/>
+```
+
+#### Dónde aparece y a qué tamaño
+
+| Sitio | Tamaño | Color | Notas |
+| --- | --- | --- | --- |
+| Cabecera de la pieza en la portada («19 NOV · ROCÓDROMOS»), sobre foto | 14 | `currentColor` = `#e6e1d8`, con la misma sombra que el texto (`drop-shadow(0 1px 1px rgb(0 0 0 / .35))`) | Justo antes del nombre, no de la fecha. 6 px de hueco. El orden aprobado de §18.1 (fecha · categoría) no cambia |
+| La misma cabecera, en la baldosa sin foto | 14 | Tinta de la categoría | Igual que el texto de la cabecera |
+| **Glifo grande** de la baldosa sin foto | % de la baldosa (46 %; 34 % en el abridor) | Tinta al 13 %, trazo **1** (no 1.75) | Sin cambios de posición respecto a §18.2: arriba a la derecha y recortado. Lo nuevo es que cada categoría tiene el suyo. Es el mismo SVG que el icono pequeño |
+| Fila de la vista lista («Seguridad», Inter 14 `meta`) | 16 | `currentColor` = `meta` | Antes del nombre |
+| Chips de categoría de `/noticias` | 16 | `meta`; `foreground` en hover; `accent` en la activa | «Todo» sin icono. Hueco 8 (el `gap` de `.chip`). Alto 44 sin cambios |
+| Ficha preview: «Categoría · Alcance · fecha» | 16 | `currentColor` = `meta` | Solo junto a la categoría. La categoría pasa a ser un enlace a `/noticias?categoria={slug}` (en: `/en/news?category=`), con el icono dentro y `min-height: 24` |
+| Tarjeta de noticia del hero, etiqueta «Categoría · fecha» | 14 | `accent` con foto; tinta de la categoría sin foto | El sello «Noticia» no lleva icono. Sin foto, el glifo grande de abajo a la derecha (14 %) es el de la categoría |
+
+**Dónde no:** el sello «Noticia», el alcance, la fecha, «Todo», las migas de pan y la carta semanal (los SVG en línea fallan en varios clientes de correo y una imagen por categoría no compensa).
+
+#### Reglas
+
+- **El icono pequeño siempre va pegado a su nombre escrito.** Nunca sale solo, así que siempre es **decorativo**: `aria-hidden="true"`, `focusable="false"` y sin `<title>`. No lleva `aria-label` ni texto `sr-only` propio.
+- **El color lo hereda** (`currentColor`). El color de la categoría solo vive en la baldosa (fondo, filete, cabecera y glifo) y en la tarjeta sin foto del hero. Si el icono fuera de color en cada chip y cada cabecera sobre foto, la portada se convertiría en un semáforo de 8 colores. Con la comparación «Sin iconos» de la lámina se ve que el icono añade forma, no color.
+- **Tamaños:** 14 junto a mono de 12 (es la única excepción a la escala 16/20/24 de §7: a 16, el icono pesa más que las mayúsculas de 12 px) y 16 junto a texto de 14–15.
+- **Alineación:** la cabecera es un bloque de texto, no un flex. El icono va en línea con `vertical-align: -2px` (14) o `-3px` (16), así que si la línea parte, el icono se queda pegado a la primera palabra del nombre.
+- **Nombres completos siempre:** también en la cabecera de la pieza y en el hero. «Federaciones y clubes · 16 nov» parte en 2 líneas en la tarjeta del hero de 248 px; es aceptable y evita una segunda clave de texto corto para loro-lola.
+- **Motion:** ninguna. El icono no se anima en hover.
+
+#### Contraste (WCAG 2.x)
+
+| Clave | Tinta / tono | Titular `#1c1a17` / tono | Tinta / papel `#f4f1ea` |
+| --- | --- | --- | --- |
+| `competicion` | 6,06 | 14,02 | 6,65 |
+| `roca-vias` | 6,63 | 13,81 | 7,39 |
+| `material` | 7,53 | 13,81 | 8,40 |
+| `rocodromos` | 7,37 | 14,08 | 8,05 |
+| `seguridad` | 6,65 | 13,66 | 7,50 |
+| `acceso-entorno` | 6,34 | 14,08 | 6,93 |
+| `federaciones` | 7,66 | 13,71 | 8,61 |
+| `comunidad` | 6,14 | 14,43 | 6,55 |
+| neutro | 5,66 | 13,96 | 6,24 |
+
+- Todas las tintas pasan 4,5:1 sobre su tono como texto, así que el icono, que tiene su mismo color, pasa también el 3:1 de UI.
+- Los iconos que heredan color están igual de cubiertos: `#e6e1d8` sobre el scrim da como mínimo 7,11:1 (§18.2), `meta` sobre papel 6,24:1, `accent` sobre `accent-muted` 5,04:1 (chip activo) y `#e8923a` sobre el peor pie del hero 6,37:1 (§18.13).
+- El glifo grande al 13–14 % es textura, no información, y no entra en el cálculo.
+- Los tonos nuevos (`roca-vias`, `seguridad`, `federaciones`) se distinguen de los demás por el tono, no solo por el matiz, y el nombre siempre va escrito: el color nunca es la única señal.
+
+#### Para coneja-lucky (después de que Xavi apruebe)
+
+- `app/utils/news-categories.ts` (o ampliar `NEWS_CATEGORY_TONES` si ya existe): un mapa único por `slug` con `{ icon, tone, ink }` y el neutro como valor por defecto.
+- Los 6 de Lucide se importan uno a uno (`import { Trophy, Mountain, Shield, Leaf, Landmark, Users, Newspaper } from 'lucide-vue-next'`). Los 2 propios, como componentes en `app/components/ui/icon/` con la misma interfaz (`size`, `stroke-width`) que los de Lucide.
+- Un componente `NewsCategoryIcon` (props `slug`, `size`, `glyph?: boolean`): con `glyph` pinta el SVG grande con trazo 1 para la baldosa. Siempre `aria-hidden="true"`.
+- Tokens nuevos: `--color-news-{clave}` y `--color-news-{clave}-ink` para las 8 claves (16 tokens). El neutro reutiliza `elevated` y `meta`.
+- La tarjeta del hero usa el mismo mapa: `tone.glyph` de §18.13 pasa a ser la clave del icono.
+
+#### Decisión para Xavi
+
+1. **Icono también en los chips de categoría:** sí, a 16 en `meta` (**recomendado**: ayuda a encontrar la categoría al pasar el dedo por la fila que se desplaza en móvil, y es donde el icono se aprende para reconocerlo luego en la portada), o chips solo con texto, con el icono solo en las piezas, la ficha y el hero.

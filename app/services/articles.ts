@@ -71,7 +71,7 @@ export function toSummary(row: SummaryRow, locale: Locale): ArticleSummary {
     slugs: { es: row.slug_es, ...(row.slug_en ? { en: row.slug_en } : {}) },
     title: pick(locale, row.title_es, row.title_en) ?? row.title_es,
     excerpt: pick(locale, row.excerpt_es, row.excerpt_en),
-    category: categorySlug && categoryName ? { slug: categorySlug, name: categoryName } : null,
+    category: categorySlug && categoryName && category ? { slug: categorySlug, slugEs: category.slug_es, name: categoryName } : null,
     cover: toMediaRef(one(row.cover as Parameters<typeof toMediaRef>[0]), locale),
     publishedAt: row.published_at,
     updatedAt: row.updated_at,

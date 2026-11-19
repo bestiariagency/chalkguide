@@ -62,7 +62,6 @@ useBreadcrumbJsonLd(crumbs)
       :total="search.total.value"
       :loading-more="search.loadingMore.value"
       :has-more="search.hasMore.value"
-      :featured="null"
       :items="listing.items.value"
       :page="listing.page.value"
       :pages="listing.pages.value"

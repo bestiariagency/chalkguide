@@ -60,7 +60,7 @@ const place = computed(() =>
           </li>
           <li v-if="detail.websiteUrl" class="flex gap-2">
             <ExternalLink :size="16" class="mt-1 shrink-0 text-meta" aria-hidden="true" />
-            <UiTextLink :href="detail.websiteUrl" external>
+            <UiTextLink :href="detail.websiteUrl" external data-track="outbound_gym">
               {{ t('gyms.detail.website') }}
             </UiTextLink>
           </li>

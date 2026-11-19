@@ -19,6 +19,7 @@ Notas de voz: tuteo, primera persona de Xavi en el panel («Nunca subo tu email�
 | `cookies.banner.reject` | Rechazar (8) | Reject (6) |
 | `cookies.banner.settings` | Configurar (10) | Settings (8) |
 | `cookies.banner.announce` (solo lector de pantalla) | Aviso de cookies. Puedes aceptar, rechazar o configurar. | Cookie notice. You can accept, reject or adjust settings. |
+| `cookies.banner.revision` [D86] (sustituye a `description` cuando la política cambia y se vuelve a preguntar; el enlace se añade igual) | He cambiado las cookies o para qué las uso, así que te pregunto de nuevo. Rechazar no cambia nada. (98; con el enlace, 118) | I've changed the cookies I use or what they're for, so I'm asking again. Rejecting changes nothing. (99; with the link, 113) |
 
 ## Panel de preferencias (segunda capa)
 
@@ -45,7 +46,7 @@ Notas de voz: tuteo, primera persona de Xavi en el panel («Nunca subo tu email�
 | Clave | ES | EN |
 | --- | --- | --- |
 | `cookies.category.necessary.title` | Necesarias | Necessary |
-| `cookies.category.necessary.description` | Guardan esta elección y, si inicias sesión con Google, tu sesión. Sin ellas la web no funciona. | They store this choice and, if you sign in with Google, your session. The site doesn't work without them. |
+| `cookies.category.necessary.description` | Guardan esta elección, tu preferencia de vista en Noticias si la cambias y, si inicias sesión con Google, tu sesión. Sin ellas la web no funciona. | They store this choice, your view preference in News if you change it and, if you sign in with Google, your session. The site doesn't work without them. |
 | `cookies.category.analytics.title` | Analítica | Analytics |
 | `cookies.category.analytics.description` | Google Analytics: qué páginas se leen y desde dónde llegan, para saber qué escribir. No sirve para anuncios. | Google Analytics: which pages are read and where readers come from, so I know what to write. It isn't used for ads. |
 | `cookies.category.ads.title` | Publicidad y remarketing | Advertising and remarketing |
@@ -61,6 +62,7 @@ Notas de voz: tuteo, primera persona de Xavi en el panel («Nunca subo tu email�
 | `cookies.table.duration` | Duración | Duration |
 | `cookies.purpose.consent` | Guarda tu elección de cookies | Stores your cookie choice |
 | `cookies.purpose.session` | Mantiene tu sesión, solo si inicias sesión | Keeps you signed in, only if you sign in |
+| `cookies.purpose.newsView` | Recuerda si prefieres ver las noticias en cuadrícula o en lista; solo si cambias la vista | Remembers whether you prefer to see the news as a grid or a list; only if you change the view |
 | `cookies.purpose.ga` | Distingue visitas para medir qué se lee | Tells visits apart to measure what is read |
 | `cookies.purpose.gcl` | Mide si un anuncio de Google ha llevado a una visita | Measures whether a Google ad led to a visit |
 | `cookies.purpose.fbp` | Meta: reconoce tu navegador para listas de remarketing | Meta: recognises your browser for remarketing lists |

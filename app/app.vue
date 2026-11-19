@@ -2,6 +2,8 @@
 const { t, locale } = useI18n()
 const site = useSiteConfig()
 const siteUrl = useSiteUrl()
+const route = useRoute()
+const onAdmin = computed(() => isAdminPath(route.path))
 
 // lang/dir, title template, canonical, hreflang (only versions that exist, D3), og:url/locale
 // and the route-level robots rules (legal, utility, newsletter states).
@@ -26,6 +28,8 @@ useJsonLd('site', () =>
 </script>
 
 <template>
+  <!-- Mount point of the cookie banner (D86): filled on the client only, hidden on the panel. -->
+  <div id="cc-root" :hidden="onAdmin || undefined" />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

@@ -139,6 +139,13 @@ export default defineNuxtConfig({
       siteUrl,
       // Optional https URL of the repository (admin runbook link in Ingesta). Empty = the panel shows the path as text.
       repoUrl: '',
+      // Analytics (D69). Public by nature, all empty by default: without an ID nothing is loaded.
+      // Netlify sets them in the production context only (docs/marketing/analitica-remarketing-spec.md §7).
+      analyticsEnabled: false, // NUXT_PUBLIC_ANALYTICS_ENABLED: own events (layer 1) on/off
+      ga4Id: '', // NUXT_PUBLIC_GA4_ID  G-XXXXXXXXXX
+      gadsId: '', // NUXT_PUBLIC_GADS_ID  AW-XXXXXXXXXX
+      gadsConvNewsletter: '', // NUXT_PUBLIC_GADS_CONV_NEWSLETTER  only if the own conversion tag is used
+      metaPixelId: '', // NUXT_PUBLIC_META_PIXEL_ID
     },
   },
 

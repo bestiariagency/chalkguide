@@ -16,6 +16,8 @@ export interface MediaRef {
 
 export interface CategoryRef {
   slug: string
+  /** Spanish slug in every locale: the `pillar` of the analytics events (D69). */
+  slugEs?: string
   name: string
 }
 

@@ -22,8 +22,12 @@ const [articles, gyms, shoes, events, settings, news] = await Promise.all([
 
 const articleSplit = computed(() => splitHomeArticles(articles.data.value ?? []))
 const blog = computed(() => articleSplit.value.blog)
-// D77 B: the news block needs at least 2 items, never a list of one.
-const homeNews = computed(() => (news.data.value?.length ?? 0) >= 2 ? (news.data.value ?? []) : [])
+// D89: the latest news goes to the hero; the block (D77 B) takes the next 4 and needs at least 2, never a list of one.
+const heroNews = computed(() => news.data.value?.[0] ?? null)
+const homeNews = computed(() => {
+  const rest = (news.data.value ?? []).slice(1)
+  return rest.length >= 2 ? rest : []
+})
 const homeGyms = computed(() => pickHomeGyms(gyms.data.value ?? []))
 const homeShoes = computed(() => pickLatestShoes(shoes.data.value ?? []))
 const heroCards = useHeroCards(() => ({
@@ -32,6 +36,7 @@ const heroCards = useHeroCards(() => ({
   event: pickHeroEvent(events.data.value ?? []),
   gyms: pickHeroGyms(gyms.data.value ?? [], articleSplit.value.latest?.cover?.path),
   article: articleSplit.value.latest,
+  news: heroNews.value,
 }))
 
 usePageSeo(() => ({ title: t('seo.homeTitle'), description: t('seo.homeDescription') }))

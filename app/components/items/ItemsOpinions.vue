@@ -68,6 +68,7 @@ const hasAverage = computed(() => props.ratings.avgOverall !== null)
         :to="flow.isSignedIn.value ? undefined : flow.signInLink.value"
         :icon="Pencil"
         data-review-opener
+        :data-track="flow.isSignedIn.value ? undefined : 'login_for_review'"
         @click="flow.onWrite"
       >
         {{ t('reviews.write') }}
@@ -180,6 +181,7 @@ const hasAverage = computed(() => props.ratings.avgOverall !== null)
           :to="flow.isSignedIn.value ? undefined : flow.signInLink.value"
           :icon="Pencil"
           data-review-opener
+          :data-track="flow.isSignedIn.value ? undefined : 'login_for_review'"
           @click="flow.onWrite"
         >
           {{ t('reviews.beFirst') }}

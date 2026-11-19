@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '~/types/database.types'
+import { parsableDate } from '~/utils/admin-dates'
+import { toAdminVideos, toProposedIds, videosPayload, type AdminNewsVideo } from '~/utils/admin-news-videos'
 import type { AdminNews, NewsAgent, NewsCategory, NewsScope, NewsStatus, NewsSummary, NewsWarning } from '~/utils/admin-news'
 import type { NewsForm, RelatedKind, RelatedLink } from '~/utils/admin-news-form'
 import { newsInsert, newsWrite } from '~/utils/admin-news-form'
@@ -20,9 +22,11 @@ function toAgent(raw: unknown): NewsAgent | null {
     confidence: typeof m.confidence === 'number' ? m.confidence : 0,
     note: text(m.note),
     excerpt: text(m.excerpt),
-    foundAt: text(m.found_at),
+    // The DB only checks the prefix of `found_at`: anything Date cannot read would throw when formatted (Intl «Invalid time value»).
+    foundAt: parsableDate(text(m.found_at)),
     inferred: Array.isArray(m.inferred) ? m.inferred.filter((x): x is string => typeof x === 'string') : [],
     duplicateOf: text(m.duplicate_of),
+    videos: toProposedIds(m.videos),
   }
 }
 
@@ -36,8 +40,12 @@ function toNews(r: Row): AdminNews {
     titleEn: r.title_en,
     summaryEs: r.summary_es,
     summaryEn: r.summary_en,
-    noteEs: r.author_note_es,
-    noteEn: r.author_note_en,
+    insightEs: r.insight_es,
+    insightEn: r.insight_en,
+    seoKeywordEs: r.seo_keyword_es,
+    seoKeywordEn: r.seo_keyword_en,
+    metaDescriptionEs: r.meta_description_es,
+    metaDescriptionEn: r.meta_description_en,
     categoryId: r.category_id,
     categoryKey: r.category_key,
     scope: r.scope,
@@ -55,6 +63,7 @@ function toNews(r: Row): AdminNews {
     imageCredit: r.image_credit,
     runId: r.run_id,
     agent: toAgent(r.agent_meta),
+    videos: toAdminVideos(r.videos),
     similarity: r.similarity,
     warnings: (r.warnings ?? []).filter((w): w is NewsWarning => ['low_confidence', 'high_similarity', 'possible_duplicate'].includes(w)),
     rejectReason: r.reject_reason,
@@ -177,6 +186,12 @@ export async function updateNews(client: Client, id: string, form: NewsForm, opt
 /** Drafts and rejected manual items only (PT423 otherwise). */
 export async function deleteNews(client: Client, id: string): Promise<void> {
   unwrap(await guideSchema(client).from('news').delete().eq('id', id).select('id').single())
+}
+
+// Videos (up to 2 per item, F8.18) -------------------------------------------------------------------
+/** Replaces the videos of an item (RPC `admin_set_news_videos`, atomic). Errors keep their code and detail for `videoError`. */
+export async function saveNewsVideos(client: Client, newsId: string, videos: readonly AdminNewsVideo[]): Promise<void> {
+  unwrap(await guideSchema(client).rpc('admin_set_news_videos', { p_news_id: newsId, p_videos: videosPayload(videos) }))
 }
 
 // Related links (up to 3 per item) ------------------------------------------------------------------

@@ -47,7 +47,7 @@ const sumLine = computed(() => {
 })
 
 // Editor and dialogs ----------------------------------------------------------------------------------------
-const editing = ref<{ news?: AdminNews; focus?: 'note' }>()
+const editing = ref<{ news?: AdminNews; focus?: 'insight' }>()
 const retiring = ref<AdminNews>()
 const removing = ref<AdminNews>()
 const batchDialog = ref(false)
@@ -57,7 +57,7 @@ function create() {
   saver.error.value = undefined
   editing.value = {}
 }
-function edit(news: AdminNews, focus?: 'note') {
+function edit(news: AdminNews, focus?: 'insight') {
   saver.error.value = undefined
   editing.value = { news, focus }
 }
@@ -109,7 +109,7 @@ const selection = computed(() => rows.value.filter((n) => checked.value.includes
 /** D77: approves at once; the dialog only opens when something in the selection has warnings. */
 async function approveBatch() {
   if (!selection.value.length) return
-  if (splitByWarnings(selection.value).warned.length) batchDialog.value = true
+  if (splitByWarnings(selection.value).warned.length || selection.value.some((n) => n.videos.length)) batchDialog.value = true
   else if (await actions.approve(selection.value.map((n) => n.id))) checked.value = []
 }
 async function approveFromDialog(only: 'all' | 'clean') {
@@ -148,7 +148,7 @@ function clearFilters() {
   <div :class="viewModel === 'revisar' && 'lg:flex lg:h-dvh lg:flex-col'">
     <AdminPageBar title="Noticias">
       <template #meta>
-        <span :class="[admChip, 'ml-1 hidden bg-adm-subtle text-adm-meta md:inline-flex']" title="Solo se indexan las fichas con una «Nota de Xavi» de unas 60 palabras o más"><EyeOff aria-hidden="true" />Sin «Nota de Xavi», la ficha va con noindex</span>
+        <span :class="[admChip, 'ml-1 hidden bg-adm-subtle text-adm-meta md:inline-flex']" title="Solo se indexan las fichas con un aporte de 80 palabras o más"><EyeOff aria-hidden="true" />Sin aporte, la ficha va con noindex</span>
       </template>
       <AdminExportsButton target="news" :initial="newsExportInitial(viewModel, nw.filters.value, exportCategoryId)" :category-options="nw.categories.value.map((c) => ({ value: c.id, label: c.labelEs }))" />
       <button type="button" :class="[admBtnGhost, 'max-md:hidden']" @click="categoriesOpen = true"><FolderTree aria-hidden="true" />Categorías</button>
@@ -184,7 +184,7 @@ function clearFilters() {
 
     <template v-else-if="viewModel === 'revisar'">
       <AdminNewsEmpty v-if="!rows.length" view="revisar" :filtered="filtering" :search="nw.search.value" :total="total" @goto="viewModel = $event" @create="create()" @clear="clearFilters" />
-      <AdminNewsInbox v-else v-model:selected-id="selectedId" v-model:checked="checked" :rows="rows" :busy="actions.busy.value" :labels="labels" @approve="approve" @reject="reject" @edit="edit" />
+      <AdminNewsInbox v-else v-model:selected-id="selectedId" v-model:checked="checked" :rows="rows" :busy="actions.busy.value" :labels="labels" @approve="approve" @reject="reject" @edit="edit" @videos-changed="nw.reload" />
     </template>
 
     <div v-else class="max-w-[1440px] px-4 py-4 md:px-6">

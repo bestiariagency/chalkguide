@@ -12,7 +12,7 @@ const options: (NewsScope | null)[] = [null, ...NEWS_SCOPES]
 </script>
 
 <template>
-  <div class="-mx-4 flex items-center gap-1 overflow-x-auto px-4 md:mx-0 md:px-0" role="group" :aria-label="t('news.scopeLabel')">
+  <div class="-ml-4 flex items-center gap-1 overflow-x-auto pl-4 md:ml-0 md:pl-0" role="group" :aria-label="t('news.scopeLabel')">
     <span class="mr-2 text-caption whitespace-nowrap text-meta">{{ t('news.scopeLabel') }}</span>
     <button
       v-for="option in options"

@@ -73,7 +73,7 @@ Con la excepción de lo que tú permitas a Google y Meta en el banner, no vendo 
 - Registros de actividad: [PENDIENTE XAVI: plazo; el modelo propone 24 meses en el registro de auditoría del panel].
 - [D86] Medición propia (`guide.analytics_events`): [PENDIENTE XAVI / jabali-javi: la spec propone 90 días para las filas brutas y 24 meses para los recuentos agregados, que no permiten identificar a nadie].
 - [D86] Google Analytics 4: 2 meses en los datos de eventos [PENDIENTE: confirmar al configurar la propiedad]. Listas de remarketing: hasta 540 días en Google y 180 en Meta [PENDIENTE: confirmar al crearlas]. Cookies: según la [política de cookies](/cookies).
-- [D86] Tu elección de cookies (`cc_cookie`): [PENDIENTE XAVI: duración; se propone renovarla a los 24 meses].
+- [D86] Tu elección de cookies (`cc_cookie`): 365 días si aceptas y 182 días si rechazas; después te vuelvo a preguntar.
 - Lista de espera de Chalk app: hasta que se abra la pizarra o pidas salir. [PENDIENTE XAVI: confirmar].
 
 **Tus derechos**
@@ -155,7 +155,7 @@ Apart from what you allow Google and Meta in the banner, I do not sell your data
 - Activity logs: [PENDING XAVI: period; the data model proposes 24 months for the panel audit log].
 - [D86] Own measurement (`guide.analytics_events`): [PENDING XAVI / jabali-javi: the spec proposes 90 days for raw rows and 24 months for aggregated counts, which cannot identify anyone].
 - [D86] Google Analytics 4: 2 months for event data [PENDING: confirm when the property is set up]. Remarketing lists: up to 540 days at Google and 180 at Meta [PENDING: confirm when they are created]. Cookies: see the [cookie policy](/en/cookies).
-- [D86] Your cookie choice (`cc_cookie`): [PENDING XAVI: duration; renewing it every 24 months is proposed].
+- [D86] Your cookie choice (`cc_cookie`): 365 days if you accept and 182 days if you reject; after that I ask you again.
 - Chalk app waiting list: until the board opens or you ask to leave. [PENDING XAVI: confirm].
 
 **Your rights**

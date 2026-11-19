@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, Eye, EyeOff, MapPin, PenLine, UserPen } from 'lucide-vue-next'
-import { NOTE_MIN_WORDS, NEWS_LIMITS, wordCount, scopeLabel, type AdminNews } from '~/utils/admin-news'
+import { INSIGHT_MIN_WORDS, NEWS_LIMITS, wordCount, scopeLabel, type AdminNews } from '~/utils/admin-news'
 
 /**
  * Detail of a draft in the inbox (read only), in the order of README §19.2: chips, title, **Fuente** (always on top, never
@@ -8,7 +8,7 @@ import { NOTE_MIN_WORDS, NEWS_LIMITS, wordCount, scopeLabel, type AdminNews } fr
  * dialog's and the actions sit in its footer.
  */
 const props = defineProps<{ news: AdminNews; busy: boolean; labels: Record<string, string>; sheet?: boolean }>()
-const emit = defineEmits<{ approve: []; edit: [focus?: 'note']; reject: [reason: string | null]; prev: []; next: [] }>()
+const emit = defineEmits<{ approve: []; edit: [focus?: 'insight']; reject: [reason: string | null]; prev: []; next: []; videosChanged: [] }>()
 const rejectOpen = defineModel<boolean>('rejectOpen', { default: false })
 
 const headId = `news-detail-${useId()}`
@@ -16,7 +16,8 @@ const flags = computed(() => sourceFlags(props.news.sourceUrl, props.news.agent?
 const category = computed(() => props.labels[props.news.categoryKey] ?? props.news.categoryKey)
 const ranAt = computed(() => props.news.agent?.foundAt ?? props.news.createdAt)
 const sourceDomains = useAdminSourceDomains()
-const words = computed(() => wordCount(props.news.noteEs ?? ''))
+const words = computed(() => wordCount(props.news.insightEs ?? ''))
+const vids = useAdminNewsVideos(() => props.news.id, () => props.news.videos, () => emit('videosChanged'))
 </script>
 
 <template>
@@ -66,11 +67,20 @@ const words = computed(() => wordCount(props.news.noteEs ?? ''))
         </details>
       </section>
 
+      <AdminNewsVideos
+        :model-value="vids.videos.value"
+        :proposed-ids="news.agent?.videos"
+        :unverified="news.source === 'agent' && news.status === 'draft'"
+        :disabled="vids.saving.value || news.status === 'rejected'"
+        :error="vids.error.value"
+        @update:model-value="vids.set"
+      />
+
       <AdminBanner :icon="news.indexable ? Eye : EyeOff">
-        <template v-if="news.indexable"><b class="font-medium">Con nota: la ficha se indexa</b> y entra en el sitemap.</template>
-        <template v-else-if="words"><b class="font-medium">La nota tiene {{ words }} palabras.</b> Con {{ NOTE_MIN_WORDS }} o más la ficha se indexa; ahora sale con noindex.</template>
-        <template v-else><b class="font-medium">Sin nota: la ficha sale con noindex.</b> Si añades una «Nota de Xavi» de al menos {{ NOTE_MIN_WORDS }} palabras, Google puede indexarla y entra en el sitemap.</template>
-        <template #actions><button type="button" :class="[admBtnGhost, 'h-8']" @click="emit('edit', 'note')"><PenLine aria-hidden="true" />{{ news.noteEs ? 'Editar nota' : 'Añadir nota' }}</button></template>
+        <template v-if="news.indexable"><b class="font-medium">Con aporte: la ficha se indexa</b> y entra en el sitemap.</template>
+        <template v-else-if="words"><b class="font-medium">El aporte tiene {{ words }} palabras.</b> Con {{ INSIGHT_MIN_WORDS }} o más la ficha se indexa; ahora sale con noindex.</template>
+        <template v-else><b class="font-medium">Sin aporte: la ficha sale con noindex.</b> Si añades un aporte («Por qué importa») de al menos {{ INSIGHT_MIN_WORDS }} palabras, Google puede indexarla y entra en el sitemap.</template>
+        <template #actions><button type="button" :class="[admBtnGhost, 'h-8']" @click="emit('edit', 'insight')"><PenLine aria-hidden="true" />{{ news.insightEs ? 'Editar aporte' : 'Añadir aporte' }}</button></template>
       </AdminBanner>
 
       <AdminNewsAgent :news="news" />

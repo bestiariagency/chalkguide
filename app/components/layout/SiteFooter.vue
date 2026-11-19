@@ -7,6 +7,15 @@ const { options: languages } = useLanguageSwitch()
 const otherLanguage = computed(() => languages.value.find((option) => !option.isCurrent))
 const { linkFor, isAvailable } = usePageLinks()
 const year = new Date().getFullYear()
+const localePath = useLocalePath()
+const { open: openCookiePreferences } = useConsent()
+// Without JS (or if the banner chunk is blocked) the link still works: it goes to the block of /cookies.
+const preferencesHref = computed(() => `${localePath({ name: 'cookies' })}#${t('cookies.choice.anchor')}`)
+async function onPreferences(event: MouseEvent) {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
+  event.preventDefault()
+  if (!(await openCookiePreferences())) await navigateTo(preferencesHref.value)
+}
 
 // Under /en, pages without an English version are hidden (never a 404, never a Spanish detour).
 const media = computed<NavItem[]>(() =>
@@ -80,16 +89,26 @@ const accounts = computed<NavItem[]>(() =>
       <div
         class="mt-12 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-t border-line-strong pt-5 text-note text-meta"
       >
-        <p>{{ t('footer.copyright', { year }) }}</p>
-        <NuxtLink
-          v-if="otherLanguage?.to"
-          :to="otherLanguage.to"
-          :lang="otherLanguage.code"
-          :hreflang="otherLanguage.code"
-          class="inline-flex min-h-11 items-center transition-colors duration-150 hover:text-foreground"
-        >
-          {{ t(otherLanguage.code === 'en' ? 'nav.languageEn' : 'nav.languageEs') }}
-        </NuxtLink>
+        <p class="mr-auto">{{ t('footer.copyright', { year }) }}</p>
+        <span class="flex flex-wrap gap-x-6">
+          <a
+            :href="preferencesHref"
+            aria-haspopup="dialog"
+            class="inline-flex min-h-11 items-center transition-colors duration-150 hover:text-foreground"
+            @click="onPreferences"
+          >
+            {{ t('footer.cookiePreferences') }}
+          </a>
+          <NuxtLink
+            v-if="otherLanguage?.to"
+            :to="otherLanguage.to"
+            :lang="otherLanguage.code"
+            :hreflang="otherLanguage.code"
+            class="inline-flex min-h-11 items-center transition-colors duration-150 hover:text-foreground"
+          >
+            {{ t(otherLanguage.code === 'en' ? 'nav.languageEn' : 'nav.languageEs') }}
+          </NuxtLink>
+        </span>
       </div>
     </div>
   </footer>
