@@ -273,7 +273,6 @@
     "unsubscribed": "You have been unsubscribed",
     "unsubscribedBody": "You will not receive the newsletter again. If you change your mind, you can subscribe again whenever you like.",
     "error": "We could not complete your subscription. Please try again in a while.",
-    "linkExpiredBody": "It may have expired or already been used. If you are not subscribed yet, sign up again and I will send you another.",
     "linkInvalidTitle": "This link does not work",
     "linkInvalidBody": "It may have expired, already been used or be incomplete. If you would like to get the newsletter, you can sign up again.",
     "unsubscribeInvalidBody": "You have not been unsubscribed: this link is not valid or has already been used. To finish, open any newsletter email and click the unsubscribe link at the bottom.",
@@ -294,7 +293,19 @@
     "confirmedGymsCta": "See the gyms",
     "relatedOptional": "(Optional)",
     "moreInfo": "More information",
-    "relatedSuccess": "Once you confirm, the newsletter and the Chalk app notices are switched on. If you were already subscribed, nothing changes: you switch the notices on from “Preferences”, at the bottom of any email."
+    "relatedSuccess": "Once you confirm, the newsletter and the Chalk app notices are switched on. If you were already subscribed, nothing changes: you switch the notices on from “Preferences”, at the bottom of any email.",
+    "confirmPageTitle": "Confirm your subscription",
+    "confirmPageBody": "One more click and you will get the weekly ChalkGuide newsletter. Until you confirm, you are not signed up.",
+    "confirmButton": "Confirm subscription",
+    "expiredTitle": "This link has expired",
+    "expiredBody": "Confirmation links last 48 hours. I can send you a new one, but only once; the old one will stop working.",
+    "resendButton": "Send me another link",
+    "resentTitle": "Check your inbox",
+    "resentBody": "If your sign-up was still pending, we have sent you a new link. Check your spam folder too.",
+    "confirmErrorTitle": "We could not confirm",
+    "confirmErrorBody": "Something failed on our side or with your connection. Your link may still work: try again.",
+    "errorLimit": "Too many attempts from your connection. Wait a bit and try again.",
+    "errorCaptcha": "The anti-bot check failed. Reload the page and try again."
   },
   "partner": {
     "title": "Find a climbing partner",

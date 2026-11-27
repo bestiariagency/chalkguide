@@ -552,6 +552,21 @@ export type Database = {
           },
         ]
       }
+      captcha_spent: {
+        Row: {
+          challenge_hash: string
+          expires_at: string
+        }
+        Insert: {
+          challenge_hash: string
+          expires_at: string
+        }
+        Update: {
+          challenge_hash?: string
+          expires_at?: string
+        }
+        Relationships: []
+      }
       consent_texts: {
         Row: {
           version: number
@@ -681,6 +696,54 @@ export type Database = {
           },
         ]
       }
+      cookie_consent_log: {
+        Row: {
+          id: number
+          consent_id: string
+          action: string
+          categories: string[]
+          revision: number
+          locale: Database["guide"]["Enums"]["locale"]
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          consent_id: string
+          action: string
+          categories?: string[]
+          revision: number
+          locale: Database["guide"]["Enums"]["locale"]
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          consent_id?: string
+          action?: string
+          categories?: string[]
+          revision?: number
+          locale?: Database["guide"]["Enums"]["locale"]
+          created_at?: string
+        }
+        Relationships: []
+      }
+      cookie_consent_rate: {
+        Row: {
+          bucket: string
+          name: string
+          n: number
+        }
+        Insert: {
+          bucket: string
+          name: string
+          n?: number
+        }
+        Update: {
+          bucket?: string
+          name?: string
+          n?: number
+        }
+        Relationships: []
+      }
       criteria: {
         Row: {
           id: string
@@ -731,6 +794,62 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "item_categories"
             referencedColumns: ["key"]
+          },
+        ]
+      }
+      email_outbox: {
+        Row: {
+          id: number
+          kind: Database["guide"]["Enums"]["outbox_kind"]
+          subscriber_id: string | null
+          brevo_contact_id: number | null
+          status: Database["guide"]["Enums"]["outbox_status"]
+          attempts: number
+          next_attempt_at: string
+          locked_at: string | null
+          lock_id: string | null
+          brevo_message_id: string | null
+          last_error: string | null
+          created_at: string
+          done_at: string | null
+        }
+        Insert: {
+          id?: number
+          kind: Database["guide"]["Enums"]["outbox_kind"]
+          subscriber_id?: string | null
+          brevo_contact_id?: number | null
+          status?: Database["guide"]["Enums"]["outbox_status"]
+          attempts?: number
+          next_attempt_at?: string
+          locked_at?: string | null
+          lock_id?: string | null
+          brevo_message_id?: string | null
+          last_error?: string | null
+          created_at?: string
+          done_at?: string | null
+        }
+        Update: {
+          id?: number
+          kind?: Database["guide"]["Enums"]["outbox_kind"]
+          subscriber_id?: string | null
+          brevo_contact_id?: number | null
+          status?: Database["guide"]["Enums"]["outbox_status"]
+          attempts?: number
+          next_attempt_at?: string
+          locked_at?: string | null
+          lock_id?: string | null
+          brevo_message_id?: string | null
+          last_error?: string | null
+          created_at?: string
+          done_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_outbox_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "subscribers"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1897,6 +2016,10 @@ export type Database = {
           created_at: string
           updated_at: string
           has_en: boolean | null
+          send_lock_id: string | null
+          send_locked_at: string | null
+          send_attempts: number
+          send_next_at: string | null
         }
         Insert: {
           id?: string
@@ -1921,6 +2044,10 @@ export type Database = {
           created_at?: string
           updated_at?: string
           has_en?: never
+          send_lock_id?: string | null
+          send_locked_at?: string | null
+          send_attempts?: number
+          send_next_at?: string | null
         }
         Update: {
           id?: string
@@ -1945,6 +2072,31 @@ export type Database = {
           created_at?: string
           updated_at?: string
           has_en?: never
+          send_lock_id?: string | null
+          send_locked_at?: string | null
+          send_attempts?: number
+          send_next_at?: string | null
+        }
+        Relationships: []
+      }
+      newsletter_rate: {
+        Row: {
+          bucket: string
+          span: string
+          window_start: string
+          hits: number
+        }
+        Insert: {
+          bucket: string
+          span: string
+          window_start: string
+          hits?: number
+        }
+        Update: {
+          bucket?: string
+          span?: string
+          window_start?: string
+          hits?: number
         }
         Relationships: []
       }
@@ -2524,7 +2676,7 @@ export type Database = {
           unsubscribe_source: string | null
           unsubscribe_token: string
           user_id: string | null
-          brevo_contact_id: string | null
+          brevo_contact_id: number | null
           synced_at: string | null
           created_at: string
           updated_at: string
@@ -2539,6 +2691,9 @@ export type Database = {
           related_confirmed_at: string | null
           related_withdrawn_at: string | null
           related_withdraw_source: string | null
+          confirm_sent_at: string | null
+          confirm_sends: number
+          confirm_resend_used: boolean
         }
         Insert: {
           id?: string
@@ -2554,7 +2709,7 @@ export type Database = {
           unsubscribe_source?: string | null
           unsubscribe_token?: string
           user_id?: string | null
-          brevo_contact_id?: string | null
+          brevo_contact_id?: number | null
           synced_at?: string | null
           created_at?: string
           updated_at?: string
@@ -2569,6 +2724,9 @@ export type Database = {
           related_confirmed_at?: string | null
           related_withdrawn_at?: string | null
           related_withdraw_source?: string | null
+          confirm_sent_at?: string | null
+          confirm_sends?: number
+          confirm_resend_used?: boolean
         }
         Update: {
           id?: string
@@ -2584,7 +2742,7 @@ export type Database = {
           unsubscribe_source?: string | null
           unsubscribe_token?: string
           user_id?: string | null
-          brevo_contact_id?: string | null
+          brevo_contact_id?: number | null
           synced_at?: string | null
           created_at?: string
           updated_at?: string
@@ -2599,6 +2757,9 @@ export type Database = {
           related_confirmed_at?: string | null
           related_withdrawn_at?: string | null
           related_withdraw_source?: string | null
+          confirm_sent_at?: string | null
+          confirm_sends?: number
+          confirm_resend_used?: boolean
         }
         Relationships: []
       }
@@ -3095,9 +3256,13 @@ export type Database = {
       admin_analytics_article_conversion: { Args: { p_range?: string; p_from?: string; p_to?: string; p_sort?: string; p_limit?: number }; Returns: Json }
       admin_analytics_stats: { Args: { p_range?: string; p_granularity?: string; p_from?: string; p_to?: string }; Returns: Json }
       admin_analytics_top: { Args: { p_name?: string; p_group?: string; p_range?: string; p_from?: string; p_to?: string; p_limit?: number }; Returns: Json }
+      admin_cookie_consent_counts: { Args: { p_from?: string; p_to?: string }; Returns: Json }
+      admin_cookie_consent_lookup: { Args: { p_consent_id: string }; Returns: Json }
       admin_create_ingest_token: { Args: { p_label: string; p_expires_days: number }; Returns: Json }
       admin_dashboard_stats: { Args: never; Returns: Json }
       admin_delete_user_review: { Args: { p_id: string; p_reason: string }; Returns: Json }
+      admin_email_health: { Args: never; Returns: Json }
+      admin_email_retry_failed: { Args: never; Returns: number }
       admin_erase_subscriber: { Args: { p_id: string; p_email_confirm: string; p_reason: string }; Returns: Json }
       admin_events_agent_info: { Args: { p_ids: string[] }; Returns: { id: string; source: Database["guide"]["Enums"]["event_source"]; duplicate_of: string }[] }
       admin_events_summary: { Args: never; Returns: Json }
@@ -3184,6 +3349,7 @@ export type Database = {
       item_is_en_ready: { Args: { p_item_id: string }; Returns: boolean }
       item_live_exempt: { Args: { p_item_id: string }; Returns: boolean }
       item_publish_blockers: { Args: { p_item_id: string }; Returns: string[] }
+      log_cookie_consent: { Args: { p_consent_id: string; p_action: string; p_categories: string[]; p_revision: number; p_locale: string }; Returns: undefined }
       mark_reviews_seen: { Args: never; Returns: string }
       media_clean_text: { Args: { p_value: string; p_max: number }; Returns: string }
       media_committed_owners: { Args: { p_id: string }; Returns: Json }
@@ -3220,6 +3386,7 @@ export type Database = {
       reorder_news_categories: { Args: { p_ids: string[] }; Returns: undefined }
       reorder_review_photos: { Args: { p_review_id: string; p_ids: string[] }; Returns: undefined }
       replace_media: { Args: { p_id: string; p_expected_version: number; p_storage_path: string; p_original_filename: string; p_width: number; p_height: number; p_dominant_color?: string }; Returns: { id: string; version: number; storage_path: string; previous_storage_path: string; mime_type: string; size_bytes: number; updated_at: string }[] }
+      request_confirm_resend: { Args: { p_token: string }; Returns: string }
       resolve_redirect: { Args: { p_kind: string; p_locale: string; p_slug: string }; Returns: string }
       review_body_is_empty: { Args: { p_html: string }; Returns: boolean }
       review_photo_public_deletable: { Args: { p_name: string }; Returns: boolean }
@@ -3241,7 +3408,6 @@ export type Database = {
       shoe_model_taken: { Args: { p_brand: string; p_model: string; p_except_id?: string }; Returns: boolean }
       social_links_valid: { Args: { p: Json }; Returns: boolean }
       submit_user_review: { Args: { p_item_id: string; p_overall: number; p_scores?: Json; p_body?: string; p_locale?: Database["guide"]["Enums"]["locale"] }; Returns: string }
-      subscribe_newsletter: { Args: { p_email: string; p_locale: Database["guide"]["Enums"]["locale"]; p_source: string; p_consent: boolean; p_page?: string; p_related_consent?: boolean }; Returns: undefined }
       text_array_except: { Args: { p_a: string[]; p_b: string[] }; Returns: string[] }
       track_event: { Args: { p_name: string; p_path: string; p_locale: string; p_content_type?: string; p_content_slug?: string; p_pillar?: string; p_partner?: string; p_source?: string; p_device?: string }; Returns: undefined }
       undo_import_batch: { Args: { p_batch_id: string }; Returns: Json }
@@ -3267,6 +3433,8 @@ export type Database = {
       news_status: "draft" | "published" | "rejected"
       newsletter_item_kind: "article" | "news" | "event"
       newsletter_status: "draft" | "scheduled" | "sending" | "sent" | "cancelled" | "failed"
+      outbox_kind: "confirm_email" | "brevo_sync" | "brevo_delete"
+      outbox_status: "pending" | "processing" | "done" | "failed" | "skipped"
       related_consent_status: "none" | "pending" | "granted" | "withdrawn"
       review_photo_status: "pending" | "approved" | "rejected"
       review_status: "pending" | "visible" | "hidden"
@@ -3305,6 +3473,8 @@ export const Constants = {
       news_status: ["draft", "published", "rejected"],
       newsletter_item_kind: ["article", "news", "event"],
       newsletter_status: ["draft", "scheduled", "sending", "sent", "cancelled", "failed"],
+      outbox_kind: ["confirm_email", "brevo_sync", "brevo_delete"],
+      outbox_status: ["pending", "processing", "done", "failed", "skipped"],
       related_consent_status: ["none", "pending", "granted", "withdrawn"],
       review_photo_status: ["pending", "approved", "rejected"],
       review_status: ["pending", "visible", "hidden"],

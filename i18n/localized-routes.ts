@@ -92,6 +92,13 @@ export const localizedRoutes = {
 
   // Newsletter (the two token pages are per-visit: never prerendered)
   newsletter: { es: '/newsletter', en: '/newsletter', render: 'prerender' },
+  // F4.6: URL of the confirmation email. SSR (the token is in the query), GET never confirms: a button POSTs.
+  'newsletter-confirm': {
+    es: '/newsletter/confirmar',
+    en: '/newsletter/confirm',
+    render: 'ssr',
+    noReferrer: true,
+  },
   'newsletter-confirmed': {
     es: '/newsletter/confirmada',
     en: '/newsletter/confirmed',

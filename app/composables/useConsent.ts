@@ -1,5 +1,6 @@
 import { buildConsentConfig } from '~/utils/consent-config'
-import { consentFromCookie, readStoredConsent, NO_CONSENT, type ConsentCategory, type ConsentState } from '~/utils/consent'
+import { logCookieConsent } from '~/services/consent-log'
+import { consentFromCookie, readStoredConsent, isAdminPath, CONSENT_REVISION, NO_CONSENT, type ConsentCategory, type ConsentState } from '~/utils/consent'
 import { NEWS_VIEW_COOKIE } from '~/utils/hero-intro'
 
 type CookieConsentApi = typeof import('vanilla-cookieconsent')
@@ -51,6 +52,7 @@ function say(text: string) {
  */
 export function useConsent() {
   const nuxtApp = useNuxtApp()
+  const supabase = useRuntimeConfig().public.supabase
   const state = useState<ConsentState>('consent', () => ({ ...NO_CONSENT }))
 
   /** Reads the saved choice from the cookie. Call after hydration so server and client HTML agree. */
@@ -88,6 +90,19 @@ export function useConsent() {
     }, 0)
   }
 
+  /** Server proof of the choice (D87). Legal duty: it does not depend on the analytics switch. */
+  function logChoice(action: 'first' | 'change') {
+    const cookie = cmp?.getCookie()
+    if (!cookie?.consentId || isAdminPath(window.location.pathname)) return
+    logCookieConsent({ supabaseUrl: String(supabase?.url ?? ''), publishableKey: String(supabase?.key ?? '') }, {
+      consentId: cookie.consentId,
+      action,
+      categories: cookie.categories,
+      revision: CONSENT_REVISION,
+      locale: String(nuxtApp.$i18n.locale.value) === 'en' ? 'en' : 'es',
+    })
+  }
+
   function writeStatusLine() {
     const header = rootEl()?.querySelector('.pm__header')
     if (!header) return
@@ -121,8 +136,14 @@ export function useConsent() {
             newsViewCookie: NEWS_VIEW_COOKIE,
             handlers: {
               onConsent: sync,
-              onFirstConsent: afterChoice,
-              onChange: afterChoice,
+              onFirstConsent: () => {
+                logChoice('first')
+                afterChoice()
+              },
+              onChange: () => {
+                logChoice('change')
+                afterChoice()
+              },
               onModalReady: ({ modalName, modal }) => {
                 if (modalName !== 'consentModal') return
                 // Layer one is a non-modal dialog: it never traps focus or blocks the page.

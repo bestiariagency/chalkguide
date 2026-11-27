@@ -74,6 +74,12 @@
 -- y F8.20b aporte propio (D91/D92: insight_* en lugar de author_note_*, seo_keyword_* interna, meta_description_* solo
 -- de Xavi, CHECK J13/J14 + NFC, indexable con ≥ 80 palabras, FTS, has_insight, ingesta J11–J17, guarda J21) y
 -- la foto de una noticia rechazada desde borrador, invisible para anon.
+-- y D87 (registro de consentimientos de cookies guide.cookie_consent_log: sin IP, UA, usuario ni path, solo
+-- log_cookie_consent escribe, validación silenciosa, necessary implícita, topes 120/min, 5.000/día y 10 por consent_id
+-- y día, lectura solo admin por RPC, purga a 36 meses).
+-- y F4.6 + 8.13 (Brevo doble opt-in y envío semanal, docs/security/F4.6-brevo-spec.md B1–B30 y L1–L11: alta solo por
+-- svc_subscribe, service_role sin grants de tabla, outbox sin PII, token solo en svc_issue_confirm_token, topes por IP,
+-- por email y global, ALTCHA de un uso, L1/L2/L4/L10, actor brevo:<id>, envío con lock send:<id>:<lock>, L11).
 -- Se ejecuta entero como postgres (execute_sql o psql) dentro de BEGIN … ROLLBACK: no deja datos
 -- (los usuarios de prueba de auth.users y el objeto de Storage también se descartan).
 -- Si algo falla, lanza una excepción LEAK/FAIL y la transacción se aborta.
@@ -84,6 +90,19 @@
 begin;
 -- F6.13 V1: marca de suite completa (local a esta transacción); la exigen los fixtures destructivos.
 select set_config('guide.rls_suite', 'running', true);
+
+-- F4.6 L9/B10: estado real antes de nada (el alta pública solo va por la EF newsletter-subscribe → svc_subscribe).
+do $$
+begin
+  if has_function_privilege('anon', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE')
+     or has_function_privilege('authenticated', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE')
+     or has_function_privilege('service_role', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE') then
+    raise exception 'LEAK F4.6 L9/B10: subscribe_newsletter ejecutable por un rol de la API';
+  end if;
+end $$;
+-- Los bloques F6.14, D56 y D66 ejercitan el cuerpo del alta (validaciones, O4, afines) como anon/authenticated: EXECUTE
+-- temporal dentro de esta transacción. El bloque F4.6 lo revoca y comprueba los 42501 antes del ROLLBACK.
+grant execute on function guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean) to anon, authenticated;
 
 -- ═════════════ Fixtures (como postgres) ═════════════
 -- F6.4: los fixtures crean artículos ya publicados con relacionados → mantenimiento explícito (postgres).
@@ -7001,9 +7020,10 @@ begin
                 where s.email like 'rls-f614-o4%' and (e.page like '%?%' or e.page like '%#%')) then
     raise exception 'LEAK F6.14 O4: consent_page guarda query string o fragmento'; end if;
 
-  -- Caducidad y retención (la función existe; el job de pg_cron no, hasta F4.6)
-  if exists (select 1 from cron.job where command ilike '%expire_pending_subscribers%') then
-    raise exception 'FAIL F6.14: expire_pending_subscribers programado antes de F4.6'; end if;
+  -- Caducidad y retención: desde F4.6, job diario guide-subscribers-expire (run_subscribers_expire → job_health)
+  if not exists (select 1 from cron.job where jobname = 'guide-subscribers-expire' and schedule = '20 2 * * *'
+                 and command ilike '%guide.run_subscribers_expire()%') then
+    raise exception 'FAIL F6.14/F4.6: caducidad sin programar'; end if;
   j := guide.expire_pending_subscribers();
   if (j ->> 'expired')::int < 1 or (j ->> 'anonymized_unconfirmed')::int < 1 or (j ->> 'anonymized_unsubscribed')::int < 1 then
     raise exception 'FAIL F6.14: expire_pending_subscribers (%)', j; end if;
@@ -8343,7 +8363,7 @@ select set_config('request.jwt.claims', '{"role":"anon"}', true);
 do $$
 begin
   if not exists (select 1 from guide.authors where slug = 'ana' and name = 'Ana' and role_es = 'Redactora'
-                 and role_en = 'Writer' and has_en and photo_media_id is null) then
+                 and role_en = 'Writer' and has_en) then  -- foto no se comprueba: Xavi la sube desde el panel
     raise exception 'FAIL anon D57: no lee la autora seed ana'; end if;
   perform a.author_id from guide.articles a where a.id = 'd5700000-0000-4000-8000-0000000000a1';
   if not found then raise exception 'FAIL anon D57: no lee el artículo vivo'; end if;
@@ -9254,10 +9274,10 @@ begin
              unnest(array['anon', 'authenticated', 'service_role']) r(role)
              where has_function_privilege(r.role, f.fn, 'EXECUTE')) then
     raise exception 'LEAK D66: helpers internos ejecutables por clientes'; end if;
-  -- Veto D66 O6: el alta solo para anon y authenticated. O5: retirada del panel solo authenticated (assert_admin dentro)
-  if not has_function_privilege('anon', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE')
-     or not has_function_privilege('authenticated', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE')
-     or has_function_privilege('service_role', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE') then
+  -- Veto D66 O6, revisado por F4.6 L9: el alta ya no es pública (EXECUTE temporal de esta suite; el estado real se
+  -- comprueba al principio y en el bloque F4.6) y nunca es de service_role, que solo usa svc_subscribe.
+  -- O5: retirada del panel solo authenticated (assert_admin dentro)
+  if has_function_privilege('service_role', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE') then
     raise exception 'LEAK D66 O6: EXECUTE de subscribe_newsletter'; end if;
   if not exists (select 1 from pg_proc where oid = 'guide.admin_withdraw_related(uuid, text)'::regprocedure
                  and prosecdef and proconfig @> array['search_path=""'])
@@ -10852,6 +10872,8 @@ begin
   begin insert into guide.newsletter_issue_items (issue_id, kind, ref_id, position) values (iss, 'event', ev, 9);
         raise exception 'LEAK F8: un evento no aprobado entra en la carta';
   exception when check_violation then null; end;
+  -- compose_issue reutiliza la carta real de la semana (la rutina ya le pone asunto e intro): se vacía aquí (rollback al final)
+  update guide.newsletter_issues set subject_es = null, subject_en = null, intro_es = null, intro_en = null where id = iss;
   begin perform guide.approve_issue(iss); raise exception 'FAIL F8: aprueba sin asunto ni intro';
   exception when check_violation then null; end;
   update guide.newsletter_issues set subject_es = 'F8 asunto', intro_es = 'F8 intro' where id = iss;
@@ -11884,6 +11906,1176 @@ reset role;
 select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
 
 -- Fin F8
+
+-- ═════════════ D87 registro de consentimientos de cookies (guide.cookie_consent_log) ═════════════
+-- Sin IP, UA, usuario ni path; solo log_cookie_consent escribe (valida en silencio, necessary implícita, categorías
+-- ordenadas y sin repetir, minuto truncado), topes global por minuto / día y 10 por consent_id y día, lectura solo
+-- admin por RPC, purga a 36 meses.
+savepoint d87_guard;
+release savepoint d87_guard;
+
+-- Catálogo (postgres)
+do $$
+declare v_p regprocedure; v_t text; v_r text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  if (select string_agg(column_name, ',' order by ordinal_position) from information_schema.columns
+      where table_schema = 'guide' and table_name = 'cookie_consent_log')
+     <> 'id,consent_id,action,categories,revision,locale,created_at' then
+    raise exception 'LEAK D87: columnas de cookie_consent_log'; end if;
+  foreach v_t in array array['guide.cookie_consent_log', 'guide.cookie_consent_rate'] loop
+    if not (select c.relrowsecurity from pg_class c where c.oid = v_t::regclass) then
+      raise exception 'LEAK D87: RLS desactivada en %', v_t; end if;
+    foreach v_r in array array['anon', 'authenticated', 'service_role'] loop
+      if has_table_privilege(v_r, v_t, 'select') or has_table_privilege(v_r, v_t, 'insert')
+         or has_table_privilege(v_r, v_t, 'update') or has_table_privilege(v_r, v_t, 'delete')
+         or has_table_privilege(v_r, v_t, 'truncate') then
+        raise exception 'LEAK D87: privilegios de tabla de % en %', v_r, v_t; end if;
+    end loop;
+  end loop;
+  if exists (select 1 from pg_policies where schemaname = 'guide'
+             and tablename in ('cookie_consent_log', 'cookie_consent_rate')) then
+    raise exception 'LEAK D87: hay policies'; end if;
+  v_p := 'guide.log_cookie_consent(uuid,text,text[],integer,text)'::regprocedure;
+  if not has_function_privilege('anon', v_p, 'execute') or not has_function_privilege('authenticated', v_p, 'execute')
+     or has_function_privilege('service_role', v_p, 'execute')
+     or not (select p.prosecdef and p.proconfig @> array['search_path=""'] from pg_proc p where p.oid = v_p)
+     or exists (select 1 from pg_proc p, aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+                where p.oid = v_p and a.grantee = 0 and a.privilege_type = 'EXECUTE') then
+    raise exception 'FAIL D87: EXECUTE / SECURITY DEFINER / search_path de log_cookie_consent'; end if;
+  v_p := 'guide.purge_cookie_consent_log()'::regprocedure;
+  if has_function_privilege('anon', v_p, 'execute') or has_function_privilege('authenticated', v_p, 'execute')
+     or has_function_privilege('service_role', v_p, 'execute') or (select p.prosecdef from pg_proc p where p.oid = v_p)
+     or exists (select 1 from pg_proc p, aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+                where p.oid = v_p and a.grantee = 0 and a.privilege_type = 'EXECUTE') then
+    raise exception 'LEAK D87: EXECUTE en la purga'; end if;
+  foreach v_p in array array['guide.admin_cookie_consent_lookup(uuid)'::regprocedure,
+                             'guide.admin_cookie_consent_counts(date,date)'::regprocedure] loop
+    if has_function_privilege('anon', v_p, 'execute') or has_function_privilege('service_role', v_p, 'execute')
+       or not has_function_privilege('authenticated', v_p, 'execute')
+       or not (select p.prosecdef and p.proconfig @> array['search_path=""'] from pg_proc p where p.oid = v_p)
+       or exists (select 1 from pg_proc p, aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
+                  where p.oid = v_p and a.grantee = 0 and a.privilege_type = 'EXECUTE') then
+      raise exception 'LEAK D87: EXECUTE en %', v_p; end if;
+  end loop;
+  if not exists (select 1 from cron.job where jobname = 'guide-cookie-consent-purge'
+                 and command = 'select guide.purge_cookie_consent_log()') then
+    raise exception 'FAIL D87: falta el job de purga'; end if;
+  -- Contadores limpios para este minuto y este día (la transacción se revierte al final)
+  delete from guide.cookie_consent_rate;
+end $$;
+
+-- anon: escribe solo por log_cookie_consent, valida en silencio, no lee nada ni llama a lo interno
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  -- Válidos
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000001', 'first', array['necessary', 'analytics'], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000001', 'change',
+                                   array['ads', 'analytics', 'ads'], 1, 'en');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000002', 'first', array['necessary'], 0, 'es');
+  -- Inválidos: no escriben y no fallan
+  perform guide.log_cookie_consent(null, 'first', array['necessary'], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'update', array['necessary'], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', null, array['necessary'], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['marketing'], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['analytics', 'Ads'], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', null, 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['analytics', null], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first',
+                                   array['ads', 'ads', 'ads', 'ads'], 1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['necessary'], -1, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['necessary'], null, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['necessary'], 100001, 'es');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['necessary'], 1, 'fr');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000099', 'first', array['necessary'], 1, null);
+  begin perform 1 from guide.cookie_consent_log; raise exception 'LEAK D87 anon: lee cookie_consent_log';
+  exception when insufficient_privilege then null; end;
+  begin perform 1 from guide.cookie_consent_rate; raise exception 'LEAK D87 anon: lee cookie_consent_rate';
+  exception when insufficient_privilege then null; end;
+  begin insert into guide.cookie_consent_log (consent_id, action, revision, locale)
+    values ('cc870000-0000-4000-8000-000000000098', 'first', 1, 'es');
+    raise exception 'LEAK D87 anon: INSERT directo'; exception when insufficient_privilege then null; end;
+  begin perform guide.purge_cookie_consent_log(); raise exception 'LEAK D87 anon: llama a la purga';
+  exception when insufficient_privilege then null; end;
+  begin perform guide.admin_cookie_consent_lookup('cc870000-0000-4000-8000-000000000001');
+    raise exception 'LEAK D87 anon: admin_cookie_consent_lookup'; exception when insufficient_privilege then null; end;
+  begin perform guide.admin_cookie_consent_counts(); raise exception 'LEAK D87 anon: admin_cookie_consent_counts';
+  exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+
+-- authenticated sin rol de admin: escribe por log_cookie_consent, no lee ni pasa assert_admin
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated"}', true);
+do $$
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000003', 'first', '{}'::text[], 2, 'en');
+  begin perform 1 from guide.cookie_consent_log; raise exception 'LEAK D87 user: lee cookie_consent_log';
+  exception when insufficient_privilege then null; end;
+  begin update guide.cookie_consent_log set revision = 9; raise exception 'LEAK D87 user: UPDATE';
+  exception when insufficient_privilege then null; end;
+  begin delete from guide.cookie_consent_log; raise exception 'LEAK D87 user: DELETE';
+  exception when insufficient_privilege then null; end;
+  begin perform guide.purge_cookie_consent_log(); raise exception 'LEAK D87 user: llama a la purga';
+  exception when insufficient_privilege then null; end;
+  begin perform guide.admin_cookie_consent_lookup('cc870000-0000-4000-8000-000000000001');
+    raise exception 'LEAK D87 user: admin_cookie_consent_lookup'; exception when insufficient_privilege then null; end;
+  begin perform guide.admin_cookie_consent_counts(); raise exception 'LEAK D87 user: admin_cookie_consent_counts';
+  exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+
+-- Lo escrito y topes (postgres; now() es fijo dentro de la transacción: mismo minuto y mismo día)
+do $$
+declare v_s text; v_n int;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  if exists (select 1 from guide.cookie_consent_log
+             where consent_id in ('cc870000-0000-4000-8000-000000000098', 'cc870000-0000-4000-8000-000000000099')) then
+    raise exception 'LEAK D87: escribió un intento inválido'; end if;
+  select string_agg(l.consent_id::text || '|' || l.action || '|' || array_to_string(l.categories, '+') || '|'
+                    || l.revision || '|' || l.locale, ';' order by l.consent_id, l.id) into v_s
+  from guide.cookie_consent_log l where l.consent_id::text like 'cc870000-%';
+  if v_s is distinct from
+       'cc870000-0000-4000-8000-000000000001|first|analytics|1|es;'
+    || 'cc870000-0000-4000-8000-000000000001|change|ads+analytics|1|en;'
+    || 'cc870000-0000-4000-8000-000000000002|first||0|es;'
+    || 'cc870000-0000-4000-8000-000000000003|first||2|en' then
+    raise exception 'FAIL D87: filas escritas %', v_s; end if;
+  if exists (select 1 from guide.cookie_consent_log l where l.consent_id::text like 'cc870000-%'
+             and l.created_at <> date_trunc('minute', now())) then
+    raise exception 'FAIL D87: created_at no truncado al minuto'; end if;
+  if (select r.n from guide.cookie_consent_rate r where r.name = '*' and r.bucket = date_trunc('minute', now())) <> 4
+     or (select r.n from guide.cookie_consent_rate r where r.name = '*day' and r.bucket = date_trunc('day', now(), 'UTC')) <> 4 then
+    raise exception 'FAIL D87: los inválidos cuentan en el tope o faltan contadores'; end if;
+  -- CHECK de la tabla (defensa en profundidad, como postgres)
+  begin insert into guide.cookie_consent_log (consent_id, action, categories, revision, locale)
+    values ('cc870000-0000-4000-8000-000000000098', 'first', array['necessary'], 1, 'es');
+    raise exception 'FAIL D87: CHECK admite necessary'; exception when check_violation then null; end;
+  begin insert into guide.cookie_consent_log (consent_id, action, revision, locale, created_at)
+    values ('cc870000-0000-4000-8000-000000000098', 'first', 1, 'es', date_trunc('minute', now()) + interval '7 seconds');
+    raise exception 'FAIL D87: CHECK admite segundos'; exception when check_violation then null; end;
+
+  -- 10 filas por consent_id y día
+  for i in 1..15 loop
+    perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000004', 'change', array['analytics'], 1, 'es');
+  end loop;
+  select count(*) into v_n from guide.cookie_consent_log where consent_id = 'cc870000-0000-4000-8000-000000000004';
+  if v_n <> 10 then raise exception 'FAIL D87: tope por consent_id (% filas)', v_n; end if;
+
+  -- Tope por minuto (120)
+  update guide.cookie_consent_rate set n = 120 where name = '*' and bucket = date_trunc('minute', now());
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000005', 'first', array['necessary'], 1, 'es');
+  if exists (select 1 from guide.cookie_consent_log where consent_id = 'cc870000-0000-4000-8000-000000000005') then
+    raise exception 'FAIL D87: tope por minuto'; end if;
+  -- Tope diario (5.000)
+  update guide.cookie_consent_rate set n = 0 where name = '*' and bucket = date_trunc('minute', now());
+  update guide.cookie_consent_rate set n = 5000 where name = '*day' and bucket = date_trunc('day', now(), 'UTC');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000005', 'first', array['necessary'], 1, 'es');
+  if exists (select 1 from guide.cookie_consent_log where consent_id = 'cc870000-0000-4000-8000-000000000005') then
+    raise exception 'FAIL D87: tope diario'; end if;
+  update guide.cookie_consent_rate set n = 0 where name = '*day' and bucket = date_trunc('day', now(), 'UTC');
+  perform guide.log_cookie_consent('cc870000-0000-4000-8000-000000000005', 'first', array['necessary'], 1, 'es');
+  if not exists (select 1 from guide.cookie_consent_log where consent_id = 'cc870000-0000-4000-8000-000000000005') then
+    raise exception 'FAIL D87: no escribe bajo el tope'; end if;
+end $$;
+
+-- Admin: historial por consent_id y recuentos
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+do $$
+declare j jsonb;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  j := guide.admin_cookie_consent_lookup('cc870000-0000-4000-8000-000000000001');
+  if jsonb_array_length(j) <> 2 or j -> 0 ->> 'action' <> 'first' or j -> 0 -> 'categories' <> '["analytics"]'
+     or j -> 1 ->> 'action' <> 'change' or j -> 1 -> 'categories' <> '["ads", "analytics"]' or j -> 1 ->> 'locale' <> 'en'
+     or (j -> 0) ?| array['id', 'consent_id', 'ip', 'user_id', 'path'] then
+    raise exception 'FAIL D87: admin_cookie_consent_lookup %', j; end if;
+  if guide.admin_cookie_consent_lookup('cc870000-0000-4000-8000-000000000097') <> '[]'::jsonb then
+    raise exception 'FAIL D87: lookup de un consent_id ausente'; end if;
+  begin perform guide.admin_cookie_consent_lookup(null); raise exception 'FAIL D87: lookup admite null';
+  exception when invalid_parameter_value then null; end;
+  j := guide.admin_cookie_consent_counts(current_date - 1, current_date + 1);
+  if (j ->> 'total')::int < 15
+     or not exists (select 1 from jsonb_array_elements(j -> 'rows') x
+                    where (x ->> 'revision')::int = 1 and x ->> 'action' = 'change' and x -> 'categories' = '["analytics"]'
+                      and x ->> 'locale' = 'es' and (x ->> 'n')::int >= 10)
+     or exists (select 1 from jsonb_array_elements(j -> 'rows') x where x ? 'consent_id') then
+    raise exception 'FAIL D87: admin_cookie_consent_counts %', j ->> 'total'; end if;
+  if (guide.admin_cookie_consent_counts(current_date + 2, current_date + 3) ->> 'total')::int <> 0 then
+    raise exception 'FAIL D87: recuento fuera de rango'; end if;
+  begin perform guide.admin_cookie_consent_counts(current_date, current_date - 1);
+    raise exception 'FAIL D87: rango invertido'; exception when invalid_parameter_value then null; end;
+end $$;
+reset role;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+
+-- Purga (postgres): fuera lo de más de 36 meses y los contadores viejos; se queda lo reciente
+do $$
+declare v bigint;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  insert into guide.cookie_consent_log (consent_id, action, revision, locale, created_at) values
+    ('cc870000-0000-4000-8000-000000000006', 'first', 0, 'es', date_trunc('minute', now() - interval '37 months')),
+    ('cc870000-0000-4000-8000-000000000007', 'first', 0, 'es', date_trunc('minute', now() - interval '35 months'));
+  insert into guide.cookie_consent_rate (bucket, name, n) values
+    (date_trunc('minute', now() - interval '2 hours'), '*', 1),
+    (date_trunc('day', now(), 'UTC') - interval '3 days', '*day', 1),
+    (date_trunc('day', now(), 'UTC') - interval '1 day', '*day', 1);
+  v := guide.purge_cookie_consent_log();
+  if v < 1 or exists (select 1 from guide.cookie_consent_log where consent_id = 'cc870000-0000-4000-8000-000000000006')
+     or not exists (select 1 from guide.cookie_consent_log where consent_id = 'cc870000-0000-4000-8000-000000000007')
+     or not exists (select 1 from guide.cookie_consent_log where consent_id = 'cc870000-0000-4000-8000-000000000001') then
+    raise exception 'FAIL D87: purga del registro (%)', v; end if;
+  if exists (select 1 from guide.cookie_consent_rate where name = '*' and bucket < now() - interval '1 hour')
+     or exists (select 1 from guide.cookie_consent_rate
+                where name = '*day' and bucket < date_trunc('day', now(), 'UTC') - interval '2 days')
+     or not exists (select 1 from guide.cookie_consent_rate
+                    where name = '*day' and bucket = date_trunc('day', now(), 'UTC') - interval '1 day')
+     or not exists (select 1 from guide.cookie_consent_rate where name = '*' and bucket = date_trunc('minute', now())) then
+    raise exception 'FAIL D87: purga de contadores'; end if;
+end $$;
+
+-- D87 O1 (docs/security/D87-cookie-consent-log-review.md): señal de salud 'cookie_consent' en job_health desde la purga
+-- horaria. 500 daily_cap_reached si hoy o ayer (UTC) '*day' >= 5.000; 500 minute_cap_hits si más de 3 minutos de la
+-- última hora llegaron a 120; si no, 200. details solo con recuentos.
+do $$
+declare v_job record;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  -- Sana: contadores bajo los topes (3 minutos al tope no bastan)
+  delete from guide.cookie_consent_rate;
+  insert into guide.cookie_consent_rate (bucket, name, n) values
+    (date_trunc('minute', now()), '*', 120),
+    (date_trunc('minute', now()) - interval '5 minutes', '*', 120),
+    (date_trunc('minute', now()) - interval '10 minutes', '*', 130),
+    (date_trunc('minute', now()) - interval '15 minutes', '*', 119),
+    (date_trunc('minute', now()) - interval '2 hours', '*', 500),
+    (date_trunc('day', now(), 'UTC'), '*day', 4999),
+    (date_trunc('day', now(), 'UTC') - interval '2 days', '*day', 9000);
+  perform guide.purge_cookie_consent_log();
+  select * into v_job from guide.job_health where job = 'cookie_consent';
+  if v_job.status_code is distinct from 200 or v_job.details -> 'alerts' <> '[]'::jsonb
+     or (v_job.details ->> 'minute_cap_hits_last_hour')::int <> 3 or (v_job.details ->> 'today_attempts')::int <> 4999
+     or (v_job.details ->> 'yesterday_attempts')::int <> 0 or v_job.checked_at is distinct from now() then
+    raise exception 'FAIL D87 O1: estado sano %', v_job; end if;
+  if exists (select 1 from jsonb_object_keys(v_job.details) k
+             where k not in ('alerts', 'cap_per_day', 'cap_per_minute', 'minute_hits_threshold', 'today_attempts',
+                             'yesterday_attempts', 'minute_cap_hits_last_hour', 'purged_rows')) then
+    raise exception 'LEAK D87 O1: claves de details %', v_job.details; end if;
+
+  -- Cuarto minuto al tope: minute_cap_hits
+  insert into guide.cookie_consent_rate (bucket, name, n) values (date_trunc('minute', now()) - interval '20 minutes', '*', 121);
+  perform guide.purge_cookie_consent_log();
+  select * into v_job from guide.job_health where job = 'cookie_consent';
+  if v_job.status_code <> 500 or v_job.details -> 'alerts' <> '["minute_cap_hits"]'::jsonb then
+    raise exception 'FAIL D87 O1: minute_cap_hits %', v_job.details; end if;
+
+  -- Tope diario hoy (y sin ráfagas): daily_cap_reached
+  delete from guide.cookie_consent_rate where name = '*';
+  update guide.cookie_consent_rate set n = 5000 where name = '*day' and bucket = date_trunc('day', now(), 'UTC');
+  perform guide.purge_cookie_consent_log();
+  select * into v_job from guide.job_health where job = 'cookie_consent';
+  if v_job.status_code <> 500 or v_job.details -> 'alerts' <> '["daily_cap_reached"]'::jsonb then
+    raise exception 'FAIL D87 O1: daily_cap_reached hoy %', v_job.details; end if;
+
+  -- Tope diario ayer
+  update guide.cookie_consent_rate set bucket = date_trunc('day', now(), 'UTC') - interval '1 day'
+  where name = '*day' and bucket = date_trunc('day', now(), 'UTC');
+  perform guide.purge_cookie_consent_log();
+  select * into v_job from guide.job_health where job = 'cookie_consent';
+  if v_job.status_code <> 500 or v_job.details -> 'alerts' <> '["daily_cap_reached"]'::jsonb
+     or (v_job.details ->> 'yesterday_attempts')::int <> 5000 then
+    raise exception 'FAIL D87 O1: daily_cap_reached ayer %', v_job.details; end if;
+
+  -- Vuelve a 200
+  delete from guide.cookie_consent_rate;
+  perform guide.purge_cookie_consent_log();
+  if (select status_code from guide.job_health where job = 'cookie_consent') <> 200 then
+    raise exception 'FAIL D87 O1: no vuelve a 200'; end if;
+  if (select count(*) from guide.job_health where job = 'cookie_consent') <> 1 then
+    raise exception 'FAIL D87 O1: upsert duplica la fila'; end if;
+end $$;
+
+-- authenticated sin rol de admin no ve la señal; el admin sí (policy job_health_select)
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated"}', true);
+do $$
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  if exists (select 1 from guide.job_health where job = 'cookie_consent') then
+    raise exception 'LEAK D87 O1: un usuario ve job_health'; end if;
+end $$;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+do $$
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  if not exists (select 1 from guide.job_health where job = 'cookie_consent' and status_code = 200) then
+    raise exception 'FAIL D87 O1: el admin no ve la señal'; end if;
+end $$;
+reset role;
+
+-- Fin D87
+
+-- ═════════════ F4.6 + 8.13 · Brevo doble opt-in y envío semanal (docs/security/F4.6-brevo-spec.md, L1–L11) ═════════════
+-- B1–B30 y L1–L11: subscribe_newsletter sin EXECUTE de anon/authenticated (L9/B10), service_role sin grants de tabla (O3),
+-- svc_* solo service_role con 42501 para el resto, outbox sin PII, token solo en svc_issue_confirm_token, topes por IP,
+-- reto ALTCHA de un solo uso, tope por email (B9) y global (B6), L1 (alta/baja en carrera), L2 (borrado tardío), L4
+-- (bounce transaccional por messageId), L10 (supresión deduplicada), actor brevo:<id> atado a la fila, envío con lock
+-- send:<id>:<lock> que no reutiliza item_live_exempt, cancelación desde sending = 55000 (L11), partición ES/EN por cupo.
+-- Las filas de este bloque usan el prefijo f4600000-… y emails rls-f46-*.
+
+-- Los bloques heredados ejercitan el cuerpo del alta con anon/authenticated (grant temporal al inicio de la suite).
+-- Aquí se vuelve al estado real de la BD (L9) para el resto del fichero.
+revoke all on function guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean) from public, anon, authenticated;
+
+create or replace function pg_temp.f46_err(q text) returns text language plpgsql as $$
+begin
+  execute q;
+  return 'ok';
+exception when others then
+  return sqlstate || ' ' || sqlerrm;
+end $$;
+create temp table _f46 (k text primary key, val text) on commit drop;
+grant select, insert, update on _f46 to anon, authenticated, service_role;
+
+-- Estático: grants, RLS y funciones internas
+do $$
+declare v_fn regprocedure; v_t text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  if has_function_privilege('anon', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE')
+     or has_function_privilege('authenticated', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE')
+     or has_function_privilege('service_role', 'guide.subscribe_newsletter(text, guide.locale, text, boolean, text, boolean)', 'EXECUTE') then
+    raise exception 'LEAK F4.6 L9/B10: subscribe_newsletter ejecutable por un rol de la API'; end if;
+  for v_fn in select p.oid::regprocedure from pg_proc p
+              where p.pronamespace = 'guide'::regnamespace and p.proname like 'svc\_%' and p.proname <> 'svc_assert' loop
+    if has_function_privilege('anon', v_fn, 'EXECUTE') or has_function_privilege('authenticated', v_fn, 'EXECUTE')
+       or not has_function_privilege('service_role', v_fn, 'EXECUTE')
+       or exists (select 1 from aclexplode((select proacl from pg_proc where oid = v_fn)) a where a.grantee = 0)
+       or not exists (select 1 from pg_proc where oid = v_fn and prosecdef and proconfig @> array['search_path=""'])
+       or pg_get_functiondef(v_fn) not like '%guide.svc_assert()%' then
+      raise exception 'LEAK F4.6 B14: EXECUTE, DEFINER o svc_assert de %', v_fn; end if;
+  end loop;
+  if (select count(*) from pg_proc p where p.pronamespace = 'guide'::regnamespace and p.proname like 'svc\_%') < 13 then
+    raise exception 'FAIL F4.6: faltan svc_*'; end if;
+  foreach v_t in array array['guide.subscribers', 'guide.subscriber_consent_events', 'guide.consent_texts', 'guide.newsletter_issues',
+                             'guide.newsletter_issue_items', 'guide.email_outbox', 'guide.newsletter_rate', 'guide.captcha_spent'] loop
+    if exists (select 1 from unnest(array['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER']) p
+               where has_table_privilege('service_role', v_t, p)) then
+      raise exception 'LEAK F4.6 O3: service_role con grants de tabla en %', v_t; end if;
+  end loop;
+  foreach v_t in array array['guide.email_outbox', 'guide.newsletter_rate', 'guide.captcha_spent'] loop
+    if not (select relrowsecurity from pg_class where oid = v_t::regclass)
+       or exists (select 1 from pg_policies where schemaname || '.' || tablename = v_t)
+       or exists (select 1 from unnest(array['anon', 'authenticated']) r, unnest(array['SELECT', 'INSERT', 'UPDATE', 'DELETE']) p
+                  where has_table_privilege(r, v_t, p)) then
+      raise exception 'LEAK F4.6: RLS, policies o grants de %', v_t; end if;
+  end loop;
+  if has_function_privilege('service_role', 'guide.unsubscribe_newsletter(uuid)', 'EXECUTE') then
+    raise exception 'LEAK F4.6 O3: service_role ejecuta unsubscribe_newsletter'; end if;
+  if not has_function_privilege('anon', 'guide.request_confirm_resend(text)', 'EXECUTE')
+     or has_function_privilege('service_role', 'guide.request_confirm_resend(text)', 'EXECUTE') then
+    raise exception 'FAIL F4.6 B5: EXECUTE de request_confirm_resend'; end if;
+  foreach v_t in array array['guide.admin_email_health()', 'guide.admin_email_retry_failed()'] loop
+    if has_function_privilege('anon', v_t::regprocedure, 'EXECUTE') or has_function_privilege('service_role', v_t::regprocedure, 'EXECUTE')
+       or not has_function_privilege('authenticated', v_t::regprocedure, 'EXECUTE') then
+      raise exception 'LEAK F4.6: EXECUTE de %', v_t; end if;
+  end loop;
+  -- B18: cron, triggers y helpers internos sin EXECUTE para ningún rol de la API
+  for v_fn in select unnest(array['guide.run_outbox_sweep()', 'guide.run_subscribers_expire()', 'guide.purge_newsletter_queue()',
+                                  'guide.run_newsletter_send()', 'guide.outbox_kick()', 'guide.subscribers_brevo_enqueue()',
+                                  'guide.svc_assert()', 'guide.outbox_locked(bigint, uuid)',
+                                  'guide.outbox_close(bigint, guide.outbox_status, text)', 'guide.newsletter_sent_today()',
+                                  'guide.newsletter_send_locked(uuid, uuid)', 'guide.subscriber_anonymize(uuid)',
+                                  'guide.expire_pending_subscribers()', 'guide.subscribers_guard()']::regprocedure[]) loop
+    if exists (select 1 from unnest(array['anon', 'authenticated', 'service_role']) r where has_function_privilege(r, v_fn, 'EXECUTE')) then
+      raise exception 'LEAK F4.6 B18: % ejecutable por un rol de la API', v_fn; end if;
+  end loop;
+  -- B15: el outbox no tiene columnas de email, token ni texto libre
+  if exists (select 1 from information_schema.columns where table_schema = 'guide' and table_name = 'email_outbox'
+             and (column_name ~ '(email|token|payload|body|response)' and column_name <> 'brevo_message_id')) then
+    raise exception 'LEAK F4.6 B15: columnas con PII en email_outbox'; end if;
+  if not exists (select 1 from cron.job where jobname = 'guide-outbox-sweep' and command like '%guide.run_outbox_sweep()%')
+     or not exists (select 1 from cron.job where jobname = 'guide-subscribers-expire' and command like '%guide.run_subscribers_expire()%')
+     or not exists (select 1 from cron.job where jobname = 'guide-newsletter-send' and command like '%guide.run_newsletter_send()%')
+     or not exists (select 1 from cron.job where jobname = 'guide-newsletter-queue-purge') then
+    raise exception 'FAIL F4.6: faltan los jobs de cron'; end if;
+  -- L11: la exención de envío no usa item_live_exempt ni draft_op
+  if pg_get_functiondef('guide.newsletter_send_locked(uuid, uuid)'::regprocedure) ~ 'item_live_exempt|draft_op'
+     or pg_get_functiondef('guide.svc_newsletter_claim(uuid)'::regprocedure) ~ 'item_live_exempt|draft_op'
+     or pg_get_functiondef('guide.svc_newsletter_record(uuid, uuid, guide.locale, bigint, text, integer, text)'::regprocedure) ~ 'item_live_exempt|draft_op' then
+    raise exception 'FAIL F4.6 L11: la exención de envío reutiliza item_live_exempt/draft_op'; end if;
+end $$;
+
+-- anon: 42501 en el alta antigua, en svc_* y en las tablas nuevas
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$
+declare v text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  v := pg_temp.f46_err($q$select guide.subscribe_newsletter('rls-f46-x@chalkguide.test', 'es', 'footer', true)$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L9 anon: subscribe_newsletter (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_subscribe('rls-f46-x@chalkguide.test', 'es', 'footer', true, null, false, null,
+                         repeat('a', 64), 'nojs', null)$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L9 anon: svc_subscribe (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_outbox_claim(20, gen_random_uuid())$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 anon: svc_outbox_claim (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_apply_brevo_event('unsubscribed', 1, 'a@b.cd', now())$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 anon: svc_apply_brevo_event (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_newsletter_claim(gen_random_uuid())$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 anon: svc_newsletter_claim (%)', v; end if;
+  v := pg_temp.f46_err($q$select 1 from guide.email_outbox$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 anon: lee email_outbox (%)', v; end if;
+  v := pg_temp.f46_err($q$insert into guide.newsletter_rate (bucket, span, window_start) values ('ip:' || repeat('a', 64), 'day', now())$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 anon: escribe newsletter_rate (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.run_outbox_sweep()$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 anon: run_outbox_sweep (%)', v; end if;
+  if guide.request_confirm_resend('nope') <> 'invalid' or guide.request_confirm_resend(repeat('0', 64)) <> 'ok' then
+    raise exception 'FAIL F4.6 B5 anon: request_confirm_resend no es neutra'; end if;
+end $$;
+reset role;
+
+-- authenticated (también con claims de service_role forjados): 42501
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000002","role":"service_role"}', true);
+do $$
+declare v text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  v := pg_temp.f46_err($q$select guide.subscribe_newsletter('rls-f46-x@chalkguide.test', 'es', 'footer', true)$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L9 user: subscribe_newsletter (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_issue_confirm_token(1, gen_random_uuid(), null)$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 user forjado: svc_issue_confirm_token (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_outbox_done(1, gen_random_uuid(), 'done', null, 1, null)$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 user forjado: svc_outbox_done (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_newsletter_record(gen_random_uuid(), gen_random_uuid(), 'es', 1, 'sent', 1, null)$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 user forjado: svc_newsletter_record (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.admin_email_health()$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 user: admin_email_health (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.admin_email_retry_failed()$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 user: admin_email_retry_failed (%)', v; end if;
+  v := pg_temp.f46_err($q$select 1 from guide.email_outbox$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 user: lee email_outbox (%)', v; end if;
+end $$;
+reset role;
+
+-- service_role: sin acceso directo (O3/L9); solo svc_*
+set local role service_role;
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+do $$
+declare v text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  v := pg_temp.f46_err($q$select 1 from guide.subscribers$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L9 service_role: SELECT subscribers (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.subscribers set status = 'active'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 O3 service_role: UPDATE subscribers (%)', v; end if;
+  v := pg_temp.f46_err($q$select 1 from guide.subscriber_consent_events$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 O3 service_role: SELECT subscriber_consent_events (%)', v; end if;
+  v := pg_temp.f46_err($q$insert into guide.subscriber_consent_events (subscriber_id, event, actor) values (gen_random_uuid(), 'confirm_sent', 'service')$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 O3 service_role: INSERT subscriber_consent_events (%)', v; end if;
+  v := pg_temp.f46_err($q$select 1 from guide.email_outbox$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 service_role: SELECT email_outbox (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.newsletter_issues set status = 'sent'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 service_role: UPDATE newsletter_issues (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.unsubscribe_newsletter(gen_random_uuid())$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 O3 service_role: unsubscribe_newsletter (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.subscribe_newsletter('rls-f46-x@chalkguide.test', 'es', 'footer', true)$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 service_role: subscribe_newsletter (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.admin_email_health()$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 service_role: admin_email_health (%)', v; end if;
+
+  -- Alta: argumentos, ALTCHA de un solo uso, topes por IP (B6/B7), respuesta neutra (B8)
+  v := pg_temp.f46_err($q$select guide.svc_subscribe('rls-f46-a@chalkguide.test', 'es', 'footer', true, null, false, null, 'zz', 'nojs', null)$q$);
+  if v not like '22023%' then raise exception 'FAIL F4.6: ip_hash inválido aceptado (%)', v; end if;
+  v := pg_temp.f46_err($q$select guide.svc_subscribe('rls-f46-a@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('b', 64), 'otro', null)$q$);
+  if v not like '22023%' then raise exception 'FAIL F4.6: modo inválido aceptado (%)', v; end if;
+  if guide.svc_subscribe('rls-f46-a@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('b', 64), 'js', null) <> 'captcha'
+     or guide.svc_subscribe('rls-f46-a@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('b', 64), 'js', 'xyz') <> 'captcha' then
+    raise exception 'FAIL F4.6 B7: alta con JS sin reto'; end if;
+  if guide.svc_subscribe(' RLS-F46-A@chalkguide.test ', 'es', 'footer', true, '/blog/x?utm=1', false,
+                         'a0000000-0000-4000-8000-000000000002', repeat('b', 64), 'js', repeat('1', 64)) <> 'ok' then
+    raise exception 'FAIL F4.6: alta con JS'; end if;
+  if guide.svc_subscribe('rls-f46-a2@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('b', 64), 'js', repeat('1', 64)) <> 'captcha' then
+    raise exception 'FAIL F4.6 B7: reto ALTCHA reutilizado'; end if;
+  if guide.svc_subscribe('no-es-email', 'es', 'footer', true, null, false, null, repeat('b', 64), 'js', repeat('2', 64)) <> 'invalid'
+     or guide.svc_subscribe('rls-f46-a2@chalkguide.test', 'es', 'footer', false, null, false, null, repeat('b', 64), 'js', repeat('3', 64)) <> 'invalid'
+     or guide.svc_subscribe('rls-f46-a2@chalkguide.test', 'es', 'admin_import', true, null, false, null, repeat('b', 64), 'js', repeat('4', 64)) <> 'invalid' then
+    raise exception 'FAIL F4.6: validación del alta'; end if;
+  -- 5 intentos por hora con JS (los inválidos cuentan): el 6.º es limit
+  if guide.svc_subscribe('rls-f46-a2@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('b', 64), 'js', repeat('5', 64)) <> 'ok'
+     or guide.svc_subscribe('rls-f46-a3@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('b', 64), 'js', repeat('6', 64)) <> 'limit' then
+    raise exception 'FAIL F4.6 B6: tope de 5/h por IP con JS'; end if;
+  -- Sin JS: 2 por IP y día
+  if guide.svc_subscribe('rls-f46-b@chalkguide.test', 'en', 'home', true, '/en', true, null, repeat('c', 64), 'nojs', null) <> 'ok'
+     or guide.svc_subscribe('rls-f46-c@chalkguide.test', 'es', 'popup', true, null, false, null, repeat('c', 64), 'nojs', null) <> 'ok'
+     or guide.svc_subscribe('rls-f46-d@chalkguide.test', 'es', 'popup', true, null, false, null, repeat('c', 64), 'nojs', null) <> 'limit' then
+    raise exception 'FAIL F4.6 B6: tope de 2/día por IP sin JS'; end if;
+  -- Más altas para los casos siguientes (otra IP)
+  if guide.svc_subscribe('rls-f46-d@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('d', 64), 'nojs', null) <> 'ok'
+     or guide.svc_subscribe('rls-f46-e@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('e', 64), 'nojs', null) <> 'ok'
+     or guide.svc_subscribe('rls-f46-f@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('f', 64), 'nojs', null) <> 'ok' then
+    raise exception 'FAIL F4.6: altas de fixture'; end if;
+end $$;
+reset role;
+
+-- Lo escrito por el alta (postgres)
+do $$
+declare v_a uuid; v_b uuid;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  select id into v_a from guide.subscribers where email = 'rls-f46-a@chalkguide.test';
+  select id into v_b from guide.subscribers where email = 'rls-f46-b@chalkguide.test';
+  if v_a is null or v_b is null or exists (select 1 from guide.subscribers where email in ('rls-f46-a3@chalkguide.test', 'no-es-email')) then
+    raise exception 'FAIL F4.6: filas del alta'; end if;
+  -- B12/H3: el user_id solo se vincula si el email de la cuenta coincide (rls-user1 ≠ rls-f46-a)
+  if (select user_id from guide.subscribers where id = v_a) is not null
+     or (select consent_page from guide.subscribers where id = v_a) <> '/blog/x' then
+    raise exception 'FAIL F4.6 B12: vínculo de cuenta o página del alta'; end if;
+  if (select actor from guide.subscriber_consent_events where subscriber_id = v_a and event = 'subscribe') <> 'anon'
+     or (select related_status from guide.subscribers where id = v_b) <> 'pending' then
+    raise exception 'FAIL F4.6: actor del alta o afines'; end if;
+  -- Un confirm_email por alta, sin PII (B15)
+  if (select count(*) from guide.email_outbox o join guide.subscribers s on s.id = o.subscriber_id
+      where s.email like 'rls-f46-%' and o.kind = 'confirm_email' and o.status = 'pending') <> 7 then
+    raise exception 'FAIL F4.6: confirm_email encolados'; end if;
+  if exists (select 1 from guide.email_outbox o where to_jsonb(o)::text ~* '@chalkguide') then
+    raise exception 'LEAK F4.6 B15: email en el outbox'; end if;
+  if exists (select 1 from guide.newsletter_rate r where r.bucket !~ '^(ip|ipnojs):[0-9a-f]{64}$') then
+    raise exception 'LEAK F4.6: bucket con IP en claro'; end if;
+  insert into _f46 select 'sub_' || split_part(split_part(email, '@', 1), '-', 3), id::text
+  from guide.subscribers where email like 'rls-f46-%';
+  -- Ningún outbox de alta antes de esta suite debe quedar sin procesar por el test: se aparta lo ajeno
+  update guide.email_outbox o set next_attempt_at = now() + interval '1 day'
+  where o.status = 'pending' and not exists (select 1 from guide.subscribers s where s.id = o.subscriber_id and s.email like 'rls-f46-%');
+  -- re-alta de un pending de < 24 h: no-op neutra (no duplica outbox)
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  if guide.svc_subscribe('rls-f46-a@chalkguide.test', 'es', 'home', true, null, false, null, repeat('9', 64), 'nojs', null) <> 'ok'
+     or (select count(*) from guide.email_outbox where subscriber_id = v_a) <> 1 then
+    raise exception 'FAIL F4.6 B8: re-alta reciente'; end if;
+  perform set_config('request.jwt.claims', '', true);
+end $$;
+
+-- Worker: claim, token, envío y confirmación (service_role)
+set local role service_role;
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+do $$
+declare
+  v_lock uuid := gen_random_uuid(); v_jobs jsonb; j jsonb; v_r jsonb; v text; v_a bigint; v_b bigint; v_c bigint;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  v_jobs := guide.svc_outbox_claim(50, v_lock);
+  if jsonb_array_length(v_jobs) <> 7 or exists (select 1 from jsonb_array_elements(v_jobs) x
+                                                 where x ->> 'kind' <> 'confirm_email' or x ? 'email') then
+    raise exception 'FAIL F4.6: claim %', v_jobs; end if;
+  if guide.svc_outbox_claim(20, gen_random_uuid()) <> '[]'::jsonb then
+    raise exception 'FAIL F4.6 B22: claim dos veces el mismo trabajo'; end if;
+  insert into _f46 select 'job_' || substr(f.k, 5), (x ->> 'id')
+  from jsonb_array_elements(v_jobs) x join _f46 f on f.k like 'sub\_%' and f.val = x ->> 'subscriber_id';
+  insert into _f46 values ('lock', v_lock::text);
+  v_a := (select val::bigint from _f46 where k = 'job_a'); v_b := (select val::bigint from _f46 where k = 'job_b');
+  v_c := (select val::bigint from _f46 where k = 'job_c');
+  if v_a is null or v_b is null or v_c is null or (select val from _f46 where k = 'job_e') is null then
+    raise exception 'FAIL F4.6: trabajos por suscriptor'; end if;
+  -- Lock ajeno → 55000
+  v := pg_temp.f46_err(format('select guide.svc_issue_confirm_token(%s, %L, null)', v_a, gen_random_uuid()));
+  if v not like '55000%' then raise exception 'FAIL F4.6 B14: token con lock ajeno (%)', v; end if;
+  -- B27: fuera de la lista de prueba → skipped sin rotar token
+  v_r := guide.svc_issue_confirm_token(v_c, v_lock, array['Solo-Xavi@chalkguide.test']);
+  if v_r <> '{"result": "skip"}'::jsonb then raise exception 'FAIL F4.6 B27: allowlist %', v_r; end if;
+  -- B1/B2: token de 64 hex solo en la respuesta
+  v_r := guide.svc_issue_confirm_token(v_a, v_lock, array[]::text[]);
+  if v_r ->> 'result' <> 'ok' or v_r ->> 'token' !~ '^[0-9a-f]{64}$' or v_r ->> 'email' <> 'rls-f46-a@chalkguide.test'
+     or v_r ->> 'locale' <> 'es' then
+    raise exception 'FAIL F4.6 B1: svc_issue_confirm_token %', v_r ->> 'result'; end if;
+  insert into _f46 values ('token_a', v_r ->> 'token');
+  v_r := guide.svc_issue_confirm_token(v_b, v_lock, null);
+  insert into _f46 values ('token_b', v_r ->> 'token');
+  -- done: messageId en lista blanca de formato; no se acepta un id con espacios
+  v := pg_temp.f46_err(format('select guide.svc_outbox_done(%s, %L, %L, null, null, %L)', v_a, v_lock, 'done', 'a b'));
+  if v not like '22023%' then raise exception 'FAIL F4.6: messageId inválido (%)', v; end if;
+  v := pg_temp.f46_err(format('select guide.svc_outbox_done(%s, %L, %L, %L, null, null)', v_a, v_lock, 'skipped', 'texto libre'));
+  if v not like '22023%' then raise exception 'FAIL F4.6 B15: código fuera de lista blanca (%)', v; end if;
+  if guide.svc_outbox_done(v_a, v_lock, 'done', null, null, '<202611271200.f46a@smtp-relay.mailin.fr>') <> 'done'
+     or guide.svc_outbox_done(v_b, v_lock, 'done', null, null, '<202611271200.f46b@smtp-relay.mailin.fr>') <> 'done' then
+    raise exception 'FAIL F4.6: svc_outbox_done confirm_email'; end if;
+  -- Trabajo cerrado: el lock ya no vale
+  v := pg_temp.f46_err(format('select guide.svc_outbox_fail(%s, %L, %L)', v_a, v_lock, 'brevo_5xx'));
+  if v not like '55000%' then raise exception 'FAIL F4.6: fail tras done (%)', v; end if;
+  -- Backoff: 1 min y, al 8.º intento, failed
+  if guide.svc_outbox_fail((select val::bigint from _f46 where k = 'job_d'), v_lock, 'brevo_5xx') <> 'retry' then
+    raise exception 'FAIL F4.6: backoff'; end if;
+  v := pg_temp.f46_err(format('select guide.svc_outbox_fail(%s, %L, %L)', (select val::bigint from _f46 where k = 'job_e'), v_lock, 'unknown'));
+  if v not like '22023%' then raise exception 'FAIL F4.6 B15: código de fallo libre (%)', v; end if;
+end $$;
+reset role;
+
+do $$
+declare v_a uuid; v_c uuid; v_job bigint;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  select id into v_a from guide.subscribers where email = 'rls-f46-a@chalkguide.test';
+  -- B2: solo el hash del token; caduca a las 48 h; confirm_sends = 1 y evento confirm_sent
+  if not exists (select 1 from guide.subscribers s where s.id = v_a
+                 and s.confirm_token_hash = sha256(convert_to((select val from _f46 where k = 'token_a'), 'UTF8'))
+                 and s.confirm_expires_at = now() + interval '48 hours' and s.confirm_sends = 1 and s.confirm_sent_at = now()) then
+    raise exception 'FAIL F4.6 B2: hash, caducidad o contador'; end if;
+  if (select count(*) from guide.subscriber_consent_events where subscriber_id = v_a and event = 'confirm_sent' and actor = 'service') <> 1 then
+    raise exception 'FAIL F4.6 B9: evento confirm_sent'; end if;
+  -- B1: el token en claro no aparece en ninguna tabla de guide ni en job_health
+  if exists (select 1 from guide.email_outbox o where to_jsonb(o)::text like '%' || (select val from _f46 where k = 'token_a') || '%')
+     or exists (select 1 from guide.job_health h where h.details::text like '%' || (select val from _f46 where k = 'token_a') || '%')
+     or exists (select 1 from guide.subscribers s where to_jsonb(s)::text like '%' || (select val from _f46 where k = 'token_a') || '%') then
+    raise exception 'LEAK F4.6 B1: token en claro guardado'; end if;
+  if (select brevo_message_id from guide.email_outbox where id = (select val::bigint from _f46 where k = 'job_a'))
+     <> '<202611271200.f46a@smtp-relay.mailin.fr>' then
+    raise exception 'FAIL F4.6 L4: messageId no guardado'; end if;
+  v_job := (select val::bigint from _f46 where k = 'job_c');
+  if not exists (select 1 from guide.email_outbox where id = v_job and status = 'skipped' and last_error = 'not_allowed_test')
+     or (select confirm_sends from guide.subscribers s join guide.email_outbox o on o.subscriber_id = s.id where o.id = v_job) <> 0 then
+    raise exception 'FAIL F4.6 B27: skipped not_allowed_test'; end if;
+  if not exists (select 1 from guide.email_outbox where id = (select val::bigint from _f46 where k = 'job_d') and status = 'pending'
+                 and attempts = 1 and last_error = 'brevo_5xx' and next_attempt_at = now() + interval '1 minute' and lock_id is null) then
+    raise exception 'FAIL F4.6: backoff de 1 min'; end if;
+  -- Al 8.º intento → failed (y job_health lo marca)
+  update guide.email_outbox set attempts = 7, status = 'processing', lock_id = (select val::uuid from _f46 where k = 'lock'), locked_at = now()
+  where id = (select val::bigint from _f46 where k = 'job_d');
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  if guide.svc_outbox_fail((select val::bigint from _f46 where k = 'job_d'), (select val::uuid from _f46 where k = 'lock'), 'timeout') <> 'failed' then
+    raise exception 'FAIL F4.6: failed al 8.º intento'; end if;
+  perform set_config('request.jwt.claims', '', true);
+  -- CHECK de defensa en profundidad (postgres)
+  begin
+    update guide.email_outbox set last_error = 'Brevo dijo: x@y.z' where id = (select val::bigint from _f46 where k = 'job_d');
+    raise exception 'FAIL F4.6 B15: CHECK de last_error';
+  exception when check_violation then null; end;
+  begin
+    insert into guide.email_outbox (kind, subscriber_id, brevo_contact_id) values ('brevo_delete', v_a, 1);
+    raise exception 'FAIL F4.6: CHECK email_outbox_target';
+  exception when check_violation then null; end;
+end $$;
+
+-- anon: confirmación (POST desde Nitro) y reenvío (B5)
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  if guide.confirm_newsletter((select val from _f46 where k = 'token_a')) <> 'ok' then
+    raise exception 'FAIL F4.6: confirm_newsletter'; end if;
+  -- B5: un reenvío por alta; el segundo es neutro y no encola
+  if guide.request_confirm_resend((select val from _f46 where k = 'token_b')) <> 'ok'
+     or guide.request_confirm_resend((select val from _f46 where k = 'token_b')) <> 'ok' then
+    raise exception 'FAIL F4.6 B5: reenvío'; end if;
+end $$;
+reset role;
+
+do $$
+declare v_a uuid; v_b uuid; v_r jsonb;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  select id into v_a from guide.subscribers where email = 'rls-f46-a@chalkguide.test';
+  select id into v_b from guide.subscribers where email = 'rls-f46-b@chalkguide.test';
+  if not exists (select 1 from guide.subscribers where id = v_a and status = 'active' and brevo_sync_status = 'pending')
+     or (select count(*) from guide.email_outbox where subscriber_id = v_a and kind = 'brevo_sync' and status = 'pending') <> 1 then
+    raise exception 'FAIL F4.6 N3: confirmar no encola brevo_sync'; end if;
+  if not exists (select 1 from guide.subscribers where id = v_b and confirm_resend_used)
+     or (select count(*) from guide.email_outbox where subscriber_id = v_b and kind = 'confirm_email' and status = 'pending') <> 1 then
+    raise exception 'FAIL F4.6 B5: reenvío una sola vez'; end if;
+  -- B5: con 2 emails de esta alta ya no se emite un tercero
+  update guide.subscribers set confirm_sends = 2 where id = v_b;
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  update guide.email_outbox set next_attempt_at = now() + interval '1 day'
+  where status = 'pending' and coalesce(subscriber_id, '00000000-0000-0000-0000-000000000000') not in (v_a, v_b);
+  insert into _f46 values ('lock2', gen_random_uuid()::text);
+  insert into _f46 values ('claim2', guide.svc_outbox_claim(20, (select val::uuid from _f46 where k = 'lock2'))::text);
+  if jsonb_array_length((select val::jsonb from _f46 where k = 'claim2')) <> 2 then
+    raise exception 'FAIL F4.6: claim2 %', (select val from _f46 where k = 'claim2'); end if;
+  v_r := guide.svc_issue_confirm_token((select o.id from guide.email_outbox o where o.subscriber_id = v_b and o.status = 'processing'),
+                                       (select val::uuid from _f46 where k = 'lock2'), null);
+  if v_r <> '{"result": "skip"}'::jsonb
+     or not exists (select 1 from guide.email_outbox where subscriber_id = v_b and status = 'skipped' and last_error = 'email_cap') then
+    raise exception 'FAIL F4.6 B5: tercer email de la misma alta'; end if;
+  perform set_config('request.jwt.claims', '', true);
+end $$;
+
+-- Las svc_* siguientes se llaman como postgres con claims de service_role (svc_assert mira auth.role()); los 42501 de
+-- los roles reales ya se han comprobado arriba.
+
+-- brevo_sync, L1 (baja mientras se sincroniza) y L2 (borrado tardío frente a re-alta)
+do $$
+declare
+  v_lock2 uuid := (select val::uuid from _f46 where k = 'lock2');
+  v_lock3 uuid := gen_random_uuid();
+  v_a uuid; v_e uuid; v_f uuid; v_job bigint; v_t jsonb; v_c jsonb;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  select id into v_a from guide.subscribers where email = 'rls-f46-a@chalkguide.test';
+  select id into v_e from guide.subscribers where email = 'rls-f46-e@chalkguide.test';
+  select id into v_f from guide.subscribers where email = 'rls-f46-f@chalkguide.test';
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+
+  select (x ->> 'id')::bigint into v_job from jsonb_array_elements((select val::jsonb from _f46 where k = 'claim2')) x
+  where x ->> 'kind' = 'brevo_sync';
+  v_t := guide.svc_outbox_target(v_job, v_lock2);
+  if v_t ->> 'status' <> 'active' or v_t ->> 'email' <> 'rls-f46-a@chalkguide.test' or v_t ->> 'locale' <> 'es' then
+    raise exception 'FAIL F4.6 B17: svc_outbox_target %', v_t ->> 'status'; end if;
+  if pg_temp.f46_err(format('select guide.svc_outbox_done(%s, %L, %L, null, null, null)', v_job, v_lock2, 'done')) not like '22023%' then
+    raise exception 'FAIL F4.6: brevo_sync sin contact_id'; end if;
+  if guide.svc_outbox_done(v_job, v_lock2, 'done', null, 9001, null) <> 'done' then
+    raise exception 'FAIL F4.6: brevo_sync done (resultado)'; end if;
+  if not exists (select 1 from guide.subscribers where id = v_a and brevo_contact_id = 9001 and brevo_sync_status = 'synced'
+                    and synced_at = now()) then
+    raise exception 'FAIL F4.6: brevo_sync done'; end if;
+
+  -- L1: e y f pasan a active (como postgres) → brevo_sync; se toman; e se da de baja antes de cerrar
+  perform set_config('request.jwt.claims', '', true);
+  update guide.subscribers set status = 'active', confirmed_at = now() where id in (v_e, v_f);
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  update guide.email_outbox set next_attempt_at = now() + interval '1 day'
+  where status = 'pending' and coalesce(subscriber_id, '00000000-0000-0000-0000-000000000000') not in (v_e, v_f);
+  v_c := guide.svc_outbox_claim(20, v_lock3);
+  if jsonb_array_length(v_c) <> 2 then raise exception 'FAIL F4.6: claim3 %', v_c; end if;
+  perform set_config('request.jwt.claims', '', true);
+  perform guide.unsubscribe_newsletter((select unsubscribe_token from guide.subscribers where id = v_e));
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  select (x ->> 'id')::bigint into v_job from jsonb_array_elements(v_c) x where (x ->> 'subscriber_id')::uuid = v_e;
+  if guide.svc_outbox_target(v_job, v_lock3) ? 'email' and guide.svc_outbox_target(v_job, v_lock3) ->> 'email' is not null then
+    raise exception 'LEAK F4.6 B17: email de una fila que ya no está active'; end if;
+  if guide.svc_outbox_done(v_job, v_lock3, 'done', null, 9002, null) <> 'deleted_stale' then
+    raise exception 'FAIL F4.6 L1: resultado de done'; end if;
+  if exists (select 1 from guide.subscribers where id = v_e and (brevo_contact_id is not null or brevo_sync_status = 'synced'))
+     or not exists (select 1 from guide.email_outbox where kind = 'brevo_delete' and brevo_contact_id = 9002 and status = 'pending') then
+    raise exception 'FAIL F4.6 L1: baja durante la sincronización'; end if;
+  select (x ->> 'id')::bigint into v_job from jsonb_array_elements(v_c) x where (x ->> 'subscriber_id')::uuid = v_f;
+  perform guide.svc_outbox_done(v_job, v_lock3, 'done', null, 9003, null);
+
+  -- L2: un brevo_delete de un contacto que vuelve a tener una fila active se salta y no limpia esa fila
+  insert into guide.email_outbox (kind, brevo_contact_id) values ('brevo_delete', 9003);
+  update guide.email_outbox set next_attempt_at = now() + interval '1 day'
+  where status = 'pending' and not (kind = 'brevo_delete' and brevo_contact_id in (9002, 9003));
+  insert into _f46 values ('lock4', gen_random_uuid()::text);
+  v_c := guide.svc_outbox_claim(20, (select val::uuid from _f46 where k = 'lock4'));
+  if jsonb_array_length(v_c) <> 2 or exists (select 1 from jsonb_array_elements(v_c) x where x ->> 'subscriber_id' is not null) then
+    raise exception 'FAIL F4.6: claim de brevo_delete %', v_c; end if;
+  select (x ->> 'id')::bigint into v_job from jsonb_array_elements(v_c) x where (x ->> 'brevo_contact_id')::bigint = 9003;
+  if guide.svc_outbox_target(v_job, (select val::uuid from _f46 where k = 'lock4')) <> '{"stale": true, "contact_id": 9003}'::jsonb then
+    raise exception 'FAIL F4.6 L2: stale %', guide.svc_outbox_target(v_job, (select val::uuid from _f46 where k = 'lock4')); end if;
+  -- Aunque el worker cerrara como done, la fila active conserva su id (L2)
+  perform guide.svc_outbox_done(v_job, (select val::uuid from _f46 where k = 'lock4'), 'done', null, null, null);
+  if not exists (select 1 from guide.subscribers where id = v_f and brevo_contact_id = 9003 and status = 'active') then
+    raise exception 'FAIL F4.6 L2: borrado tardío limpia una fila active'; end if;
+  -- L10: 404 de Brevo cuenta como done
+  select (x ->> 'id')::bigint into v_job from jsonb_array_elements(v_c) x where (x ->> 'brevo_contact_id')::bigint = 9002;
+  if guide.svc_outbox_target(v_job, (select val::uuid from _f46 where k = 'lock4')) ->> 'stale' <> 'false' then
+    raise exception 'FAIL F4.6 L2: stale de un contacto sin fila active'; end if;
+  if guide.svc_outbox_done(v_job, (select val::uuid from _f46 where k = 'lock4'), 'done', 'brevo_404', null, null) <> 'done' then
+    raise exception 'FAIL F4.6 L10: 404 como done'; end if;
+  perform set_config('request.jwt.claims', '', true);
+end $$;
+
+-- Webhook de marketing (B19–B21, L3) y transaccional (L4)
+do $$
+declare v_a uuid; v_b uuid; v_f uuid; v text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  select id into v_a from guide.subscribers where email = 'rls-f46-a@chalkguide.test';
+  select id into v_b from guide.subscribers where email = 'rls-f46-b@chalkguide.test';
+  select id into v_f from guide.subscribers where email = 'rls-f46-f@chalkguide.test';
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  -- B20: id y email deben coincidir; eventos fuera de lista blanca se ignoran
+  if guide.svc_apply_brevo_event('unsubscribed', 9001, 'otro@chalkguide.test', now()) <> 'ignored'
+     or guide.svc_apply_brevo_event('unsubscribed', 9999, 'rls-f46-a@chalkguide.test', now()) <> 'ignored'
+     or guide.svc_apply_brevo_event('opened', 9001, 'rls-f46-a@chalkguide.test', now()) <> 'ignored'
+     or guide.svc_apply_brevo_event('softBounce', 9001, 'rls-f46-a@chalkguide.test', now()) <> 'ignored'
+     or guide.svc_apply_brevo_event(null, 9001, 'rls-f46-a@chalkguide.test', now()) <> 'ignored' then
+    raise exception 'FAIL F4.6 B20: evento aplicado sin casar id y email'; end if;
+  if (select status from guide.subscribers where id = v_a) <> 'active' then raise exception 'FAIL F4.6 B20: cambió el estado'; end if;
+  if guide.svc_apply_brevo_event('unsubscribed', 9001, ' RLS-F46-A@chalkguide.test', now() + interval '1 day') <> 'applied' then
+    raise exception 'FAIL F4.6: baja desde Brevo'; end if;
+  if not exists (select 1 from guide.subscribers where id = v_a and status = 'unsubscribed' and unsubscribe_source = 'brevo'
+                 and unsubscribed_at = now() and confirm_token_hash is null and brevo_contact_id = 9001)
+     or not exists (select 1 from guide.subscriber_consent_events where subscriber_id = v_a and event = 'unsubscribe'
+                    and source = 'brevo' and actor = 'brevo')
+     or not exists (select 1 from guide.activity_log where entity_table = 'subscribers' and entity_id = v_a::text
+                    and details ->> 'by' = 'system' and details ->> 'to' = 'unsubscribed')
+     or (select count(*) from guide.email_outbox where kind = 'brevo_delete' and brevo_contact_id = 9001 and status = 'pending') <> 1 then
+    raise exception 'FAIL F4.6 B21/N3: baja desde Brevo (estado, historial o brevo_delete)'; end if;
+  -- Nunca sube estados: idempotente y sin reactivar
+  if guide.svc_apply_brevo_event('unsubscribed', 9001, 'rls-f46-a@chalkguide.test', now()) <> 'ignored'
+     or guide.svc_apply_brevo_event('hardBounce', 9001, 'rls-f46-a@chalkguide.test', now()) <> 'ignored' then
+    raise exception 'FAIL F4.6 B20: evento sobre una baja'; end if;
+  -- Queja de spam = baja con origen complaint; hard bounce = bounced
+  if guide.svc_apply_brevo_event('spam', 9003, 'rls-f46-f@chalkguide.test', null) <> 'applied' then
+    raise exception 'FAIL F4.6: queja de spam (resultado)'; end if;
+  if (select unsubscribe_source from guide.subscribers where id = v_f) <> 'complaint' then
+    raise exception 'FAIL F4.6: queja de spam'; end if;
+
+  -- L4: bounce del email de confirmación (fila pending, sin contacto): exige messageId y email del outbox
+  if guide.svc_apply_brevo_tx_event('hardBounce', '<202611271200.f46b@smtp-relay.mailin.fr>', 'rls-f46-a@chalkguide.test') <> 'ignored'
+     or guide.svc_apply_brevo_tx_event('hardBounce', '<otro@smtp-relay.mailin.fr>', 'rls-f46-b@chalkguide.test') <> 'ignored'
+     or guide.svc_apply_brevo_tx_event('unsubscribed', '<202611271200.f46b@smtp-relay.mailin.fr>', 'rls-f46-b@chalkguide.test') <> 'ignored' then
+    raise exception 'FAIL F4.6 L4: evento transaccional sin casar'; end if;
+  if guide.svc_apply_brevo_tx_event('hardBounce', '<202611271200.f46b@smtp-relay.mailin.fr>', 'rls-f46-b@chalkguide.test') <> 'applied' then
+    raise exception 'FAIL F4.6 L4: resultado'; end if;
+  if not exists (select 1 from guide.subscribers where id = v_b and status = 'bounced' and confirm_token_hash is null)
+     or not exists (select 1 from guide.subscriber_consent_events where subscriber_id = v_b and event = 'bounce' and actor = 'brevo') then
+    raise exception 'FAIL F4.6 L4: pending → bounced'; end if;
+  perform set_config('request.jwt.claims', '', true);
+
+  -- pending → bounced solo con actor brevo; el actor brevo está atado a la fila y solo baja estados
+  insert into guide.subscribers (id, email, status, locale, consent_source, consent_version)
+  values ('f4600000-0000-4000-8000-000000000001', 'rls-f46-g@chalkguide.test', 'pending', 'es', 'footer', 1);
+  v := pg_temp.f46_err($q$update guide.subscribers set status = 'bounced' where id = 'f4600000-0000-4000-8000-000000000001'$q$);
+  if v not like '22023%' then raise exception 'FAIL F4.6 L4: pending → bounced sin actor brevo (%)', v; end if;
+  perform set_config('guide.consent_actor', 'brevo:' || v_a::text, true);
+  v := pg_temp.f46_err($q$update guide.subscribers set confirm_sends = 1 where id = 'f4600000-0000-4000-8000-000000000001'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 B14: actor brevo de otra fila (%)', v; end if;
+  perform set_config('guide.consent_actor', 'brevo:f4600000-0000-4000-8000-000000000001', true);
+  v := pg_temp.f46_err($q$update guide.subscribers set locale = 'en' where id = 'f4600000-0000-4000-8000-000000000001'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 B14: actor brevo cambia el idioma (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.subscribers set status = 'active' where id = 'f4600000-0000-4000-8000-000000000001'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 B20: actor brevo activa (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.subscribers set consent_page = '/hack' where id = 'f4600000-0000-4000-8000-000000000001'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 B14: actor brevo toca la prueba de consentimiento (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.subscribers set unsubscribe_source = 'brevo' where id = 'f4600000-0000-4000-8000-000000000001'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 B14: actor brevo cambia la baja sin transición (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.subscribers set status = 'bounced' where id = 'f4600000-0000-4000-8000-000000000001'$q$);
+  if v <> 'ok' then raise exception 'FAIL F4.6 L4: actor brevo pending → bounced (%)', v; end if;
+  perform set_config('guide.consent_actor', '', true);
+end $$;
+
+-- B16/L10/§3.6: supresión de un activo con contacto → un único brevo_delete sin email y fila sin email ni id
+insert into guide.subscribers (id, email, status, locale, consent_source, consent_version, confirmed_at, brevo_contact_id, brevo_sync_status)
+values ('f4600000-0000-4000-8000-000000000002', 'rls-f46-h@chalkguide.test', 'pending', 'en', 'footer', 1, null, null, 'not_synced');
+update guide.subscribers set status = 'active', confirmed_at = now() where id = 'f4600000-0000-4000-8000-000000000002';
+select set_config('guide.consent_actor', 'brevo:f4600000-0000-4000-8000-000000000002', true);
+update guide.subscribers set brevo_contact_id = 9004, brevo_sync_status = 'synced' where id = 'f4600000-0000-4000-8000-000000000002';
+select set_config('guide.consent_actor', '', true);
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+do $$
+declare j jsonb;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  perform guide.admin_erase_subscriber('f4600000-0000-4000-8000-000000000002', 'rls-f46-h@chalkguide.test', 'request');
+  j := guide.admin_email_health();
+  if not (j ? 'outbox') or (j ->> 'failed_deletes')::int < 0 or j::text ~* '@chalkguide|9004' then
+    raise exception 'LEAK F4.6: admin_email_health %', j; end if;
+  -- L11: cancelar una edición en sending → 55000 (se prueba abajo con la edición en curso)
+end $$;
+reset role;
+do $$
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  if (select count(*) from guide.email_outbox where kind = 'brevo_delete' and brevo_contact_id = 9004) <> 1
+     or exists (select 1 from guide.email_outbox where brevo_contact_id = 9004 and subscriber_id is not null)
+     or not exists (select 1 from guide.subscribers where id = 'f4600000-0000-4000-8000-000000000002' and status = 'erased'
+                    and email is null and brevo_contact_id is null and brevo_sync_status = 'not_synced') then
+    raise exception 'FAIL F4.6 B16/L10: supresión con brevo_delete deduplicado'; end if;
+
+  -- B9: 3 emails de confirmación en 30 días por dirección, aunque haya re-altas
+  update guide.subscribers set status = 'unsubscribed', unsubscribed_at = now(), unsubscribe_source = 'admin'
+  where id = 'f4600000-0000-4000-8000-000000000001' and status = 'bounced';
+  insert into guide.subscriber_consent_events (subscriber_id, occurred_at, event, source, locale, actor)
+  select 'f4600000-0000-4000-8000-000000000001', now() - (g || ' days')::interval, 'confirm_sent', 'brevo', 'es', 'service'
+  from generate_series(1, 3) g;
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  if guide.svc_subscribe('rls-f46-g@chalkguide.test', 'es', 'footer', true, null, false, null, repeat('7', 64), 'nojs', null) <> 'ok' then
+    raise exception 'FAIL F4.6 B9: respuesta'; end if;
+  if (select status from guide.subscribers where id = 'f4600000-0000-4000-8000-000000000001') <> 'unsubscribed' then
+    raise exception 'FAIL F4.6 B9: re-alta con 3 emails en 30 días'; end if;
+  perform set_config('request.jwt.claims', '', true);
+
+  -- Salud: un brevo_delete failed es aviso RGPD (L10); details solo con recuentos
+  update guide.email_outbox set status = 'failed', done_at = now(), last_error = 'brevo_5xx'
+  where kind = 'brevo_delete' and brevo_contact_id = 9004;
+  perform guide.purge_newsletter_queue();
+  if (select status_code from guide.job_health where job = 'newsletter_email') <> 500
+     or not ((select details -> 'alerts' from guide.job_health where job = 'newsletter_email') ? 'gdpr_delete_failed')
+     or exists (select 1 from jsonb_object_keys((select details from guide.job_health where job = 'newsletter_email')) k
+                where k not in ('alerts', 'failed', 'failed_deletes', 'stuck', 'confirm_sent_today', 'confirm_cap_per_day', 'purged_rows')) then
+    raise exception 'FAIL F4.6 L10: señal newsletter_email'; end if;
+  perform guide.run_subscribers_expire();
+  if (select status_code from guide.job_health where job = 'subscribers-expire') <> 200 then
+    raise exception 'FAIL F4.6: job subscribers-expire'; end if;
+end $$;
+
+-- B6: tope global de 100 emails de confirmación al día → se aplaza a mañana sin rotar el token
+do $$
+declare v_lock uuid := gen_random_uuid(); v_job bigint; v_hash bytea;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  insert into guide.subscriber_consent_events (subscriber_id, occurred_at, event, source, locale, actor)
+  select 'f4600000-0000-4000-8000-000000000001', now(), 'confirm_sent', 'brevo', 'es', 'service' from generate_series(1, 100);
+  update guide.email_outbox set next_attempt_at = now() + interval '1 day' where status = 'pending';
+  update guide.email_outbox set status = 'pending', done_at = null, attempts = 0, next_attempt_at = now()
+  where id = (select o.id from guide.email_outbox o join guide.subscribers s on s.id = o.subscriber_id
+              where s.email = 'rls-f46-d@chalkguide.test' and o.status = 'failed') returning id into v_job;
+  select confirm_token_hash into v_hash from guide.subscribers where email = 'rls-f46-d@chalkguide.test';
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  if jsonb_array_length(guide.svc_outbox_claim(20, v_lock)) <> 1 then
+    raise exception 'FAIL F4.6 B6: claim'; end if;
+  if guide.svc_issue_confirm_token(v_job, v_lock, null) <> '{"result": "defer"}'::jsonb then
+    raise exception 'FAIL F4.6 B6: tope global'; end if;
+  perform set_config('request.jwt.claims', '', true);
+  if not exists (select 1 from guide.email_outbox where id = v_job and status = 'pending' and last_error = 'global_cap'
+                 and next_attempt_at > now() and lock_id is null)
+     or (select confirm_token_hash from guide.subscribers where email = 'rls-f46-d@chalkguide.test') is distinct from v_hash then
+    raise exception 'FAIL F4.6 B6: aplazamiento'; end if;
+  -- El panel ve el cupo con la reserva y la partición (decisión 4)
+  perform set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+end $$;
+
+-- ───────────── 8.13 · Envío ─────────────
+select set_config('guide.draft_op', 'maintenance', true);
+insert into guide.article_categories (id, name_es, slug_es) values ('f4600000-0000-4000-8000-0000000000c1', 'F46', 'rls-f46-cat');
+insert into guide.articles (id, category_id, status, published_at, title_es, slug_es, title_en, slug_en, excerpt_es) values
+  ('f4600000-0000-4000-8000-0000000000a1', 'f4600000-0000-4000-8000-0000000000c1', 'published', now() - interval '1 day',
+   'F46 <b>vivo</b>', 'rls-f46-vivo', null, null, 'Resumen'),
+  ('f4600000-0000-4000-8000-0000000000a2', 'f4600000-0000-4000-8000-0000000000c1', 'draft', null, 'F46 borrador', 'rls-f46-borrador', null, null, null);
+insert into guide.newsletter_issues (id, week_start, status, subject_es, intro_es, approved_at, scheduled_for) values
+  ('f4600000-0000-4000-8000-0000000000e1', date '2031-01-06', 'scheduled', 'Asunto F46', 'Intro F46', now() - interval '2 hours', now() - interval '1 hour'),
+  ('f4600000-0000-4000-8000-0000000000e2', date '2031-01-13', 'scheduled', 'Asunto F46 b', 'Intro F46 b', now() - interval '2 hours', now() - interval '30 minutes');
+insert into guide.newsletter_issue_items (issue_id, kind, ref_id, position) values
+  ('f4600000-0000-4000-8000-0000000000e1', 'article', 'f4600000-0000-4000-8000-0000000000a1', 1),
+  ('f4600000-0000-4000-8000-0000000000e1', 'article', 'f4600000-0000-4000-8000-0000000000a2', 2),
+  ('f4600000-0000-4000-8000-0000000000e2', 'article', 'f4600000-0000-4000-8000-0000000000a1', 1);
+select set_config('guide.draft_op', '', true);
+-- Cualquier otra edición vencida de la BD queda fuera de este bloque
+do $$ begin
+  perform set_config('guide.draft_op', 'maintenance', true);
+  update guide.newsletter_issues set scheduled_for = now() + interval '2 days', approved_at = now()
+  where status = 'scheduled' and id not in ('f4600000-0000-4000-8000-0000000000e1', 'f4600000-0000-4000-8000-0000000000e2');
+  perform set_config('guide.draft_op', '', true);
+end $$;
+
+do $$
+declare v_lock uuid := gen_random_uuid(); j jsonb; v text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  j := guide.svc_newsletter_claim(v_lock);
+  insert into _f46 values ('nl_lock', v_lock::text);
+  -- B26: solo lo publicado, con el título tal cual (se escapa en la EF)
+  if j ->> 'id' <> 'f4600000-0000-4000-8000-0000000000e1' or j ->> 'result' <> 'claimed'
+     or jsonb_array_length(j -> 'items') <> 1 or j -> 'items' -> 0 ->> 'title_es' <> 'F46 <b>vivo</b>'
+     or j -> 'items' -> 0 ->> 'path_es' <> '/blog/rls-f46-vivo' or j -> 'items' -> 0 -> 'path_en' <> 'null'::jsonb
+     or (j ->> 'has_en')::boolean or j -> 'state' -> 'es' ->> 'state' <> 'pending' or (j ->> 'attempts')::int <> 1 then
+    raise exception 'FAIL F4.6 B26: svc_newsletter_claim %', j; end if;
+  if j::text ~* 'rls-f46-borrador|@chalkguide' then raise exception 'LEAK F4.6 B26: borrador o emails en el claim'; end if;
+  -- B22: la otra edición vencida sí se puede tomar, esta no
+  if guide.svc_newsletter_claim(gen_random_uuid()) ->> 'id' <> 'f4600000-0000-4000-8000-0000000000e2' then
+    raise exception 'FAIL F4.6 B22: skip locked'; end if;
+  -- Audiencia por idioma (solo en memoria de la EF) y trabajos abiertos (B24)
+  j := guide.svc_newsletter_audience('f4600000-0000-4000-8000-0000000000e1', v_lock, 'es');
+  if not (j ? 'audience' and j ? 'open_sync' and j ? 'failed_deletes') or (j ->> 'failed_deletes')::int < 1 then
+    raise exception 'FAIL F4.6 B24/L10: audiencia %', j - 'audience'; end if;
+  v := pg_temp.f46_err(format('select guide.svc_newsletter_audience(%L, %L, %L)', 'f4600000-0000-4000-8000-0000000000e1', gen_random_uuid(), 'es'));
+  if v not like '55000%' then raise exception 'FAIL F4.6 B14: audiencia sin lock (%)', v; end if;
+  -- Estados por idioma: lista blanca, campaign id obligatorio al crear/enviar
+  v := pg_temp.f46_err(format('select guide.svc_newsletter_record(%L, %L, %L, null, %L, 1, null)', 'f4600000-0000-4000-8000-0000000000e1', v_lock, 'es', 'sent'));
+  if v not like '22023%' then raise exception 'FAIL F4.6: sent sin campaign id (%)', v; end if;
+  v := pg_temp.f46_err(format('select guide.svc_newsletter_record(%L, %L, %L, 5, %L, 1, %L)', 'f4600000-0000-4000-8000-0000000000e1', v_lock, 'es', 'failed', 'texto de Brevo'));
+  if v not like '22023%' then raise exception 'FAIL F4.6 B15: error libre (%)', v; end if;
+  if guide.svc_newsletter_record('f4600000-0000-4000-8000-0000000000e1', v_lock, 'es', 501, 'created', null, null) ->> 'result' <> 'recorded' then
+    raise exception 'FAIL F4.6: ES created'; end if;
+  if guide.svc_newsletter_record('f4600000-0000-4000-8000-0000000000e1', v_lock, 'es', 501, 'sent', 2, null) ->> 'result' <> 'recorded' then
+    raise exception 'FAIL F4.6: ES sent'; end if;
+  v := pg_temp.f46_err(format('select guide.svc_newsletter_record(%L, %L, %L, 501, %L, 2, null)', 'f4600000-0000-4000-8000-0000000000e1', v_lock, 'es', 'sent'));
+  if v not like '55000%' then raise exception 'FAIL F4.6 B22: idioma enviado dos veces (%)', v; end if;
+  -- Decisión 4: EN no cabe hoy → mañana
+  if guide.svc_newsletter_record('f4600000-0000-4000-8000-0000000000e1', v_lock, 'en', null, 'deferred_quota', null, null) ->> 'result' <> 'deferred' then
+    raise exception 'FAIL F4.6: EN aplazado'; end if;
+  perform set_config('request.jwt.claims', '', true);
+end $$;
+
+-- L11: cancelar desde sending → 55000; el admin no puede tocar las columnas de envío
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+do $$
+declare v text; j jsonb;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  v := pg_temp.f46_err($q$select guide.newsletter_set_status('f4600000-0000-4000-8000-0000000000e1', '{sending}', 'cancelled')$q$);
+  if v not like '55000%' then raise exception 'FAIL F4.6 L11: cancelar desde sending (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.newsletter_issues set send_next_at = now() where id = 'f4600000-0000-4000-8000-0000000000e1'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L11: el admin toca send_* (%)', v; end if;
+  -- El admin con newsletter_op forjado tampoco: la exención exige el lock vigente
+  perform set_config('guide.newsletter_op', 'send:f4600000-0000-4000-8000-0000000000e1:' || gen_random_uuid()::text, true);
+  v := pg_temp.f46_err($q$update guide.newsletter_issues set send_next_at = now() where id = 'f4600000-0000-4000-8000-0000000000e1'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L11: exención con lock falso (%)', v; end if;
+  perform set_config('guide.newsletter_op', '', true);
+  j := guide.newsletter_quota_today();
+  if not (j ? 'reserve' and j ? 'will_split' and j ? 'fits') or (j ->> 'reserve')::int <> 30 or (j ->> 'used_today')::int < 102 then
+    raise exception 'FAIL F4.6 L7: newsletter_quota_today %', j; end if;
+end $$;
+reset role;
+
+do $$
+declare v text; v_lock uuid := gen_random_uuid(); j jsonb;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  -- L11: draft_op 'send:…' (item_live_exempt) no exime; el lock vigente con contenido cambiado tampoco
+  perform set_config('guide.draft_op', 'send:f4600000-0000-4000-8000-0000000000e1:x', true);
+  v := pg_temp.f46_err($q$update guide.newsletter_issues set status = 'sent', sent_at = now() where id = 'f4600000-0000-4000-8000-0000000000e1'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L11: draft_op exime el envío (%)', v; end if;
+  perform set_config('guide.draft_op', '', true);
+  if not exists (select 1 from guide.newsletter_issues where id = 'f4600000-0000-4000-8000-0000000000e1' and status = 'sending'
+                 and send_lock_id is null and send_next_at > now() and send_attempts = 0
+                 and brevo_campaign_ids -> 'es' ->> 'state' = 'sent' and brevo_campaign_ids -> 'en' ->> 'state' = 'deferred_quota') then
+    raise exception 'FAIL F4.6: estado tras aplazar EN'; end if;
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  if guide.svc_newsletter_claim(gen_random_uuid()) is not null then
+    raise exception 'FAIL F4.6: toma una edición aplazada antes de tiempo'; end if;
+  -- Al día siguiente (simulado) se toma y EN se envía → sent con recuentos por idioma
+  perform set_config('guide.draft_op', 'maintenance', true);
+  update guide.newsletter_issues set send_next_at = now() - interval '1 minute' where id = 'f4600000-0000-4000-8000-0000000000e1';
+  perform set_config('guide.draft_op', '', true);
+  j := guide.svc_newsletter_claim(v_lock);
+  if j ->> 'id' <> 'f4600000-0000-4000-8000-0000000000e1' or j -> 'state' -> 'es' ->> 'state' <> 'sent' then
+    raise exception 'FAIL F4.6: retoma la edición %', j -> 'state'; end if;
+  perform set_config('guide.newsletter_op', 'send:f4600000-0000-4000-8000-0000000000e1:' || v_lock::text, true);
+  v := pg_temp.f46_err($q$update guide.newsletter_issues set subject_es = 'Hack' where id = 'f4600000-0000-4000-8000-0000000000e1'$q$);
+  if v not like '42501%' then raise exception 'LEAK F4.6 L11: exención cambia el contenido (%)', v; end if;
+  v := pg_temp.f46_err($q$update guide.newsletter_issues set status = 'cancelled' where id = 'f4600000-0000-4000-8000-0000000000e1'$q$);
+  if v not like '55000%' then raise exception 'FAIL F4.6 L11: exención cancela (%)', v; end if;
+  perform set_config('guide.newsletter_op', '', true);
+  if guide.svc_newsletter_record('f4600000-0000-4000-8000-0000000000e1', v_lock, 'en', 502, 'sent', 3, null) ->> 'result' <> 'sent' then
+    raise exception 'FAIL F4.6: EN sent'; end if;
+  if not exists (select 1 from guide.newsletter_issues where id = 'f4600000-0000-4000-8000-0000000000e1' and status = 'sent'
+                    and sent_at = now() and sent_counts = '{"es": 2, "en": 3}'::jsonb and send_lock_id is null) then
+    raise exception 'FAIL F4.6: edición enviada'; end if;
+  v := pg_temp.f46_err(format('select guide.svc_newsletter_record(%L, %L, %L, 502, %L, 3, null)', 'f4600000-0000-4000-8000-0000000000e1', v_lock, 'en', 'sent'));
+  if v not like '55000%' then raise exception 'FAIL F4.6 B22: record tras sent (%)', v; end if;
+  -- Segunda edición: el preflight no cuadra durante > 30 min → failed sync_mismatch
+  perform set_config('guide.draft_op', 'maintenance', true);
+  update guide.newsletter_issues set send_lock_id = null, send_locked_at = null where id = 'f4600000-0000-4000-8000-0000000000e2';
+  perform set_config('guide.draft_op', '', true);
+  v_lock := gen_random_uuid();
+  j := guide.svc_newsletter_claim(v_lock);
+  if j ->> 'id' <> 'f4600000-0000-4000-8000-0000000000e2' then raise exception 'FAIL F4.6: claim e2'; end if;
+  if guide.svc_newsletter_record('f4600000-0000-4000-8000-0000000000e2', v_lock, 'es', null, 'retry', null, 'sync_mismatch') ->> 'result' <> 'retry' then
+    raise exception 'FAIL F4.6: retry'; end if;
+  perform set_config('guide.draft_op', 'maintenance', true);
+  update guide.newsletter_issues
+  set send_next_at = now() - interval '1 minute',
+      brevo_campaign_ids = jsonb_set(brevo_campaign_ids, '{es,retry_since}', to_jsonb(now() - interval '31 minutes'))
+  where id = 'f4600000-0000-4000-8000-0000000000e2';
+  perform set_config('guide.draft_op', '', true);
+  v_lock := gen_random_uuid();
+  perform guide.svc_newsletter_claim(v_lock);
+  if guide.svc_newsletter_record('f4600000-0000-4000-8000-0000000000e2', v_lock, 'es', null, 'retry', null, 'sync_mismatch') ->> 'result' <> 'failed' then
+    raise exception 'FAIL F4.6: retry > 30 min'; end if;
+  if not exists (select 1 from guide.newsletter_issues where id = 'f4600000-0000-4000-8000-0000000000e2' and status = 'failed'
+                    and error_code = 'sync_mismatch' and send_lock_id is null) then
+    raise exception 'FAIL F4.6 §7.8.2: sync_mismatch tras 30 min'; end if;
+  perform set_config('request.jwt.claims', '', true);
+end $$;
+
+-- Revisión de implementación (leona-lia) C1 y C4
+do $$
+declare v_lock uuid := gen_random_uuid(); v_c jsonb; v_job bigint; v text;
+begin
+  if coalesce(current_setting('guide.rls_suite', true), '') <> 'running' then
+    raise exception 'ABORT: ejecuta guide_rls_leaks.sql entero (BEGIN … ROLLBACK), nunca fragmentos';
+  end if;
+  insert into guide.subscribers (id, email, status, locale, consent_source, consent_version) values
+    ('f4600000-0000-4000-8000-0000000000c4', 'rls-f46-c4@chalkguide.test', 'pending', 'es', 'footer', 1),
+    ('f4600000-0000-4000-8000-0000000000c5', 'rls-f46-c1@chalkguide.test', 'pending', 'es', 'footer', 1);
+  update guide.email_outbox set next_attempt_at = now() + interval '1 day' where status = 'pending';
+  -- C4: confirm_email con lock caducado → failed/lock_expired, nunca se reclama
+  update guide.email_outbox set status = 'processing', lock_id = gen_random_uuid(), locked_at = now() - interval '11 minutes'
+  where subscriber_id = 'f4600000-0000-4000-8000-0000000000c4' and kind = 'confirm_email';
+  -- C1: fila active con brevo_sync pendiente
+  update guide.subscribers set status = 'active', confirmed_at = now() where id = 'f4600000-0000-4000-8000-0000000000c5';
+  update guide.email_outbox set next_attempt_at = now()
+  where subscriber_id = 'f4600000-0000-4000-8000-0000000000c5' and kind = 'brevo_sync' and status = 'pending';
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', true);
+  v_c := guide.svc_outbox_claim(20, v_lock);
+  if jsonb_array_length(v_c) <> 1 or v_c -> 0 ->> 'kind' <> 'brevo_sync' then
+    raise exception 'FAIL F4.6 C4: claim %', v_c; end if;
+  v_job := (v_c -> 0 ->> 'id')::bigint;
+  if guide.svc_outbox_sync_suppressed(v_job, v_lock) <> 'applied' then
+    raise exception 'FAIL F4.6 C1: resultado'; end if;
+  v := pg_temp.f46_err(format('select guide.svc_outbox_sync_suppressed(%s, %L)', v_job, v_lock));
+  if v not like '55000%' then raise exception 'FAIL F4.6 C1: segundo cierre (%)', v; end if;
+  perform set_config('request.jwt.claims', '', true);
+  if not exists (select 1 from guide.email_outbox where subscriber_id = 'f4600000-0000-4000-8000-0000000000c4'
+                 and kind = 'confirm_email' and status = 'failed' and last_error = 'lock_expired' and lock_id is null) then
+    raise exception 'FAIL F4.6 C4: confirm_email caducado no se cierra failed'; end if;
+  if not exists (select 1 from guide.subscribers where id = 'f4600000-0000-4000-8000-0000000000c5' and status = 'unsubscribed'
+                 and unsubscribe_source = 'brevo' and brevo_contact_id is null)
+     or not exists (select 1 from guide.subscriber_consent_events where subscriber_id = 'f4600000-0000-4000-8000-0000000000c5'
+                    and event = 'unsubscribe' and actor = 'brevo')
+     or not exists (select 1 from guide.email_outbox where id = v_job and status = 'skipped' and last_error = 'stale_state') then
+    raise exception 'FAIL F4.6 C1: baja por lista negra de Brevo'; end if;
+  if has_function_privilege('anon', 'guide.svc_outbox_sync_suppressed(bigint, uuid)', 'EXECUTE')
+     or has_function_privilege('authenticated', 'guide.svc_outbox_sync_suppressed(bigint, uuid)', 'EXECUTE') then
+    raise exception 'LEAK F4.6 C1: EXECUTE de svc_outbox_sync_suppressed'; end if;
+end $$;
+
+-- Fin F4.6 + 8.13
 
 -- public intacto tras todo lo anterior
 do $$

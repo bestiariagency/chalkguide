@@ -63,7 +63,7 @@ export function readStoredConsent(cookieString: string): ConsentState {
 }
 
 /** Pages where nothing is tracked and no banner is shown: panel, API and links with a token (D66, D69). */
-const UNTRACKED_PATH = /^\/(en\/)?(administrador|api)(\/|$)|^\/(en\/)?newsletter\/(confirmada|confirmed|preferencias|preferences|baja|unsubscribed)(\/|$)|^\/(en\/)?(entrar|sign-in)(\/|$)/i
+const UNTRACKED_PATH = /^\/(en\/)?(administrador|api)(\/|$)|^\/(en\/)?newsletter\/(confirmar|confirm|confirmada|confirmed|preferencias|preferences|baja|unsubscribed)(\/|$)|^\/(en\/)?(entrar|sign-in)(\/|$)/i
 
 export const isUntrackedPath = (path: string) => UNTRACKED_PATH.test(path)
 export const isAdminPath = (path: string) => /^\/administrador(\/|$)/i.test(path)

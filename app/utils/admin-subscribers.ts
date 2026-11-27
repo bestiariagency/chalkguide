@@ -119,7 +119,7 @@ export const SOURCE_OPTIONS: readonly { value: string; label: string }[] = [
 export const sourceLabel = (source: string) =>
   source === 'admin_import' ? 'Importado' : (SOURCE_OPTIONS.find((s) => s.value === source)?.label ?? RELATED_ORIGINS[source] ?? source)
 
-const VIAS: Record<string, string> = { link: 'Enlace del email', brevo: 'Proveedor de email', admin: 'Desde el panel', user: 'Desde su cuenta', ...RELATED_VIAS }
+const VIAS: Record<string, string> = { link: 'Enlace del email', brevo: 'Proveedor de email', complaint: 'Queja de spam', admin: 'Desde el panel', user: 'Desde su cuenta', ...RELATED_VIAS }
 export const viaLabel = (via: string | null) => (via ? (VIAS[via] ?? via) : '—')
 
 export const UNSUBSCRIBE_REASONS = [

@@ -1,34 +1,54 @@
 import type { Locale } from '~/types/domain'
+import type { NewsletterSource } from '~/utils/newsletter'
 import { type GuideClient, ServiceError } from './client'
 
-export type NewsletterSource = 'footer' | 'article' | 'article_mid' | 'article_end' | 'item_page' | 'home' | 'popup' | 'newsletter_page' | 'noticias'
+export type { NewsletterSource }
+
+/** Failure kinds of `POST /api/newsletter` (`ServiceError.code`). */
+export type SubscribeFailure = 'invalid' | 'captcha' | 'limit' | 'server'
 
 /**
- * Double opt-in sign-up: the row is created as `pending`. The RPC answers the same whether or
- * not the email already existed, so callers must never reveal that. The confirmation email is
- * NOT sent here: the F4.6 integration (Database Webhook -> Edge Function -> Brevo) sends it.
+ * Double opt-in sign-up through the server relay (F4.6): Nitro -> Edge Function (ALTCHA, rate limits) ->
+ * `svc_subscribe`. The reply is neutral (the same for new, existing or active emails), so callers must
+ * never reveal whether the email existed. The confirmation email is sent by the backend worker.
  */
-export async function subscribeNewsletter(
-  db: GuideClient,
-  input: {
-    email: string
-    locale: Locale
-    source: NewsletterSource
-    page?: string
-    /** D66: the separate, optional box. Never required, never inferred. */
-    relatedConsent?: boolean
-  },
-): Promise<void> {
-  // Consent is always true here: the RPC rejects false, and the form only submits when checked.
-  const { error } = await db.rpc('subscribe_newsletter', {
-    p_email: input.email,
-    p_locale: input.locale,
-    p_source: input.source,
-    p_consent: true,
-    p_page: input.page,
-    p_related_consent: input.relatedConsent === true,
-  })
-  if (error) throw new ServiceError(error.message, error.code)
+export async function subscribeNewsletter(input: {
+  email: string
+  locale: Locale
+  source: NewsletterSource
+  consent: boolean
+  page?: string
+  /** D66: the separate, optional box. Never required, never inferred. */
+  relatedConsent?: boolean
+  /** ALTCHA solution; without it the relay uses the stricter no-JS limits. */
+  altcha?: string | null
+  /** Honeypot value (must stay empty for people). */
+  website?: string
+  /** Session access token, only so a signed-in user's account is linked when the email matches (H3). */
+  accessToken?: string | null
+}): Promise<void> {
+  try {
+    await $fetch('/api/newsletter', {
+      method: 'POST',
+      headers: input.accessToken ? { authorization: `Bearer ${input.accessToken}` } : undefined,
+      body: {
+        email: input.email,
+        locale: input.locale,
+        source: input.source,
+        consent: input.consent,
+        page: input.page,
+        related_consent: input.relatedConsent === true,
+        website: input.website ?? '',
+        altcha: input.altcha ?? '',
+      },
+    })
+  } catch (e) {
+    const status = (e as { statusCode?: number; status?: number }).statusCode ?? (e as { status?: number }).status
+    const kind = (e as { data?: { error?: string } }).data?.error
+    const code: SubscribeFailure =
+      status === 429 ? 'limit' : status === 400 ? (kind === 'captcha' ? 'captcha' : 'invalid') : 'server'
+    throw new ServiceError('newsletter sign-up failed', code)
+  }
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i

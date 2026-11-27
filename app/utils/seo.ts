@@ -35,6 +35,7 @@ export function clampDescription(text: string | null | undefined, max = MAX_DESC
 
 /** Routes that are never indexed, by Nuxt route base name (§6: legal, utility, newsletter states). */
 export const ROUTE_ROBOTS: Record<string, string> = {
+  'newsletter-confirm': ROBOTS_NOINDEX_NOFOLLOW,
   'newsletter-confirmed': ROBOTS_NOINDEX_NOFOLLOW,
   'newsletter-unsubscribed': ROBOTS_NOINDEX_NOFOLLOW,
   'newsletter-preferences': ROBOTS_NOINDEX_NOFOLLOW,

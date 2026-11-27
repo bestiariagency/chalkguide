@@ -43,6 +43,7 @@ const showNewsletter = computed(() => route.meta.newsletterBlock !== false)
       <LayoutStickyBar ref="bar" :visible="barVisible" :spy="spy" />
       <LayoutScrollDock :visible="pastMasthead" :bar-visible="barVisible" />
       <LayoutSiteHeader ref="header" />
+      <NewsletterNotice />
       <main id="main" tabindex="-1" class="flex-1 overflow-x-clip focus-visible:shadow-none">
         <slot />
       </main>

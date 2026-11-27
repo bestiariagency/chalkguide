@@ -10,11 +10,12 @@ import type { NewsletterSource } from '~/services/newsletter'
  * slab's height and is shared with the other forms of the page.
  */
 const props = defineProps<{ source: NewsletterSource; successCta?: boolean }>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const route = useRoute()
 const { linkFor } = usePageLinks()
 const { data: settings } = await useSiteSettings()
 const consentText = computed(() => settings.value?.newsletterConsentText ?? null)
-const { email, consent, related, subscribedRelated, emailError, emailMissingDomain, consentError, status, submit } =
+const { email, consent, related, website, failure, subscribedRelated, emailError, emailMissingDomain, consentError, status, submit } =
   useNewsletterForm(props.source)
 const relatedText = computed(() => settings.value?.relatedConsentText ?? null)
 
@@ -22,7 +23,12 @@ const box = ref<HTMLElement | null>(null)
 const minHeight = ref<string | undefined>()
 const emailField = ref<{ focus: () => void } | null>(null)
 const consentField = ref<{ focus: () => void } | null>(null)
+const altcha = ref<{ verify: () => Promise<string | null>; reset: () => void } | null>(null)
 const successBox = ref<HTMLElement | null>(null)
+
+const errorMessage = computed(() =>
+  consentText.value ? t(failure.value === 'limit' ? 'newsletter.errorLimit' : failure.value === 'captcha' ? 'newsletter.errorCaptcha' : 'newsletter.error') : t('newsletter.error'),
+)
 
 const emailMessage = computed(() => {
   if (!emailError.value) return undefined
@@ -31,7 +37,8 @@ const emailMessage = computed(() => {
 
 async function onSubmit() {
   const before = box.value?.offsetHeight
-  const invalid = await submit()
+  const invalid = await submit(async () => (await altcha.value?.verify()) ?? null)
+  altcha.value?.reset() // a challenge solution is single-use
   // The slab keeps its height only when the form is replaced by the success message.
   minHeight.value = status.value === 'success' && before ? `${before}px` : undefined
   if (invalid === 'email') emailField.value?.focus()
@@ -58,12 +65,18 @@ async function onSubmit() {
     </div>
     <form
       v-else
+      action="/api/newsletter"
       method="post"
       novalidate
       class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:gap-x-3"
       :aria-label="t('newsletter.formLabel')"
       @submit.prevent="onSubmit"
     >
+      <!-- Fields the relay needs with or without JS (the no-JS redirect goes back to `page`). -->
+      <input type="hidden" name="locale" :value="locale" />
+      <input type="hidden" name="source" :value="source" />
+      <input type="hidden" name="page" :value="route.path" />
+      <NewsletterAltcha ref="altcha" v-model:website="website" />
       <!-- DOM order = tab order: email, checkbox, related checkbox + more info, button; from lg the grid puts the button in row 1. -->
       <UiInput
         ref="emailField"
@@ -114,7 +127,7 @@ async function onSubmit() {
         role="alert"
         class="flex items-start gap-1.5 text-body-sm text-danger-text lg:col-span-2 lg:row-start-4"
       >
-        <CircleAlert :size="16" aria-hidden="true" class="mt-0.5" />{{ t('newsletter.error') }}
+        <CircleAlert :size="16" aria-hidden="true" class="mt-0.5" />{{ errorMessage }}
       </p>
     </form>
   </div>

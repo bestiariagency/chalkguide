@@ -13,7 +13,7 @@ const changes = computed(() => {
   return { articles: count('article'), pages: count('page'), items: drafts.length - count('article') - count('page') }
 })
 const groups = computed(() =>
-  data.value ? buildPending({ stats: data.value.stats, newReviews: data.value.newReviews, changes: changes.value, provisionalPages: data.value.provisionalPages, news: data.value.news, today }) : [],
+  data.value ? buildPending({ stats: data.value.stats, newReviews: data.value.newReviews, changes: changes.value, provisionalPages: data.value.provisionalPages, news: data.value.news, health: data.value.health, today }) : [],
 )
 const subtitle = computed(() => `${formatDayLong(today)} · últimos 30 días frente a los 30 anteriores`)
 </script>

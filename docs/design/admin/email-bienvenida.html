@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Email de bienvenida · Newsletter · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=9"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* Newsletter › Bienvenida (§21). Editor por idioma + vista previa con la plantilla real (email.ts). */
+  .pvwrap{background:var(--subtle);border:1px solid var(--line);border-radius:12px;padding:16px;overflow:hidden}
+  .pvwrap iframe{display:block;margin:0 auto;background:#f6f4ef;border:0;border-radius:6px;box-shadow:var(--shadow-pop);max-width:100%;transition:width .2s var(--ease)}
+  @media (prefers-reduced-motion:reduce){.pvwrap iframe{transition:none}}
+  .inbox{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:2px 10px;align-items:center;padding:10px 12px;background:var(--elev);border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
+  .inbox .av{grid-row:span 2;width:32px;height:32px;border-radius:99px;background:#1d1d1b;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
+  .inbox .l1{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .inbox .l2{font-size:12px;color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;grid-column:2/4}
+  .rt{min-height:180px;padding:12px 14px;font-size:14px;line-height:22px;border:1px solid var(--line-strong);border-top:0;border-radius:0 0 6px 6px;background:var(--elev)}
+  .rt:focus{outline:2px solid var(--acc);outline-offset:-1px}
+  .rt p{margin:0 0 10px} .rt ul{list-style:disc;padding-left:20px;margin:0 0 10px} .rt a{color:var(--acc);text-decoration:underline;text-underline-offset:2px}
+  .rt[aria-invalid="true"]{border-color:var(--danger)}
+  .rtbar{display:flex;align-items:center;gap:2px;height:40px;padding:0 4px;border:1px solid var(--line-strong);border-radius:6px 6px 0 0;background:var(--subtle);overflow-x:auto}
+  .li-it{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;padding:6px 6px 6px 2px}
+  .locked{background:var(--subtle);border:1px dashed var(--line-strong);border-radius:8px;padding:12px 14px;font-size:12px;line-height:18px;color:var(--meta)}
+  [data-only]:not(.on){display:none!important}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
+  .kv dt{color:var(--meta)}
+  .input[aria-invalid="true"]{border-color:var(--danger)}
+</style>
+</head>
+<body data-page="bienvenida" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 flex items-center gap-2 border-b border-line text-sm">
+    <h1 class="font-medium">Newsletter</h1>
+    <span class="ml-auto hidden xl:inline text-xs text-meta border border-dashed border-line-strong rounded px-2 py-1">Mockup · estado:
+      <select id="demoState" class="bg-transparent outline-none text-fg" aria-label="Estado del mockup">
+        <option value="publicado">Publicado, sin cambios</option>
+        <option value="cambios">Borrador de cambios</option>
+        <option value="en-vacio">Inglés vacío</option>
+        <option value="errores">Errores al publicar</option>
+        <option value="inactivo">Nunca publicado (seed)</option>
+        <option value="cargando">Cargando</option>
+      </select></span>
+    <a href="suscriptores.html" class="btn btn-ghost ml-auto xl:ml-0 hidden sm:inline-flex"><i data-lucide="users"></i>Suscriptores</a>
+  </header>
+
+  <!-- Vistas de Newsletter: son rutas (?vista=), no pestañas en página -->
+  <nav class="px-4 md:px-6 border-b border-line overflow-x-auto" aria-label="Vistas de la newsletter">
+    <div class="flex gap-5 min-w-max">
+      <a href="newsletter.html" class="tab t">Esta semana</a>
+      <a href="newsletter.html#historial" class="tab t">Historial <span class="num text-muted">23</span></a>
+      <a href="#" class="tab t" aria-selected="true" aria-current="page"><i data-lucide="mail-open" class="w-4 h-4"></i>Bienvenida<span data-only="cambios en-vacio errores" class="w-1.5 h-1.5 rounded-full bg-st-rev" title="Cambios sin publicar"></span><span data-only="cambios en-vacio errores" class="sr-only">(cambios sin publicar)</span></a>
+    </div>
+  </nav>
+
+  <!-- Cargando -->
+  <div data-only="cargando" class="px-4 md:px-6 py-5 grid xl:grid-cols-[minmax(0,1fr)_652px] gap-6" aria-busy="true" aria-label="Cargando el email de bienvenida">
+    <div class="space-y-4"><div class="sk h-6 w-64 rounded"></div><div class="sk h-9 rounded"></div><div class="sk h-9 rounded"></div><div class="sk h-40 rounded"></div><div class="sk h-24 rounded"></div></div>
+    <div class="hidden xl:block sk h-[640px] rounded-xl"></div>
+  </div>
+
+  <!-- Barra de estado -->
+  <section data-only="publicado cambios en-vacio errores inactivo" class="px-4 md:px-6 py-4 border-b border-line flex flex-wrap items-center gap-x-4 gap-y-3" aria-labelledby="wl-h">
+    <div class="min-w-0">
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 id="wl-h" class="text-lg font-semibold tracking-tight">Email de bienvenida</h2>
+        <span data-only="publicado" class="chip st-pub"><span class="dot"></span>Activo</span>
+        <span data-only="cambios en-vacio errores" class="chip-pair"><span class="chip st-pub"><span class="dot"></span>Activo</span><span class="chip st-rev" id="chgChip">3 cambios<span class="sr-only"> sin publicar</span></span></span>
+        <span data-only="inactivo" class="chip st-draft"><span class="dot"></span>Sin activar</span>
+      </div>
+      <p class="mt-1 text-xs text-meta">
+        <span class="inline-flex items-center gap-1"><i data-lucide="zap" class="w-3 h-3"></i>Sale solo, justo después de que alguien confirme su suscripción</span>
+        · <span data-only="publicado">Publicado el 12 nov, 10:20</span><span data-only="cambios en-vacio errores">Borrador guardado · hace 20 s</span><span data-only="inactivo">Aún no se envía a nadie</span>
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 sm:ml-auto w-full sm:w-auto">
+      <button type="button" class="btn btn-ghost xl:hidden flex-1 sm:flex-none" data-open="preview"><i data-lucide="eye"></i>Vista previa</button>
+      <button type="button" class="btn btn-ghost flex-1 sm:flex-none" id="testBtn"><i data-lucide="send"></i><span>Enviarme una prueba</span></button>
+      <button data-only="publicado" type="button" class="btn btn-primary w-full sm:w-auto" disabled aria-describedby="nochg"><i data-lucide="check"></i>Publicar cambios</button>
+      <span data-only="publicado" id="nochg" class="sr-only">Desactivado: no hay cambios sin publicar.</span>
+      <div data-only="cambios en-vacio errores" class="flex w-full sm:w-auto">
+        <button type="button" class="btn btn-rev flex-1 sm:flex-none rounded-r-none" id="pubBtn"><i data-lucide="check"></i>Publicar cambios</button>
+        <button type="button" class="btn btn-rev !px-2 rounded-l-none border-l border-white/25" aria-label="Más acciones de publicación" aria-haspopup="dialog" data-open="discard"><i data-lucide="chevron-down"></i></button>
+      </div>
+      <button data-only="inactivo" type="button" class="btn btn-primary w-full sm:w-auto" id="actBtn"><i data-lucide="power"></i>Publicar y activar</button>
+    </div>
+  </section>
+
+  <!-- Bandas -->
+  <div data-only="cambios en-vacio errores" class="rev-band px-4 md:px-6 py-2.5 text-sm flex flex-wrap items-center gap-x-3 gap-y-1" role="status">
+    <i data-lucide="git-compare-arrows" class="w-4 h-4 text-st-rev flex-none"></i>
+    <span class="flex-1 min-w-[220px]">Estás editando un <b>borrador de cambios</b>. Quien confirme ahora sigue recibiendo la versión publicada del 12 nov hasta que publiques.</span>
+    <span class="flex gap-4"><button class="underline underline-offset-2 font-medium" id="seeChg">Ver cambios</button><button class="underline underline-offset-2 text-meta hover:text-fg" data-open="discard">Descartar</button></span>
+  </div>
+  <div data-only="inactivo" class="px-4 md:px-6 py-2.5 text-sm flex flex-wrap items-center gap-x-3 gap-y-1 bg-side border-b border-line" role="status">
+    <i data-lucide="eye-off" class="w-4 h-4 text-meta flex-none"></i>
+    <span class="flex-1 min-w-[220px]">Sin activar: quien confirma ve la página «Suscripción confirmada» y no recibe nada más hasta la carta del jueves. El texto es el borrador inicial: revísalo antes de activarlo.</span>
+  </div>
+  <div data-only="errores" class="px-4 md:px-6 pt-4">
+    <div class="banner banner-err" role="alert" tabindex="-1" id="errBanner"><i data-lucide="circle-alert" class="w-4 h-4 flex-none mt-0.5"></i><div><b>No se ha publicado: hay 3 cosas que arreglar.</b>
+      <ul class="mt-1 list-disc pl-4 space-y-0.5">
+        <li><a href="#es-subject" class="underline underline-offset-2" data-goto="es">Asunto (ES): 86 caracteres, el máximo es 80</a></li>
+        <li><a href="#es-btnurl" class="underline underline-offset-2" data-goto="es">Enlace del botón (ES): tiene que empezar por https://</a></li>
+        <li><a href="#en-body" class="underline underline-offset-2" data-goto="en">Inglés a medias: hay asunto y título pero no cuerpo. Complétalo o vacía la versión inglesa</a></li>
+      </ul></div></div>
+  </div>
+
+  <!-- Editor + vista previa -->
+  <div data-only="publicado cambios en-vacio errores inactivo" class="grid xl:grid-cols-[minmax(0,1fr)_652px] gap-6 px-4 md:px-6 py-5">
+    <div class="min-w-0 space-y-6" id="form">
+      <!-- Idioma -->
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <div class="border-b border-line" role="tablist" aria-label="Versión" data-tabs id="langTabs">
+          <button role="tab" class="tab t !h-9" aria-controls="v-es" aria-selected="true" id="tab-es">Español <span class="num text-muted text-xs">212</span></button>
+          <button role="tab" class="tab t !h-9 ml-4" aria-controls="v-en" id="tab-en">Inglés <span class="num text-muted text-xs">31</span><span id="enDot" class="w-1.5 h-1.5 rounded-full bg-warn-icon hidden" title="Vacía o incompleta"></span><span id="enDotSr" class="sr-only"></span></button>
+        </div>
+        <p class="text-xs text-meta">Cada suscriptor lo recibe en su idioma. Las cifras son suscriptores activos.</p>
+      </div>
+
+      <div id="v-es" role="tabpanel" aria-labelledby="tab-es" class="space-y-6"></div>
+      <div id="v-en" role="tabpanel" aria-labelledby="tab-en" hidden class="space-y-6"></div>
+
+      <!-- Pie fijo -->
+      <section aria-labelledby="h-foot" class="space-y-2">
+        <div class="flex items-center gap-2"><h3 id="h-foot" class="text-sm font-semibold">Pie del email</h3><span class="chip st-neutral"><i data-lucide="lock"></i>No se edita</span></div>
+        <div class="locked" id="footBox"></div>
+        <p class="help">Es el mismo pie que la carta semanal: motivo del envío, sin seguimiento, enlace de baja de un clic e identificación del remitente (LSSI art. 21). Se cambia en código, con revisión legal.</p>
+      </section>
+
+      <!-- Envío -->
+      <section aria-labelledby="h-send" class="card">
+        <div class="card-h"><h3 id="h-send">Envío</h3></div>
+        <div class="p-4 grid sm:grid-cols-2 gap-x-6 gap-y-4">
+          <dl class="kv"><dt>Cuándo</dt><dd>Al confirmar la suscripción (una vez por persona)</dd><dt>Remitente</dt><dd>Xavi · ChalkGuide</dd><dt>Responder a</dt><dd class="mono text-xs self-center">hola@chalkguide.es</dd></dl>
+          <div class="text-xs text-meta space-y-2">
+            <p>Cuenta en el cupo diario de Brevo (300), igual que la confirmación de alta: cada alta completa gasta 2 envíos.</p>
+            <p>Publicar no reenvía nada: los cambios solo los ve quien confirme a partir de ese momento.</p>
+          </div>
+          <div class="sm:col-span-2 flex items-start gap-3 pt-3 border-t border-line">
+            <button type="button" class="switch mt-0.5" role="switch" aria-checked="true" id="sw-on" aria-labelledby="sw-l" aria-describedby="sw-d"></button>
+            <div><p id="sw-l" class="text-sm font-medium">Enviar el email de bienvenida</p><p id="sw-d" class="text-xs text-meta">Si lo apagas, quien confirme no recibe nada más hasta la próxima carta. No borra el texto.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Vista previa (≥ 1280). Por debajo, modal -->
+    <aside class="hidden xl:block min-w-0" aria-labelledby="h-pv">
+      <div class="sticky top-4">
+        <div class="flex items-center gap-2 mb-2"><h3 id="h-pv" class="text-sm font-semibold">Vista previa <span class="text-meta font-normal" id="pvLang">· Español</span></h3>
+          <div class="seg ml-auto" role="radiogroup" aria-label="Ancho"><button role="radio" aria-checked="true" data-w="600">Escritorio</button><button role="radio" aria-checked="false" data-w="375">Móvil</button></div></div>
+        <div class="pvwrap">
+          <div class="inbox" aria-label="Así se ve en la bandeja de entrada"><span class="av" aria-hidden="true">X</span><span class="l1"><span>Xavi · ChalkGuide</span> <span class="font-normal text-meta" id="ibSubj"></span></span><span class="text-2xs text-muted">ahora</span><span class="l2" id="ibPre"></span></div>
+          <iframe id="pvf" title="Vista previa del email de bienvenida" width="600" height="700"></iframe>
+        </div>
+        <p class="mt-2 text-xs text-meta">Es la plantilla real de los emails (la de la confirmación y la carta) con este texto. «Enviarme una prueba» la manda a tu email para verla en tu cliente de correo.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- Publicar cambios -->
+<div id="pub" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pub-h">
+  <div class="dialog lg"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="pub-h">Publicar los cambios del email de bienvenida</h2></div>
+    <div class="dialog-b space-y-4 text-sm">
+      <ul class="border border-line rounded-lg divide-y divide-line" id="chgList"></ul>
+      <ul class="space-y-1.5">
+        <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Asunto, título y cuerpo en español.</li>
+        <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Enlaces con https://.</li>
+        <li class="flex gap-2" id="pubEn"></li>
+      </ul>
+      <p class="text-xs text-meta">Desde ahora lo recibe cada nueva confirmación. No se reenvía a quien ya lo recibió.</p>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close>Seguir editando</button><button type="button" class="btn btn-rev" id="doPub">Publicar cambios</button></div>
+  </div>
+</div>
+
+<!-- Activar (primera vez) -->
+<div id="act" class="overlay" role="dialog" aria-modal="true" aria-labelledby="act-h">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="act-h">¿Publicar y activar el email de bienvenida?</h2></div>
+    <div class="dialog-b space-y-3 text-sm">
+      <p>A partir de ahora, cada persona que confirme su suscripción lo recibe unos segundos después. A las 18 personas que ya están suscritas no se les envía.</p>
+      <div class="banner banner-warn"><i data-lucide="triangle-alert"></i><div>Es el texto inicial de ChalkGuide. ¿Lo has leído entero? También puedes enviarte una prueba antes.</div></div>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close>Todavía no</button><button type="button" class="btn btn-primary" id="doAct">Publicar y activar</button></div>
+  </div>
+</div>
+
+<!-- Descartar -->
+<div id="discard" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="dc-h" aria-describedby="dc-d">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="dc-h">¿Descartar los cambios sin publicar?</h2></div>
+    <div class="dialog-b text-sm" id="dc-d">Vuelves a la versión publicada del 12 nov. Los cambios del borrador se pierden.</div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close autofocus>Conservar cambios</button><button type="button" class="btn btn-danger" id="doDiscard">Descartar cambios</button></div>
+  </div>
+</div>
+
+<!-- Enlace -->
+<div id="link" class="overlay" role="dialog" aria-modal="true" aria-labelledby="ln-h">
+  <div class="dialog"><div class="grab"></div>
+    <div class="dialog-h"><h2 id="ln-h">Enlace</h2></div>
+    <div class="dialog-b space-y-3">
+      <div><label class="lbl" for="ln-u">URL</label><input id="ln-u" class="input" type="url" value="https://chalkguide.es/rocodromos" inputmode="url"><p class="help">Solo https://. Mejor a páginas de ChalkGuide.</p></div>
+    </div>
+    <div class="dialog-f"><button type="button" class="btn btn-ghost" data-close>Cancelar</button><button type="button" class="btn btn-primary" data-close data-toast="Enlace añadido" data-action="">Aplicar</button></div>
+  </div>
+</div>
+
+<!-- Vista previa (< 1280) -->
+<div id="preview" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pv-h">
+  <div class="dialog xl"><div class="grab"></div>
+    <div class="dialog-h flex items-center"><h2 id="pv-h">Vista previa</h2><button type="button" class="icon-btn ml-auto -mr-2" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
+    <div class="dialog-b"><div class="pvwrap !p-2 sm:!p-4">
+      <div class="inbox"><span class="av" aria-hidden="true">X</span><span class="l1">Xavi · ChalkGuide <span class="font-normal text-meta" id="ibSubj2"></span></span><span class="text-2xs text-muted">ahora</span><span class="l2" id="ibPre2"></span></div>
+      <iframe id="pvf2" title="Vista previa del email de bienvenida" style="width:100%;max-width:600px" height="680"></iframe></div></div>
+  </div>
+</div>
+
+<script>
+/* ---------- Datos de ejemplo (borrador para loro-lola) ---------- */
+const PUB={ /* versión publicada (12 nov) */
+ es:{subject:'Ya estás dentro: esto es lo que te llega de ChalkGuide',pre:'Una carta a la semana con la agenda de escalada en Barcelona, noticias con su fuente y el último artículo.',
+  title:'Bienvenid@ a ChalkGuide',
+  body:'<p>Gracias por confirmar. Nos alegra que formes parte de la familia de escaladores de ChalkGuide.</p><p>Soy Xavi. Escalo en Barcelona y escribo ChalkGuide para que elegir rocódromo, resolador o pies de gato sea más fácil: con datos que puedas comparar y mi opinión, <strong>que no se compra</strong>.</p>',
+  listTitle:'Qué te llega',
+  items:['Una carta a la semana, el jueves por la tarde.','La agenda de escalada en Barcelona para las dos semanas siguientes.','Noticias de escalada, cada una con su fuente enlazada.','El último artículo del blog: guías, precios y comparativas.'],
+  btnText:'Ver los rocódromos de Barcelona',btnUrl:'https://chalkguide.es/rocodromos',sig:'Xavi\nChalkGuide · Barcelona'},
+ en:{subject:'You’re in: here’s what you’ll get from ChalkGuide',pre:'One email a week with the Barcelona climbing agenda, news with its source and the latest article.',
+  title:'Welcome to ChalkGuide',
+  body:'<p>Thanks for confirming. We’re glad to have you in the ChalkGuide climbing family.</p><p>I’m Xavi. I climb in Barcelona and I write ChalkGuide to make choosing a gym, a resoler or climbing shoes easier: with data you can compare and my opinion, <strong>which is not for sale</strong>.</p>',
+  listTitle:'What you’ll get',
+  items:['One email a week, on Thursday afternoon.','The Barcelona climbing agenda for the next two weeks.','Climbing news, each with its source linked.','The latest blog article: guides, prices and comparisons.'],
+  btnText:'See Barcelona’s climbing gyms',btnUrl:'https://chalkguide.es/en/climbing-gyms',sig:'Xavi\nChalkGuide · Barcelona'}
+};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const STATES={
+ publicado:()=>clone(PUB),
+ inactivo:()=>clone(PUB),
+ cambios:()=>{const d=clone(PUB);d.es.subject='Ya estás dentro: lo que te llega cada semana';d.es.items.splice(3,0,'Sin publicidad encubierta: lo invitado o de afiliado va siempre marcado.');d.es.btnText='Empieza por los rocódromos';d.en.items.splice(3,0,'No hidden ads: anything sponsored or affiliate is always labelled.');return d;},
+ 'en-vacio':()=>{const d=STATES.cambios();d.en={subject:'',pre:'',title:'',body:'',listTitle:'',items:[],btnText:'',btnUrl:'',sig:''};return d;},
+ errores:()=>{const d=STATES.cambios();d.es.subject='Ya estás dentro: esto es todo lo que te va a llegar cada semana desde ChalkGuide, Barcelona';d.es.btnUrl='http://chalkguide.es/rocodromos';d.en.body='';d.en.listTitle='';d.en.items=[];d.en.btnText='';d.en.btnUrl='';d.en.sig='';return d;},
+};
+const CHG={cambios:[['ES','Asunto'],['ES','Qué te llega · ítem nuevo (4)'],['ES','Texto del botón'],['EN','Qué te llega · ítem nuevo (4)']]};
+let D=null, ST='cambios', LANG='es';
+
+/* ---------- Plantilla real (supabase/functions/_shared/newsletter/email.ts) ---------- */
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const escc=s=>esc(s).replace(/\{/g,'&#123;').replace(/\}/g,'&#125;');
+const safeHref=u=>{try{const x=new URL(u);return x.protocol==='https:'&&!x.username&&!x.password?x.toString():null}catch{return null}};
+const WRAP_OPEN='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"></head>'+
+ '<body style="margin:0;padding:0;background:#f6f4ef;font-family:Helvetica,Arial,sans-serif;color:#1d1d1b">'+
+ '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">'+
+ '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:8px">'+
+ '<tr><td style="padding:28px 28px 8px;font-size:20px;font-weight:bold">ChalkGuide</td></tr>';
+const WRAP_CLOSE='</table></td></tr></table></body></html>';
+const FOOT={
+ es:{footer:'Recibes este email porque acabas de confirmar tu suscripción a la newsletter de ChalkGuide. No medimos aperturas ni clics. Puedes responder a este correo: me llega a mí.',unsub:'Darme de baja',onlyEs:''},
+ en:{footer:'You are getting this email because you have just confirmed your subscription to the ChalkGuide newsletter. We do not track opens or clicks. You can reply to this email: it comes straight to me.',unsub:'Unsubscribe',onlyEs:'This welcome email is in Spanish only for now.'}
+};
+const SENDER='ChalkGuide · hola@chalkguide.es';
+/* Cuerpo: lista blanca p / strong / em / a[https] / ul>li. Todo texto se escapa. */
+function richToEmail(html){
+  const box=document.createElement('div');box.innerHTML=html;
+  const walk=n=>{if(n.nodeType===3)return escc(n.nodeValue);if(n.nodeType!==1)return '';const inner=[...n.childNodes].map(walk).join('');const t=n.tagName;
+    if(t==='P'||t==='DIV')return `<p style="margin:0 0 12px">${inner}</p>`;
+    if(t==='STRONG'||t==='B')return `<strong>${inner}</strong>`;
+    if(t==='EM'||t==='I')return `<em>${inner}</em>`;
+    if(t==='UL')return `<ul style="margin:0 0 12px;padding-left:20px">${inner}</ul>`;
+    if(t==='LI')return `<li style="margin:0 0 6px">${inner}</li>`;
+    if(t==='BR')return '<br>';
+    if(t==='A'){const h=safeHref(n.getAttribute('href'));return h?`<a href="${escc(h)}" style="color:#1d1d1b;text-decoration:underline">${inner}</a>`:inner;}
+    return inner;};
+  return [...box.childNodes].map(walk).join('');
+}
+function welcomeHtml(v,locale,fallback){
+  const c=FOOT[locale];let b='';
+  b+=`<tr><td style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:#ffffff">${escc(v.pre)}</td></tr>`;
+  if(fallback)b+=`<tr><td style="padding:8px 28px;font-size:14px;color:#555"><em>${escc(c.onlyEs)}</em></td></tr>`;
+  b+=`<tr><td style="padding:8px 28px 4px;font-size:22px;line-height:1.3;font-weight:bold">${escc(v.title)}</td></tr>`;
+  b+=`<tr><td style="padding:8px 28px;font-size:16px;line-height:1.5">${richToEmail(v.body)}</td></tr>`;
+  const items=v.items.filter(x=>x.trim());
+  if(items.length){b+=`<tr><td style="padding:8px 28px 4px;font-size:16px;font-weight:bold">${escc(v.listTitle)}</td></tr>`+
+    `<tr><td style="padding:4px 28px 8px;font-size:16px;line-height:1.5"><ul style="margin:0;padding-left:20px">${items.map(i=>`<li style="margin:0 0 6px">${escc(i)}</li>`).join('')}</ul></td></tr>`;}
+  const href=v.btnText.trim()&&safeHref(v.btnUrl);
+  if(href)b+=`<tr><td style="padding:16px 28px"><a href="${escc(href)}" style="display:inline-block;background:#1d1d1b;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:6px;font-weight:bold">${escc(v.btnText)}</a></td></tr>`;
+  if(v.sig.trim())b+=`<tr><td style="padding:8px 28px 20px;font-size:16px;line-height:1.5">${escc(v.sig).replace(/\n/g,'<br>')}</td></tr>`;
+  b+=`<tr><td style="padding:20px 28px 28px;font-size:12px;color:#777;border-top:1px solid #eee">${escc(c.footer)} <a href="#" style="color:#777">${escc(c.unsub)}</a><br>${escc(SENDER)}</td></tr>`;
+  return WRAP_OPEN+b+WRAP_CLOSE;
+}
+
+/* ---------- Formulario por idioma ---------- */
+const LIM={subject:80,pre:110,title:80,body:1500,listTitle:40,item:140,btnText:40,sig:120,items:6};
+const lblL=(l,es,en)=>l==='en'?en:es;
+const enEmpty=v=>!v.subject&&!v.title&&!v.body&&!v.items.length;
+const enPartial=v=>!enEmpty(v)&&(!v.subject||!v.title||!v.body.replace(/<[^>]+>/g,'').trim());
+function counter(n,max){return `<span class="counter ${n>max?'over':n>max*.9?'warn':''}">${n} / ${max}</span>`;}
+function itemLi(l,t,i){const lab=t||'Ítem vacío';return `<li class="li-it" data-label="${esc(lab)}"><button type="button" class="handle" aria-label="Mover «${esc(lab)}»"><i data-lucide="grip-vertical"></i></button>
+  <span><label class="sr-only" for="${l}-it${i}">Ítem ${i+1}</label><input id="${l}-it${i}" class="input" data-f="item" maxlength="${LIM.item+20}" value="${esc(t)}" ${l==='en'?'lang="en"':''}></span>
+  <button type="button" class="icon-btn" aria-label="Quitar «${esc(lab)}»" data-rm="${i}"><i data-lucide="x"></i></button></li>`;}
+function panel(l){
+  const v=D[l], en=l==='en', bodyLen=v.body.replace(/<[^>]+>/g,'').length;
+  const err=ST==='errores';
+  const subjOver=v.subject.length>LIM.subject, urlBad=v.btnText&&v.btnUrl&&!safeHref(v.btnUrl), bodyMiss=err&&en&&!bodyLen&&!enEmpty(v);
+  let h='';
+  if(en&&enEmpty(v))h+=`<div class="banner banner-warn" lang="es"><i data-lucide="triangle-alert"></i><div><b class="font-medium">Sin versión en inglés.</b> Los 31 suscriptores en inglés reciben el email en español, con una línea arriba: «${FOOT.en.onlyEs}». No bloquea la publicación. <button type="button" class="underline underline-offset-2" id="copyEs">Empezar desde el español</button></div></div>`;
+  if(en&&enPartial(v))h+=`<div class="banner banner-err" lang="es"><i data-lucide="circle-alert"></i><div><b class="font-medium">Inglés a medias.</b> Va completo o vacío: con asunto, título y cuerpo, o sin nada. A medias no se puede publicar.</div></div>`;
+  h+=`<section aria-labelledby="${l}-h1" class="space-y-4"><h3 id="${l}-h1" class="text-sm font-semibold">Bandeja de entrada</h3>
+   <div><label class="lbl" for="${l}-subject">${lblL(l,'Asunto','Asunto (inglés)')} ${en?'':'<span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span>'}${counter(v.subject.length,LIM.subject)}</label>
+    <input id="${l}-subject" class="input" data-f="subject" value="${esc(v.subject)}" ${en?'lang="en"':''} ${subjOver?`aria-invalid="true" aria-describedby="${l}-subject-e"`:`aria-describedby="${l}-subject-h"`}>
+    <div class="meter ${subjOver?'over':v.subject.length>55?'warn':''}"><span style="width:${Math.min(100,v.subject.length/LIM.subject*100)}%"></span></div>
+    ${subjOver?`<p id="${l}-subject-e" class="err"><i data-lucide="circle-alert" class="w-3.5 h-3.5 flex-none"></i>Máximo 80 caracteres. Sobran ${v.subject.length-80}.</p>`:`<p id="${l}-subject-h" class="help">Ideal entre 30 y 55: en móvil se corta hacia los 40.</p>`}</div>
+   <div><label class="lbl" for="${l}-pre">Preheader <span class="opt">(texto de vista previa, opcional)</span>${counter(v.pre.length,LIM.pre)}</label>
+    <input id="${l}-pre" class="input" data-f="pre" maxlength="${LIM.pre}" value="${esc(v.pre)}" ${en?'lang="en"':''} aria-describedby="${l}-pre-h"><p id="${l}-pre-h" class="help">Sale junto al asunto en la bandeja. Si lo dejas vacío, el cliente de correo enseña el principio del cuerpo.</p></div>
+  </section>
+  <section aria-labelledby="${l}-h2" class="space-y-4"><h3 id="${l}-h2" class="text-sm font-semibold">Contenido</h3>
+   <div><label class="lbl" for="${l}-title">Título ${en?'':'<span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span>'}${counter(v.title.length,LIM.title)}</label>
+    <input id="${l}-title" class="input" data-f="title" maxlength="${LIM.title}" value="${esc(v.title)}" ${en?'lang="en"':''}></div>
+   <div><p class="lbl" id="${l}-body-l">Cuerpo ${en?'':'<span class="req" aria-hidden="true">*</span><span class="sr-only">(obligatorio)</span>'}${counter(bodyLen,LIM.body)}</p>
+    <div role="toolbar" aria-label="Formato del cuerpo" aria-controls="${l}-body" class="rtbar">
+     <button type="button" class="icon-btn" aria-label="Deshacer"><i data-lucide="undo-2"></i></button><button type="button" class="icon-btn" aria-label="Rehacer"><i data-lucide="redo-2"></i></button>
+     <span class="w-px h-5 bg-line mx-1 flex-none"></span>
+     <button type="button" class="icon-btn" aria-label="Negrita" aria-pressed="false" data-cmd="bold"><i data-lucide="bold"></i></button><button type="button" class="icon-btn" aria-label="Cursiva" aria-pressed="false" data-cmd="italic"><i data-lucide="italic"></i></button><button type="button" class="icon-btn" aria-label="Enlace" data-open="link"><i data-lucide="link"></i></button><button type="button" class="icon-btn" aria-label="Lista" data-cmd="insertUnorderedList"><i data-lucide="list"></i></button>
+     <span class="ml-auto text-2xs text-muted flex-none pl-2 pr-1 hidden sm:inline">Sin imágenes ni títulos: el email llega mejor</span></div>
+    <div id="${l}-body" class="rt" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="${l}-body-l" data-f="body" ${en?'lang="en"':''} ${bodyMiss?`aria-invalid="true" aria-describedby="${l}-body-e"`:''}>${v.body}</div>
+    ${bodyMiss?`<p id="${l}-body-e" class="err"><i data-lucide="circle-alert" class="w-3.5 h-3.5 flex-none"></i>Falta el cuerpo en inglés.</p>`:'<p class="help">Párrafos, negrita, cursiva, enlaces y listas. Al pegar desde otro sitio se quita el formato que no cabe.</p>'}</div>
+  </section>
+  <section aria-labelledby="${l}-h3" class="space-y-3">
+   <div class="flex items-center gap-2"><h3 id="${l}-h3" class="text-sm font-semibold">Lista «${esc(v.listTitle||lblL(l,'Qué te llega','What you’ll get'))}»</h3><span class="text-xs text-meta num">${v.items.length} de ${LIM.items}</span></div>
+   <div><label class="lbl" for="${l}-listTitle">Título de la lista <span class="opt">(opcional)</span>${counter(v.listTitle.length,LIM.listTitle)}</label><input id="${l}-listTitle" class="input" data-f="listTitle" maxlength="${LIM.listTitle}" value="${esc(v.listTitle)}" ${en?'lang="en"':''}></div>
+   ${v.items.length?`<ul class="sortable border border-line rounded-lg divide-y divide-line" id="${l}-items">${v.items.map((t,i)=>itemLi(l,t,i)).join('')}</ul>`:`<p class="text-xs text-meta border border-dashed border-line-strong rounded-lg px-3 py-3">Sin ítems: la lista no sale en el email.</p>`}
+   <div class="flex items-center gap-3"><button type="button" class="btn btn-ghost btn-sm" data-add="${l}" ${v.items.length>=LIM.items?'disabled aria-describedby="'+l+'-max"':''}><i data-lucide="plus"></i>Añadir ítem</button>
+    <p class="text-xs text-meta" id="${l}-max">Máximo ${LIM.items}, de 140 caracteres. Arrastra o usa el asa con teclado para ordenar.</p></div>
+  </section>
+  <section aria-labelledby="${l}-h4" class="space-y-4"><h3 id="${l}-h4" class="text-sm font-semibold">Botón <span class="text-meta font-normal">(opcional)</span></h3>
+   <div class="grid sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4">
+    <div><label class="lbl" for="${l}-btnText">Texto${counter(v.btnText.length,LIM.btnText)}</label><input id="${l}-btnText" class="input" data-f="btnText" maxlength="${LIM.btnText}" value="${esc(v.btnText)}" ${en?'lang="en"':''}></div>
+    <div><label class="lbl" for="${l}-btnUrl">Enlace</label><input id="${l}-btnUrl" class="input mono !text-xs" type="url" inputmode="url" data-f="btnUrl" value="${esc(v.btnUrl)}" placeholder="https://chalkguide.es/…" ${urlBad?`aria-invalid="true" aria-describedby="${l}-btnUrl-e"`:''}>
+     ${urlBad?`<p id="${l}-btnUrl-e" class="err"><i data-lucide="circle-alert" class="w-3.5 h-3.5 flex-none"></i>Tiene que empezar por https://.</p>`:''}</div>
+   </div>
+   <p class="help -mt-2">Sin texto, el botón no sale. Si hay texto, el enlace es obligatorio.</p>
+  </section>
+  <section aria-labelledby="${l}-h5"><h3 id="${l}-h5" class="sr-only">Firma</h3>
+   <label class="lbl" for="${l}-sig">Firma <span class="opt">(opcional)</span>${counter(v.sig.length,LIM.sig)}</label><textarea id="${l}-sig" class="input !h-auto py-2" rows="2" data-f="sig" maxlength="${LIM.sig}" ${en?'lang="en"':''}>${esc(v.sig)}</textarea>
+  </section>`;
+  return h;
+}
+function renderPanels(){
+  ['es','en'].forEach(l=>{const p=document.getElementById('v-'+l);p.innerHTML=panel(l);const ul=document.getElementById(l+'-items');if(ul)CG.initSortable(ul);});
+  const ee=enEmpty(D.en), ep=enPartial(D.en);
+  document.getElementById('enDot').classList.toggle('hidden',!(ee||ep));
+  document.getElementById('enDotSr').textContent=ee?'(vacía)':ep?'(incompleta)':'';
+  document.getElementById('footBox').innerHTML=`${esc(FOOT[LANG].footer)} <u>${FOOT[LANG].unsub}</u><br>${esc(SENDER)}`;
+  CG.icons();renderPreview();
+}
+function renderPreview(){
+  const fb=LANG==='en'&&enEmpty(D.en), v=fb?D.es:D[LANG];
+  const html=welcomeHtml(v,LANG,fb);
+  ['pvf','pvf2'].forEach(id=>{const f=document.getElementById(id);f.srcdoc=html;f.onload=()=>{try{f.height=f.contentDocument.body.scrollHeight+8}catch(e){}};});
+  ['ibSubj','ibSubj2'].forEach(id=>document.getElementById(id).textContent='· '+(v.subject||'(sin asunto)'));
+  ['ibPre','ibPre2'].forEach(id=>document.getElementById(id).textContent=v.pre||v.title);
+  document.getElementById('pvLang').textContent=LANG==='en'?(fb?'· Inglés (recibe el español)':'· Inglés'):'· Español';
+}
+function setState(s){
+  ST=s;D=STATES[s==='cargando'?'publicado':s]();
+  document.querySelectorAll('[data-only]').forEach(el=>el.classList.toggle('on',el.dataset.only.split(' ').includes(s)));
+  document.getElementById('demoState').value=s;
+  const n=s==='en-vacio'?5:s==='errores'?6:4;document.getElementById('chgChip').innerHTML=`${n} cambios<span class="sr-only"> sin publicar</span>`;
+  document.getElementById('sw-on').setAttribute('aria-checked',s!=='inactivo');
+  renderPanels();
+  if(s==='errores')setTimeout(()=>document.getElementById('errBanner').focus(),50);
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener('input',e=>{
+  const f=e.target.dataset&&e.target.dataset.f;if(!f)return;const l=e.target.closest('[role=tabpanel]').id.slice(2);
+  if(f==='item'){const lis=[...e.target.closest('ul').querySelectorAll('input[data-f=item]')];D[l].items=lis.map(x=>x.value);}
+  else D[l][f]=f==='body'?e.target.innerHTML:e.target.value;
+  const c=e.target.closest('div,section').querySelector('.counter');
+  if(c&&f!=='item'){const n=f==='body'?e.target.textContent.length:e.target.value.length;const m=LIM[f];c.textContent=`${n} / ${m}`;c.className='counter '+(n>m?'over':n>m*.9?'warn':'');}
+  renderPreview();
+});
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]');if(a){const l=a.dataset.add;D[l].items.push('');renderPanels();const ins=document.querySelectorAll(`#${l}-items input`);ins[ins.length-1].focus();return;}
+  const r=e.target.closest('[data-rm]');if(r){const l=r.closest('[role=tabpanel]').id.slice(2);D[l].items.splice(+r.dataset.rm,1);renderPanels();CG.toast('Ítem quitado',{action:'Deshacer'});return;}
+  const c=e.target.closest('[data-cmd]');if(c){e.preventDefault();document.execCommand(c.dataset.cmd);renderPreview();return;}
+  if(e.target.id==='copyEs'){D.en=clone(D.es);renderPanels();CG.toast('Copiado del español: tradúcelo antes de publicar',{type:'info',action:null});return;}
+  const g=e.target.closest('[data-goto]');if(g){e.preventDefault();document.getElementById('tab-'+g.dataset.goto).click();setTimeout(()=>{const t=document.querySelector(g.getAttribute('href'));t&&t.focus();},30);}
+});
+document.addEventListener('sorted',e=>{const ul=e.target;const l=ul.id.slice(0,2);D[l].items=[...ul.querySelectorAll('input')].map(x=>x.value);renderPreview();},true);
+document.addEventListener('dragend',e=>{const ul=e.target.closest&&e.target.closest('ul.sortable');if(ul){const l=ul.id.slice(0,2);D[l].items=[...ul.querySelectorAll('input')].map(x=>x.value);renderPreview();}},true);
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const h=location.hash.slice(1);
+  setState(STATES[h]||h==='cargando'?h:'cambios');
+  if(h==='publicar')setTimeout(()=>document.getElementById('pubBtn').click(),60);
+  document.getElementById('demoState').onchange=e=>setState(e.target.value);
+  document.querySelectorAll('#langTabs [role=tab]').forEach(t=>t.addEventListener('click',()=>{LANG=t.id.slice(4);renderPanels();}));
+  document.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{document.getElementById('pvf').width=b.dataset.w;}));
+  document.getElementById('pubBtn').onclick=()=>{
+    if(ST==='errores'){CG.toast('No se ha publicado: revisa los 3 avisos de arriba',{type:'err',action:null});document.getElementById('errBanner').focus();return;}
+    const rows=(CHG.cambios).concat(ST==='en-vacio'?[['EN','Versión inglesa vaciada']]:[]);
+    document.getElementById('chgList').innerHTML=rows.map(r=>`<li class="px-3 py-2 flex items-center gap-2"><span class="lang-tag">${r[0]}</span><span class="flex-1">${r[1]}</span><span class="chg-mark" aria-hidden="true"></span></li>`).join('');
+    const ee=enEmpty(D.en);document.getElementById('pubEn').innerHTML=ee?'<i data-lucide="triangle-alert" class="w-4 h-4 text-warn-icon flex-none mt-0.5"></i><span>Sin inglés: los 31 en inglés recibirán el español.</span>':'<i data-lucide="check" class="w-4 h-4 text-ok flex-none mt-0.5"></i>Versión inglesa completa.';
+    CG.icons();CG.open('pub');};
+  document.getElementById('seeChg').onclick=()=>document.getElementById('pubBtn').click();
+  document.getElementById('doPub').onclick=()=>{CG.close('pub');setState('publicado');CG.toast('Email de bienvenida publicado · lo recibe quien confirme desde ahora',{action:null});};
+  document.getElementById('doDiscard').onclick=()=>{CG.close('discard');setState('publicado');CG.toast('Cambios descartados',{action:'Deshacer'});};
+  document.getElementById('actBtn').onclick=()=>CG.open('act');
+  document.getElementById('doAct').onclick=()=>{CG.close('act');setState('publicado');CG.toast('Email de bienvenida activado',{action:null});};
+  const tb=document.getElementById('testBtn');
+  tb.onclick=()=>{if(tb.disabled)return;tb.disabled=true;tb.setAttribute('aria-busy','true');tb.querySelector('span').textContent='Enviando…';
+    setTimeout(()=>{tb.disabled=false;tb.removeAttribute('aria-busy');tb.querySelector('span').textContent='Enviarme una prueba';
+      CG.toast(`Prueba (${LANG==='en'?'inglés':'español'}) enviada a tu email de admin · con lo que tienes ahora, sin publicar`,{action:null});},1200);};
+});
+</script>
+</body>
+</html>

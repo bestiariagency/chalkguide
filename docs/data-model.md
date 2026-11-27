@@ -1800,3 +1800,65 @@ Informe: `docs/security/D69-analytics-events-review.md` (D66 `p_related` aprobad
 - **V2 · Sin origen ni dispositivo en 3 eventos.** `newsletter_submit`, `review_submitted` y `login_for_review` guardan `source` y `device` a null. Pueden casar en el tiempo con una fila identificable (alta, opinión o inicio de sesión), y así solo aportan lo que ya consta en esa fila. El panel no usa esos desgloses.
 - **Contrato para el front (obligatorio).** En artículos, `content_slug` y `pillar` van **siempre** con `slug_es`, también en `/en`. Si `pillar` no es un `article_categories.slug_es`, el servidor descarta el evento entero.
 - **Pruebas.** Bloque «Veto D69» de `guide_rls_leaks.sql`, con la guarda `rls_suite` en cada DO. Cubre: con el tope diario alcanzado no se escribe; `job_health` pasa a 500 y vuelve a 200; `*day` de hoy sobrevive a la purga y el de hace 3 días no; todo sale truncado a la hora; `source` y `device` son null en los 3 eventos y se conservan en `page_view`. Además, la aserción de la purga de tasa excluye ahora `*day`. Se ejecutó en una transacción revertida, en verde y sin restos. **Advisors:** sin avisos nuevos.
+
+### D87: registro mínimo de consentimientos de cookies (2026-11-19)
+
+Migración `20261119172728_guide_d87_cookie_consent_log.sql`. Diseño: `docs/security/D86-cookie-consent-front-review.md`, «Pregunta 6». Sirve para acreditar el consentimiento (art. 7.1 RGPD y política de consentimiento de Google): qué se eligió, con qué revisión del banner y cuándo. No sustituye al registro versionado del mecanismo en el repositorio (textos, configuración y capturas por `revision`).
+
+**Principio.** Sin IP, user agent, `user_id` ni path. Ninguna columna lo admite y la función no lee `request.headers`. `consent_id` es el `consentId` aleatorio de `vanilla-cookieconsent`: un seudónimo que solo se liga a una persona si ella aporta su cookie.
+
+#### Tablas
+
+| Tabla | Contenido | Acceso |
+| --- | --- | --- |
+| `cookie_consent_log` | `id` (identity), `consent_id uuid`, `action` (`first` o `change`), `categories text[]`, `revision int`, `locale` (`guide.locale`), `created_at` (servidor, truncado al minuto) | RLS sin policies. Sin GRANT para `anon`, `authenticated` ni `service_role` (aviso INFO del linter esperado). Escribe solo `log_cookie_consent`; lee solo el admin por RPC |
+| `cookie_consent_rate` | `(bucket, name, n)`. `name = '*'` cuenta por minuto y `'*day'` por día UTC | RLS sin policies ni GRANT (aviso INFO esperado). Solo la toca `log_cookie_consent` como dueño |
+
+**Categorías.** Se guardan solo las opcionales aceptadas, ordenadas y sin repetir: `{}`, `{analytics}`, `{ads}` o `{ads,analytics}`. `necessary` es implícita y **no se guarda**: `{}` significa «solo necesarias» (rechazo). CHECK: `categories <@ {analytics,ads}`, sin null y con 2 elementos como máximo. `revision` entre 0 y 100 000. `created_at` debe ser un minuto exacto.
+
+#### Escritura
+
+**`log_cookie_consent(p_consent_id uuid, p_action text, p_categories text[], p_revision int, p_locale text) returns void`.** SECURITY DEFINER, `search_path = ''`. EXECUTE para `anon` y `authenticated`, revocado a `public` y `service_role`. Nunca falla: si algo no valida o se supera un tope, no escribe nada.
+
+- Valida: `consent_id` no nulo, `action` en `first|change`, `p_categories` no nulo, sin null, de 3 elementos como máximo y contenido en `necessary|analytics|ads` (en minúsculas exactas), `revision` entre 0 y 100 000 y `locale` en `es|en`. Quita `necessary` y normaliza el resto.
+- Topes: **120 por minuto y 5 000 por día UTC en total**, y **10 filas por `consent_id` y día UTC**. Solo cuentan en los topes globales los intentos que validan. Sin IP no hay límite por cliente; si hiciera falta, iría en el borde (osset-op).
+- El front (`useConsent.ts`, fuera de este cambio) la llama sin bloquear desde `onFirstConsent` y `onChange`, con los datos de `cmp.getCookie()`.
+
+#### Lectura (solo admin)
+
+SECURITY DEFINER con `assert_admin()`. EXECUTE solo `authenticated`.
+
+- `admin_cookie_consent_lookup(p_consent_id uuid) returns jsonb`. Historial cronológico `[{created_at, action, categories, revision, locale}]` de un `consent_id`; `[]` si no hay filas. Para cuando alguien aporta su cookie. `null`: 22023.
+- `admin_cookie_consent_counts(p_from date default null, p_to date default null) returns jsonb`. `{from, to, generated_at, total, rows[{revision, action, categories, locale, n}]}` por días UTC (ambos incluidos; null = sin límite). `p_from > p_to`: 22023.
+
+#### Conservación
+
+**36 meses** (propuesta de leona-lia: vida del consentimiento más prescripción de infracciones graves de la LSSI; lo confirma Xavi con revisión legal). `purge_cookie_consent_log() returns bigint`: SECURITY INVOKER, sin EXECUTE para la API (como `purge_activity_log`, D60). pg_cron `guide-cookie-consent-purge`, cada hora a los :50. Borra el registro de más de 36 meses, los contadores por minuto de más de 1 hora y los `*day` de más de 2 días.
+
+**Base legal y aviso.** Obligación legal de acreditar (art. 6.1.c RGPD). Hay que mencionarlo en `/privacidad` (loro-lola y revisión legal, fuera de este cambio).
+
+**Pruebas.** Bloque «D87» de `guide_rls_leaks.sql`, con la guarda `rls_suite` en cada DO. Cubre: catálogo (columnas exactas, RLS, sin GRANT de tabla, sin policies, EXECUTE y SECURITY DEFINER con `search_path` vacío, purga sin EXECUTE, job), anon (3 válidos y 14 inválidos que no escriben ni fallan; sin lectura, INSERT directo, purga ni RPC de admin), usuario sin rol (escribe; sin lectura, UPDATE, DELETE, purga ni RPC de admin), normalización de categorías, minuto truncado, CHECK de la tabla, los tres topes, RPC de admin (historial, ausente, null, recuentos, rango vacío e invertido) y purga del registro y de los contadores. Se ejecutó con fixtures mínimos en una transacción revertida, en verde y sin restos. La suite completa queda pendiente.
+
+**Advisors:** los avisos nuevos son los esperados. DEFINER ejecutable por `anon` y `authenticated` en `log_cookie_consent` (intencionado). DEFINER ejecutable por `authenticated` en las dos `admin_cookie_consent_*` (con `assert_admin()`). INFO de RLS sin policy en las dos tablas. **Tipos** de `guide` regenerados.
+
+#### O1 del veto D87: señal de salud (2026-11-19)
+
+Informe: `docs/security/D87-cookie-consent-log-review.md` (APROBADO, O1 es condición para activar). Migración `20261119203335_guide_d87_o1_cookie_consent_health.sql`. La firma de `purge_cookie_consent_log()` no cambia, así que los tipos tampoco.
+
+- La purga horaria (:50) hace upsert de `job_health` con `job = 'cookie_consent'`, como `analytics` en D69.
+- **500** con `alerts`:
+  - `daily_cap_reached`: hoy o ayer (UTC) el contador `*day` llegó a 5 000. Ese día puede haber consentimientos sin registrar.
+  - `minute_cap_hits`: en la última hora, **más de 3 minutos** (N = 3) llegaron a 120. Avisa de ráfagas repetidas, no de un pico suelto.
+- Si no hay alertas, **200**.
+- `details` solo lleva recuentos y umbrales: `alerts`, `cap_per_day`, `cap_per_minute`, `minute_hits_threshold`, `today_attempts`, `yesterday_attempts`, `minute_cap_hits_last_hour` y `purged_rows`.
+- **Visibilidad.** `job_health` es legible solo por el admin (policy `job_health_select`). Hoy el panel solo pinta `ingest` (`app/services/admin/ingest.ts`) y `review-photos-cleanup` (vía `admin_dashboard_stats`). `analytics` y `cookie_consent` no se ven todavía: hace falta un aviso en el front (pendiente de coneja-lucky).
+- **Pruebas.** Bloque «D87 O1» de `guide_rls_leaks.sql`, con la guarda `rls_suite` en cada DO. Cubre:
+  - 200 con 3 minutos al tope, `*day` en 4 999 y contadores fuera de la ventana;
+  - claves exactas de `details`;
+  - 500 `minute_cap_hits` al cuarto minuto;
+  - 500 `daily_cap_reached` hoy y ayer;
+  - vuelta a 200 y una sola fila;
+  - el usuario sin rol no ve la fila y el admin sí.
+
+  Se ejecutó con fixtures mínimos en una transacción revertida, en verde y sin restos.
+- **Advisors:** sin avisos nuevos.

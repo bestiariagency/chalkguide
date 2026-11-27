@@ -273,7 +273,6 @@
     "unsubscribed": "Baja confirmada",
     "unsubscribedBody": "No volverás a recibir la newsletter. Si cambias de idea, puedes volver a suscribirte cuando quieras.",
     "error": "No se pudo completar la suscripción. Inténtalo de nuevo en un rato.",
-    "linkExpiredBody": "Puede haber caducado o haberse usado ya. Si aún no estás dentro, vuelve a apuntarte y te envío otro.",
     "linkInvalidTitle": "Este enlace no funciona",
     "linkInvalidBody": "Puede que haya caducado, que ya se haya usado o que esté incompleto. Si quieres recibir la newsletter, puedes volver a apuntarte.",
     "unsubscribeInvalidBody": "La baja no se ha hecho: este enlace no es válido o ya se usó. Para completarla, abre cualquier correo de la newsletter y pulsa el enlace de baja que lleva al pie.",
@@ -294,7 +293,19 @@
     "confirmedGymsCta": "Ver los rocódromos",
     "relatedOptional": "(Opcional)",
     "moreInfo": "Más información",
-    "relatedSuccess": "Al confirmarlo se activan la newsletter y los avisos de Chalk app. Si ya estabas suscrito, no cambia nada: los avisos se activan desde «Preferencias», al pie de cualquier email."
+    "relatedSuccess": "Al confirmarlo se activan la newsletter y los avisos de Chalk app. Si ya estabas suscrito, no cambia nada: los avisos se activan desde «Preferencias», al pie de cualquier email.",
+    "confirmPageTitle": "Confirma tu suscripción",
+    "confirmPageBody": "Un clic más y recibirás la newsletter semanal de ChalkGuide. Hasta que confirmes, no estás apuntado.",
+    "confirmButton": "Confirmar suscripción",
+    "expiredTitle": "Este enlace ha caducado",
+    "expiredBody": "Los enlaces de confirmación duran 48 horas. Puedo mandarte uno nuevo, pero solo una vez; el anterior dejará de valer.",
+    "resendButton": "Enviarme otro enlace",
+    "resentTitle": "Revisa tu correo",
+    "resentBody": "Si tu alta seguía pendiente, te hemos enviado un enlace nuevo. Mira también en spam.",
+    "confirmErrorTitle": "No hemos podido confirmar",
+    "confirmErrorBody": "Ha fallado algo por nuestra parte o por tu conexión. Tu enlace puede seguir valiendo: inténtalo otra vez.",
+    "errorLimit": "Demasiados intentos desde tu conexión. Espera un poco y vuelve a probar.",
+    "errorCaptcha": "La comprobación anti-bots ha fallado. Recarga la página e inténtalo de nuevo."
   },
   "partner": {
     "title": "Encuentra compañero",

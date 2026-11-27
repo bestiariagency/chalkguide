@@ -135,6 +135,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // F4.6: server-only, never `public`. Same value as the Supabase EF secret. Netlify env: NEWSLETTER_RELAY_SECRET
+    // (read at runtime by server/utils/newsletter-relay.ts) or NUXT_NEWSLETTER_RELAY_SECRET.
+    newsletterRelaySecret: '',
     public: {
       siteUrl,
       // Optional https URL of the repository (admin runbook link in Ingesta). Empty = the panel shows the path as text.
@@ -225,6 +228,16 @@ export default defineNuxtConfig({
 
     // Internal API endpoints: never prerendered, never indexed.
     '/api/**': { ssr: true, robots: false, headers: { 'cache-control': 'private, no-store' } },
+    // F4.6 newsletter relay (sign-up, ALTCHA challenge, confirm, resend): never prerendered, never indexed, no referrer.
+    '/api/newsletter/**': {
+      ssr: true,
+      robots: false,
+      headers: {
+        'cache-control': 'no-store',
+        'x-robots-tag': 'noindex, nofollow',
+        'referrer-policy': 'no-referrer',
+      },
+    },
     // Sanitized editorial content (D64, F6.19 C5): anon-only data (the routes never read the visitor's
     // session), so it is shared and cached with the same TTL as the page that uses it. Must come after
     // `/api/**`: it replaces that rule's `no-store`. Nothing else under /api is cached.

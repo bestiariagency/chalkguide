@@ -12,6 +12,10 @@
 
 [build.environment]
   NODE_VERSION = "24"
+  # Secrets scanning: these values are public by design (inlined in the client bundle, quoted in docs
+  # and design mockups), so scanning them is a false positive. Real secrets (NUXT_NEWSLETTER_RELAY_SECRET,
+  # service keys) stay scanned: never add them here.
+  SECRETS_SCAN_OMIT_KEYS = "NUXT_PUBLIC_SITE_URL,NUXT_PUBLIC_SUPABASE_URL,NUXT_PUBLIC_SUPABASE_KEY"
 
 # Contexts: one build command for all of them. Indexing is NOT configured here: nuxt.config.ts reads Netlify's CONTEXT variable, so only
 # `production` (with a real NUXT_PUBLIC_SITE_URL) is indexable; deploy-preview and branch-deploy get

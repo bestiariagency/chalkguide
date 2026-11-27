@@ -1,8 +1,9 @@
 import { countOf, type ByCategory, type DashboardStats } from './admin-dashboard'
+import { systemRows, type JobHealth } from './admin-dashboard-health'
 import { GYM_INFO, RESOLER_INFO, SHOE_INFO } from './item-spec'
 
-/** "Pendiente" of Inicio v2 (README §14.2): three groups, from most to least urgent; groups and rows without work are dropped. */
-export type PendingIcon = 'reviews' | 'photos' | 'events' | 'news' | 'ingest' | 'changes' | 'imported' | 'drafts' | 'stale' | 'alt' | 'pages' | 'cleanup'
+/** "Pendiente" of Inicio v2 (README §14.2, §20): the «Sistema» block plus three groups, from most to least urgent; groups and rows without work are dropped. */
+export type PendingIcon = 'reviews' | 'photos' | 'events' | 'news' | 'ingest' | 'changes' | 'imported' | 'drafts' | 'stale' | 'alt' | 'pages' | 'cleanup' | 'consent' | 'consent-unknown' | 'analytics' | 'stopped'
 export type PendingTone = 'acc' | 'rev' | 'subtle' | 'warn' | 'danger'
 
 export interface PendingRow {
@@ -19,10 +20,14 @@ export interface PendingRow {
   deadline?: string
   /** Remedy shown on demand (notice rows without a destination). */
   help?: string
+  /** Task name shown in `code` where `help` has `{code}`. */
+  helpCode?: string
+  /** Screen-reader prefix of line 1 (the tone is only visible in the badge). */
+  sr?: string
 }
 
 export interface PendingGroup {
-  key: 'moderate' | 'publish' | 'review'
+  key: 'system' | 'moderate' | 'publish' | 'review'
   label: string
   rows: PendingRow[]
 }
@@ -39,6 +44,8 @@ export interface PendingInput {
   today: string
   /** News drafts and the health of the agent (`admin_news_summary`); absent when it could not be read. */
   news?: { pending: number; warnings: number; ingestFailing: boolean } | null
+  /** `job_health` of `analytics` and `cookie_consent`; absent when it could not be read (Sistema then skips them). */
+  health?: JobHealth[] | null
 }
 
 const CATEGORIES = [
@@ -93,15 +100,6 @@ function changesRow(changes: PendingInput['changes']): PendingRow | null {
 
 function moderateRows({ stats, newReviews, today, news }: PendingInput): PendingRow[] {
   const rows: PendingRow[] = []
-  if (news?.ingestFailing)
-    rows.push({
-      key: 'ingest',
-      icon: 'ingest',
-      tone: 'danger',
-      to: adminPath('ingesta'),
-      strong: 'La rutina de novedades no está recogiendo',
-      context: 'Mira el motivo y qué hacer en Ingesta',
-    })
   if (news?.pending)
     rows.push({
       key: 'news',
@@ -171,50 +169,8 @@ function publishRows(input: PendingInput): PendingRow[] {
   return rows
 }
 
-const CLEANUP_MAX_AGE_MS = 48 * 3_600_000
-
-const cleanupCheckedMs = (stats: DashboardStats) => (stats.cleanupCheckedAt ? Date.parse(stats.cleanupCheckedAt) : NaN)
-
-/** Remedy of the cleanup notice (the row opens nothing: the fix lives outside the panel). */
-const CLEANUP_HELP = 'Comprueba que la limpieza sigue programada y que su secreto coincide en Edge Function secrets y en Vault.'
-
-/** The nightly cleanup of reader photos is not confirmed: failed status, never checked or check older than 48 h. */
-function cleanupNeedsAttention(stats: DashboardStats, now: number): boolean {
-  const checked = cleanupCheckedMs(stats)
-  return stats.cleanupLastStatus !== 200 || !Number.isFinite(checked) || now - checked > CLEANUP_MAX_AGE_MS
-}
-
-/** Copy of the cleanup row: confirmed failure, never checked or stale check (only the first one is a known failure). */
-function cleanupCopy(stats: DashboardStats, now: number): Pick<PendingRow, 'strong' | 'context' | 'tone'> {
-  const checked = cleanupCheckedMs(stats)
-  if (!Number.isFinite(checked))
-    return {
-      tone: 'warn',
-      strong: 'Limpieza nocturna de fotos nunca comprobada',
-      context: 'No se sabe si se borran las fotos rechazadas o caducadas',
-    }
-  if (now - checked > CLEANUP_MAX_AGE_MS)
-    return {
-      tone: 'warn',
-      strong: 'Limpieza nocturna de fotos sin comprobar hace más de 48 h',
-      context: 'No se sabe si se borran las fotos rechazadas o caducadas',
-    }
-  return {
-    tone: 'danger',
-    strong: 'Ha fallado la limpieza nocturna de fotos',
-    context: 'Las fotos rechazadas o caducadas pueden no borrarse',
-  }
-}
-
-function reviewRows({ stats, provisionalPages, now = Date.now() }: PendingInput): PendingRow[] {
+function reviewRows({ stats, provisionalPages }: PendingInput): PendingRow[] {
   const rows: PendingRow[] = []
-  if (cleanupNeedsAttention(stats, now))
-    rows.push({
-      key: 'cleanup',
-      icon: 'cleanup',
-      help: CLEANUP_HELP,
-      ...cleanupCopy(stats, now),
-    })
   if (stats.itemsStale)
     rows.push({
       key: 'stale',
@@ -247,6 +203,7 @@ function reviewRows({ stats, provisionalPages, now = Date.now() }: PendingInput)
 
 export function buildPending(input: PendingInput): PendingGroup[] {
   const groups: PendingGroup[] = [
+    { key: 'system', label: 'Sistema', rows: systemRows({ stats: input.stats, now: input.now ?? Date.now(), ingestFailing: !!input.news?.ingestFailing, health: input.health ?? null }) },
     { key: 'moderate', label: 'Moderar', rows: moderateRows(input) },
     { key: 'publish', label: 'Publicar', rows: publishRows(input) },
     { key: 'review', label: 'Revisar', rows: reviewRows(input) },

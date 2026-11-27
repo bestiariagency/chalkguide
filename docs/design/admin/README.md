@@ -1700,3 +1700,173 @@ Pie: Rechazar… · Guardar (sigue por revisar) · **Guardar y publicar**. En un
 3. **Editar una carta programada:** vuelve a borrador y, al aprobarla de nuevo, cuenta otra hora (**recomendado**, sin riesgo de que salga a medio editar) o se edita sin perder la hora (más rápido para erratas, pero con autoguardado podría salir un cambio a medias).
 4. **Suscriptores en inglés sin versión EN esa semana:** reciben la española con una línea «This week only in Spanish» (**recomendado**, mantiene el ritmo semanal) o no reciben nada esa semana. D75 dice «sin versión en inglés, solo en español»: confirma cuál de las dos lecturas es la buena.
 5. **Aprobar noticias en lote:** al momento con Deshacer, y diálogo solo si hay avisos (**recomendado**), o diálogo siempre.
+
+---
+
+## 20 · Salud de los topes: analítica (D69) y consentimientos de cookies (D87) · propuesta (pendiente de Xavi)
+
+Mockup: `salud-topes.html`. Estados en el hash: `#ataque` (consentimientos: tope de hoy + ráfagas), `#ayer` (consentimientos: solo ayer), `#analitica` (tope de eventos), `#sin-confirmar` (último aviso de hace 3–24 h), `#parada` (sin comprobar hace más de 24 h), `#todo` (los cuatro avisos de sistema juntos), `#resuelto` (vuelta a 200) y `#estadisticas` (tarjeta Visitas cuando se conecte). Para 390 o 768: `anchos.html?solo=salud-topes.html%23todo&w=390`. Revisado a 1440, 768 y 390.
+
+Una sola dirección: reutiliza la fila de Pendiente (§14.2) y el patrón ya implementado de la limpieza de fotos (fila sin destino + «Cómo arreglarlo», tono `danger` si el fallo es seguro y `warn` si solo no se sabe). No hay rumbo que elegir.
+
+### 20.1 · Dónde va
+- **Inicio → Pendiente → nuevo bloque «Sistema»**, a ancho completo, **encima** de los grupos Moderar · Publicar · Revisar. Solo aparece si hay alguna fila. Cuenta en «N tareas».
+  - Por qué no un cuarto grupo: la rejilla es de 3 columnas como máximo (§14.2), y en móvil «Revisar» queda al final; un fallo de registro legal no puede quedar debajo de las fichas sin verificar.
+  - Por qué no una banda global en todas las pantallas: el aviso se calcula cada hora y dura hasta 48 h (el tope mira hoy y ayer). Una banda fija durante dos días en cada página cansa y deja de leerse. Pendiente ya es lo primero que se ve en Inicio, también en móvil.
+- **«Sistema» agrupa todo lo que sale de `guide.job_health`**: `cookie_consent`, `analytics`, `review-photos-cleanup` (hoy en Revisar) e `ingest` (hoy en Moderar). Las dos últimas **se mueven aquí** (pregunta 1). Sus textos, tonos y destinos no cambian.
+- **Estadísticas**: hoy **no** lleva aviso; la tarjeta «Visitas» sigue «Sin conectar» (§16.5) y no hay cifra de la que desconfiar. Cuando Visitas tenga datos, el día con tope se marca en el propio gráfico (20.6). Los consentimientos no salen en Estadísticas.
+- **Ajustes, menú lateral, badge**: nada. El badge del menú es para bandejas con trabajo.
+
+### 20.2 · Estados por tarea (`job`)
+La purga de cada tarea corre **cada hora** (`analytics` a :40, `cookie_consent` a :50). `age = ahora − checked_at`.
+
+| Estado | Condición | Fila |
+| --- | --- | --- |
+| Bien | `status_code = 200` y `age ≤ 3 h` | Ninguna |
+| Fallo | `status_code = 500` y `age ≤ 3 h` | Sí, tono según 20.3 |
+| Sin confirmar | `3 h < age ≤ 24 h` y el último fue 500 | Sí, tono `neutral` (`subtle/meta`), icono `shield-question`. No afirma fallo: dice cuándo fue el último aviso |
+| Sin confirmar, último bien | `3 h < age ≤ 24 h` y el último fue 200 | **Ninguna**. No se alarma por un par de horas sin comprobar |
+| Parada | `age > 24 h`, o no hay fila para ese `job` | Sí, tono `warn`, icono `timer-off`. La tarea programada no corre: ni vigila el tope ni purga (retención de 90 días / 36 meses) |
+
+3 h deja pasar dos ejecuciones perdidas sin ruido. 24 h es el mismo criterio que usará cualquier otra tarea horaria.
+
+### 20.3 · Filas
+Anatomía idéntica a §14.2 (56 px, pastilla 32×32 radio 8, línea 1 13 px medium, línea 2 12 px `meta`). Las filas sin destino llevan **«Cómo arreglarlo»** (`btn-quiet btn-sm`, `aria-expanded` + `aria-controls`) y despliegan una línea de ayuda debajo (12 px `meta`, `max-width: 72ch`, sangría alineada con el texto). Los nombres de tareas programadas van en `code`.
+
+| Caso | Condición en `details` | Tono · icono | Línea 1 | Línea 2 |
+| --- | --- | --- | --- | --- |
+| Consentimientos: tope de hoy | `daily_cap_reached` y `today_attempts ≥ cap_per_day` | `danger` · `shield-alert` | No se registran todos los consentimientos de cookies | «Hoy: tope de 5.000 alcanzado» + (si también `minute_cap_hits`) «· 7 minutos al tope en la última hora» + «· comprobado a las 10:50» |
+| Consentimientos: ráfagas | solo `minute_cap_hits` | `danger` · `shield-alert` | Ráfagas en el registro de consentimientos | «7 minutos al tope de 120 en la última hora · posible bot · comprobado a las…» |
+| Consentimientos: solo ayer | `daily_cap_reached`, `today_attempts < cap_per_day`, sin `minute_cap_hits` | `warn` · `shield-alert` | Ayer no se registraron todos los consentimientos de cookies | «18 nov: tope de 5.000 alcanzado · hoy, normal (312) · comprobado a las…» |
+| Analítica: tope | `daily_cap_reached` | `warn` · `chart-no-axes-column` | Visitas de hoy incompletas / Visitas del 18 nov incompletas | «Se llegó al tope de 20.000 eventos · las cifras de ese día se quedan cortas · comprobado a las…» |
+| Sin confirmar | 20.2 | `neutral` · `shield-question` (consentimientos) o `chart-no-axes-column` (analítica) | {Tarea}: sin confirmar | «Último aviso a las 04:50 (tope de hoy) · sin comprobar desde hace 6 h» |
+| Parada | 20.2 | `warn` · `timer-off` | Comprobación de {consentimientos / analítica} parada | «Sin comprobar desde hace 2 días · no se vigila el tope ni se purga…» |
+
+- **Tono**: `danger` solo si el problema ocurre **ahora** (hoy o en la última hora) y es de consentimientos: falta prueba legal y puede ser un ataque. La analítica nunca pasa de `warn`: son cifras cortas, no un riesgo.
+- **Día**: los contadores son por día **UTC**. Si `today_attempts ≥ cap_per_day`, «hoy»; si no, el día anterior al `checked_at` en UTC, escrito «18 nov». Sin hora.
+- **Números**: siempre de `details` (`cap_per_day`, `cap_per_minute`, `today_attempts`, `yesterday_attempts`, `minute_cap_hits_last_hour`), nunca escritos a mano. `fmtInt` con punto de miles.
+- **«comprobado a las 10:50»**: hora de Madrid de `checked_at`. Si es de otro día, «comprobado ayer a las 23:50».
+- **Ayuda** (texto en el mockup): consentimientos dice que el visitante no lo nota, que la prueba perdida no se recupera y que se revise el origen antes de subir el tope; analítica dice que el exceso no se guarda y que solo hay que actuar si fue un pico real; «parada» nombra la tarea programada (`guide-cookie-consent-purge`, `guide-analytics-purge`).
+- **Orden dentro de Sistema**: `danger` → `warn` → `neutral`; a igualdad, `ingest`, `cookie_consent`, `review-photos-cleanup`, `analytics`. En `≥ 1024`, con 2 o más filas, rejilla de 2 columnas con separador `line`; con 1, ancho completo.
+- **Cabecera del bloque**: «Sistema» + recuento, mismo `grp-h` que los grupos (`h3` + `ul aria-labelledby`).
+- **Lectores de pantalla**: la línea 1 lleva un prefijo `sr-only` («Fallo: », «Aviso: », «Sin confirmar: »), porque el tono solo se ve en la pastilla. **Sin** `role="alert"`: es estado al cargar, no un evento en vivo.
+- **Sin acciones** dentro de la fila (no hay «silenciar» ni «subir tope»): el remedio vive fuera del panel (migración o Supabase).
+
+### 20.4 · Vuelta a 200
+- La fila **desaparece** en la siguiente carga de Inicio (o al volver a la pestaña, si `useAdminDashboard` ya refresca al enfocar). Sin toast «resuelto», sin historial: `job_health` solo guarda la última comprobación.
+- Si Sistema se queda sin filas, el bloque desaparece entero y el recuento de Pendiente baja. Si no queda nada pendiente, «Todo al día» (§14.2) sin cambios (`#resuelto`).
+- Ojo: `daily_cap_reached` sigue a 500 mientras **ayer** pasó el tope. Por eso el caso «solo ayer» baja a `warn` y lo dice: el aviso se va solo al día siguiente si hoy no se repite.
+
+### 20.5 · Responsive
+- **1440**: Sistema a ancho completo; filas en 2 columnas si hay 2 o más. «Cómo arreglarlo» a la derecha de la fila.
+- **768**: una columna; botón a la derecha. Sin cambios en los grupos (§14.2).
+- **390**: el botón baja a su propia línea, alineado con el texto (margen izquierdo 44 px), con 44 px de alto. La ayuda se despliega debajo con la misma sangría. Sin scroll horizontal.
+- Sin animación al abrir la ayuda; el chevron de las filas con destino sigue la regla de §14.2 (150 ms, anulado con `prefers-reduced-motion`).
+
+### 20.6 · Estadísticas · Visitas (cuando se conecte)
+- Chip `st-warn` con `triangle-alert` en la cabecera de la tarjeta: «18 nov incompleto» (o «2 días incompletos» si hay varios en el periodo).
+- La barra o punto del día con tope: **trama diagonal** `warn-icon` sobre `warn-soft` y contorno discontinuo. No solo color. Leyenda: «Incompleto: se llegó al tope diario (la cifra real es mayor)». Distinto del «En curso» de §16.4.
+- Detalle y tabla: el valor lleva «≥» delante («≥ 1.120») y la fila de la tabla la nota «incompleto».
+- Requiere backend: `job_health` solo sabe de hoy y ayer. Para marcar días antiguos hace falta guardar los días con tope (pregunta 2). Sin eso, solo se marcan hoy y ayer.
+
+### 20.7 · Para coneja-lucky
+- Datos: lectura directa de `guide.job_health` (el admin ya la lee), como `fetchIngestHealth` en `app/services/admin/ingest.ts`. Generalizar a `fetchJobHealth(client, jobs)` con `.in('job', ['analytics','cookie_consent'])` y el mismo saneado de `details` (solo números y `alerts` de texto). **Sin backend nuevo.**
+- Lógica pura en `app/utils/admin-dashboard-pending.ts`: `healthRows(input, now)` con los umbrales 3 h / 24 h de 20.2, junto a las reglas de `cleanupNeedsAttention`. Nuevo grupo `{ key: 'system', label: 'Sistema' }` delante de los demás en `buildPending`. Las filas `ingest` y `cleanup` se mueven a ese grupo (si Xavi aprueba la pregunta 1).
+- `dashboard/Pending.vue`: el grupo `system` se pinta fuera de la rejilla de columnas, a ancho completo, con `sm:grid-cols-1 lg:grid-cols-2` si tiene 2 o más filas. Reutiliza `rowClass`, `helpOpen` y los tonos; añade el tono `neutral` (= `subtle`, ya existe) y los iconos `ShieldAlert`, `ShieldQuestion`, `ChartNoAxesColumn`, `TimerOff`. Botón «Cómo arreglarlo» con `h-11 md:h-8`.
+- Si falla la lectura de `job_health`, no se pinta Sistema ni se muestra error: el resto de Pendiente sigue (como `news` en `PendingInput`).
+- Tests unitarios de `healthRows`: los 6 casos de 20.3 + los 5 estados de 20.2 + día UTC.
+
+### 20.8 · Textos para loro-lola (claves; borrador en el mockup)
+`admin.pending.system.label` · `admin.health.helpButton` (reutiliza «Cómo arreglarlo») · `admin.health.checkedAt` · `admin.health.checkedAtYesterday` · `admin.health.sr.fail` · `admin.health.sr.warn` · `admin.health.sr.unknown` ·
+`admin.health.consent.capToday.strong` · `admin.health.consent.capToday.context` · `admin.health.consent.capToday.withBursts` · `admin.health.consent.capToday.help` ·
+`admin.health.consent.bursts.strong` · `admin.health.consent.bursts.context` · `admin.health.consent.bursts.help` ·
+`admin.health.consent.capYesterday.strong` · `admin.health.consent.capYesterday.context` · `admin.health.consent.capYesterday.help` ·
+`admin.health.analytics.capToday.strong` · `admin.health.analytics.capDay.strong` · `admin.health.analytics.cap.context` · `admin.health.analytics.cap.help` ·
+`admin.health.unknown.strong` · `admin.health.unknown.context` · `admin.health.unknown.help` ·
+`admin.health.stopped.strong` · `admin.health.stopped.context.consent` · `admin.health.stopped.context.analytics` · `admin.health.stopped.help` ·
+`admin.health.job.consent` · `admin.health.job.analytics` ·
+`admin.stats.visits.incomplete.chip` · `admin.stats.visits.incomplete.chipMany` · `admin.stats.visits.incomplete.legend` · `admin.stats.visits.incomplete.tableNote`
+
+### 20.9 · Preguntas para Xavi (con recomendación)
+1. **Mover «rutina de novedades» y «limpieza de fotos» a Sistema.** **Recomiendo que sí**: todo lo que sale de `job_health` junto y arriba. Si no, Sistema solo lleva analítica y consentimientos, y la limpieza sigue en Revisar.
+2. **Guardar los días con tope** (una tabla pequeña o una lista en `details`) para marcarlos en Estadísticas más allá de hoy y ayer. **Recomiendo** decidirlo cuando se conecte Visitas, no ahora. Es backend (jabali-javi → leona-lia).
+3. **Banda global para consentimientos en `danger`** en todas las pantallas del panel. **Recomiendo que no** (20.1). Si quieres un aviso fuera del panel, mejor un email de alerta (requiere osset-op).
+
+---
+
+## 21 · Newsletter › Email de bienvenida · propuesta (pendiente de Xavi)
+
+Mockup: [`email-bienvenida.html`](email-bienvenida.html). Los estados se eligen en el selector «Mockup» o con el hash: `#publicado`, `#cambios` (por defecto), `#en-vacio`, `#errores`, `#inactivo` (nunca publicado: texto del seed), `#cargando` y `#publicar` (modal). A 390: `anchos.html?solo=email-bienvenida.html%23errores&w=390`. Revisado a 1440 y 390 (Chrome headless): sin scroll horizontal. La vista previa es **en vivo**: cada tecla re-renderiza el iframe con las mismas cadenas que `supabase/functions/_shared/newsletter/email.ts` (`WRAP_OPEN`, `WRAP_CLOSE`, botón de `confirmEmail`, pie de `newsletterHtml`).
+
+Una sola dirección: es el editor de la carta semanal (§19.3: campos por idioma + vista previa sticky de 652 px) con el modelo de publicación de Páginas (§10, D23). No hay rumbo que elegir. **Descartado:** un editor de bloques libre (como en artículos). Es un email de 1 pantalla que casi no cambia: con campos fijos la plantilla nunca se rompe y el HTML que genera la Edge Function es predecible y seguro.
+
+### 21.1 · Dónde vive
+- **Comunidad › Newsletter**, tercera vista: **Esta semana · Historial · Bienvenida**. Ruta `/administrador/newsletter?vista=bienvenida` (igual que `?vista=historial`).
+  - Las vistas pasan a ser **enlaces** (`nav` + `aria-current="page"`), no pestañas en página: cada una es una URL que se puede compartir y recargar. Mismo aspecto (`.tab`).
+  - Punto violeta (`st-rev`) en «Bienvenida» si hay cambios sin publicar.
+- **Por qué no Suscriptores:** Suscriptores es la lista de personas (datos, RGPD, bajas); los emails que reciben viven en Newsletter. **Por qué no Ajustes:** el texto cambia de vez en cuando y tiene vista previa y publicación; Ajustes es para valores que se ponen una vez.
+- **⌘K** encuentra «Email de bienvenida» en «Ir a». Ficha de suscriptor (§11): línea «Bienvenida enviada el 12 nov» en su actividad, si backend la registra (pregunta 3).
+
+### 21.2 · Modelo de publicación (recomendado: borrador de cambios, D23)
+- **Por qué no guardado simple:** el email es «en vivo» (sale solo con cada confirmación). Con autoguardado directo, quien confirme a mitad de una edición recibe un texto a medias. Con D23, Xavi edita tranquilo y nada cambia hasta **Publicar cambios**.
+- Estados y chips:
+  - Nunca publicado: `Sin activar` (`st-draft`) + franja `side` con `eye-off`: «quien confirma no recibe nada más hasta la carta del jueves». Primaria: **Publicar y activar** (modal: «a las N ya suscritas no se les envía»).
+  - Publicado: `Activo` (`st-pub`). «Publicar cambios» desactivado con `aria-describedby` («no hay cambios»).
+  - Con cambios: `chip-pair` Activo + `N cambios` (`st-rev`), `rev-band` («Quien confirme ahora sigue recibiendo la versión publicada del 12 nov») con «Ver cambios» y «Descartar».
+- **Autoguardado** del borrador a los 3 s (`content_drafts`, como Páginas); meta «Borrador guardado · hace 20 s» con `SaveStatus`.
+- **Publicar cambios** (`btn-rev` + chevron con «Descartar cambios…»): modal `lg` con la lista de cambios por campo e idioma (`lang-tag` + `chg-mark`), checklist (ES completo, enlaces https, estado del inglés) y «No se reenvía a quien ya lo recibió». Toast: «Email de bienvenida publicado · lo recibe quien confirme desde ahora».
+- **Descartar:** `alertdialog`, foco en «Conservar cambios», toast con «Deshacer».
+- **Interruptor «Enviar el email de bienvenida»** (tarjeta Envío): apagarlo no borra el texto. Es un ajuste inmediato (no pasa por el borrador) con toast «Email de bienvenida desactivado» + «Deshacer».
+
+### 21.3 · Campos (por idioma, pestañas Español · N / Inglés · N)
+
+| Campo | Límite | Obligatorio (ES) | Notas |
+| --- | --- | --- | --- |
+| Asunto | 80 (ideal 30–55, medidor) | Sí | Texto plano, sin llaves (`noBraces`) |
+| Preheader | 110 | No | Texto de vista previa. Va como fila oculta al inicio del HTML (los envíos transaccionales de Brevo no tienen `previewText`) |
+| Título | 80 | Sí | 22 px negrita en el email |
+| Cuerpo | 1.500 caracteres de texto | Sí | Texto enriquecido limitado (21.4) |
+| Título de la lista | 40 | No | Por defecto «Qué te llega» / «What you’ll get» |
+| Ítems de la lista | 6 × 140 | No | Ordenables (asa, ratón y teclado, §4.2). Sin ítems, la lista no sale. Ítems vacíos se ignoran |
+| Botón · texto | 40 | No | Sin texto, no hay botón |
+| Botón · enlace | https | Si hay texto | `safeHref`: solo `https://` sin usuario ni contraseña. Recomendado a páginas de ChalkGuide |
+| Firma | 120, 2 líneas | No | Saltos de línea → `<br>` |
+
+- **Contadores** en la etiqueta (`counter`, `warn` desde el 90 %, `over` al pasar). Los campos con `maxlength` no dejan pasar; el asunto sí deja escribir de más (para pegar y recortar) y bloquea al publicar.
+- **No editable:** pie del email (motivo, «no medimos aperturas ni clics», «Darme de baja», identidad del remitente LSSI art. 21). Se muestra en un bloque `locked` (borde discontinuo, chip «No se edita» con `lock`) con el texto del idioma activo.
+- **Envío** (tarjeta): cuándo (al confirmar, una vez por persona), remitente, responder a, nota del cupo de Brevo (cada alta gasta 2: confirmación + bienvenida) y «publicar no reenvía nada».
+
+### 21.4 · Cuerpo: texto enriquecido limitado
+- Tiptap con solo: párrafo, negrita, cursiva, enlace (modal con URL https) y lista con viñetas. Barra: Deshacer · Rehacer | Negrita · Cursiva · Enlace · Lista + nota «Sin imágenes ni títulos: el email llega mejor». **Sin** imágenes, vídeo, títulos, citas ni menú `/` en v1.
+- Al pegar se limpia todo lo que no esté en la lista blanca.
+- **Guardar como JSON de Tiptap** (no HTML). La Edge Function lo convierte con lista blanca: `p` → `<p style="margin:0 0 12px">`, `strong`, `em`, `a` (solo `safeHref`, estilo `color:#1d1d1b;text-decoration:underline`), `ul` (`padding-left:20px`) › `li` (`margin:0 0 6px`). Todo texto pasa por `escc` (sin llaves, C2). Cualquier otro nodo se descarta conservando su texto. La función `richToEmail` del mockup es la referencia.
+
+### 21.5 · Plantilla del email (orden de filas)
+`WRAP_OPEN` (cabecera «ChalkGuide») → preheader oculto → [EN sin versión: línea `onlyEs` en cursiva, 14 px `#555`] → título (22/1.3 negrita, `padding:8px 28px 4px`) → cuerpo (16/1.5) → título de lista (16 negrita) + `ul` (16/1.5) → botón (idéntico al de `confirmEmail`) → firma (16/1.5, `padding:8px 28px 20px`) → pie (idéntico al de `newsletterHtml`, texto propio: «…porque acabas de confirmar tu suscripción…») → `WRAP_CLOSE`. Versión de texto plano con el mismo orden.
+- El enlace de baja es **por suscriptor** (token propio, como la confirmación), no `{{ unsubscribe }}` de campañas: es un envío transaccional.
+
+### 21.6 · Idiomas
+- **D3:** el inglés va completo (asunto, título y cuerpo) o vacío.
+- **Vacío** (`#en-vacio`): punto ámbar en la pestaña, `banner-warn` «Los 31 suscriptores en inglés reciben el email en español, con una línea arriba: "This welcome email is in Spanish only for now."» + «Empezar desde el español» (copia el ES para traducir; toast `info`). **No bloquea.** La vista previa en la pestaña EN enseña exactamente eso.
+- **A medias** (`#errores`): `banner-err` en la pestaña EN y bloquea publicar.
+
+### 21.7 · Vista previa y prueba
+- ≥ 1280: columna de 652 px `sticky` con segmentado Escritorio (600) / Móvil (375) y, encima del email, una **fila de bandeja** (avatar, «Xavi · ChalkGuide», asunto, preheader truncado) para juzgar asunto y preheader juntos. Sigue la pestaña de idioma. < 1280: botón «Vista previa» → modal `xl` (hoja en móvil).
+- **Enviarme una prueba:** envía lo que hay en pantalla (borrador, sin publicar) en el idioma activo, al email de la sesión de admin, con «[Prueba]» delante del asunto. Estado de carga en el botón («Enviando…», `aria-busy`, desactivado) y toast «Prueba (español) enviada a tu email de admin · con lo que tienes ahora, sin publicar». Error: toast persistente con «Reintentar». Cuenta en el cupo de Brevo.
+
+### 21.8 · Errores (`#errores`)
+Al publicar: `banner-err` con `role=alert` y foco, un enlace por error que cambia de pestaña y enfoca el campo (asunto > 80, enlace sin https, inglés a medias). Cada campo con error lleva borde `danger`, `aria-invalid` y mensaje con icono + texto (`aria-describedby`). Toast de error persistente.
+
+### 21.9 · Responsive y accesibilidad
+- 1440: formulario + vista previa. 768–1279: una columna, vista previa en modal. 390: botones de la barra a ancho completo (primaria abajo), Botón · texto y enlace apilados, ítems con asa de 44 px.
+- Barra de formato `role=toolbar` con `aria-controls`; cuerpo `role=textbox` `aria-multiline` con `aria-labelledby`. `lang="en"` en los campos de la versión inglesa. Transición de ancho del iframe 200 ms, anulada con `prefers-reduced-motion`.
+
+### 21.10 · Para backend (jabali-javi → leona-lia) y frontend
+- **Backend:** fila única `guide.newsletter_welcome` (o `site_settings.welcome_email`): `enabled`, por idioma `subject_*`, `preheader_*`, `title_*`, `body_*` (jsonb Tiptap), `list_title_*`, `list_items_*` (text[] ≤ 6), `button_text_*`, `button_url_*`, `signature_*`, `published_at`; borrador en `content_drafts` (como Páginas). CHECK de longitudes (21.3) y de `https://` en la URL. RPC `publish_welcome_email`. Edge Function: envío tras confirmar (idempotente por suscriptor) y `send_welcome_test` (solo admin, al email de la sesión). **Revisión de leona-lia obligatoria:** HTML generado desde contenido editable.
+- **Frontend (coneja-lucky):** reutiliza `Header`/`SaveStatus`/`ChangesBand`/`ChangesDialog` de Páginas, `AdminTextField` con contador, la lista ordenable de la carta y la vista previa de `newsletter.html`. La vista previa del panel debe usar la **misma función** de render que la Edge Function (módulo compartido), no una copia.
+- **loro-lola:** el texto de ejemplo del mockup es borrador (ES/EN), incluidos el pie de bienvenida y la línea `onlyEs`.
+
+### 21.11 · Preguntas para Xavi (con recomendación)
+1. **Borrador de cambios + Publicar** (como Páginas) en vez de guardado simple. **Recomiendo borrador**: evita que alguien reciba un texto a medias.
+2. **Inglés vacío → se envía el español con una línea en inglés arriba.** **Recomiendo que sí** (mismo criterio que la carta, D78).
+3. **¿Registrar «bienvenida enviada» por suscriptor** (fecha en su ficha)? **Recomiendo que sí**: sirve para no enviarla dos veces y para soporte. Es backend.

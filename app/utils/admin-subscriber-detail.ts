@@ -6,6 +6,8 @@ import { RELATED_LABEL } from '~/utils/admin-subscribers-related'
 export function actorLabel(actor: string | null, event: string): string {
   if (actor === 'admin') return 'Tú'
   if (actor === 'service') return 'Sistema'
+  // F4.6: unsubscriptions, bounces and spam complaints reported by the email provider's webhook.
+  if (actor === 'brevo' || actor?.startsWith('brevo:')) return 'Proveedor de email'
   return actor === 'user' && event === 'subscribe' ? 'La persona, con sesión iniciada' : 'La persona'
 }
 
@@ -61,6 +63,11 @@ export function historyLines(events: readonly SubscriberEvent[]): HistoryLine[] 
     } else if (e.event === 'bounce') {
       text = 'Rebotó'
       tone = 'off'
+    } else if (e.event === 'complaint') {
+      text = 'Marcó el email como spam'
+      tone = 'off'
+    } else if (e.event === 'confirm_sent') {
+      text = 'Email de confirmación enviado'
     } else if (e.event === 'expire') {
       text = 'Caducó sin confirmar (7 días)'
       tone = 'off'

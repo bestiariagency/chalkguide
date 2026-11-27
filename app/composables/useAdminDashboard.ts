@@ -10,6 +10,7 @@ import {
   fetchReviewsSeenAt,
   fetchTimeseries,
 } from '~/services/admin/dashboard'
+import { fetchJobHealth } from '~/services/admin/job-health'
 import { fetchNewsSummary } from '~/services/admin/news'
 
 const WEEKS = 12
@@ -30,7 +31,7 @@ export function useAdminDashboard() {
 
   const summary = useAsyncData('admin-dashboard', async () => {
     const from = addDays(today, -7 * WEEKS)
-    const [raw, drafts, series, totals, provisionalPages, lastPublished, news] = await Promise.all([
+    const [raw, drafts, series, totals, provisionalPages, lastPublished, news, health] = await Promise.all([
       fetchDashboardStats(client),
       fetchContentDrafts(client),
       fetchTimeseries(client, 'subscribers_new', from, today, 'week'),
@@ -38,6 +39,7 @@ export function useAdminDashboard() {
       optional(countProvisionalPages(client), 0),
       optional(fetchLastPublished(client), null),
       optional(fetchNewsSummary(client), null),
+      optional(fetchJobHealth(client, HEALTH_JOBS), null),
     ])
     const { data } = await client.auth.getSession()
     const userId = data.session?.user.id
@@ -50,6 +52,7 @@ export function useAdminDashboard() {
       newReviews,
       provisionalPages,
       lastPublished,
+      health,
       news: news ? { pending: news.pending, warnings: news.pendingWarnings, ingestFailing: news.health?.ok === false } : null,
       signups: series.map((p) => ({ bucket: p.bucket, value: Number(p.value) })),
       totals: totals.map((p) => Number(p.value)),

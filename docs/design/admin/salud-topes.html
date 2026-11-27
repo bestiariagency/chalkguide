@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Salud: topes de analítica y consentimientos · Panel · ChalkGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="assets/admin.js?v=10"></script>
+<link rel="stylesheet" href="assets/admin.css?v=6">
+<style>
+  /* §20 · Salud de los topes (D69, D87): bloque «Sistema» dentro de Pendiente. Mismo patrón de fila que §14.2 */
+  .pend-grid{display:grid;grid-template-columns:minmax(0,1fr)}
+  @media (min-width:1024px){.pend-grid{grid-template-columns:repeat(var(--n),minmax(0,1fr))}.pend-grid>.grp+.grp{border-left:1px solid var(--line)}}
+  @media (max-width:1023.98px){.pend-grid>.grp+.grp{border-top:1px solid var(--line)}}
+  .grp-h{display:flex;align-items:center;gap:6px;padding:12px 16px 4px;font-size:12px;font-weight:600;color:var(--meta)}
+  .grp-h .n{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+  .task{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 16px}
+  a.task{transition:background-color .15s var(--ease)}
+  a.task:hover{background:var(--subtle)}
+  a.task:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+  .task .ico{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none}
+  .task .ico svg{width:16px;height:16px}
+  .task .go{width:16px;height:16px;color:var(--muted);flex:none;transition:transform .15s var(--ease)}
+  a.task:hover .go{transform:translateX(2px)}
+  .ico.acc{background:var(--acc-soft);color:var(--acc)} .ico.rev{background:var(--st-rev-bg);color:var(--st-rev)}
+  .ico.warn{background:var(--warn-soft);color:var(--warn)} .ico.neutral{background:var(--subtle);color:var(--meta)}
+  .ico.danger{background:var(--danger-soft);color:var(--danger)}
+  /* Sistema: franja a ancho completo sobre los grupos; filas en 2 columnas desde 1024 si hay 2 o más */
+  .sys{border-bottom:1px solid var(--line)}
+  .sys-list{display:grid;grid-template-columns:minmax(0,1fr)}
+  @media (min-width:1024px){.sys-list.two{grid-template-columns:repeat(2,minmax(0,1fr))}.sys-list.two>li:nth-child(2n){border-left:1px solid var(--line)}}
+  .help{padding:0 16px 12px 60px;font-size:12px;line-height:16px;color:var(--meta);max-width:72ch}
+  .help code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--subtle);padding:1px 4px;border-radius:3px;color:var(--fg)}
+  .help-btn{flex:none}
+  /* < 768: el botón baja a su línea, alineado con el texto, a 44 px */
+  @media (max-width:767.98px){.task.has-help{flex-wrap:wrap;row-gap:0}.task.has-help>.txt{flex-basis:calc(100% - 44px)}.task.has-help .help-btn{height:44px;margin-left:36px;padding:0 8px}.help{padding-left:60px}}
+  .mocknote a{text-decoration:underline;text-underline-offset:2px}
+  .mocknote a[aria-current]{font-weight:600;text-decoration:none;background:var(--fg);color:var(--bg);padding:1px 6px;border-radius:4px}
+  /* Estadísticas · Visitas (futuro): día incompleto con trama, no solo color */
+  .bar-cut{fill:url(#hatch);stroke:var(--warn-icon);stroke-width:1;stroke-dasharray:3 2}
+  @media (prefers-reduced-motion:reduce){a.task,.task .go{transition:none}a.task:hover .go{transform:none}}
+</style>
+</head>
+<body data-page="inicio" class="bg-bg text-fg font-sans antialiased text-base">
+<a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 btn btn-primary">Saltar al contenido</a>
+<main id="contenido">
+  <header class="h-12 px-4 md:px-6 hidden md:flex items-center gap-2 border-b border-line text-sm">
+    <span class="font-medium">Inicio</span>
+    <div class="ml-auto flex items-center gap-2"><a href="#" class="btn btn-ghost t"><i data-lucide="external-link"></i>Ver sitio</a><a href="articulo-editor.html" class="btn btn-primary t"><i data-lucide="plus"></i>Nuevo artículo</a></div>
+  </header>
+
+  <div class="px-4 md:px-6 py-6 max-w-[1440px]">
+    <p class="mocknote mb-4 text-xs text-meta border border-dashed border-line-strong rounded-md px-3 py-2 leading-5">Mockup §20 · Salud de los topes (D69 analítica, D87 consentimientos) · hoy: jueves 19 nov 2026, 11:20. Estados:
+      <a href="#ataque">consentimientos: tope hoy + ráfagas</a> · <a href="#ayer">consentimientos: solo ayer</a> · <a href="#analitica">analítica: tope</a> · <a href="#sin-confirmar">sin confirmar (3–24 h)</a> · <a href="#parada">comprobación parada (&gt; 24 h)</a> · <a href="#todo">todo junto</a> · <a href="#resuelto">vuelta a 200</a> · <a href="#estadisticas">Estadísticas · Visitas (futuro)</a></p>
+
+    <div id="hello" class="flex flex-wrap items-end gap-x-4 gap-y-1">
+      <h1 class="text-xl font-semibold tracking-tight">Buenos días, Xavi</h1>
+      <p class="text-sm text-meta">Jueves 19 de noviembre · últimos 30 días frente a los 30 anteriores</p>
+    </div>
+
+    <div id="view"></div>
+  </div>
+</main>
+
+<script>
+/* ---------- filas de Sistema (job_health) ---------- */
+/* [key, icono, tono, línea 1, línea 2, ayuda|null, href|null] */
+const SYS = {
+  consentNow: ['cookie_consent','shield-alert','danger','No se registran todos los consentimientos de cookies',
+    'Hoy: tope de 5.000 alcanzado · 7 minutos al tope en la última hora · comprobado a las 10:50',
+    'Los visitantes no lo notan: el banner funciona. Lo que falta es la prueba de su consentimiento, y esa no se recupera. Tantas ráfagas suelen ser un bot: revisa el origen en Supabase antes de subir el tope.'],
+  consentBurst: ['cookie_consent','shield-alert','danger','Ráfagas en el registro de consentimientos',
+    '7 minutos al tope de 120 en la última hora · posible bot · comprobado a las 10:50',
+    'En esos minutos no se registraron consentimientos. Si sigue, revisa el origen del tráfico en Supabase.'],
+  consentYday: ['cookie_consent','shield-alert','warn','Ayer no se registraron todos los consentimientos de cookies',
+    '18 nov: tope de 5.000 alcanzado · hoy, normal (312) · comprobado a las 10:50',
+    'Los de ayer por encima del tope no se recuperan. El aviso se va solo mañana si hoy no se repite.'],
+  analytics: ['analytics','chart-no-axes-column','warn','Visitas del 18 nov incompletas',
+    'Se llegó al tope de 20.000 eventos · las cifras de ese día se quedan cortas · comprobado a las 10:40',
+    'Los eventos por encima del tope no se guardan. Si fue un pico real, el tope puede subir; si fue un bot, no hace falta nada.'],
+  consentUnknown: ['cookie_consent','shield-question','neutral','Consentimientos de cookies: sin confirmar',
+    'Último aviso a las 04:50 (tope de hoy) · sin comprobar desde hace 6 h',
+    'La comprobación es cada hora. Si mañana sigue igual, saldrá como parada.'],
+  consentStopped: ['cookie_consent','timer-off','warn','Comprobación de consentimientos parada',
+    'Sin comprobar desde hace 2 días · no se vigila el tope ni se purga el registro',
+    'Comprueba en Supabase que la tarea programada guide-cookie-consent-purge sigue activa.'],
+  analyticsStopped: ['analytics','timer-off','warn','Comprobación de analítica parada',
+    'Sin comprobar desde hace 2 días · no se vigila el tope ni se purgan los eventos',
+    'Comprueba en Supabase que la tarea programada guide-analytics-purge sigue activa.'],
+  cleanup: ['cleanup','circle-alert','danger','Ha fallado la limpieza nocturna de fotos',
+    'Las fotos rechazadas o caducadas pueden no borrarse',
+    'Comprueba que la limpieza sigue programada y que su secreto coincide en Edge Function secrets y en Vault.'],
+  ingest: ['ingest','bot','danger','La rutina de novedades no está recogiendo','Mira el motivo y qué hacer en Ingesta',null,'ingesta.html']
+};
+const BASE = [
+  ['Moderar', [['message-square','acc','7 opiniones nuevas','desde tu última visita · 2 con nota ≤ 2','opiniones.html']]],
+  ['Publicar', [['git-compare-arrows','rev','2 con cambios sin publicar','1 artículo, 1 ficha','articulos.html#cambios']]],
+  ['Revisar', [['badge-check','warn','5 fichas sin verificar','hace más de 6 meses · 4 rocódromos, 1 resolador','rocodromo-editor.html']]]
+];
+const STATES = {
+  ataque: [SYS.consentNow],
+  ayer: [SYS.consentYday],
+  analitica: [SYS.analytics],
+  'sin-confirmar': [SYS.consentUnknown],
+  parada: [SYS.consentStopped, SYS.analyticsStopped],
+  todo: [SYS.ingest, SYS.consentNow, SYS.cleanup, SYS.analytics],
+  resuelto: []
+};
+
+/* ---------- piezas ---------- */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TONE_SR = { danger: 'Fallo: ', warn: 'Aviso: ', neutral: 'Sin confirmar: ' };
+function task([ic, tone, strong, rest, href]) {
+  return `<li><a href="${href}" class="task">
+    <span class="ico ${tone}" aria-hidden="true"><i data-lucide="${ic}"></i></span>
+    <span class="flex-1 min-w-0"><span class="block text-sm font-medium num">${esc(strong)}</span><span class="block text-xs text-meta num">${esc(rest)}</span></span>
+    <i data-lucide="chevron-right" class="go" aria-hidden="true"></i></a></li>`;
+}
+function sysRow([key, ic, tone, strong, rest, help, href], i) {
+  const body = `<span class="ico ${tone}" aria-hidden="true"><i data-lucide="${ic}"></i></span>
+    <span class="txt flex-1 min-w-0"><span class="block text-sm font-medium num"><span class="sr-only">${TONE_SR[tone] || ''}</span>${esc(strong)}</span><span class="block text-xs text-meta num">${esc(rest)}</span></span>`;
+  if (href) return `<li><a href="${href}" class="task">${body}<i data-lucide="chevron-right" class="go" aria-hidden="true"></i></a></li>`;
+  const id = `help-${key}-${i}`;
+  return `<li><div class="task has-help">${body}
+      <button type="button" class="btn btn-quiet btn-sm help-btn t" aria-expanded="false" aria-controls="${id}">Cómo arreglarlo</button></div>
+    <p id="${id}" class="help" hidden>${esc(help).replace(/(guide-[a-z-]+)/g, '<code>$1</code>')}</p></li>`;
+}
+function pending(sys) {
+  const total = sys.length + BASE.reduce((n, [, r]) => n + r.length, 0);
+  const sysBlock = sys.length ? `<div class="sys pb-1">
+      <h3 class="grp-h" id="g-sys">Sistema <span class="n">${sys.length}</span></h3>
+      <ul aria-labelledby="g-sys" class="sys-list ${sys.length > 1 ? 'two' : ''}">${sys.map(sysRow).join('')}</ul></div>` : '';
+  return `
+    <section aria-labelledby="h-pend" class="mt-5 card overflow-hidden">
+      <div class="card-h"><h2 id="h-pend">Pendiente</h2><span class="text-xs text-muted num">${total} ${total === 1 ? 'tarea' : 'tareas'}</span>
+        <span class="ml-auto hidden md:inline text-xs text-meta">De más urgente a menos</span></div>
+      ${sysBlock}
+      <div class="pend-grid" style="--n:${BASE.length}">
+        ${BASE.map(([label, rows], i) => `<div class="grp pb-2">
+          <h3 class="grp-h" id="g${i}">${label} <span class="n">${rows.length}</span></h3>
+          <ul aria-labelledby="g${i}">${rows.map(task).join('')}</ul></div>`).join('')}
+      </div>
+    </section>`;
+}
+function kpisStub() {
+  return `<div class="mt-4 grid grid-cols-2 lg:grid-cols-4 border border-line rounded-lg overflow-hidden bg-elev" aria-hidden="true">
+    ${['Suscriptores activos|1.284','Artículos|15 publicados','Opiniones|7 nuevas','Fichas publicadas|71'].map((s, i) => { const [a, b] = s.split('|'); return `<div class="p-4 ${i % 2 === 0 ? 'border-r' : 'lg:border-r'} ${i < 2 ? 'border-b lg:border-b-0' : ''} ${i === 3 ? 'lg:border-r-0' : ''} border-line"><p class="text-xs text-meta">${a}</p><p class="mt-1 text-2xl font-semibold num tracking-tight">${b}</p></div>`; }).join('')}
+  </div>
+  <p class="mt-3 text-xs text-muted">(KPIs, calendario, altas y actividad: igual que <a href="inicio-v2.html" class="underline underline-offset-2">Inicio v2</a>.)</p>`;
+}
+
+/* ---------- Estadísticas · Visitas por día (cuando se conecte D69) ---------- */
+function stats() {
+  const days = [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+  const data = [412,388,455,430,398,520,610,575,490,462,505,480,530,1120,214]; // 18: tope (incompleto); 19: en curso
+  const max = 1200, H = 150, W = 600, bw = 26, gap = (W - 36 - bw * data.length) / data.length;
+  const bars = data.map((v, i) => {
+    const x = 36 + i * (bw + gap) + gap / 2, h = Math.round(v / max * H), y = 160 - h, d = days[i];
+    if (d === 18) return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="3" class="bar-cut"/>`;
+    if (d === 19) return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="3" fill="var(--acc)" fill-opacity=".45" stroke="var(--acc)" stroke-dasharray="3 2"/>`;
+    return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="3" fill="var(--acc)"/>`;
+  }).join('');
+  const labels = days.map((d, i) => i % 2 === 0 || d === 19 ? `<text x="${36 + i * (bw + gap) + gap / 2 + bw / 2}" y="176" text-anchor="middle">${d === 5 ? '5 nov' : d}</text>` : '').join('');
+  return `
+    <p class="mt-5 text-xs text-meta">Referencia para cuando «Visitas» tenga datos (§16.5). Hoy esa tarjeta sigue «Sin conectar» y no lleva aviso. Boceto en `viewBox`: en la app, SVG al ancho real (§16.4), ejes a 11 px.</p>
+    <section aria-labelledby="h-vis" class="mt-3 card overflow-hidden max-w-[760px]">
+      <div class="card-h !h-auto min-h-[44px] py-2 flex-wrap"><h2 id="h-vis">Visitas por día</h2>
+        <span class="chip st-warn"><i data-lucide="triangle-alert" class="w-3 h-3"></i>18 nov incompleto</span></div>
+      <figure class="p-4">
+        <svg viewBox="0 -6 600 190" class="w-full h-44" role="img" aria-labelledby="vis-desc"><desc id="vis-desc">Visitas diarias del 5 al 19 de noviembre. El 18 de noviembre está incompleto: se llegó al tope diario y la cifra real es mayor que 1.120. El 19 está en curso.</desc>
+          <defs><pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="var(--warn-soft)"/><line x1="0" y1="0" x2="0" y2="5" stroke="var(--warn-icon)" stroke-width="1.5"/></pattern></defs>
+          <g stroke="var(--line)"><line x1="36" y1="10" x2="600" y2="10"/><line x1="36" y1="85" x2="600" y2="85"/></g><line x1="36" y1="160" x2="600" y2="160" stroke="var(--line-strong)"/>
+          <g font-family="JetBrains Mono" font-size="11" fill="var(--muted)"><text x="0" y="14">1.200</text><text x="8" y="89">600</text><text x="22" y="164">0</text>${labels}</g>
+          ${bars}</svg>
+        <figcaption class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-meta">
+          <span class="inline-flex items-center gap-1.5"><svg width="10" height="10" aria-hidden="true"><rect width="10" height="10" rx="2" fill="url(#hatch)" stroke="var(--warn-icon)"/></svg>Incompleto: se llegó al tope diario (la cifra real es mayor)</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:color-mix(in srgb,var(--acc) 45%,transparent);box-shadow:inset 0 0 0 1px var(--acc)"></span>En curso</span>
+          <button type="button" class="ml-auto hover:text-fg underline underline-offset-2 max-md:py-3">Ver como tabla</button></figcaption>
+      </figure>
+    </section>`;
+}
+
+/* ---------- estado por hash ---------- */
+function render() {
+  const h = location.hash.slice(1) || 'ataque';
+  document.querySelectorAll('.mocknote a').forEach(a => a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + h));
+  const v = document.getElementById('view');
+  document.getElementById('hello').style.display = h === 'estadisticas' ? 'none' : '';
+  v.innerHTML = h === 'estadisticas' ? stats() : pending(STATES[h] || STATES.ataque) + kpisStub();
+  v.querySelectorAll('.help-btn').forEach(b => b.addEventListener('click', () => {
+    const open = b.getAttribute('aria-expanded') === 'true', p = document.getElementById(b.getAttribute('aria-controls'));
+    b.setAttribute('aria-expanded', String(!open)); p.hidden = open;
+  }));
+  CG.icons();
+}
+addEventListener('hashchange', render);
+addEventListener('DOMContentLoaded', () => setTimeout(render, 0));
+</script>
+</body>
+</html>

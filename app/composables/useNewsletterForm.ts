@@ -1,4 +1,4 @@
-import { subscribeNewsletter, type NewsletterSource } from '~/services/newsletter'
+import { subscribeNewsletter, type NewsletterSource, type SubscribeFailure } from '~/services/newsletter'
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
@@ -11,10 +11,10 @@ export type NewsletterStatus = 'idle' | 'loading' | 'success' | 'error'
  * Success is shared between every form on the page (footer, article cards) via `useState`.
  */
 export function useNewsletterForm(source: NewsletterSource = 'footer') {
-  const db = useGuideClient()
   const locale = useGuideLocale()
   const route = useRoute()
   const { track } = useTrack()
+  const session = useSupabaseSession()
 
   const email = ref('')
   const consent = ref(false)
@@ -27,6 +27,10 @@ export function useNewsletterForm(source: NewsletterSource = 'footer') {
   const subscribed = useState('newsletter:subscribed', () => false)
   /** Whether the shared success message must also name the related-products notices (O7). */
   const subscribedRelated = useState('newsletter:subscribed-related', () => false)
+  /** Why the last attempt failed; picks the message. `server` also covers network errors. */
+  const failure = ref<SubscribeFailure>('server')
+  /** Honeypot (F4.6 B7): must stay empty for people. */
+  const website = ref('')
   const ownStatus = ref<NewsletterStatus>('idle')
   const status = computed<NewsletterStatus>({
     get: () => (subscribed.value ? 'success' : ownStatus.value),
@@ -38,8 +42,24 @@ export function useNewsletterForm(source: NewsletterSource = 'footer') {
 
   watch(consent, (checked) => checked && (consentError.value = false))
 
-  /** Returns the first invalid field so the component can focus it. */
-  async function submit(): Promise<'email' | 'consent' | null> {
+  // No-JS fallback (F4.6 §6): the server redirects back with #newsletter-ok|error|limit. NewsletterNotice shows it
+  // with :target; with JS we take it into the form state and clear the hash so the banner goes away.
+  onMounted(() => {
+    const flag = /^#newsletter-(ok|error|limit)$/.exec(window.location.hash)?.[1]
+    if (!flag) return
+    if (flag === 'ok') status.value = 'success'
+    else {
+      failure.value = flag === 'limit' ? 'limit' : 'server'
+      status.value = 'error'
+    }
+    window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
+  })
+
+  /**
+   * Returns the first invalid field so the component can focus it. `solveCaptcha` yields the ALTCHA payload
+   * (null if the widget is missing: the relay then applies the stricter no-JS limits).
+   */
+  async function submit(solveCaptcha: () => Promise<string | null>): Promise<'email' | 'consent' | null> {
     if (status.value === 'loading') return null
     emailError.value = !EMAIL_RE.test(email.value.trim())
     emailMissingDomain.value = emailError.value && /^[^@\s]+@[^@\s.]+$/.test(email.value.trim())
@@ -49,22 +69,27 @@ export function useNewsletterForm(source: NewsletterSource = 'footer') {
 
     status.value = 'loading'
     try {
-      // The confirmation email is sent by the F4.6 integration (Brevo), not from here.
-      await subscribeNewsletter(db, {
+      // The confirmation email is sent by the backend worker (F4.6), not from here.
+      await subscribeNewsletter({
         email: email.value.trim(),
         locale: locale.value,
         source,
+        consent: consent.value,
         page: route.path,
         relatedConsent: related.value,
+        altcha: await solveCaptcha(),
+        website: website.value,
+        accessToken: session.value?.access_token ?? null,
       })
       subscribedRelated.value = related.value
       status.value = 'success'
       track('newsletter_submit') // no email, no free text
-    } catch {
-      status.value = 'error' // network/server error: the user can retry with the same data
+    } catch (e) {
+      failure.value = (e as { code?: SubscribeFailure }).code ?? 'server'
+      status.value = 'error' // the user can retry with the same data
     }
     return null
   }
 
-  return { email, consent, related, subscribedRelated, emailError, emailMissingDomain, consentError, status, submit }
+  return { email, consent, related, website, failure, subscribedRelated, emailError, emailMissingDomain, consentError, status, submit }
 }

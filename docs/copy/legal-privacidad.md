@@ -26,6 +26,7 @@ El responsable es [PENDIENTE XAVI: nombre o razón social], NIF [PENDIENTE XAVI:
 | Medición propia de visitas (`guide.analytics_events`): página, idioma, clase de origen, móvil o escritorio, hora truncada a la hora en punto. Sin IP, sin navegador, sin identificadores, sin cookies [D86] | Saber qué páginas se leen y qué artículos llevan a la newsletter | No trata datos personales; no requiere base legal del RGPD ni consentimiento de cookies. [PENDIENTE revisión legal: confirmar] |
 | Analítica de Google (Google Analytics 4): identificador de cookie, IP, dispositivo y navegador, páginas vistas [D86] | Saber qué páginas se leen y desde dónde llegan los lectores | Tu consentimiento (art. 6.1.a RGPD y art. 22.2 LSSI), solo si aceptas «Analítica» |
 | Publicidad y remarketing (Google Ads y píxel de Meta): identificador de cookie, IP, dispositivo y navegador, páginas vistas, alta en la newsletter como evento (sin tu email) [D86] | Medir anuncios y mostrártelos en otras webs y redes si has visitado ChalkGuide | Tu consentimiento (art. 6.1.a RGPD y art. 22.2 LSSI), solo si aceptas «Publicidad y remarketing» |
+| Registro de tu elección de cookies: identificador aleatorio del consentimiento (el de tu cookie `cc_cookie`), categorías aceptadas, versión del banner, idioma y fecha redondeada al minuto. Sin IP, navegador, usuario ni página [D87] | Poder demostrar que diste el consentimiento, o que lo rechazaste, y cómo se te pidió | Obligación legal de acreditar el consentimiento (art. 6.1.c RGPD, en relación con el art. 7.1 RGPD y el art. 22.2 LSSI) |
 
 **Cookies, medición y publicidad** [D86]
 
@@ -36,6 +37,16 @@ Detallo qué cookies hay y cuánto duran en la [política de cookies](/cookies).
 - **No subo tu email, ni ninguna lista de emails, a Google ni a Meta.** Las altas en la newsletter se miden como un evento sin datos personales. Tengo desactivada la «coincidencia avanzada» automática del píxel de Meta, que de otro modo podría recoger el email de un formulario. [PENDIENTE XAVI: comprobar que está desactivada en el Administrador de Eventos de Meta.]
 - Puedes retirar el consentimiento cuando quieras desde «Preferencias de cookies», al pie de cada página; es tan fácil como darlo. Para no ver anuncios personalizados también puedes usar los ajustes de anuncios de [Google](https://myadcenter.google.com) y de [Meta](https://www.facebook.com/adpreferences).
 - Los artículos sobre lesiones quedan fuera de las listas de remarketing.
+
+**Registro de consentimientos de cookies** [D87]
+
+Cada vez que aceptas o rechazas en el banner, guardo un registro mínimo para poder demostrarlo si hiciera falta.
+
+- **Qué se guarda:** el identificador aleatorio del consentimiento (el mismo que va en tu cookie `cc_cookie`), las categorías aceptadas (analítica y publicidad), la versión del banner, el idioma y la fecha, redondeada al minuto. No se guarda tu IP, tu navegador, tu usuario ni la página en la que estabas.
+- **Para qué:** poder demostrar que diste el consentimiento, o que lo rechazaste, y cómo se te pidió.
+- **Base legal:** obligación legal de acreditar el consentimiento (art. 6.1.c RGPD, en relación con el art. 7.1 RGPD y el art. 22.2 LSSI).
+- **Conservación:** 36 meses y luego se borra automáticamente. [PENDIENTE revisión legal: confirmar el plazo.]
+- Solo puedo asociar ese registro a ti si me aportas tu cookie.
 
 **Newsletter**
 
@@ -74,6 +85,7 @@ Con la excepción de lo que tú permitas a Google y Meta en el banner, no vendo 
 - [D86] Medición propia (`guide.analytics_events`): [PENDIENTE XAVI / jabali-javi: la spec propone 90 días para las filas brutas y 24 meses para los recuentos agregados, que no permiten identificar a nadie].
 - [D86] Google Analytics 4: 2 meses en los datos de eventos [PENDIENTE: confirmar al configurar la propiedad]. Listas de remarketing: hasta 540 días en Google y 180 en Meta [PENDIENTE: confirmar al crearlas]. Cookies: según la [política de cookies](/cookies).
 - [D86] Tu elección de cookies (`cc_cookie`): 365 días si aceptas y 182 días si rechazas; después te vuelvo a preguntar.
+- [D87] Registro de consentimientos de cookies: 36 meses y luego borrado automático [PENDIENTE revisión legal: confirmar].
 - Lista de espera de Chalk app: hasta que se abra la pizarra o pidas salir. [PENDIENTE XAVI: confirmar].
 
 **Tus derechos**
@@ -108,6 +120,7 @@ The controller is [PENDING XAVI: name or company name], tax ID [PENDING XAVI: ta
 | Own visit measurement (`guide.analytics_events`): page, language, kind of source, mobile or desktop, time truncated to the hour. No IP, no browser, no identifiers, no cookies [D86] | To know which pages are read and which articles lead to the newsletter | It does not process personal data; no GDPR legal basis or cookie consent needed. [PENDING legal review: confirm] |
 | Google analytics (Google Analytics 4): cookie identifier, IP, device and browser, page views [D86] | To know which pages are read and where readers come from | Your consent (Art. 6(1)(a) GDPR and Art. 22.2 LSSI), only if you accept "Analytics" |
 | Advertising and remarketing (Google Ads and Meta pixel): cookie identifier, IP, device and browser, page views, newsletter sign-up as an event (without your email) [D86] | To measure ads and show them to you on other sites and networks if you have visited ChalkGuide | Your consent (Art. 6(1)(a) GDPR and Art. 22.2 LSSI), only if you accept "Advertising and remarketing" |
+| Record of your cookie choice: random consent ID (the one in your `cc_cookie` cookie), categories accepted, banner version, language and date rounded to the minute. No IP, browser, user or page [D87] | To be able to show that you gave consent, or refused it, and how you were asked | Legal obligation to prove consent (Art. 6(1)(c) GDPR, read with Art. 7(1) GDPR and Art. 22.2 LSSI) |
 
 **Cookies, measurement and advertising** [D86]
 
@@ -118,6 +131,16 @@ I list which cookies exist and how long they last in the [cookie policy](/en/coo
 - **I do not upload your email, or any list of emails, to Google or Meta.** Newsletter sign-ups are measured as an event with no personal data. I have switched off the Meta pixel's automatic "advanced matching", which could otherwise pick up the email from a form. [PENDING XAVI: check it is switched off in Meta Events Manager.]
 - You can withdraw consent whenever you like from "Cookie preferences" at the foot of every page; it is as easy as giving it. To avoid personalised ads you can also use the ad settings of [Google](https://myadcenter.google.com) and [Meta](https://www.facebook.com/adpreferences).
 - Articles about injuries are kept out of remarketing lists.
+
+**Record of cookie consents** [D87]
+
+Each time you accept or reject in the banner, I keep a minimal record so I can show it if ever needed.
+
+- **What is stored:** the random consent ID (the same one in your `cc_cookie` cookie), the categories accepted (analytics and advertising), the banner version, the language and the date, rounded to the minute. Your IP, browser, user account and the page you were on are not stored.
+- **Why:** to be able to show that you gave consent, or refused it, and how you were asked.
+- **Legal basis:** legal obligation to prove consent (Art. 6(1)(c) GDPR, read with Art. 7(1) GDPR and Art. 22.2 LSSI).
+- **Retention:** 36 months, then it is deleted automatically. [PENDING legal review: confirm the period.]
+- I can only link this record to you if you give me your cookie.
 
 **Newsletter**
 
@@ -156,6 +179,7 @@ Apart from what you allow Google and Meta in the banner, I do not sell your data
 - [D86] Own measurement (`guide.analytics_events`): [PENDING XAVI / jabali-javi: the spec proposes 90 days for raw rows and 24 months for aggregated counts, which cannot identify anyone].
 - [D86] Google Analytics 4: 2 months for event data [PENDING: confirm when the property is set up]. Remarketing lists: up to 540 days at Google and 180 at Meta [PENDING: confirm when they are created]. Cookies: see the [cookie policy](/en/cookies).
 - [D86] Your cookie choice (`cc_cookie`): 365 days if you accept and 182 days if you reject; after that I ask you again.
+- [D87] Cookie consent record: 36 months, then automatic deletion [PENDING legal review: confirm].
 - Chalk app waiting list: until the board opens or you ask to leave. [PENDING XAVI: confirm].
 
 **Your rights**
@@ -184,4 +208,4 @@ If I change this policy, I will say so here with the update date.
 8. [D86] Que la coincidencia avanzada automática de Meta está desactivada y que no se sube ningún email a Google ni a Meta (Customer Match fuera).
 9. [D86] Que la medición propia trunca la hora y no guarda IP ni user agent, y sus plazos; y que la fila de la tabla dice lo que de verdad hace la base de datos (jabali-javi / leona-lia).
 10. [D86] Que las listas de remarketing excluyen artículos sobre lesiones y que los plazos (GA4 2 meses; 540 / 180 días) son los configurados.
-11. [D86] Que, con `vanilla-cookieconsent` autoalojado, ningún proveedor recibe la IP al mostrar el banner (y que no hay registro de consentimientos en servidor: decidir cómo se prueba el consentimiento, con leona-lia).
+11. [D86] Que, con `vanilla-cookieconsent` autoalojado, ningún proveedor recibe la IP al mostrar el banner. [D87] Que el registro de consentimientos guarda solo lo que dice la cláusula (sin IP, navegador, usuario ni página), la base legal 6.1.c y el plazo de 36 meses (revisión legal).
