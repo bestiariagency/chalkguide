@@ -253,5 +253,11 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'netlify',
+    // sanitize-html (CJS) does `require('htmlparser2')`, which is ESM-only since v12. Netlify Functions
+    // run a Node without require(esm) (< 22.12), so loading it from node_modules crashed every
+    // `/api/content/*` route with ERR_REQUIRE_ESM. Bundled, Rollup resolves the require at build time.
+    externals: {
+      inline: ['sanitize-html', 'htmlparser2', 'domhandler', 'domutils', 'dom-serializer', 'domelementtype', 'entities'],
+    },
   },
 })
