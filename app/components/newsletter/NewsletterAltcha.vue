@@ -15,23 +15,36 @@ interface AltchaElement extends HTMLElement {
 let widget: AltchaElement | null = null
 let payload: string | null = null
 
-onMounted(async () => {
-  await import('altcha')
-  if (!host.value) return
-  const el = document.createElement('altcha-widget') as AltchaElement
-  el.setAttribute('challenge', '/api/newsletter/challenge')
-  el.setAttribute('name', 'altcha')
-  el.setAttribute('display', 'invisible')
-  el.setAttribute('auto', 'onfocus')
-  el.addEventListener('verified', (ev) => (payload = (ev as CustomEvent<{ payload: string }>).detail.payload))
-  el.addEventListener('expired', () => (payload = null))
-  host.value.appendChild(el)
-  widget = el
+/** Builds the widget once; null until then. Loaded on the first interaction with the form, not on mount (home TBT / unused JS). */
+let loading: Promise<void> | null = null
+function load(): Promise<void> {
+  loading ??= (async () => {
+    await import('altcha')
+    if (!host.value) return
+    const el = document.createElement('altcha-widget') as AltchaElement
+    el.setAttribute('challenge', '/api/newsletter/challenge')
+    el.setAttribute('name', 'altcha')
+    el.setAttribute('display', 'invisible')
+    el.setAttribute('auto', 'onfocus')
+    el.addEventListener('verified', (ev) => (payload = (ev as CustomEvent<{ payload: string }>).detail.payload))
+    el.addEventListener('expired', () => (payload = null))
+    host.value.appendChild(el)
+    widget = el
+  })()
+  return loading
+}
+
+let form: HTMLFormElement | null = null
+const warm = () => void load()
+onMounted(() => {
+  form = host.value?.closest('form') ?? null
+  for (const type of ['focusin', 'pointerenter', 'touchstart']) form?.addEventListener(type, warm, { once: true, passive: true })
 })
 
 /** Payload of the solved challenge, solving it now if needed. Null if the widget is missing or fails. */
 async function verify(): Promise<string | null> {
   if (payload) return payload
+  await load()
   if (!widget) return null
   try {
     return (await widget.verify())?.payload ?? null
@@ -46,7 +59,10 @@ function reset() {
   widget?.reset()
 }
 
-onBeforeUnmount(() => widget?.remove())
+onBeforeUnmount(() => {
+  for (const type of ['focusin', 'pointerenter', 'touchstart']) form?.removeEventListener(type, warm)
+  widget?.remove()
+})
 defineExpose({ verify, reset })
 </script>
 

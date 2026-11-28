@@ -37,6 +37,16 @@ export function useMenuRope(options: {
     }
   }
 
+  let scrollFrame = 0
+  /** Scroll of the list: one measure per frame, not per event. */
+  function measureOnFrame() {
+    if (scrollFrame) return
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = 0
+      measure()
+    })
+  }
+
   function clipTo(index: number) {
     clipped.value = index
     measure()
@@ -62,12 +72,25 @@ export function useMenuRope(options: {
     }
   }
 
-  watch(isOpen, (open) => open && nextTick(() => clipTo(restIndex.value)))
+  // Opening dirties the whole page (inert, scroll lock): measuring in the same tick would force a
+  // full layout before the first frame. Two frames later it is clean and the pills are already moving.
+  let openFrame = 0
+  watch(isOpen, (open) => {
+    if (!open) return
+    cancelAnimationFrame(openFrame)
+    openFrame = requestAnimationFrame(() => {
+      openFrame = requestAnimationFrame(() => isOpen.value && clipTo(restIndex.value))
+    })
+  })
   watch([restIndex, locale], () => nextTick(rest))
 
   const onResize = () => isOpen.value && measure()
   onMounted(() => window.addEventListener('resize', onResize))
-  onBeforeUnmount(() => window.removeEventListener('resize', onResize))
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', onResize)
+    cancelAnimationFrame(openFrame)
+    cancelAnimationFrame(scrollFrame)
+  })
 
-  return { y, clipped, clipTo, rest, measure, onLinkClick }
+  return { y, clipped, clipTo, rest, measure: measureOnFrame, onLinkClick }
 }

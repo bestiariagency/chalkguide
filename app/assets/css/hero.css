@@ -336,7 +336,6 @@ html:not(.js) .hero-ring {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding: 8px 16px;
-  perspective: none;
 }
 html:not(.js) .hero-scene {
   position: static;

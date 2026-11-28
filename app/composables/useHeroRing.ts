@@ -19,8 +19,12 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
   const ready = ref(false)
   const dragging = ref(false)
   const moving = ref(false)
-  /** Bumped on every measure so the rope can re-read the card height. */
-  const layoutKey = ref(0)
+  /**
+   * Rope metrics, measured here with every layout read BEFORE the style writes (the ring box does
+   * not depend on --w/--h: the cards are absolute), so the rope never forces a second layout.
+   */
+  const ropeRest = ref<number | null>(null)
+  const ropeMaxDrop = ref(92)
 
   let cards: HTMLElement[] = []
   let n = 0
@@ -29,6 +33,7 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
   let target = 0
   let step = 0.3
   let radius = 1000
+  let persp = 1000
   let cardW = 280
   let raf = 0
   let vel = 0
@@ -54,15 +59,20 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
   function measure() {
     const el = ring.value
     if (!el || !n) return
-    const g = ringGeometry(el.clientWidth, el.clientHeight)
+    const ringW = el.clientWidth
+    const ringH = el.clientHeight
+    const g = ringGeometry(ringW, ringH)
+    const heroBottom = hero.value?.getBoundingClientRect().bottom ?? 0
+    const ringTop = el.getBoundingClientRect().top
     cardW = g.cardW
     radius = g.radius
+    persp = g.perspective
     step = g.step
     el.style.setProperty('--w', `${g.cardW}px`)
     el.style.setProperty('--h', `${g.cardH}px`)
-    el.style.setProperty('--p', `${g.perspective}px`)
     render()
-    layoutKey.value++
+    ropeMaxDrop.value = ringW < 900 ? 30 : 92
+    ropeRest.value = Math.round(heroBottom - (ringTop + ringH / 2 + g.cardH / 2) + 28)
   }
 
   function render() {
@@ -74,7 +84,10 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
         return
       }
       card.style.visibility = 'visible'
-      card.style.transform = `translateZ(${radius}px) rotateY(${-a}rad) translateZ(${-radius}px)`
+      // Flat ring: perspective per card (same projection as one on the ring, same centre), and the paint
+      // order by depth in z-index. No shared 3D context, so no plane can intersect another (split cards).
+      card.style.transform = `perspective(${persp}px) translateZ(${radius}px) rotateY(${-a}rad) translateZ(${-radius}px)`
+      card.style.zIndex = String(Math.round((1 - Math.cos(a)) * 1000))
       card.style.setProperty('--cap', Math.max(0, Math.min(1, 2.2 - Math.abs(d))).toFixed(2))
       if (reduced) return
       const kick = Math.max(-8, Math.min(8, vel * 5))
@@ -251,5 +264,5 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
     clearTimeout(clickTimer)
   })
 
-  return { live, ready, dragging, moving, layoutKey, goTo, spinIn }
+  return { live, ready, dragging, moving, ropeRest, ropeMaxDrop, goTo, spinIn }
 }

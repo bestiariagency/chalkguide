@@ -14,8 +14,8 @@ const ring = ref<HTMLElement | null>(null)
 const scene = ref<HTMLElement | null>(null)
 const rope = ref<HTMLElement | null>(null)
 
-const { live, ready, dragging, moving, layoutKey, spinIn } = useHeroRing({ hero, ring, scene })
-useHeroRope({ hero, ring, rope, layoutKey })
+const { live, ready, dragging, moving, ropeRest, ropeMaxDrop, spinIn } = useHeroRing({ hero, ring, scene })
+useHeroRope({ rope, rest: ropeRest, maxDrop: ropeMaxDrop })
 const intro = useHeroIntro(spinIn)
 
 const title = computed(() => splitHeroTitle(t('home.hero.title')))
@@ -60,10 +60,10 @@ const title = computed(() => splitHeroTitle(t('home.hero.title')))
       :aria-roledescription="t('home.hero.regionRole')"
       :aria-label="t('home.hero.regionLabel')"
       tabindex="-1"
-      class="hero-ring relative z-1 mt-[clamp(4px,1.5svh,18px)] mb-[clamp(64px,11svh,108px)] min-h-80 flex-1 touch-pan-y select-none [--h:calc(var(--w)/.74)] [--p:1000px] [--w:min(21vw,52svh)] perspective-(--p) max-[899px]:mb-19 max-[899px]:min-h-75 max-[899px]:[--h:calc(var(--w)/.76)] max-[899px]:[--w:min(74vw,50svh)] min-[600px]:max-[899px]:[--w:min(46vw,50svh)]"
+      class="hero-ring relative z-1 mt-[clamp(4px,1.5svh,18px)] mb-[clamp(64px,11svh,108px)] min-h-80 flex-1 touch-pan-y select-none [--h:calc(var(--w)/.74)] [--w:min(21vw,52svh)] max-[899px]:mb-19 max-[899px]:min-h-75 max-[899px]:[--h:calc(var(--w)/.76)] max-[899px]:[--w:min(74vw,50svh)] min-[600px]:max-[899px]:[--w:min(46vw,50svh)]"
       :class="[ready && 'is-ready', dragging ? 'cursor-grabbing' : 'cursor-grab']"
     >
-      <div ref="scene" class="hero-scene absolute inset-0 transform-3d">
+      <div ref="scene" class="hero-scene absolute inset-0">
         <HomeHeroCard
           v-for="(card, i) in props.cards"
           :key="card.key"
