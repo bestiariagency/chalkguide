@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /**
- * Mobile menu (D42, docs/design/site/pages/home-hero-carrusel.html): four dark pills rise,
- * the items reveal with a clip-path and the hero's rope runs down the left margin to the
- * current section. Below `lg` only; the pages behind it are inert (see layouts/default.vue).
+ * Mobile menu (D42, §19.6 of docs/design/site/README.md): four dark pills rise, the items fade
+ * and slide in, and the hero's rope runs down the left margin to the current section. Only
+ * opacity and transform animate (compositor, no repaint or layout per frame). Below `lg` only;
+ * the pages behind it are inert (see layouts/default.vue).
  */
 const { t } = useI18n()
 const route = useRoute()
@@ -36,10 +37,10 @@ watch(isOpen, (open) => {
 const showNewsletterBlock = computed(() => route.meta.newsletterBlock !== false)
 // Each pill starts a little later than the previous one, as in the mock.
 const PILL_DELAYS = [
-  'group-data-[open=true]:delay-[40ms]',
+  'group-data-[open=true]:delay-[25ms]',
   'group-data-[open=true]:delay-0',
+  'group-data-[open=true]:delay-[45ms]',
   'group-data-[open=true]:delay-[70ms]',
-  'group-data-[open=true]:delay-[110ms]',
 ]
 </script>
 
@@ -56,14 +57,14 @@ const PILL_DELAYS = [
       <i
         v-for="(delay, n) in PILL_DELAYS"
         :key="n"
-        class="-mx-px block h-[128%] translate-y-full rounded-t-[12.5vw] bg-background transition-transform duration-300 ease-[cubic-bezier(0.5,0,0.9,0.4)] group-data-[open=true]:-translate-y-[14%] group-data-[open=true]:duration-[520ms] group-data-[open=true]:ease-out motion-reduce:transition-none motion-reduce:group-data-[open=true]:transition-none"
+        class="-mx-px block h-[128%] translate-y-full rounded-t-[12.5vw] bg-background transition-transform duration-[220ms] ease-[cubic-bezier(0.5,0,0.9,0.4)] group-data-[open=true]:-translate-y-[14%] group-data-[open=true]:duration-[380ms] group-data-[open=true]:ease-out motion-reduce:transition-none motion-reduce:group-data-[open=true]:transition-none"
         :class="delay"
       />
     </div>
 
     <div ref="panel" class="relative flex h-full flex-col">
       <div
-        class="flex h-[calc(4rem+env(safe-area-inset-top))] flex-none items-center justify-between pt-[env(safe-area-inset-top)] pr-[max(16px,env(safe-area-inset-right))] pl-[max(16px,env(safe-area-inset-left))] opacity-0 transition-opacity duration-150 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-[180ms] group-data-[open=true]:duration-[250ms] motion-reduce:transition-none"
+        class="flex h-[calc(4rem+env(safe-area-inset-top))] flex-none items-center justify-between pt-[env(safe-area-inset-top)] pr-[max(16px,env(safe-area-inset-right))] pl-[max(16px,env(safe-area-inset-left))] opacity-0 transition-opacity duration-[120ms] group-data-[open=true]:opacity-100 group-data-[open=true]:delay-[120ms] group-data-[open=true]:duration-[180ms] motion-reduce:transition-none"
       >
         <NuxtLinkLocale
           to="/"
@@ -89,21 +90,23 @@ const PILL_DELAYS = [
         @pointerleave="rope.rest"
         @scroll.passive="rope.measure"
       >
-        <!-- CSS fallback: the rope end follows a measured height (--y) and the braid is hero.css's gradient. -->
+        <!-- CSS fallback: the braid is hero.css's gradient. The rail has a fixed height; the cord scales
+             (scaleY, FLIP in useMenuRope) and the carabiner translates to the measured --y. -->
         <div
           aria-hidden="true"
-          class="pointer-events-none absolute top-0 left-[calc(26px+env(safe-area-inset-left))] h-(--y) w-0 transition-[height] duration-500 ease-out motion-reduce:transition-none"
+          class="pointer-events-none absolute top-0 left-[calc(26px+env(safe-area-inset-left))] h-full w-0"
           :style="{ '--y': `${rope.y.value}px` }"
         >
           <i
-            class="hero-rope-cord absolute top-0 bottom-[18px] -left-0.5 block w-1 origin-top scale-y-0 rounded-xs transition-none group-data-[open=true]:scale-y-100 group-data-[open=true]:transition-transform group-data-[open=true]:delay-[140ms] group-data-[open=true]:duration-[550ms] group-data-[open=true]:ease-out motion-reduce:scale-y-100 motion-reduce:transition-none motion-reduce:group-data-[open=true]:transition-none"
+            data-menu-cord
+            class="hero-rope-cord absolute top-0 -left-0.5 block h-[calc(var(--y)-18px)] w-1 origin-top scale-y-0 rounded-xs transition-none group-data-[open=true]:scale-y-100 group-data-[open=true]:transition-transform group-data-[open=true]:delay-100 group-data-[open=true]:duration-[280ms] group-data-[open=true]:ease-out motion-reduce:scale-y-100 motion-reduce:transition-none motion-reduce:group-data-[open=true]:transition-none"
           />
           <svg
             viewBox="0 0 44 64"
             fill="none"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="absolute -bottom-[22px] -left-[15px] h-11 w-[30px] text-accent opacity-0 group-data-[open=true]:opacity-100 group-data-[open=true]:transition-opacity group-data-[open=true]:delay-[400ms] group-data-[open=true]:duration-200"
+            class="absolute top-0 -left-[15px] h-11 w-[30px] translate-y-[calc(var(--y)-22px)] text-accent opacity-0 group-data-[open=true]:opacity-100 group-data-[open=true]:transition-[opacity,translate] group-data-[open=true]:delay-[250ms,0ms] group-data-[open=true]:duration-[150ms,280ms] group-data-[open=true]:ease-out motion-reduce:group-data-[open=true]:transition-none"
           >
             <path
               stroke="currentColor"
@@ -119,7 +122,7 @@ const PILL_DELAYS = [
             v-for="(item, i) in menuItems"
             :key="item.name"
             :style="{ '--i': i }"
-            class="translate-y-3.5 [clip-path:inset(0_0_100%_0)] group-data-[open=true]:translate-y-0 group-data-[open=true]:transition-[clip-path,translate] group-data-[open=true]:delay-[calc(200ms+var(--i)*45ms)] group-data-[open=true]:duration-500 group-data-[open=true]:ease-out group-data-[open=true]:[clip-path:inset(-4px_-4px_-8px_-4px)] motion-reduce:translate-y-0 motion-reduce:[clip-path:none] motion-reduce:group-data-[open=true]:transition-none"
+            class="translate-y-3 opacity-0 transition-opacity duration-[120ms] group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-data-[open=true]:transition-[opacity,translate] group-data-[open=true]:duration-[200ms,260ms] group-data-[open=true]:ease-out group-data-[open=true]:delay-[calc(120ms+var(--i)*30ms)] motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:group-data-[open=true]:transition-none"
           >
             <NuxtLinkLocale
               :to="{ name: item.name }"
@@ -145,7 +148,7 @@ const PILL_DELAYS = [
       </nav>
 
       <div
-        class="flex flex-none flex-wrap items-center justify-between gap-x-4 pt-2 pr-[max(16px,env(safe-area-inset-right))] pb-[calc(14px+env(safe-area-inset-bottom))] pl-[max(16px,env(safe-area-inset-left))] opacity-0 transition-opacity duration-100 group-data-[open=true]:opacity-100 group-data-[open=true]:delay-500 group-data-[open=true]:duration-300 motion-reduce:transition-none"
+        class="flex flex-none flex-wrap items-center justify-between gap-x-4 pt-2 pr-[max(16px,env(safe-area-inset-right))] pb-[calc(14px+env(safe-area-inset-bottom))] pl-[max(16px,env(safe-area-inset-left))] opacity-0 transition-opacity duration-[120ms] group-data-[open=true]:opacity-100 group-data-[open=true]:delay-[280ms] group-data-[open=true]:duration-200 motion-reduce:transition-none"
       >
         <a
           v-if="showNewsletterBlock"

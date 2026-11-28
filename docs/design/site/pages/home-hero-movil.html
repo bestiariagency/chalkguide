@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero móvil plano y menú ligero · ChalkGuide</title>
+<meta name="description" content="Propuesta: carrusel plano con scroll-snap nativo para el hero de la home por debajo de 900 px, y animación barata del menú móvil.">
+<!--
+  Propuesta para Xavi (2026-11-28). No es código de producción.
+  Por debajo de 900 px: el carrusel plano real. A partir de 900 px: banco de pruebas con la misma
+  página en marcos de 360, 390 y 768 (iframes con ?embed=1), y la comparación del menú.
+  Pruebas: ?embed=1 fuerza la vista móvil sin banco · ?escala=0 quita la escala de las vecinas.
+  Contenido dummy, igual que el de producción a 2026-11-28.
+-->
+<script>
+  const q = new URLSearchParams(location.search)
+  document.documentElement.classList.add('js')
+  if (q.get('embed') === '1') document.documentElement.classList.add('is-embed')
+  if (q.get('escala') === '0') document.documentElement.classList.add('no-scale')
+</script>
+<link rel="icon" href="../../../../public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wall: #0f0f0f;
+    --paper: #f4f1ea;
+    --chalk: #f0ede8;
+    --meta: #a19d94;
+    --ink: #1c1a17;
+    --meta-ink: #5e584e;
+    --accent: #e8923a;
+    --accent-ink: #9a4a16;
+    --on-accent: #1a0a00;
+    --rope-shade: #8f5013;
+    --news-roca: #dfe7e5;
+    --news-roca-ink: #25564e;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    --head-h: 64px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--wall); }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.6 Inter, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus { outline: none; }
+  :focus-visible { box-shadow: 0 0 0 2px var(--wall), 0 0 0 4px var(--accent); border-radius: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .mono { font: 400 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; }
+
+  /* ===== Cabecera (igual que producción, simplificada) ===== */
+  .site-head { position: relative; z-index: 3; height: var(--head-h); display: flex; align-items: center; justify-content: space-between; padding-inline: 16px; background: var(--wall); color: var(--chalk); }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 500; font-size: 20px; letter-spacing: -.01em; }
+  .brand small { font: 400 13px/1 'JetBrains Mono', monospace; letter-spacing: .2em; color: var(--meta); }
+  .burger { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -8px; border-radius: 8px; }
+  .burger i { display: block; width: 24px; height: 2.5px; border-radius: 2px; background: currentColor; margin: 2.5px 0; }
+  .burger i:nth-child(2) { width: 18px; margin-left: 6px; }
+
+  /* ===== Hero móvil ===== */
+  .hero { position: relative; z-index: 1; isolation: isolate; overflow-x: clip; min-height: calc(100svh - var(--head-h)); display: flex; flex-direction: column; background: var(--wall); color: var(--chalk); }
+  /* Polvo de magnesio: igual que hoy, estático */
+  .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .26; pointer-events: none; mask-image: linear-gradient(180deg, transparent, #000 120px); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .93 0 0 0 0 .91 0 0 0 1.5 -.92'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  /* Bandas laterales: se quedan, más estrechas y sin transición (no hay «is-moving» en móvil) */
+  .edge { position: absolute; z-index: 2; top: 0; bottom: 0; width: 20px; pointer-events: none; mask-image: linear-gradient(180deg, transparent, #000 120px); }
+  .edge--l { left: 0; background: linear-gradient(90deg, rgb(232 146 58 / .14), rgb(232 146 58 / 0) 70%), linear-gradient(90deg, #0f0f0f 0%, rgb(15 15 15 / 0) 100%); }
+  .edge--r { right: 0; background: linear-gradient(270deg, rgb(232 146 58 / .14), rgb(232 146 58 / 0) 70%), linear-gradient(270deg, #0f0f0f 0%, rgb(15 15 15 / 0) 100%); }
+
+  .title { margin: clamp(4px, 2.2svh, 28px) 0 0; padding-inline: 16px; text-align: center; font: 700 clamp(30px, 10vw, 76px)/1.04 Archivo, Inter, sans-serif; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; color: #fff; }
+  .title span { display: block; }
+
+  /* La tarjeta: 82vw en teléfono, 44vw en tableta, y nunca más alta de lo que cabe */
+  .carousel { --cw: min(82vw, 340px, calc((100svh - 330px) * .76)); --gap: 12px; position: relative; margin-top: clamp(12px, 2.4svh, 24px); }
+  @media (min-width: 600px) { .carousel { --cw: min(44vw, 360px, calc((100svh - 330px) * .76)); --gap: 16px; } }
+  .track { display: flex; gap: var(--gap); margin: 0; padding: 8px calc((100% - var(--cw)) / 2) 12px; list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .track::-webkit-scrollbar { display: none; }
+  .slide { flex: 0 0 var(--cw); scroll-snap-align: center; scroll-snap-stop: always; }
+
+  /* ===== Caras: las de producción, sin plies, sin tilt, sin blend ===== */
+  .cardx { position: relative; display: block; aspect-ratio: .76; border-radius: 6px; color: var(--chalk); text-decoration: none; -webkit-tap-highlight-color: transparent;
+    /* Grosor: un canto inferior de 3 px y sombra de contacto, en una sola capa pintada */
+    box-shadow: 0 3px 0 #1b1b1d, 0 18px 28px -14px rgb(0 0 0 / .7); }
+  .cardx:focus-visible { box-shadow: 0 3px 0 #1b1b1d, 0 0 0 2px var(--wall), 0 0 0 4px var(--accent); }
+  .face { position: absolute; inset: 0; overflow: hidden; container-type: inline-size; border-radius: inherit; background: #1a1a1c; }
+  .face img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+  /* Filo de luz y reflejo fijos (antes seguían el giro con mix-blend-mode: screen) */
+  .face::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(112deg, rgb(255 255 255 / 0) 30%, rgb(255 255 255 / .07) 44%, rgb(255 255 255 / 0) 58%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .13), inset 0 -1px 0 rgb(0 0 0 / .3), inset 1px 0 0 rgb(255 255 255 / .045), inset -1px 0 0 rgb(255 255 255 / .045); }
+  .grade { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / 0) 66%, rgb(20 20 22 / .85) 118%); }
+  .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 56px 14px 12px; background: linear-gradient(180deg, rgb(15 15 15 / 0), rgb(15 15 15 / .88) 62%); }
+  .kind { display: block; color: var(--accent); }
+  .cap strong { display: block; margin-top: 8px; font-size: 19px; line-height: 1.3; font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
+  .cap small { display: block; margin-top: 5px; font-size: 14px; line-height: 1.35; color: #d5d1c9; }
+  .cap small b { font-weight: 500; color: var(--chalk); }
+  .cardx--strong .cap { padding-top: 104px; background: linear-gradient(180deg, rgb(0 0 0 / 0), rgb(0 0 0 / .84) 46%, rgb(0 0 0 / .97)); }
+
+  .cardx--shoe { color: var(--on-accent); }
+  .cardx--shoe .face { background: var(--accent); }
+  .cardx--shoe .face img { inset: 4% 4% auto; width: 92%; height: auto; aspect-ratio: 1; object-fit: contain; mix-blend-mode: multiply; }
+  .cardx--shoe .cap { background: none; }
+  .cardx--shoe .kind, .cardx--shoe small, .cardx--shoe small b { color: var(--on-accent); }
+
+  .cardx--event { color: var(--ink); }
+  .cardx--event .face { background: var(--paper); }
+  .cardx--event .face::after, .cardx--news-text .face::after { background: linear-gradient(112deg, rgb(0 0 0 / 0) 30%, rgb(0 0 0 / .05) 44%, rgb(0 0 0 / 0) 58%); }
+  .date { position: absolute; left: 16px; top: 14px; margin: 0; font: 700 31cqw/.92 Archivo, sans-serif; font-stretch: 125%; letter-spacing: -.03em; text-transform: uppercase; }
+  .date span { display: block; }
+  .cardx--event .cap { background: none; }
+  .cardx--event .kind { color: var(--accent-ink); }
+  .cardx--event small { color: var(--meta-ink); }
+
+  /* Noticia sin foto: la baldosa de /noticias (tono, filete, glifo al 14 %) */
+  .cardx--news-text { color: var(--ink); }
+  .cardx--news-text .face { background: var(--news-roca); }
+  .cardx--news-text .face::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--news-roca-ink); }
+  .stamp { position: absolute; top: 14px; left: 14px; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px 5px; border-radius: 4px; background: var(--accent); color: var(--on-accent); box-shadow: 0 1px 0 rgb(0 0 0 / .25); }
+  .stamp i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .glyph { position: absolute; right: -14%; bottom: -10%; width: 72%; height: auto; color: var(--news-roca-ink); opacity: .14; }
+  .news-body { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 58px 16px 14px; }
+  .news-body .mono { display: flex; align-items: center; gap: 6px; color: var(--news-roca-ink); }
+  .news-body strong { display: block; margin-top: 10px; font-size: clamp(21px, 9.6cqw, 28px); line-height: 1.16; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }
+  .news-body small { position: relative; margin-top: auto; font-size: 14px; line-height: 1.35; color: var(--meta-ink); }
+  .news-body small b { font-weight: 500; color: var(--ink); }
+
+  /* Las vecinas un poco más pequeñas y con el pie apagado: animación ligada al scroll (compositor,
+     sin JS). Mejora progresiva: sin soporte, todas a tamaño 1 y nada se rompe. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      html:not(.no-scale) .slide { animation: slide-focus linear both; animation-timeline: view(inline); }
+      html:not(.no-scale) .slide .cap, html:not(.no-scale) .slide .news-body { animation: cap-focus linear both; animation-timeline: view(inline); }
+      @keyframes slide-focus { 0%, 100% { scale: .92; } 50% { scale: 1; } }
+      @keyframes cap-focus { 0%, 100% { opacity: .35; } 35%, 65% { opacity: 1; } }
+    }
+  }
+
+  /* ===== Paginador: anterior / puntos / siguiente; la cuerda cuelga de él ===== */
+  .pager { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 4px; }
+  .pager button { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(240 237 232 / .45); color: var(--chalk); transition: background-color .15s, border-color .15s, opacity .15s; }
+  .pager button:hover { background: rgb(240 237 232 / .08); }
+  .pager button:active { background: rgb(240 237 232 / .16); }
+  .pager button[aria-disabled='true'] { opacity: .35; cursor: default; background: none; }
+  .pager svg { width: 20px; height: 20px; }
+  .dots { display: flex; align-items: center; gap: 6px; height: 44px; padding-inline: 4px; }
+  .dots i { display: block; width: 6px; height: 6px; border-radius: 3px; background: #77736b; transition: width .18s var(--ease), background-color .18s; }
+  .dots i.is-on { width: 20px; background: var(--accent); }
+
+  /* Cuerda estática: sale de debajo del paginador y el mosquetón baja a la sección siguiente.
+     Sin caída con el scroll y sin balanceo (ningún listener ni animación continua). */
+  .rope { position: relative; z-index: 0; flex: 1 0 96px; width: 0; margin: -10px auto -40px; pointer-events: none; }
+  .rope-cord { position: absolute; top: 0; bottom: 56px; left: -2.5px; width: 5px; border-radius: 3px; background: repeating-linear-gradient(-58deg, var(--accent) 0 3px, var(--rope-shade) 3px 5px); }
+  .rope-end { position: absolute; left: -22px; bottom: 0; display: block; width: 44px; height: 64px; color: var(--accent); pointer-events: auto; }
+  .rope-end svg { display: block; width: 44px; height: 64px; transform-origin: 50% 8%; transition: transform .18s var(--ease); }
+  .rope-end:active svg { transform: translateY(3px); }
+
+  .next { position: relative; padding: 80px 16px 48px; background: var(--paper); }
+  .next h2 { margin: 0 0 16px; font-size: 28px; line-height: 1.12; font-weight: 500; letter-spacing: -.025em; }
+  .next ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+  .next a { display: block; padding: 20px; background: #fbf9f5; border-radius: 12px; font-size: 18px; font-weight: 500; text-decoration: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: 0s !important; }
+  }
+
+  /* ===== Banco de pruebas (≥ 900 px y no embebido): marcos + comparación del menú ===== */
+  .bench { display: none; }
+  @media (min-width: 900px) {
+    html:not(.is-embed) .phone-only { display: none; }
+    html:not(.is-embed) .bench { display: block; }
+  }
+  .bench { min-height: 100vh; padding: 48px clamp(24px, 4vw, 64px) 80px; background: #e9e5dc; color: var(--ink); }
+  .bench h1 { margin: 0; font-size: 32px; line-height: 1.15; font-weight: 500; letter-spacing: -.02em; }
+  .bench h2 { margin: 56px 0 8px; font-size: 22px; font-weight: 500; letter-spacing: -.01em; }
+  .bench p { max-width: 72ch; margin: 8px 0 0; color: #3d3a34; }
+  .bench code { font: 400 13px 'JetBrains Mono', monospace; background: rgb(0 0 0 / .06); padding: 1px 5px; border-radius: 4px; }
+  .frames { display: flex; flex-wrap: wrap; gap: 40px 32px; align-items: flex-start; margin-top: 28px; padding: 8px; }
+  .frame { flex: none; }
+  .frame span { display: block; margin-bottom: 8px; color: var(--meta-ink); }
+  .frame iframe { display: block; border: 0; border-radius: 18px; background: var(--wall); box-shadow: 0 0 0 8px #1c1a17, 0 30px 60px -30px rgb(0 0 0 / .5); }
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 24px; }
+  .note { padding: 20px; border-radius: 12px; background: #fbf9f5; }
+  .note h3 { margin: 0 0 6px; font-size: 16px; font-weight: 500; }
+  .note p, .note li { font-size: 15px; line-height: 1.5; color: #3d3a34; }
+  .note ul { margin: 6px 0 0; padding-left: 18px; }
+  .tag { display: inline-block; padding: 3px 8px 2px; border-radius: 4px; background: var(--ink); color: var(--chalk); }
+  .tag--rec { background: var(--accent); color: var(--on-accent); }
+
+  /* ===== Menú: escenario de comparación (también es el menú real en la vista móvil) ===== */
+  .menu-compare { display: flex; flex-wrap: wrap; gap: 32px; margin-top: 24px; }
+  .stage-wrap { flex: none; }
+  .stage-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; width: 360px; }
+  .stage-head b { font-weight: 500; }
+  .stage-head button { min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--ink); color: var(--chalk); font-size: 15px; }
+  .stage-head button:hover { background: #33302a; }
+  .stage { position: relative; width: 360px; height: 640px; overflow: hidden; border-radius: 18px; background: #ddd8ce; box-shadow: 0 0 0 8px #1c1a17; }
+  .stage-under { position: absolute; inset: 0; display: grid; place-content: center; color: var(--meta-ink); text-align: center; padding: 24px; }
+
+  .menu { position: absolute; inset: 0; z-index: 50; visibility: hidden; color: #fff; transition: visibility 0s .26s; }
+  .menu[data-open='true'] { visibility: visible; transition-delay: 0s; }
+  .page-menu { position: fixed; }
+  .pills { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); pointer-events: none; }
+  .pills i { display: block; height: 128%; margin-inline: -1px; background: var(--wall); border-radius: 12.5vw 12.5vw 0 0; transform: translateY(100%); }
+  .stage .pills i { border-radius: 45px 45px 0 0; }
+  .menu-panel { position: relative; display: flex; flex-direction: column; height: 100%; }
+  .menu-top { display: flex; align-items: center; justify-content: space-between; height: 64px; padding-inline: 16px; }
+  .menu-close { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -8px; border-radius: 8px; }
+  .menu-close svg { width: 24px; height: 24px; }
+  .menu-nav { position: relative; flex: 1 1 auto; display: flex; min-height: 0; padding: 8px 16px 8px 52px; overflow-y: auto; }
+  .menu-list { display: grid; gap: clamp(8px, 2.1svh, 20px); width: 100%; margin: auto 0; padding: 0; list-style: none; }
+  .stage .menu-list { gap: 14px; }
+  .menu-link { display: block; padding: 4px 0; border-radius: 4px; text-decoration: none; }
+  .menu-link b { display: block; font: 700 clamp(25px, 8vw, 46px)/1.04 Archivo, Inter, sans-serif; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; transition: color .15s; }
+  .stage .menu-link b { font-size: 28px; }
+  .menu-link span { display: block; margin-top: 3px; font-size: 15px; line-height: 1.35; color: var(--meta); }
+  .menu-link.is-clipped b { color: var(--accent); }
+  .menu-foot { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 16px; }
+  .menu-foot a { display: inline-flex; align-items: center; min-height: 44px; color: #fff; }
+
+  /* Cuerda del menú: carril a la izquierda */
+  .mrope { position: absolute; left: 26px; top: 0; width: 0; pointer-events: none; }
+  .mrope .cord { position: absolute; top: 0; left: -2px; width: 4px; border-radius: 2px; background: repeating-linear-gradient(-58deg, var(--accent) 0 3px, var(--rope-shade) 3px 5px); }
+  .mrope svg { position: absolute; left: -15px; width: 30px; height: 44px; color: var(--accent); }
+
+  /* ----- ANTES (producción hoy): clip-path por li, altura de la cuerda transicionada ----- */
+  .is-old .pills i { transition: transform .3s cubic-bezier(.5, 0, .9, .4); }
+  .is-old[data-open='true'] .pills i { transform: translateY(-14%); transition: transform .52s var(--ease); }
+  .is-old[data-open='true'] .pills i:nth-child(1) { transition-delay: 40ms; }
+  .is-old[data-open='true'] .pills i:nth-child(3) { transition-delay: 70ms; }
+  .is-old[data-open='true'] .pills i:nth-child(4) { transition-delay: 110ms; }
+  .is-old .menu-top, .is-old .menu-foot { opacity: 0; transition: opacity .15s; }
+  .is-old[data-open='true'] .menu-top { opacity: 1; transition: opacity .25s .18s; }
+  .is-old[data-open='true'] .menu-foot { opacity: 1; transition: opacity .3s .5s; }
+  .is-old .menu-list li { translate: 0 14px; clip-path: inset(0 0 100% 0); }
+  .is-old[data-open='true'] .menu-list li { translate: 0 0; clip-path: inset(-4px -4px -8px -4px); transition: clip-path .5s var(--ease), translate .5s var(--ease); transition-delay: calc(200ms + var(--i) * 45ms); }
+  .is-old .mrope { height: var(--y, 0px); transition: height .5s var(--ease); }
+  .is-old .mrope .cord { bottom: 18px; transform-origin: top; transform: scaleY(0); }
+  .is-old[data-open='true'] .mrope .cord { transform: scaleY(1); transition: transform .55s var(--ease) .14s; }
+  .is-old .mrope svg { bottom: -22px; opacity: 0; }
+  .is-old[data-open='true'] .mrope svg { opacity: 1; transition: opacity .2s .4s; }
+
+  /* ----- DESPUÉS (propuesta): solo opacity y transform, todo en el compositor ----- */
+  .is-new .pills i { transition: transform .22s cubic-bezier(.5, 0, .9, .4); }
+  .is-new[data-open='true'] .pills i { transform: translateY(-14%); transition: transform .38s var(--ease); }
+  .is-new[data-open='true'] .pills i:nth-child(1) { transition-delay: 25ms; }
+  .is-new[data-open='true'] .pills i:nth-child(3) { transition-delay: 45ms; }
+  .is-new[data-open='true'] .pills i:nth-child(4) { transition-delay: 70ms; }
+  .is-new .menu-top, .is-new .menu-foot { opacity: 0; transition: opacity .12s; }
+  .is-new[data-open='true'] .menu-top { opacity: 1; transition: opacity .18s .12s; }
+  .is-new[data-open='true'] .menu-foot { opacity: 1; transition: opacity .2s .28s; }
+  .is-new .menu-list li { opacity: 0; transform: translateY(12px); transition: opacity .12s, transform 0s .12s; }
+  .is-new[data-open='true'] .menu-list li { opacity: 1; transform: none; transition: opacity .2s var(--ease), transform .26s var(--ease); transition-delay: calc(120ms + var(--i) * 30ms); }
+  /* Cuerda: el carril tiene la altura máxima fija; la cuerda escala (scaleY) y el mosquetón se traslada */
+  .is-new .mrope { height: 100%; }
+  .is-new .mrope .cord { height: calc(var(--y, 0px) - 18px); transform-origin: top; transform: scaleY(0); transition: transform .12s; }
+  .is-new[data-open='true'] .mrope .cord { transform: scaleY(1); transition: transform .28s var(--ease) .1s; }
+  .is-new .mrope svg { top: 0; transform: translateY(calc(var(--y, 0px) - 22px)); opacity: 0; transition: opacity .1s; }
+  .is-new[data-open='true'] .mrope svg { opacity: 1; transition: opacity .15s .25s, transform .28s var(--ease); }
+  /* Al cambiar de enlace: la longitud de la cuerda cambia; la altura se escribe y se anima con scaleY desde la anterior (FLIP en JS) */
+  .is-new .mrope .cord.is-flip { transition: transform .28s var(--ease); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu .pills i, .menu .menu-list li, .menu .mrope .cord, .menu .mrope svg, .menu .menu-top, .menu .menu-foot { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= VISTA MÓVIL (< 900 px o ?embed=1) ======================= -->
+<div class="phone-only">
+  <header class="site-head">
+    <a class="brand" href="#"><span>chalkguide</span><small>BCN</small></a>
+    <button type="button" class="burger" id="burger" aria-label="Abrir el menú" aria-controls="page-menu" aria-expanded="false"><span aria-hidden="true"><i></i><i></i><i></i></span></button>
+  </header>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <i class="edge edge--l" aria-hidden="true"></i>
+    <i class="edge edge--r" aria-hidden="true"></i>
+    <h1 class="title" id="hero-title"><span>Escalar en</span> <span>Barcelona</span></h1>
+
+    <div class="carousel" role="region" aria-roledescription="carrusel" aria-label="Destacados">
+      <ul class="track" id="track">
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="1 de 9">
+          <a class="cardx cardx--news-text" href="/noticias/ainhize-belar-la-planta-de-shiva" data-label="Noticia: Ainhize Belar encadena La Planta de Shiva">
+            <div class="face">
+              <span class="stamp mono"><i aria-hidden="true"></i>Noticia</span>
+              <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+              <div class="news-body">
+                <span class="mono"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>Roca y vías · 27 nov</span>
+                <strong>Ainhize Belar encadena La Planta de Shiva, 9b, y es la primera española en un 9b</strong>
+                <small>Fuente: <b>WOGU</b></small>
+              </div>
+            </div>
+          </a>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 de 9">
+          <a class="cardx cardx--shoe" href="/pies-de-gato/la-sportiva-tarantulace" data-label="La Sportiva Tarantulace">
+            <div class="face">
+              <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/fd83f8ef-5f14-4439-aef1-0496d73451f7/1-tarantulace.jpg" alt="" width="650" height="650">
+              <div class="cap"><span class="kind mono">Reseña</span><strong>La Sportiva Tarantulace</strong><small>«Justos pero sin dolor en sesiones de dos horas.»</small></div>
+            </div>
+          </a>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 de 9">
+          <a class="cardx cardx--event" href="/agenda" data-label="Curso de iniciación a la escalada de vías de varios largos, en Vic">
+            <div class="face">
+              <p class="date" aria-hidden="true"><span>28</span><span>nov</span></p>
+              <div class="cap"><span class="kind mono">Agenda</span><strong>Curso de iniciación a la escalada de vías de varios largos, en Vic</strong><small>Sábado, 08:00</small></div>
+            </div>
+          </a>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 de 9">
+          <a class="cardx cardx--strong" href="/rocodromos/la-paret-de-gracia" data-label="La Paret de Gràcia">
+            <div class="face">
+              <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000008/1-escalador-desde-abajo.jpg" alt="" width="1600" height="2400">
+              <div class="cap"><span class="kind mono">Rocódromo</span><strong>La Paret de Gràcia</strong><small>Gràcia · 69 €/mes · hasta 15 m</small></div>
+            </div>
+          </a>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="5 de 9">
+          <div class="cardx cardx--photo" data-label="Techo de roca sobre el mar">
+            <div class="face"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000004/1-techo-roca-mar.jpg" alt="Techo de roca sobre el mar" width="1600" height="1156"><i class="grade"></i></div>
+          </div>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="6 de 9">
+          <a class="cardx cardx--shoe" href="/pies-de-gato/la-sportiva-skwama" data-label="La Sportiva Skwama">
+            <div class="face">
+              <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/e67b0a52-71ce-4e84-ab40-72819c6906a7/1-skwama.jpg" alt="" width="550" height="550">
+              <div class="cap"><span class="kind mono">Pies de gato</span><strong>La Sportiva Skwama</strong><small>145–170 €</small></div>
+            </div>
+          </a>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="7 de 9">
+          <a class="cardx cardx--strong" href="/rocodromos/magnesi-poblenou" data-label="Magnesi Poblenou">
+            <div class="face">
+              <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000007/1-desplome-presas-rojas-verdes.jpg" alt="" width="1600" height="1067">
+              <div class="cap"><span class="kind mono">Rocódromo</span><strong>Magnesi Poblenou</strong><small>Poblenou · 62 €/mes · bloque</small></div>
+            </div>
+          </a>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="8 de 9">
+          <a class="cardx cardx--strong" href="/blog/como-elegir-pies-de-gato" data-label="Cómo elegir pies de gato según tu nivel y estilo">
+            <div class="face">
+              <img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000006/1-sala-bloque-amplia.jpg" alt="" width="1600" height="1067">
+              <div class="cap"><span class="kind mono">Artículo</span><strong>Cómo elegir pies de gato según tu nivel y estilo</strong></div>
+            </div>
+          </a>
+        </li>
+
+        <li class="slide" role="group" aria-roledescription="diapositiva" aria-label="9 de 9">
+          <div class="cardx cardx--photo" data-label="Escalador en una pared de roca roja desplomada">
+            <div class="face"><img loading="lazy" src="https://eqtjlafxtrzbjazhhyin.supabase.co/storage/v1/object/public/media/d0d0d0d0-000a-4000-8000-000000000002/1-pared-roja-desplomada.jpg" alt="Escalador en una pared de roca roja desplomada" width="1600" height="2000"><i class="grade"></i></div>
+          </div>
+        </li>
+
+      </ul>
+
+      <div class="pager">
+        <button type="button" id="prev" aria-label="Destacado anterior" aria-controls="track" aria-disabled="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <span class="dots" id="dots" aria-hidden="true"></span>
+        <button type="button" id="next" aria-label="Destacado siguiente" aria-controls="track">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+      <p class="sr" id="live" aria-live="polite"></p>
+    </div>
+
+    <div class="rope">
+      <i class="rope-cord" aria-hidden="true"></i>
+      <a class="rope-end" href="#paths" aria-label="Ir a la sección siguiente">
+        <svg viewBox="0 0 44 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path stroke="#8f5013" stroke-width="6" d="M18 6h7c9 0 14 7 13 15l-3 28c-1 6-6 10-12 10h-3c-6 0-11-5-11-11V15c0-5 4-9 9-9Z"/>
+          <path stroke="currentColor" stroke-width="3.6" d="M18 6h7c9 0 14 7 13 15l-3 28c-1 6-6 10-12 10h-3c-6 0-11-5-11-11V15c0-5 4-9 9-9Z"/>
+          <path stroke="#8f5013" stroke-width="3.6" d="m38 21-3 28"/>
+          <path fill="currentColor" stroke="currentColor" stroke-width="1" d="m34.6 33 4.6.5-1.2 11.6-4.6-.5z"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <section class="next" id="paths" aria-labelledby="next-title">
+    <h2 id="next-title">¿Por dónde empiezas?</h2>
+    <ul>
+      <li><a href="#">Busco rocódromo</a></li>
+      <li><a href="#">Busco pies de gato</a></li>
+      <li><a href="#">Quiero salir a roca</a></li>
+    </ul>
+  </section>
+
+  <!-- Menú real de la vista móvil: versión «después» -->
+  <div class="menu is-new page-menu" id="page-menu" role="dialog" aria-modal="true" aria-label="Menú" data-open="false">
+    <div class="pills" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="menu-panel" data-menu></div>
+  </div>
+</div>
+
+<!-- ======================= BANCO DE PRUEBAS (≥ 900 px) ======================= -->
+<main class="bench">
+  <p class="mono" style="color:var(--accent-ink)">Propuesta · 28 nov 2026 · pendiente de Xavi</p>
+  <h1>Hero móvil plano y menú más ligero</h1>
+  <p>Por debajo de 900 px el anillo 3D se sustituye por un carrusel plano con <code>scroll-snap</code> nativo: el dedo mueve el scroll del navegador, sin física en JS, sin plies y sin tilt. Las caras de las tarjetas son las mismas. A partir de 900 px se queda el anillo, aligerado (ver notas). Abre esta misma página en un móvil, o reduce la ventana por debajo de 900 px, para probarla a tamaño real.</p>
+
+  <div class="frames">
+    <div class="frame"><span class="mono">360 × 640</span><iframe src="?embed=1" width="360" height="640" title="Vista a 360 px"></iframe></div>
+    <div class="frame"><span class="mono">390 × 760</span><iframe src="?embed=1" width="390" height="760" title="Vista a 390 px"></iframe></div>
+    <div class="frame"><span class="mono">768 × 900</span><iframe src="?embed=1" width="768" height="900" title="Vista a 768 px"></iframe></div>
+  </div>
+
+  <div class="notes">
+    <div class="note">
+      <h3>Qué se ve igual</h3>
+      <ul>
+        <li>Mismas 9 tarjetas y mismo orden (D89): la noticia, de frente al cargar.</li>
+        <li>Mismas caras: baldosa de noticia con su glifo al fondo, «28 NOV» en papel, naranja del pie de gato, fotos con pie oscuro.</li>
+        <li>Polvo de magnesio, bandas laterales, cuerda y mosquetón.</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h3>Qué cambia</h3>
+      <ul>
+        <li>Sin grosor 3D: un canto de 3 px y sombra de contacto, en una sola capa.</li>
+        <li>Reflejo fijo, sin <code>mix-blend-mode</code>. Sin tilt ni parallax.</li>
+        <li>Las vecinas asoman (82 vw) y bajan a escala 0,92 con el pie apagado. La animación va ligada al scroll y la mueve el compositor. Sin soporte, quedan planas. Para compararlo sin escala: <a href="?escala=0">?escala=0</a>.</li>
+        <li>Paginador: anterior, puntos y siguiente. La cuerda cuelga de él y es estática: ni caída con el scroll ni balanceo.</li>
+        <li>Sin vuelta infinita: el scroll nativo tiene principio y fin. Los botones se apagan en los extremos.</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h3>Por qué la agenda se veía «picada»</h3>
+      <p>En las capturas de Android, la tarjeta de agenda atraviesa la central: media tarjeta delante y media detrás. Chrome Android junta los planos 3D de varias tarjetas (las plies con <code>preserve-3d</code>) en un mismo contexto, y entonces los planos se cortan entre sí. El <code>z-index</code> ya no manda. El carrusel plano no tiene 3D, así que el fallo no puede pasar.</p>
+    </div>
+  </div>
+
+  <h2>Menú móvil: antes y después</h2>
+  <p>Pulsa «Abrir / cerrar» en los dos. Toca un enlace para ver cómo viaja el mosquetón (en el mockup no navega). Con «Paint flashing» de DevTools, el de la izquierda repinta cada fila en cada fotograma. El de la derecha no repinta nada mientras anima.</p>
+  <div class="menu-compare">
+    <div class="stage-wrap">
+      <div class="stage-head"><b>Antes · producción</b><button type="button" data-toggle="old">Abrir / cerrar</button></div>
+      <div class="stage"><p class="stage-under">Página de fondo</p>
+        <div class="menu is-old" id="menu-old" data-open="false"><div class="pills" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="menu-panel" data-menu></div></div>
+      </div>
+      <p class="mono" style="margin-top:12px;color:var(--meta-ink)">Abrir ≈ 830 ms · clip-path + height</p>
+    </div>
+    <div class="stage-wrap">
+      <div class="stage-head"><b>Después · propuesta</b><button type="button" data-toggle="new">Abrir / cerrar</button></div>
+      <div class="stage"><p class="stage-under">Página de fondo</p>
+        <div class="menu is-new" id="menu-new" data-open="false"><div class="pills" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="menu-panel" data-menu></div></div>
+      </div>
+      <p class="mono" style="margin-top:12px;color:var(--meta-ink)">Abrir ≈ 420 ms · opacity + transform</p>
+    </div>
+  </div>
+</main>
+
+<template id="menu-tpl">
+  <div class="menu-top">
+    <span class="brand" style="color:#fff">chalkguide</span>
+    <button type="button" class="menu-close" data-close aria-label="Cerrar el menú"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <nav class="menu-nav" aria-label="Navegación principal">
+    <div class="mrope" aria-hidden="true"><i class="cord"></i>
+      <svg viewBox="0 0 44 64" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="currentColor" stroke-width="3.8" d="M18 6h7c9 0 14 7 13 15l-3 28c-1 6-6 10-12 10h-3c-6 0-11-5-11-11V15c0-5 4-9 9-9Z"/><path stroke="#8f5013" stroke-width="3.8" d="m38 21-3 28"/></svg>
+    </div>
+    <ul class="menu-list">
+      <li style="--i:0"><a class="menu-link" href="#"><b>Rocódromos</b><span>Precios, horarios y muros de Barcelona</span></a></li>
+      <li style="--i:1"><a class="menu-link" href="#"><b>Pies de gato</b><span>Reseñas y comparador</span></a></li>
+      <li style="--i:2"><a class="menu-link" href="#"><b>Noticias</b><span>Lo que pasa en la escalada, cada semana</span></a></li>
+      <li style="--i:3"><a class="menu-link" href="#"><b>Agenda</b><span>Cursos, quedadas y competiciones</span></a></li>
+      <li style="--i:4"><a class="menu-link" href="#"><b>Blog</b><span>Guías y opinión</span></a></li>
+    </ul>
+  </nav>
+  <div class="menu-foot"><a href="#"><span style="text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:4px">Newsletter</span></a><span class="mono" style="color:var(--meta)">ES · EN</span></div>
+</template>
+
+<script>
+/* ===== Carrusel plano: el scroll es nativo; JS solo pinta el paginador y los botones ===== */
+const track = document.getElementById('track')
+if (track) {
+  const slides = [...track.children]
+  const n = slides.length
+  const dots = document.getElementById('dots')
+  const live = document.getElementById('live')
+  const prev = document.getElementById('prev')
+  const next = document.getElementById('next')
+  slides.forEach(() => dots.append(document.createElement('i')))
+  let active = -1
+  let frame = 0
+  let liveTimer = 0
+
+  // Índice de la tarjeta centrada a partir del scroll (una lectura por fotograma, sin layout de las tarjetas).
+  const step = () => slides[1].offsetLeft - slides[0].offsetLeft
+  function sync() {
+    frame = 0
+    const i = Math.max(0, Math.min(n - 1, Math.round(track.scrollLeft / step())))
+    if (i === active) return
+    active = i
+    ;[...dots.children].forEach((d, k) => d.classList.toggle('is-on', k === i))
+    prev.setAttribute('aria-disabled', String(i === 0))
+    next.setAttribute('aria-disabled', String(i === n - 1))
+    clearTimeout(liveTimer)
+    liveTimer = setTimeout(() => {
+      live.textContent = `Destacado ${active + 1} de ${n}: ${slides[active].querySelector('[data-label]').dataset.label}`
+    }, 400)
+  }
+  track.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(sync) }, { passive: true })
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const goTo = (i) => track.scrollTo({ left: Math.max(0, Math.min(n - 1, i)) * step(), behavior: reduced ? 'auto' : 'smooth' })
+  prev.addEventListener('click', () => active > 0 && goTo(active - 1))
+  next.addEventListener('click', () => active < n - 1 && goTo(active + 1))
+
+  // Tocar una vecina la centra; la central navega.
+  slides.forEach((slide, i) => slide.firstElementChild.addEventListener('click', (e) => {
+    if (i !== active) { e.preventDefault(); goTo(i) }
+    else if (slide.firstElementChild.tagName === 'A') e.preventDefault() // mockup: no navegar
+  }))
+  sync()
+}
+
+/* ===== Menús ===== */
+const tpl = document.getElementById('menu-tpl')
+document.querySelectorAll('[data-menu]').forEach((p) => p.append(tpl.content.cloneNode(true)))
+
+function setupMenu(menu) {
+  const nav = menu.querySelector('.menu-nav')
+  const rope = menu.querySelector('.mrope')
+  const cord = rope.querySelector('.cord')
+  const links = [...menu.querySelectorAll('.menu-link')]
+  const isNew = menu.classList.contains('is-new')
+  let y = 0
+  function clipTo(i) {
+    links.forEach((l, k) => l.classList.toggle('is-clipped', k === i))
+    const li = links[i].parentElement
+    const ny = Math.round(li.offsetTop + links[i].offsetHeight / 2 + 22)
+    if (isNew && y && menu.dataset.open === 'true') {
+      // FLIP: la cuerda toma su nueva altura y arranca escalada a la vieja; luego vuelve a 1 (solo transform).
+      cord.classList.remove('is-flip')
+      cord.style.transform = `scaleY(${(y - 18) / (ny - 18)})`
+      menu.style.setProperty('--y', `${ny}px`)
+      cord.getBoundingClientRect()
+      cord.classList.add('is-flip')
+      cord.style.transform = ''
+    } else {
+      menu.style.setProperty('--y', `${ny}px`)
+    }
+    y = ny
+  }
+  links.forEach((l, i) => {
+    l.addEventListener('pointerenter', () => clipTo(i))
+    l.addEventListener('focus', () => clipTo(i))
+    l.addEventListener('click', (e) => { e.preventDefault(); clipTo(i) })
+  })
+  nav.addEventListener('pointerleave', () => clipTo(0))
+  return {
+    open() {
+      menu.dataset.open = 'true'
+      requestAnimationFrame(() => requestAnimationFrame(() => clipTo(0)))
+    },
+    close() { menu.dataset.open = 'false' },
+    toggle() { menu.dataset.open === 'true' ? this.close() : this.open() },
+  }
+}
+
+const menus = { old: document.getElementById('menu-old'), new: document.getElementById('menu-new') }
+Object.entries(menus).forEach(([k, el]) => {
+  const m = setupMenu(el)
+  document.querySelector(`[data-toggle="${k}"]`).addEventListener('click', () => m.toggle())
+  el.querySelector('[data-close]').addEventListener('click', () => m.close())
+})
+
+const pageMenu = document.getElementById('page-menu')
+const burger = document.getElementById('burger')
+if (pageMenu && burger) {
+  const m = setupMenu(pageMenu)
+  burger.addEventListener('click', () => { m.open(); burger.setAttribute('aria-expanded', 'true'); setTimeout(() => pageMenu.querySelector('[data-close]').focus(), 60) })
+  pageMenu.querySelector('[data-close]').addEventListener('click', () => { m.close(); burger.setAttribute('aria-expanded', 'false'); burger.focus() })
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pageMenu.dataset.open === 'true') pageMenu.querySelector('[data-close]').click() })
+}
+</script>
+</body>
+</html>

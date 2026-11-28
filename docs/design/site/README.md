@@ -2473,3 +2473,195 @@ Por qué cada uno:
 #### Decisión para Xavi
 
 1. **Icono también en los chips de categoría:** sí, a 16 en `meta` (**recomendado**: ayuda a encontrar la categoría al pasar el dedo por la fila que se desplaza en móvil, y es donde el icono se aprende para reconocerlo luego en la portada), o chips solo con texto, con el icono solo en las piezas, la ficha y el hero.
+
+---
+
+## 19 · Hero móvil plano, anillo de escritorio más ligero y menú móvil barato · propuesta (pendiente de Xavi)
+
+Mockup: `pages/home-hero-movil.html`. Por debajo de 900 px es el carrusel real. A partir de 900 px muestra un banco de pruebas: la misma página en marcos de 360, 390 y 768, y el menú de antes y el de después, uno al lado del otro. `?escala=0` quita la escala de las vecinas.
+
+Origen: feedback de Xavi del 28-11 (Android Chrome y escritorio).
+- En móvil, la agenda se ve «picada»: atraviesa la tarjeta central.
+- El carrusel cuesta de mover, en móvil y en escritorio.
+- En móvil quiere un carrusel normal.
+- El menú móvil sigue pesado.
+
+### 19.1 · Diagnóstico
+
+- **Agenda «picada» (Android):** en las capturas, la agenda corta la tarjeta central por la mitad. Media tarjeta queda delante y media detrás. Es una intersección de planos 3D.
+  - Cada `.hero-slab` lleva `preserve-3d` con sus 18 plies.
+  - Chrome Android (GPU) acaba componiendo varias tarjetas en un mismo contexto 3D. Ahí los planos se ordenan por profundidad real, no por el `z-index` que escribe `useHeroRing`.
+  - No es de la agenda en sí: le toca porque está a la izquierda de la central con el ángulo más abierto.
+- **Pesado al arrastrar:**
+  - `.hero-slab` y `.hero-sheen` tienen `transition: transform .5s`, pero `--ry`/`--sheen` se reescriben en cada fotograma. La inclinación siempre llega medio segundo tarde: el carrusel parece arrastrar peso.
+  - `CHASE_RATE = 0.11` por fotograma tarda unos 0,7 s en asentarse a 60 Hz, y más con fotogramas lentos (depende del frame rate).
+  - Hay unas 160 capas (`<i>` plies) con `will-change: transform` permanente, más el `mix-blend-mode`. Son muchas capas de GPU en un móvil medio.
+  - `DRAG_CARD_SPAN = 1.16`: hay que arrastrar más de una tarjeta de ancho para pasar a la siguiente.
+- **Menú pesado:**
+  - Cada `li` anima `clip-path` durante 500 ms, y eso repinta en el hilo principal en cada fotograma.
+  - El carril de la cuerda anima `height` durante 500 ms (layout en cada fotograma).
+  - En total, abrir dura unos 830 ms (200 ms + 4 × 45 ms + 500 ms + extras).
+
+### 19.2 · Direcciones para móvil (< 900 px)
+
+| | A · Plano nativo (**recomendada**) | B · Plano con escala de vecinas | C · Anillo aligerado también en móvil |
+| --- | --- | --- | --- |
+| Intención | Un carrusel de swipe normal. El dedo mueve el scroll del navegador. | A, más las vecinas a 0,92 y con el pie apagado, ligado al scroll. | Mantener el cilindro, con menos capas y sin lag. |
+| Pros | Inercia y snap del sistema, cero JS de física, accesible por defecto, imposible que se corten tarjetas. | Da profundidad sin 3D. Es una animación ligada al scroll en el compositor (`animation-timeline: view()`). Sin soporte, cae a A. | Mismo look en todos los tamaños. |
+| Contras | Sin vuelta infinita: tiene principio y fin. | Safari aún no la soporta (ahí se ve como A). | Sigue siendo JS por fotograma y 3D en GPU modesta. El efecto de lente no se aprecia en 390. |
+
+**Recomendación: A con la capa de B** (es lo que muestra el mockup). B no cuesta nada donde no hay soporte. Confirmo la lectura de Xavi: el efecto de lente no hace falta en móvil.
+
+### 19.3 · Spec del carrusel móvil
+
+**Cambio de modo:** por debajo de 900 px, carrusel plano. A partir de 900 px, el anillo. Es el mismo corte que ya usa `ringGeometry` (`phone = W < 900`).
+
+**Estructura:**
+- `region` con `aria-roledescription="carrusel"` y `aria-label="Destacados"`.
+- Dentro, una `ul.track`. Cada `li` es un `group` con `aria-roledescription="diapositiva"` y `aria-label="3 de 9"`.
+- La tarjeta (`a` o `div` para fotos) va dentro del `li`.
+
+**Pista:**
+- `display: flex`, `gap: 12px` (16 px a partir de 600).
+- `overflow-x: auto`, `scroll-snap-type: x mandatory`, `overscroll-behavior-x: contain`, sin barra.
+- Padding lateral `calc((100% - var(--cw)) / 2)` para que la primera y la última queden centradas.
+- Padding vertical: 8 px arriba y 12 px abajo, para la sombra.
+
+**Tarjeta:**
+- Cada tarjeta lleva `scroll-snap-align: center` y `scroll-snap-stop: always`: un swipe, una tarjeta.
+- Ancho `--cw`:
+  - En teléfono: `min(82vw, 340px, calc((100svh - 330px) * .76))`.
+  - De 600 a 899: `min(44vw, 360px, …)`.
+  - El tercer término evita que la tarjeta empuje el paginador fuera de pantalla en 360 × 640.
+- Proporción 0,76 (como hoy en teléfono), radio 6.
+- En 390 asoman de 20 a 40 px de cada vecina, según la altura útil; en 768, media tarjeta.
+
+**Caras:** idénticas a `HeroCard` (noticia con baldosa y glifo al 14 %, evento «28 NOV» en papel, pie de gato naranja con `multiply` en la foto de producto, rocódromo y artículo con pie negro, fotos con `grade`). Sin plies, sin `hero-slab` 3D, sin `--par` y sin `--cap` dinámico.
+
+**Grosor:** una sola `box-shadow` en la tarjeta, `0 3px 0 #1b1b1d, 0 18px 28px -14px rgb(0 0 0 / .7)`: un canto inferior de 3 px más una sombra de contacto.
+
+**Reflejo:** fijo, en el `::after` de la cara, con mezcla normal.
+- Sobre fondos oscuros: `linear-gradient(112deg, rgb(255 255 255 / 0) 30%, rgb(255 255 255 / .07) 44%, rgb(255 255 255 / 0) 58%)`.
+- Sobre papel y noticia: lo mismo en negro al 5 %.
+- Fuera `mix-blend-mode`.
+
+**Vecinas (B):**
+- `@supports (animation-timeline: view())` y `prefers-reduced-motion: no-preference`.
+- `.slide`: `scale` .92 en los extremos y 1 en el centro, con `animation-timeline: view(inline)`.
+- `.cap` y `.news-body`: `opacity` .35 en los extremos y 1 entre el 35 y el 65 %.
+- Solo `scale` y `opacity`.
+
+**Tocar una vecina** la centra (`scrollTo` suave, `auto` con movimiento reducido) y no navega. La central navega. Es lo mismo que hace hoy el anillo.
+
+**Paginador** (debajo de la pista, centrado, 4 px de margen):
+- Botones anterior/siguiente: círculo de 44 × 44, borde `rgb(240 237 232 / .45)`, chevron de 20 px en tiza.
+  - Hover: fondo tiza al 8 %. Activo: al 16 %. Foco: el anillo global.
+  - En los extremos, `aria-disabled="true"` y opacidad .35 (el foco sigue llegando).
+  - `aria-label`: «Destacado anterior» / «Destacado siguiente», con `aria-controls` hacia la pista.
+- Puntos: decorativos (`aria-hidden`).
+  - Inactivo: 6 × 6, `#77736b`.
+  - Activo: 20 × 6, `accent`. La transición del ancho dura 180 ms.
+  - Con 9 puntos ocupan unos 102 px.
+- Región viva (`sr-only`, `polite`):
+  - Anuncia «Destacado 3 de 9: {label}» 400 ms después de que el scroll se pare, para no leer cada tarjeta que pasa.
+  - En inglés: «Highlight 3 of 9: {label}».
+
+**JS** (sustituye a `useHeroRing` en móvil):
+- Un listener `scroll` pasivo con un `requestAnimationFrame`.
+- Índice activo = `round(scrollLeft / paso)`, con `paso = offsetLeft(1) - offsetLeft(0)`, que se mide una vez.
+- Con eso se pintan los puntos, se habilitan los botones y se actualiza la región viva.
+- No hay física, ni `pointermove`, ni escrituras por tarjeta.
+
+**Teclado:** las tarjetas son enlaces. Al tabular, el navegador las centra (snap). Con la pista enfocada, las flechas desplazan de forma nativa.
+
+**Cuerda:** se queda, **estática**.
+- Cuelga del centro del paginador: es un `flex: 1 0 96px` que llena hasta el borde del hero.
+- El mosquetón (44 × 64) sobresale 40 px en «¿Por dónde empiezas?», como hoy, y enlaza a `#paths`.
+- En móvil, sin `useHeroRope` (ni caída con el scroll ni listener) y sin `hero-sway`.
+- Alternativa: quitarla en móvil. No la recomiendo: es el hilo de marca que une hero, menú y sección siguiente.
+
+**Bandas laterales:** 20 px, estáticas (sin `is-moving`).
+
+**Entrada (intro):** se mantiene, porque solo anima transforms de 4 píldoras. En móvil no hay `spinIn`.
+
+**No-JS:** el fallback actual (`html:not(.js) .hero-ring`) ya es casi este carrusel. Lo recomendable es que móvil y no-JS compartan las mismas reglas.
+
+**LCP:** sin cambios. La tarjeta 1 es `eager` + `fetchpriority=high`. Las demás son `lazy`, y ahora sí entran en el viewport al asomar: se cargan cuando el navegador lo decida, sin `display: none`.
+
+### 19.4 · Implementación sugerida (para coneja-lucky, tras aprobación)
+
+- Un solo marcado para los dos modos. `HeroCarousel` pinta las tarjetas una vez. En `< 900` el CSS convierte `.hero-ring`/`.hero-scene` en la pista (reutilizando el bloque no-JS) y `useHeroRing` no arranca.
+- `useHeroRing` escucha `matchMedia('(min-width: 900px)')`. Al cruzar el corte, monta o desmonta los listeners y limpia los estilos inline (`transform`, `z-index`, `visibility`, custom properties).
+- Nuevo composable pequeño `useHeroSnap` para el paginador y la región viva. Mismo patrón que el JS del mockup.
+- `HeroRope` en móvil: dentro del flujo, bajo el paginador, sin `useHeroRope`.
+- Tokens: no hay nuevos. `#1b1b1d` (canto) y `#77736b` (punto inactivo) pueden ir como `--color-hero-edge` y `--color-hero-dot`.
+
+### 19.5 · Escritorio (≥ 900): el anillo, más ligero
+
+Se mantienen el cilindro, el tilt, el parallax, el pie que se apaga y la intro. Se aplican los cambios siguientes, ordenados por impacto en la sensación de peso.
+
+1. **Fuera las transiciones de 500 ms mientras se mueve.**
+   - `.hero-slab` y `.hero-sheen` llevan `transition: none` cuando el hero tiene `.is-moving` o el anillo `.cursor-grabbing`.
+   - La transición de 200 ms solo se conserva para el tilt de hover en reposo.
+   - Es lo que más pesa: hoy la inclinación persigue al dedo con medio segundo de retraso.
+2. **Persecución por tiempo, no por fotograma.**
+   - `pos += diff * (1 - exp(-dt / 90))` (dt en ms).
+   - Se asienta en unos 350 ms, igual a 60, 120 o 30 Hz.
+   - `CHASE_RATE` pasa a ser `CHASE_MS = 90`.
+3. **Menos recorrido por tarjeta.** `DRAG_CARD_SPAN` de 1,16 a 0,9, y lanzamiento de `vel * 180` a `vel * 240`.
+4. **Grosor sin plies** (de unas 160 capas a 0). La recomendada es la opción 4a.
+   - **4a · Canto pintado (recomendada).**
+     - `.hero-slab` deja de ser `preserve-3d` y la tarjeta lleva `transform-style: flat` explícito.
+     - El grosor es un `box-shadow` escalonado en `.hero-face`: `-1px 1px 0 #1f1f21, -2px 2px 0 #1c1c1e, -3px 3px 0 #19191b, -4px 4px 0 #161618, -5px 5px 0 #141415, -6px 6px 0 #121213` y la sombra de contacto.
+     - Es una sola capa, se pinta una vez y gira con la tarjeta en perspectiva.
+     - **Cambio visual:** el canto ya no cambia de lado con el tilt fuerte del hover. Siempre se ve abajo a la izquierda, que es como se ve hoy en el 90 % de los ángulos (`--ry` es positivo salvo en las tarjetas del extremo derecho). Con el giro normal no se nota.
+     - Elimina el riesgo de intersección también en tabletas Android de 900 px o más.
+   - **4b · Canto 3D de 2 planos.** Un lateral (`rotateY(90deg)`, 22 px) y el inferior (`rotateX(-90deg)`), dentro de un `preserve-3d`.
+     - Es fiel al tilt, pero mantiene el 3D por tarjeta y con él el riesgo de intersección en GPU Android.
+     - Pasa de 18 a 2 capas por tarjeta.
+5. **Reflejo sin `mix-blend-mode`:** mezcla normal, con blanco al 8 % (en vez de `screen` al 11 %) y negro al 5 % en papel. Es casi idéntico y ahorra capas aisladas.
+6. **`will-change: transform` solo durante el movimiento:** `.is-moving .hero-card`. En reposo, nada.
+7. **Escribir solo las tarjetas visibles.** Hoy `render()` ya oculta las de `|a| > 1.05`. Además, hay que saltarse las escrituras de `--ry/--rx/--par/--sheen` en las ocultas (ya hace `return`), y no escribir propiedades que no cambian (cachear el último valor por tarjeta).
+
+**Qué cambia a la vista en escritorio:** el canto (4a) es fijo abajo a la izquierda en vez de reaccionar al tilt extremo. El reflejo es un pelo más suave. El giro responde al instante y se asienta antes. Nada más.
+
+### 19.6 · Menú móvil: antes y después
+
+| | Antes (producción) | Después (propuesta) |
+| --- | --- | --- |
+| Píldoras | 520 ms al abrir, 300 ms al cerrar | 380 ms / 220 ms, retardos de 0 a 70 ms (antes de 0 a 110) |
+| Filas `li` | `clip-path` + `translate`, 500 ms, `200 + i·45` ms | `opacity` 200 ms + `transform: translateY(12px → 0)` 260 ms, `120 + i·30` ms |
+| Cierre de filas | Corte seco | `opacity` 120 ms, sin escalonar |
+| Cabecera / pie | 250 ms tras 180 ms / 300 ms tras 500 ms | 180 ms tras 120 ms / 200 ms tras 280 ms |
+| Carril de la cuerda | `height` animada 500 ms (layout por fotograma) | Altura fija (100 % del `nav`), sin animar |
+| Cuerda | `scaleY` 550 ms tras 140 ms, más la altura del carril | `scaleY` 280 ms tras 100 ms. Al cambiar de enlace: FLIP (se escribe la nueva altura y se anima `scaleY(vieja/nueva) → 1`) |
+| Mosquetón | Pegado al fondo del carril, aparece a 400 ms | `translateY(var(--y))` 280 ms, aparece a 250 ms |
+| Abrir completo | ≈ 830 ms | ≈ 420 ms |
+| Repintado mientras anima | Cada fila en cada fotograma | Ninguno (compositor) |
+
+- `TRAVEL_MS` (`useMenuRope`) baja de 420 a 280, para que coincida con el viaje del mosquetón.
+- El FLIP vive en `clipTo`: medir la nueva `y`, poner `scaleY(yVieja / yNueva)` sin transición, forzar estilo y quitarlo con transición. La trenza solo se deforma durante los 280 ms del viaje.
+- Movimiento reducido: todo sin transición, como hoy.
+
+### 19.7 · Contraste (WCAG 2.x, sobre `#0f0f0f`)
+
+- Borde de los botones del paginador (tiza al 45 %, unos `#757370`): 4,0:1. Cumple el mínimo de UI (3:1).
+- Chevron en tiza: 17,1:1.
+- Punto activo `accent`: 8,4:1.
+- Punto inactivo `#77736b`: 4,2:1. Es decorativo, pero se ve.
+- Las caras de las tarjetas no cambian, así que los contrastes medidos en §18.13 y D41 siguen valiendo.
+
+### 19.8 · Textos nuevos (para loro-lola, es y en)
+
+- «Destacado anterior» / «Previous highlight».
+- «Destacado siguiente» / «Next highlight».
+- «Destacado {n} de {total}: {label}» / «Highlight {n} of {total}: {label}».
+- «{n} de {total}» (etiqueta de cada diapositiva) / «{n} of {total}».
+- «diapositiva» / «slide» (`aria-roledescription`).
+
+### 19.9 · Decisiones para Xavi
+
+1. **Móvil:** A + B, plano con las vecinas escaladas (**recomendado**). La otra opción es A pura, sin escala (`?escala=0`).
+2. **Cuerda en móvil:** estática colgando del paginador (**recomendado**), o quitarla.
+3. **Escritorio, grosor:** 4a, canto pintado (**recomendado**: cero capas y sin riesgo en Android), o 4b, dos planos 3D (fiel al tilt extremo).
+4. **Intro en móvil:** mantenerla (**recomendado**: es barata y es la marca), o saltarla por debajo de 900 px.

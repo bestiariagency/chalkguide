@@ -1,14 +1,20 @@
 import type { Ref } from 'vue'
 
 /** The carabiner needs this long to reach the tapped link before we navigate (D42). */
-const TRAVEL_MS = 420
+const TRAVEL_MS = 280
+/** Rope growth between links (ms), the same as the carabiner's travel (CSS: duration-[280ms]). */
+const FLIP_MS = 280
 /** Distance from a link's centre to the rope end so the carabiner sits on it (mock). */
 const CARABINER_OFFSET = 22
+/** The braid stops this far above the rope end (CSS: h-[calc(var(--y)-18px)]). */
+const CORD_INSET = 18
 
 /**
  * Rope in the mobile menu's left margin. The carabiner clips to the current section (or the
  * first item when there is none), follows hover/focus, and on tap travels to the link before
- * navigating. `nav` is the scrolling, positioned container; links carry `data-menu-link`.
+ * navigating. `nav` is the scrolling, positioned container; links carry `data-menu-link` and the
+ * braid `data-menu-cord`. The cord's height jumps to the new length and, so that only a transform
+ * animates, it starts scaled to the old one and eases back to 1 (FLIP).
  */
 export function useMenuRope(options: {
   isOpen: Ref<boolean>
@@ -29,12 +35,31 @@ export function useMenuRope(options: {
    * offsetTop ignores the reveal transform and the list's scroll position. The transformed `li`
    * is the link's offsetParent, so its own offsetTop (relative to `nav`) is added.
    */
-  function measure() {
+  function measure(flip = false) {
     const link = links()[clipped.value]
     const item = link?.parentElement
-    if (link && item) {
-      y.value = Math.round(item.offsetTop + link.offsetTop + link.offsetHeight / 2 + CARABINER_OFFSET)
-    }
+    if (!link || !item) return
+    const next = Math.round(item.offsetTop + link.offsetTop + link.offsetHeight / 2 + CARABINER_OFFSET)
+    const from = y.value
+    if (next === from) return
+    y.value = next
+    if (flip && from > CARABINER_OFFSET && isOpen.value) flipCord(from, next)
+  }
+
+  let flipTimer = 0
+  async function flipCord(from: number, to: number) {
+    const cord = nav.value?.querySelector<HTMLElement>('[data-menu-cord]')
+    if (!cord || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const base = to - CORD_INSET
+    if (base <= 0) return
+    cord.style.transition = 'none'
+    cord.style.transform = `scaleY(${(from - CORD_INSET) / base})`
+    await nextTick() // the new height is in the DOM; the cord is still drawn at the old length
+    void cord.offsetHeight
+    cord.style.transition = `transform ${FLIP_MS}ms var(--ease-out)`
+    cord.style.transform = ''
+    clearTimeout(flipTimer)
+    flipTimer = window.setTimeout(() => (cord.style.transition = ''), FLIP_MS + 40)
   }
 
   let scrollFrame = 0
@@ -49,7 +74,7 @@ export function useMenuRope(options: {
 
   function clipTo(index: number) {
     clipped.value = index
-    measure()
+    measure(true)
   }
   const rest = () => !travelling && clipTo(restIndex.value)
 
@@ -90,6 +115,7 @@ export function useMenuRope(options: {
     window.removeEventListener('resize', onResize)
     cancelAnimationFrame(openFrame)
     cancelAnimationFrame(scrollFrame)
+    clearTimeout(flipTimer)
   })
 
   return { y, clipped, clipTo, rest, measure: measureOnFrame, onLinkClick }

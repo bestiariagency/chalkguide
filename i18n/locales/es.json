@@ -497,6 +497,11 @@
       "regionLabel": "Destacados",
       "regionRole": "carrusel",
       "ropeLabel": "Ir a la sección siguiente",
+      "prev": "Destacado anterior",
+      "next": "Destacado siguiente",
+      "status": "Destacado {n} de {total}: {label}",
+      "slideLabel": "{n} de {total}",
+      "slideRole": "diapositiva",
       "kind": {
         "review": "Reseña",
         "shoe": "Pies de gato",

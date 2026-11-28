@@ -1,5 +1,12 @@
 import type { Ref } from 'vue'
-import { CHASE_RATE, DRAG_CARD_SPAN, DRAG_THRESHOLD_PX, ringGeometry } from '~/utils/hero-ring'
+import {
+  CHASE_MS,
+  DRAG_CARD_SPAN,
+  DRAG_THRESHOLD_PX,
+  HERO_RING_MIN_WIDTH,
+  THROW_MS,
+  ringGeometry,
+} from '~/utils/hero-ring'
 
 interface RingElements {
   hero: Ref<HTMLElement | null>
@@ -12,7 +19,9 @@ interface RingElements {
  * rotateY, driven by `pos` (a fractional card index). It only moves when the user moves it
  * (drag, swipe, horizontal trackpad, arrows, focus, click on a side card): no autoplay, ever.
  * Cards are written straight to the DOM (custom properties) on every frame: going through
- * Vue reactivity here would re-render the tree 60 times a second.
+ * Vue reactivity here would re-render the tree 60 times a second. Only values that changed are written.
+ * It only runs from 900px up (the CSS cut); below that the hero is a native scroll-snap carousel
+ * (useHeroSnap) and this one tears down, leaving no inline style behind.
  */
 export function useHeroRing({ hero, ring, scene }: RingElements) {
   const live = ref('')
@@ -27,6 +36,9 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
   const ropeMaxDrop = ref(92)
 
   let cards: HTMLElement[] = []
+  let written: Record<string, string>[] = []
+  let active = false
+  let lastFrame = 0
   let n = 0
   let reduced = false
   let pos = 0
@@ -48,6 +60,8 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
   let wheelTimer = 0
   let clickTimer = 0
   const cleanups: (() => void)[] = []
+  let modeCleanups: (() => void)[] = []
+  let mq: MediaQueryList | null = null
 
   const wrap = (v: number) => ((v % n) + n) % n
   function offset(i: number) {
@@ -71,8 +85,18 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
     el.style.setProperty('--w', `${g.cardW}px`)
     el.style.setProperty('--h', `${g.cardH}px`)
     render()
-    ropeMaxDrop.value = ringW < 900 ? 30 : 92
+    ropeMaxDrop.value = 92
     ropeRest.value = Math.round(heroBottom - (ringTop + ringH / 2 + g.cardH / 2) + 28)
+  }
+
+  /** Write a style only when it changed (a hidden or settled card costs nothing). */
+  function put(i: number, card: HTMLElement, name: string, value: string) {
+    const memo = (written[i] ??= {})
+    if (memo[name] === value) return
+    memo[name] = value
+    if (name === 'transform' || name === 'zIndex' || name === 'visibility') {
+      card.style[name] = value
+    } else card.style.setProperty(name, value)
   }
 
   function render() {
@@ -80,27 +104,30 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
       const d = offset(i)
       const a = d * step
       if (Math.abs(a) > 1.05) {
-        card.style.visibility = 'hidden'
+        put(i, card, 'visibility', 'hidden')
         return
       }
-      card.style.visibility = 'visible'
+      put(i, card, 'visibility', 'visible')
       // Flat ring: perspective per card (same projection as one on the ring, same centre), and the paint
       // order by depth in z-index. No shared 3D context, so no plane can intersect another (split cards).
-      card.style.transform = `perspective(${persp}px) translateZ(${radius}px) rotateY(${-a}rad) translateZ(${-radius}px)`
-      card.style.zIndex = String(Math.round((1 - Math.cos(a)) * 1000))
-      card.style.setProperty('--cap', Math.max(0, Math.min(1, 2.2 - Math.abs(d))).toFixed(2))
+      put(i, card, 'transform', `perspective(${persp}px) translateZ(${radius}px) rotateY(${-a}rad) translateZ(${-radius}px)`)
+      put(i, card, 'zIndex', String(Math.round((1 - Math.cos(a)) * 1000)))
+      put(i, card, '--cap', Math.max(0, Math.min(1, 2.2 - Math.abs(d))).toFixed(2))
       if (reduced) return
       const kick = Math.max(-8, Math.min(8, vel * 5))
       const tilt = card === tiltCard ? tiltXY : [0, 0]
       const ry = 9 - d * 7 + kick + tilt[0]! * 8
-      card.style.setProperty('--ry', `${ry.toFixed(2)}deg`)
-      card.style.setProperty('--rx', `${(-4 - tilt[1]! * 6).toFixed(2)}deg`)
-      card.style.setProperty('--par', `${(-d * 6).toFixed(2)}%`)
-      card.style.setProperty('--sheen', `${(ry * 2.6 - 16).toFixed(1)}%`)
+      put(i, card, '--ry', `${ry.toFixed(2)}deg`)
+      put(i, card, '--rx', `${(-4 - tilt[1]! * 6).toFixed(2)}deg`)
+      put(i, card, '--par', `${(-d * 6).toFixed(2)}%`)
+      put(i, card, '--sheen', `${(ry * 2.6 - 16).toFixed(1)}%`)
     })
   }
 
-  function tick() {
+  /** Chase by time, not by frame: it settles in the same ~350 ms at 30, 60 or 120 Hz. */
+  function tick(now: number) {
+    const dt = Math.min(64, Math.max(1, now - lastFrame))
+    lastFrame = now
     const diff = target - pos
     if (Math.abs(diff) < 0.001) {
       pos = target
@@ -109,15 +136,21 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
       moving.value = false
       return
     }
-    pos += diff * (reduced ? 1 : CHASE_RATE)
+    pos += diff * (reduced ? 1 : 1 - Math.exp(-dt / CHASE_MS))
     render()
+    raf = requestAnimationFrame(tick)
+  }
+
+  function startLoop() {
+    if (raf) return
+    lastFrame = performance.now()
     raf = requestAnimationFrame(tick)
   }
 
   function moveTo(value: number, announce = true) {
     target = value
     moving.value = true
-    if (!raf) raf = requestAnimationFrame(tick)
+    startLoop()
     if (announce) live.value = cards[wrap(Math.round(value))]?.dataset.label ?? ''
   }
 
@@ -130,10 +163,11 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
 
   /** Intro: the wall is already turning when the pills lift (starts 1.7 cards away, settles on 0). */
   function spinIn() {
+    if (!active) return
     pos = -1.7
     target = 0
     moving.value = true
-    if (!raf) raf = requestAnimationFrame(tick)
+    startLoop()
   }
 
   function onCardClick(e: Event, i: number) {
@@ -184,7 +218,7 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
     if (!down) return
     down = false
     dragging.value = false
-    const throwBy = (vel * 180) / (cardW * DRAG_CARD_SPAN)
+    const throwBy = (vel * THROW_MS) / (cardW * DRAG_CARD_SPAN)
     vel = 0
     if (moved) moveTo(Math.round(pos - throwBy))
     else moveTo(Math.round(pos), false)
@@ -215,15 +249,17 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
     options?: AddEventListenerOptions,
   ) {
     el.addEventListener(type, handler as EventListener, options)
-    cleanups.push(() => el.removeEventListener(type, handler as EventListener, options))
+    modeCleanups.push(() => el.removeEventListener(type, handler as EventListener, options))
   }
 
-  onMounted(() => {
+  function enable() {
     const ringEl = ring.value
     const heroEl = hero.value
-    if (!ringEl || !heroEl || !scene.value) return
+    if (active || !ringEl || !heroEl || !scene.value) return
+    active = true
     reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-    cards = [...scene.value.children] as HTMLElement[]
+    cards = [...scene.value.querySelectorAll<HTMLElement>('.hero-card')]
+    written = []
     n = cards.length
     cards.forEach((card, i) => {
       listen(card, 'focus', () => {
@@ -254,11 +290,46 @@ export function useHeroRing({ hero, ring, scene }: RingElements) {
     measure()
     ready.value = true
     // Fonts change the title height and with it the scene's.
-    document.fonts?.ready.then(measure)
+    document.fonts?.ready.then(() => active && measure())
+  }
+
+  /** Below 900px: stop, and leave the cards as plain CSS blocks (no inline style, no ring state). */
+  function disable() {
+    if (!active) return
+    active = false
+    modeCleanups.forEach((off) => off())
+    modeCleanups = []
+    cancelAnimationFrame(raf)
+    raf = 0
+    clearTimeout(wheelTimer)
+    pos = target = vel = 0
+    down = moved = false
+    tiltCard = null
+    ready.value = false
+    dragging.value = false
+    moving.value = false
+    ring.value?.style.removeProperty('--w')
+    ring.value?.style.removeProperty('--h')
+    cards.forEach((card) => {
+      card.style.transform = ''
+      card.style.zIndex = ''
+      card.style.visibility = ''
+      for (const name of ['--cap', '--ry', '--rx', '--par', '--sheen']) card.style.removeProperty(name)
+    })
+    written = []
+  }
+
+  onMounted(() => {
+    mq = matchMedia(`(min-width: ${HERO_RING_MIN_WIDTH}px)`)
+    const apply = () => (mq?.matches ? enable() : disable())
+    mq.addEventListener('change', apply)
+    cleanups.push(() => mq?.removeEventListener('change', apply))
+    apply()
   })
 
   onBeforeUnmount(() => {
     cleanups.forEach((off) => off())
+    modeCleanups.forEach((off) => off())
     cancelAnimationFrame(raf)
     clearTimeout(wheelTimer)
     clearTimeout(clickTimer)

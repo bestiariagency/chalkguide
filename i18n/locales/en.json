@@ -497,6 +497,11 @@
       "regionLabel": "Highlights",
       "regionRole": "carousel",
       "ropeLabel": "Go to the next section",
+      "prev": "Previous highlight",
+      "next": "Next highlight",
+      "status": "Highlight {n} of {total}: {label}",
+      "slideLabel": "{n} of {total}",
+      "slideRole": "slide",
       "kind": {
         "review": "Review",
         "shoe": "Climbing shoes",

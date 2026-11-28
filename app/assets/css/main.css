@@ -48,6 +48,8 @@
   --color-accent-ink: #9a4a16; /* etiqueta de acento sobre papel */
   --color-meta-ink: #5e584e; /* secundario sobre papel */
   --color-rope-shade: #8f5013; /* sombra del trenzado de la cuerda */
+  --color-hero-edge: #1b1b1d; /* canto de las tarjetas planas del hero móvil (§19) */
+  --color-hero-dot: #77736b; /* punto inactivo del paginador del hero móvil (§19) */
   --color-nav-card: #1c1c1e; /* cara de la tarjeta del menú de escritorio */
   --color-nav-tile: #2c2c2f; /* baldosa numérica de esa tarjeta */
   --color-accent-fill-hover: #dd8630; /* pieza naranja del dock al pasar el ratón */

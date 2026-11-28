@@ -3,13 +3,12 @@ import type { HeroCardData } from '~/types/ui'
 
 /**
  * One slab of the hero carousel. Photos are plain (no text, no link); the rest are links.
- * The plies (thickness) only exist on the client: 18 per card would bloat the SSR HTML.
+ * No plies: the thickness is a painted edge (hero.css), one layer per card.
  */
 const props = defineProps<{
   card: HeroCardData
   /** The first image is the page's LCP: eager and high priority; the others lazy. */
   eager?: boolean
-  plies?: boolean
 }>()
 
 const { t } = useI18n()
@@ -58,9 +57,6 @@ useImagePreload(() => ({
     :data-label="card.label"
   >
     <div class="hero-slab">
-      <template v-if="plies">
-        <i v-for="n in HERO_PLIES" :key="n" class="hero-ply" :style="{ '--i': n }" />
-      </template>
       <div class="hero-face">
         <p
           v-if="card.date"
@@ -97,7 +93,7 @@ useImagePreload(() => ({
         />
         <div
           v-if="newsText"
-          class="absolute inset-0 flex flex-col px-4 pt-[58px] pb-3.5 text-ink"
+          class="hero-cap absolute inset-0 flex flex-col px-4 pt-[58px] pb-3.5 text-ink"
         >
           <span class="label-mini flex items-center gap-1.5 !text-(--tink)">
             <NewsCategoryIcon :slug="card.news?.categorySlug" :size="14" />{{ card.eyebrow }}
@@ -107,7 +103,7 @@ useImagePreload(() => ({
         </div>
         <div
           v-else-if="card.eyebrow"
-          class="absolute inset-x-0 bottom-0 px-4 pb-3.5 [opacity:var(--cap,1)] max-[599px]:px-3.5 max-[599px]:pb-3"
+          class="hero-cap absolute inset-x-0 bottom-0 px-4 pb-3.5 [opacity:var(--cap,1)] max-[599px]:px-3.5 max-[599px]:pb-3"
           :class="capBase"
         >
           <span class="label-mini block" :class="[tone.eyebrow, isNews ? 'flex items-center gap-1.5' : '']">

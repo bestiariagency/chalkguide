@@ -1,9 +1,13 @@
 /** Pointer / trackpad travel (in card widths) that moves the ring by one card. */
-export const DRAG_CARD_SPAN = 1.16
-/** Share of the remaining distance covered per frame (ease-out chase of `target`). */
-export const CHASE_RATE = 0.11
+export const DRAG_CARD_SPAN = 0.9
+/** Time constant (ms) of the ease-out chase of `target`: settles in about 4x this, at any frame rate. */
+export const CHASE_MS = 90
+/** Throw (ms of release velocity) added when a drag ends. */
+export const THROW_MS = 240
 /** Horizontal pointer travel (px) before a press becomes a drag. */
 export const DRAG_THRESHOLD_PX = 6
+/** From this viewport width the hero is the ring; below it, a flat scroll-snap carousel (same cut as the CSS). */
+export const HERO_RING_MIN_WIDTH = 900
 
 export interface RingGeometry {
   cardW: number
@@ -15,17 +19,16 @@ export interface RingGeometry {
   perspective: number
 }
 
-/** Card size and cylinder radius for a ring box of `W`×`H` px (phones get bigger, tighter cards). */
+/** Card size and cylinder radius for a ring box of `W`×`H` px (the ring only runs from 900px up). */
 export function ringGeometry(W: number, H: number): RingGeometry {
-  const phone = W < 900
-  const cardW = Math.round(phone ? Math.min(W * (W < 600 ? 0.74 : 0.46), H * 0.94 * 0.76) : Math.min(W * 0.21, H * 0.96 * 0.74))
-  const gap = cardW * (phone ? 0.1 : 0.09)
-  const radius = Math.max(W * (phone ? 1.05 : 0.85), cardW * 2.4)
+  const cardW = Math.round(Math.min(W * 0.21, H * 0.96 * 0.74))
+  const gap = cardW * 0.09
+  const radius = Math.max(W * 0.85, cardW * 2.4)
   return {
     cardW,
-    cardH: Math.round(cardW / (phone ? 0.76 : 0.74)),
+    cardH: Math.round(cardW / 0.74),
     radius,
     step: (cardW + gap) / radius,
-    perspective: Math.round(radius * (phone ? 1.05 : 0.95)),
+    perspective: Math.round(radius * 0.95),
   }
 }
